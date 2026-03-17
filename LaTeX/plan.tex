@@ -1,0 +1,39 @@
+1. Build the "True" and "Baseline" Models (gprMax)
+Define your "Ground Truth" for the time-lapse change.
+\begin{itemize}
+    \item Model A (Baseline): Create a gprMax .in file with your background velocity model and a closed fracture (or no fracture).
+    \item Model B (Monitor): Create a second file with the "True" subwavelength fracture (e.g., a 2mm air-filled gap).
+    \item Generate Data: Run both to get your "observed" synthetic traces: $d_{base}$ and $d_{mon}$.
+    \item The Target: Calculate the difference signal $\delta d_{obs} = d_{mon} - d_{base}$. This is the only signal your MCMC needs to explain.
+\end{itemize}
+
+2. Set Up the RTM Imaging Kernel
+Since the velocity model is predefined, your RTM will be perfectly migrated.
+\begin{itemize}
+\item Structural Mask: Run RTM on $\delta d_{obs}$ to find the exact spatial coordinates of the change.
+\item Constraint: Use this image to "crop" your inversion. If the RTM shows the change is at $(x=2.0, z=1.5)$, don't let the MCMC waste time looking at $(x=5.0, z=5.0)$.
+\end{itemize}
+
+3. Build the MCMC "Wrapper" (Python)
+You need a script that acts as the "brain," connecting the statistical sampler to the GPR solver.
+\begin{itemize}
+\item Define Parameters: Choose 2–3 variables to solve for (e.g., Fracture Aperture $a$ and Permittivity $\epsilon_{fill}$).
+\item The Proposal: MCMC picks a test value for $a$.
+\item The Forward Call: The script updates the gprMax .in file with the test $a$, runs the simulation, and subtracts the baseline to get $\delta d_{test}$.
+\item The Misfit: Compare $\delta d_{test}$ to your target $\delta d_{obs}$ using a simple L2-norm (Sum of Squared Errors).
+\item The Decision: If the error is low, the MCMC "accepts" that aperture value and moves to the next guess.
+\end{itemize}
+
+4. Run the "Master Loop"
+\begin{itemize}
+\item Initialize: Start 10–20 "walkers" (parallel chains) using a library like emcee.
+\item Iterate: Let them run for ~500–1000 steps. Because it's synthetic and the background is fixed, it should converge quickly.
+\item Analyze: Extract the Posterior Distribution. This will give you the "Most Likely" aperture and a "Certainty" range (e.g., $2mm \pm 0.1mm$).
+\end{itemize}
+
+Why this is faster for your Thesis:
+\begin{itemize}
+    \item No Velocity Uncertainty: By using a predefined model, you remove the biggest source of non-linearity in GPR inversion.
+    \item Differential Focus: You are only simulating the "delta." You can actually use a very small gprMax "sub-grid" around the fracture zone to make each simulation run in seconds rather than minutes.
+    \item Perfect Wavelet: You don't have to estimate a source pulse; you know exactly what you put into the gprMax file.
+\end{itemize}
