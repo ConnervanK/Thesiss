@@ -1,13 +1,26 @@
 import re
 import numpy as np
 
-
-def max_fracture_thickness(f_central, epsilon_r, sub_wavelength_factor=4):
+def central_wavelength(f_central, epsilon_r):
     c = 299792458.0  # m/s
     c_medium = c / np.sqrt(epsilon_r)  # m/s
-    lam = c_medium / f_central  # m
+    return c_medium / f_central  # m
+
+def max_fracture_thickness(f_central, epsilon_r, sub_wavelength_factor=4):
+    lam = central_wavelength(f_central, epsilon_r)
     thickness = lam / sub_wavelength_factor  # m
-    return thickness, lam
+    return thickness
+
+def fracture_depth(f_central, epsilon_r, source_receiver_distance):
+    lam = central_wavelength(f_central, epsilon_r)
+    return 2 * source_receiver_distance**2 / lam # Minimum distance to get to the far field in metre
+
+def horizontal_resolution(f_central, epsilon_r, z):
+    lam = central_wavelength(f_central, epsilon_r)
+    I = (z + lam / 4)**2
+    return np.sqrt( I - z**2 ) # radius in metres
+    
+
 
 
 def write_thin_fracture_gprmax_input(
