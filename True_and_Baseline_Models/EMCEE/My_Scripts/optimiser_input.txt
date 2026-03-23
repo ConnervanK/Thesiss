@@ -1,0 +1,8 @@
+# Recommended simulation parameters
+f_central = 1.265e+08 # Hz
+memory    = 0.027 # million cells
+n_steps   = 1.306e+02
+cost      = 3.491e+00
+thickness = 0.0265 # m
+depth     = 0.100 # m
+dx_dy_dz  = 0.00265 # m
