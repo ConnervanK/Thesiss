@@ -172,6 +172,12 @@ def generate_alternating_block_model(
     y_receiver=0.1,
     src_pos=None,
     rx_pos=None,
+    src_positions=None,
+    rx_positions=None,
+    bscan_n_traces=1,
+    bscan_step=0.0,
+    bscan_step_lambda=None,
+    tx_rx_offset=0.02,
     show_plot=True,
     # gprMax specific params
     dx_dy_dz=(0.002, 0.002, 0.002),
@@ -182,9 +188,36 @@ def generate_alternating_block_model(
     """
     Generates a gprMax model with alternating PERMITTIVITY blocks in the fracture.
     Plots the model and writes the input file.
+
+    Supports B-scan generation using either:
+    1) #src_steps/#rx_steps with bscan_n_traces > 1 and bscan_step > 0
+    2) explicit lists via src_positions and rx_positions
+
+    Notes:
+    - You can define B-scan step in meters (`bscan_step`) or as a wavelength
+      fraction (`bscan_step_lambda`). If both are given, `bscan_step_lambda`
+      takes precedence.
     """
     # 1. Resolve Geometry (Reuse logic)
     lam = central_wavelength(f_central, epsilon_r)
+
+    # B-scan step can be given in meters or wavelength fraction.
+    if bscan_step_lambda is not None:
+        bscan_step_m = float(bscan_step_lambda) * lam
+    else:
+        bscan_step_m = float(bscan_step)
+
+    def _normalize_pos(p):
+        # Accept (x, y) or (x, y, z) in visual depth coordinates.
+        if len(p) == 2:
+            return (p[0], p[1], 0.0)
+        if len(p) == 3:
+            return (p[0], p[1], p[2])
+        raise ValueError("Each position must be (x, y) or (x, y, z).")
+
+    def _to_gprmax_coords(p):
+        x_v, y_v, z_v = _normalize_pos(p)
+        return x_v, depth - y_v, z_v
     
     if fracture_depth_lambda is not None:
         dist_from_receiver = fracture_depth_lambda * lam
@@ -246,6 +279,44 @@ def generate_alternating_block_model(
         })
         current_x = x_end
 
+    # Resolve source/receiver positions for plotting and file export.
+    use_explicit_positions = (src_positions is not None) or (rx_positions is not None)
+    if use_explicit_positions:
+        if src_positions is None or rx_positions is None:
+            raise ValueError("Provide both src_positions and rx_positions when using explicit multi-position mode.")
+        if len(src_positions) == 0 or len(rx_positions) == 0:
+            raise ValueError("src_positions and rx_positions cannot be empty.")
+
+        plot_src_positions = [_normalize_pos(s) for s in src_positions]
+        plot_rx_positions = [_normalize_pos(r) for r in rx_positions]
+        use_steps = False
+    else:
+        if src_pos is None:
+            src_pos = (x_receiver, y_receiver, 0.0)
+        if rx_pos is None:
+            rx_pos = (x_receiver + tx_rx_offset, y_receiver, 0.0)
+
+        src0 = _normalize_pos(src_pos)
+        rx0 = _normalize_pos(rx_pos)
+        n_traces = int(bscan_n_traces)
+
+        use_steps = n_traces > 1
+        if use_steps and bscan_step_m <= 0:
+            raise ValueError("bscan_step/bscan_step_lambda must be > 0 when bscan_n_traces > 1.")
+
+        if use_steps:
+            plot_src_positions = [
+                (src0[0] + i * bscan_step_m, src0[1], src0[2])
+                for i in range(n_traces)
+            ]
+            plot_rx_positions = [
+                (rx0[0] + i * bscan_step_m, rx0[1], rx0[2])
+                for i in range(n_traces)
+            ]
+        else:
+            plot_src_positions = [src0]
+            plot_rx_positions = [rx0]
+
     # 3. Plotting
     if show_plot:
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -277,8 +348,25 @@ def generate_alternating_block_model(
         cbar = plt.colorbar(sm, ax=ax, orientation='horizontal', pad=0.15, fraction=0.05)
         cbar.set_label(f'Relative Permittivity ($\\epsilon_r$) [Base: {epsilon_r}]')
         
-        # Receiver
-        ax.scatter(x_receiver, y_receiver, marker='v', s=150, color='black', zorder=10, label='Receiver')
+        # Plot source/receiver acquisition geometry.
+        src_x = np.array([p[0] for p in plot_src_positions])
+        src_y = np.array([p[1] for p in plot_src_positions])
+        rx_x = np.array([p[0] for p in plot_rx_positions])
+        rx_y = np.array([p[1] for p in plot_rx_positions])
+
+        if len(src_x) > 1:
+            ax.plot(src_x, src_y, color='darkgreen', linestyle='--', linewidth=1, alpha=0.7, label='Source path')
+            ax.scatter(src_x[0], src_y[0], marker='^', s=120, color='green', zorder=11, label='Source start')
+            ax.scatter(src_x[-1], src_y[-1], marker='^', s=120, color='limegreen', zorder=11, label='Source end')
+        else:
+            ax.scatter(src_x, src_y, marker='^', s=120, color='green', zorder=11, label='Source')
+
+        if len(rx_x) > 1:
+            ax.plot(rx_x, rx_y, color='black', linestyle='--', linewidth=1, alpha=0.7, label='Receiver path')
+            ax.scatter(rx_x[0], rx_y[0], marker='v', s=120, color='black', zorder=11, label='Receiver start')
+            ax.scatter(rx_x[-1], rx_y[-1], marker='v', s=120, color='gray', zorder=11, label='Receiver end')
+        else:
+            ax.scatter(rx_x, rx_y, marker='v', s=120, color='black', zorder=11, label='Receiver')
         
         # Upper layer (visual)
         upper_zone = Rectangle((0, 0), length, y_receiver, facecolor='#cfe8ff', edgecolor='none', alpha=0.3)
@@ -306,15 +394,12 @@ def generate_alternating_block_model(
         ax.set_xlim(0, length)
         ax.set_aspect('equal')
         ax.grid(True, linestyle=':', alpha=0.5)
+        ax.legend(loc='lower left', fontsize=9)
         
         plt.tight_layout()
         plt.show()
 
     # 4. Export gprMax Input File
-    if src_pos is None:
-        src_pos = (x_receiver, y_receiver - 0.05, 0.0) # slightly above rx?
-    if rx_pos is None:
-        rx_pos = (x_receiver + 0.01, y_receiver, 0.0)
         
     lines = []
     lines.append(f"#title: Alternating Permittivity Model")
@@ -422,28 +507,27 @@ def generate_alternating_block_model(
         lines.append(f"#box: {b['x_start']:.6f} {y_min:.6f} 0 {b['x_end']:.6f} {y_max:.6f} {dx_dy_dz[2]} {mat_name}")
 
     lines.append("")
-    # Source/Receiver conversion
-    gpr_src_y = depth - src_pos[1] if src_pos else gpr_ysurf + 0.01 # Slightly above interface?
-    gpr_rx_y = depth - rx_pos[1] if rx_pos else gpr_ysurf + 0.01
-    
-    # If implicit positions, use receiver location as reference
-    if src_pos is None:
-        gpr_src_y = depth - y_receiver # At interface
-    if rx_pos is None:
-        gpr_rx_y = depth - y_receiver # At interface
+    # Use model central frequency unless caller overrides waveform separately later.
+    lines.append(f"#waveform: ricker 1 {f_central} my_ricker")
+    if use_explicit_positions:
+        for s in plot_src_positions:
+            sx, sy, sz = _to_gprmax_coords(s)
+            lines.append(f"#hertzian_dipole: z {sx:.6f} {sy:.6f} {sz:.6f} my_ricker")
 
-    # Default logic: Receiver at specified (x, y) visual.
-    # gprMax Y = depth - y_receiver
-    
-    final_src_y = depth - y_receiver # Collocated for simplicity if not separated
-    final_rx_y = depth - y_receiver
-    
-    # But usually source/rx are slightly offset or at specific coords.
-    # I'll use the passed x/y_receiver directly converted for gprMax Y.
-    
-    lines.append("#waveform: ricker 1 1.5e9 my_ricker")
-    lines.append(f"#hertzian_dipole: z {x_receiver} {final_src_y:.4f} 0 my_ricker")
-    lines.append(f"#rx: {x_receiver + 0.02} {final_rx_y:.4f} 0") 
+        for r in plot_rx_positions:
+            rx, ry, rz = _to_gprmax_coords(r)
+            lines.append(f"#rx: {rx:.6f} {ry:.6f} {rz:.6f}")
+    else:
+        sx, sy, sz = _to_gprmax_coords(plot_src_positions[0])
+        rx, ry, rz = _to_gprmax_coords(plot_rx_positions[0])
+
+        lines.append(f"#hertzian_dipole: z {sx:.6f} {sy:.6f} {sz:.6f} my_ricker")
+        lines.append(f"#rx: {rx:.6f} {ry:.6f} {rz:.6f}")
+
+        if use_steps:
+            lines.append(f"#src_steps: {bscan_step_m} 0 0")
+            lines.append(f"#rx_steps: {bscan_step_m} 0 0")
+
     lines.append("#messages: y")
     lines.append(f"#geometry_view: 0 0 0 {length} {depth} {dx_dy_dz[2]} {dx_dy_dz[0]} {dx_dy_dz[1]} {dx_dy_dz[2]} Model_Geometry n")
 
@@ -462,5 +546,11 @@ def generate_alternating_block_model(
         'epsilon_minus': eps_minus,
         'fracture_depth_m': dist_from_receiver,
         'fracture_thickness_m': thickness,
-        'gprMax_y_fracture_center': (gpr_yfrac_top + gpr_yfrac_bot)/2
+        'gprMax_y_fracture_center': (gpr_yfrac_top + gpr_yfrac_bot)/2,
+        'bscan_n_traces': int(bscan_n_traces),
+        'bscan_step_m': float(bscan_step_m),
+        'bscan_step_lambda': None if bscan_step_lambda is None else float(bscan_step_lambda),
+        'use_src_rx_steps': use_steps,
+        'num_sources': 0 if src_positions is None else len(src_positions),
+        'num_receivers': 0 if rx_positions is None else len(rx_positions)
     }
