@@ -1,6 +1,6 @@
 import numpy as np
 import h5py
-from scipy.signal import hilbert
+from scipy.signal import hilbert, butter, filtfilt, find_peaks
 import pywt
 from forward import clear_results, create_input_file, run_gprmax
 
@@ -87,6 +87,49 @@ class GPRModelData:
         """Applies Hilbert transform to calculate the positive amplitude envelope."""
         if len(traces) == 0: return traces
         return np.abs(hilbert(traces, axis=1))
+
+    def calculate_diffraction_energy(self, traces):
+        """Calculates the total energy (L2 norm squared) of the diffracted field traces."""
+        return np.sum(np.square(traces))
+        
+    def bandpass_filter(self, traces, lowcut, highcut, order=4):
+        """Applies a zero-phase Butterworth bandpass filter to the traces."""
+        if len(traces) == 0: return traces
+        nyq = 0.5 / self.dt
+        low = lowcut / nyq
+        high = highcut / nyq
+        # Handle cases where highcut is above Nyquist safely
+        if high >= 1.0: high = 0.99
+        
+        b, a = butter(order, [low, high], btype='band')
+        filtered_traces = filtfilt(b, a, traces, axis=1)
+        return filtered_traces
+
+    def extract_fk_peaks(self, k, freqs, fk_mag, f_min=1e9, f_max=2e9):
+        """
+        Extracts the dominant lateral wavenumber (k_x) ridge in a specific frequency band.
+        This provides an estimate of the grating spatial frequency K_0 = 2*pi/d.
+        """
+        if fk_mag is None: return None, None
+        
+        # Limit to target frequency band
+        f_idx = np.where((freqs >= f_min) & (freqs <= f_max))[0]
+        if len(f_idx) == 0: return None, None
+        
+        # Average fk magnitude over the frequency band to find spatial dominant peaks
+        avg_fk_k = np.mean(fk_mag[:, f_idx], axis=1)
+        
+        # Find peaks in the spatial wavenumber domain
+        peaks, _ = find_peaks(avg_fk_k, prominence=np.max(avg_fk_k)*0.1)
+        
+        if len(peaks) > 0:
+            # Sort peaks by amplitude
+            sorted_peaks = sorted(peaks, key=lambda p: avg_fk_k[p], reverse=True)
+            # Find the peak corresponding to positive k (skip dc k=0)
+            for p in sorted_peaks:
+                if k[p] > 0.1: # Skip exactly zero
+                    return k[p], avg_fk_k[p]
+        return None, None
         
     def cross_correlate(self):
         """Cross correlates the average homogeneous trace with each difference trace."""
@@ -146,6 +189,9 @@ class GPRModelData:
             for ix_out, x_out in enumerate(rx_x_array):
                 dist_tx = np.sqrt((x_out - tx_x)**2 + z**2)
                 for irx, rx_x in enumerate(rx_x_array):
+                    if irx >= traces.shape[0]:
+                        continue
+                    
                     dist_rx = np.sqrt((x_out - rx_x)**2 + z**2)
                     
                     t_total_sec = (dist_tx + dist_rx) / velocity

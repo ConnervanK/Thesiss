@@ -90,6 +90,24 @@ def main():
     tx_start_x = x_first_measurement + 54 * source_receiver_steps
     max_depth = 0.5 
 
+    # E. Multi-Band Migration
+    # Low-freq for mean fracture (using full alt field)
+    alt_low_traces = gpr_model.bandpass_filter(gpr_model.alt_traces, lowcut=1e8, highcut=1e9)
+    migrated_low, depths_low = gpr_model.migrate(
+        alt_low_traces, tx_x=tx_start_x, velocity=v_ice, max_depth=max_depth
+    )
+    plot_migrated_image(gpr_model, gpr_model.apply_envelope(migrated_low), depths_low,
+                        "Low-Freq Migration (Mean Fracture)", "plot_migrated_low.png")
+
+    # High-freq for internal heterogeneity (using diffracted field)
+    diff_high_traces = gpr_model.bandpass_filter(svd_filtered_traces, lowcut=1e9, highcut=4e9)
+    migrated_high, depths_high = gpr_model.migrate(
+        diff_high_traces, tx_x=tx_start_x, velocity=v_ice, max_depth=max_depth
+    )
+    plot_migrated_image(gpr_model, gpr_model.apply_envelope(migrated_high), depths_high,
+                        "High-Freq Migration (Diffracted Interior)", "plot_migrated_high.png")
+
+    # Full band diffraction migration
     migrated_img, depths = gpr_model.migrate(
         svd_filtered_traces, tx_x=tx_start_x, velocity=v_ice, max_depth=max_depth
     )
@@ -98,6 +116,32 @@ def main():
     migrated_envelope = gpr_model.apply_envelope(migrated_img)
     plot_migrated_image(gpr_model, migrated_envelope, depths,
                         "Depth Migrated Diffractions (Envelope)", "plot_diff_migrated.png")
+                        
+    # 9. Evaluate Lateral Tuning Theory Metrics & Spectral Inversion
+    wavelength_bg = v_ice / model_params['f_central']
+    eta = gpr_model.block_width / wavelength_bg
+    diff_energy = gpr_model.calculate_diffraction_energy(svd_filtered_traces)
+    
+    # Inversion: Estimate block width (d) from peak k_x
+    k_peak, peak_mag = gpr_model.extract_fk_peaks(k_array, fk_freqs, fk_mag, f_min=1e9, f_max=2.5e9)
+    # The alternating blocks (+A, -A, +A, -A) form a spatial period of 2*d.
+    # Therefore, the dominant spatial wavenumber is K = 2*pi / (2*d) = pi / d.
+    d_est = (np.pi / k_peak) if k_peak else 0.0
+
+    print("\n" + "="*50)
+    print("LATERAL TUNING METRICS & SPECTRAL INVERSION")
+    print("="*50)
+    print(f"Background Wavelength (lambda) : {wavelength_bg:.4f} m")
+    print(f"Internal Block Width (True d)  : {gpr_model.block_width:.4f} m")
+    print(f"Lateral Tuning Parameter (eta) : {eta:.4f} (d / lambda)")
+    print(f"Total Diffraction Energy       : {diff_energy:.5e}")
+    if k_peak:
+        print(f"Extracted Peak F-K (K_0)       : {k_peak:.4f} rad/m")
+        print(f"Inverted Block Width (Est. d)  : {d_est:.4f} m")
+        print(f"Inversion Error                : {abs(d_est - gpr_model.block_width)/gpr_model.block_width * 100:.1f}%")
+    else:
+        print("No valid spatial wavenumber peaks found.")
+    print("="*50 + "\n")
 
 if __name__ == "__main__":
     main()
