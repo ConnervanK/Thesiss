@@ -38,7 +38,7 @@ def create_input_file():
     conductivity_fracture_plus  = conductivity_fracture * 1.1
     conductivity_fracture_minus = conductivity_fracture * 0.9
 
-    block_size = (1/2) * wavelength_fracture
+    block_size = (1/4) * wavelength_fracture
 
     dx_min = wavelength_fracture / 20
     dx_dy_dz = dx_min
