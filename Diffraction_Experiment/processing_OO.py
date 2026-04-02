@@ -127,7 +127,6 @@ class GPRModelData:
         # Wavenumbers (axis 0 of traces -> rows of FFT) in rad/m
         rx_dx = self.block_width / self.rx_per_block
         k = np.fft.fftshift(np.fft.fftfreq(traces.shape[0], rx_dx)) * 2 * np.pi
-        k = np.fft.fftshift(np.fft.fftfreq(traces.shape[0], self.block_width)) * 2 * np.pi
         
         fk_mag = np.abs(fk_data)
         return k, freqs, fk_mag

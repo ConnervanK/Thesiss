@@ -43,7 +43,7 @@ def plot_fk_image(k, freqs, fk_mag, title, save_filename, block_width=None):
     fk_log = np.log1p(fk_mag / np.max(fk_mag) * 1e4)
 
     im = ax.imshow(
-        fk_log, aspect='auto', cmap='jet', origin='lower',
+        fk_log.T, aspect='auto', cmap='jet', origin='lower',
         extent=[k[0], k[-1], freqs_ghz[0], freqs_ghz[-1]]
     )
 
@@ -59,7 +59,7 @@ def plot_fk_image(k, freqs, fk_mag, title, save_filename, block_width=None):
     ax.set_ylabel("Frequency [GHz]", fontsize=12)
     
     # Ensure standard quadrant display (positive freq is usually enough, but full bounds are safe)
-    ax.set_ylim(0, np.max(freqs_ghz))
+    ax.set_ylim(0, 5) # focus up to 5 GHz
     
     # The max measured wavenumber is pi/d (Nyquist limit). Since we are drawing 2*pi/d, 
     # we need to artificially widen the x-axis to show the lines relative to the spectrum.
