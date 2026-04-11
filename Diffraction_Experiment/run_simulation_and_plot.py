@@ -25,7 +25,16 @@ def main():
         'fracture_depth': 0.3,
         'depth_below_fracture': 0.1,
         'air_thickness': 0.05,
-        'rx_per_block': 4                    # Measure 4 times per spatial block
+        
+        # --- Mode selection: 'static' or 'bscan' ---
+        'mode': 'static',                    # Switch to 'bscan' to run moving Tx-Rx array 
+        'rx_per_block': 1,                   # Used only if mode == 'static'
+        
+        # --- B-scan parameters (used if mode == 'bscan') ---
+        'rx_count': 1,                       # Number of receivers in moving array
+        'rx_spacing': 0.02,                  # Metres between receivers in the array
+        'bscan_traces': 20,                  # Number of traces for the B-scan
+        'bscan_step_x': 0.02                 # Movement step size in metres
     }
 
     # ==========================
@@ -128,6 +137,48 @@ def main():
     # Therefore, the dominant spatial wavenumber is K = 2*pi / (2*d) = pi / d.
     d_est = (np.pi / k_peak) if k_peak else 0.0
 
+    # A. Diffraction Energy Calibration
+    # Sub-wavelength scattering energy scales ~ (d/\lambda)^a.
+    # Using existing empirical constant for this dataset setup.
+    energy_cal_factor = 280.0  # Assumed calibration constant for demonstration
+    d_est_energy = wavelength_bg * np.sqrt(diff_energy / energy_cal_factor)
+    
+    # B. High-Resolution Spatial Spectral Estimation (MUSIC)
+    # Resolves spatial frequencies beyond the Rayleigh limit of standard FFTs.
+    k_music, music_spectrum = gpr_model.compute_music_spectrum(svd_filtered_traces, num_sources=3)
+    if k_music is not None:
+        music_peak_idx = np.argmax(music_spectrum)
+        k_music_peak = k_music[music_peak_idx]
+        d_est_music = np.pi / k_music_peak
+    else:
+        k_music_peak, d_est_music = 0.0, 0.0
+
+    # C. Spectral Centroid / Frequency Shift Analysis
+    # Compare the centroid frequency of the difference field to the background frequency.
+    # Sub-wavelength features act as high-pass or resonant filters (e.g., Rayleigh scattering ~ f^4)
+    centroid_homo = gpr_model.compute_spectral_centroid(gpr_model.homo_traces)
+    centroid_diff = gpr_model.compute_spectral_centroid(svd_filtered_traces)
+    
+    # Simple empirical shift mapping
+    centroid_shift_ratio = centroid_diff / (centroid_homo + 1e-9)
+    # Target central freq is around 1.5e9. Assume scaling relationship. Placeholder conversion.
+    # Actual relations depend on forward modeling calibration.
+    d_est_centroid = wavelength_bg * (1.0 / centroid_shift_ratio) if centroid_diff > 0 else 0.0
+
+    # D. Amplitude Versus Offset (AVO)
+    # Extract peak reflection amplitudes across the receiver array
+    rx_x, avo_amps, offsets = gpr_model.extract_avo(svd_filtered_traces, tx_x=tx_start_x)
+    if rx_x is not None and len(offsets) > 1:
+        # Calculate AVO gradient (simplified linear fit of amplitude vs offset)
+        # Small 'd' scatters more uniformly (isotropic, low gradient), large 'd' reflects specularly (sharp decay).
+        p = np.polyfit(offsets, avo_amps, 1)
+        avo_gradient = p[0]
+        # Empirical conversion placeholder
+        d_est_avo = wavelength_bg * np.exp(avo_gradient * 50) 
+    else:
+        avo_gradient = 0.0
+        d_est_avo = 0.0
+
     print("\n" + "="*50)
     print("LATERAL TUNING METRICS & SPECTRAL INVERSION")
     print("="*50)
@@ -138,9 +189,31 @@ def main():
     if k_peak:
         print(f"Extracted Peak F-K (K_0)       : {k_peak:.4f} rad/m")
         print(f"Inverted Block Width (Est. d)  : {d_est:.4f} m")
-        print(f"Inversion Error                : {abs(d_est - gpr_model.block_width)/gpr_model.block_width * 100:.1f}%")
+        print(f"F-K Inversion Error            : {abs(d_est - gpr_model.block_width)/gpr_model.block_width * 100:.1f}%")
+        
+    print("-"*50)
+    print(f"Energy-Calibrated Block Width  : {d_est_energy:.4f} m")
+    print(f"Energy Inversion Error         : {abs(d_est_energy - gpr_model.block_width)/gpr_model.block_width * 100:.1f}%")
+    
+    if k_music_peak > 0.0:
+        print("-"*50)
+        print(f"MUSIC Spectrum Peak (K_0)      : {k_music_peak:.4f} rad/m")
+        print(f"MUSIC Inverted Block Width     : {d_est_music:.4f} m")
+        print(f"MUSIC Inversion Error          : {abs(d_est_music - gpr_model.block_width)/gpr_model.block_width * 100:.1f}%")
     else:
         print("No valid spatial wavenumber peaks found.")
+        
+    print("-"*50)
+    print(f"Homogeneous Spectral Centroid  : {centroid_homo/1e9:.4f} GHz")
+    print(f"Diffraction Spectral Centroid  : {centroid_diff/1e9:.4f} GHz")
+    print(f"Centroid-Inverted Block Width  : {d_est_centroid:.4f} m")
+    print(f"Centroid Inversion Error       : {abs(d_est_centroid - gpr_model.block_width)/gpr_model.block_width * 100:.1f}%")
+
+    print("-"*50)
+    print(f"AVO Gradient (Amp/m)           : {avo_gradient:.5e}")
+    print(f"AVO-Inverted Block Width       : {d_est_avo:.4f} m")
+    print(f"AVO Inversion Error            : {abs(d_est_avo - gpr_model.block_width)/gpr_model.block_width * 100:.1f}%")
+        
     print("="*50 + "\n")
 
 if __name__ == "__main__":

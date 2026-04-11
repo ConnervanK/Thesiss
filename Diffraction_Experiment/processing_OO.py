@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import h5py
 from scipy.signal import hilbert, butter, filtfilt, find_peaks
@@ -30,13 +31,31 @@ class GPRModelData:
         if self.model_params is None:
             raise ValueError("No model parameters specified.")
         
-        clear_results()
+        if os.path.exists(self.out_alt_file) and os.path.exists(self.out_homo_file):
+            print(f"Loading existing `{self.out_alt_file}` and `{self.out_homo_file}`, skipping simulation.")
+            out_ctx = create_input_file(**self.model_params)
+        else:
+            clear_results()
+            out_ctx = create_input_file(**self.model_params)
+            run_gprmax(traces_count=out_ctx['actual_traces'])
+
+        # Store attributes
+        self.width = out_ctx['domain_width']
+        self.height = out_ctx['domain_height']
+        self.air_thick = out_ctx['air_thickness']
+        self.f_top = out_ctx['fracture_top']
+        self.f_bottom = out_ctx['fracture_bottom']
+        self.snap_time = out_ctx['snapshot_time']
+        self.dx_dy_dz = out_ctx['dx_dy_dz']
+        self.n_blocks = out_ctx['n_blocks']
+        self.block_width = out_ctx['block_width']
+        self.rx_offset = out_ctx['rx_start_x'] - out_ctx['tx_start_x']
+        self.rx_per_block = out_ctx.get('rx_per_block', 1)
+        self.mode = out_ctx.get('mode', 'static')
         
-        (self.width, self.height, self.air_thick, self.f_top, self.f_bottom, 
-         self.snap_time, self.dx_dy_dz, self.n_blocks, self.block_width, 
-         self.rx_offset, self.rx_per_block) = create_input_file(**self.model_params)
-         
-        run_gprmax()
+        self.total_rx = out_ctx['total_rx']
+        self.actual_traces = out_ctx['actual_traces']
+
         self._load_data()
 
     def _load_data(self):
@@ -49,18 +68,39 @@ class GPRModelData:
             homo_traces = []
             alt_traces = []
             
-            total_rx = self.n_blocks * self.rx_per_block
-            for i in range(total_rx):
-                # The first receiver is rx1 (usually next to the tx). The array receivers start at rx2.
-                rx_name = f'rx{i+2}'
+            # The receivers in the output are simply numbered rx1, rx2... up to total_rx
+            for i in range(self.total_rx):
+                rx_name = f'rx{i+1}'
+                # Inside 'static' mode, we used to skip the rx1 because rx1 was positioned at source location. 
+                # Our rewritten logic outputs the exact array receivers natively, so we just start from rx1!
                 try:
                     ez_alt = np.array(fa['rxs'][rx_name]['Ez'])
                     ez_homo = np.array(fh['rxs'][rx_name]['Ez'])
                     
-                    alt_traces.append(ez_alt)
-                    homo_traces.append(ez_homo)
-                    diff_traces.append(ez_alt - ez_homo)
-                except KeyError:
+                    if self.actual_traces > 1:
+                        # B-scan matrix: shape (time, traces). 
+                        # We transpose so Shape: (traces, time), which handles as an ensemble of classical trace arrays.
+                        ez_alt = ez_alt.T
+                        ez_homo = ez_homo.T
+                        
+                        # In the single rx case (bscan with 1 source, 1 rx), 'diff_traces' 
+                        # is logically 'ez_alt_transposed', behaving like a single pseudo-spatial array 
+                        # just like 'static'.
+                        if self.total_rx == 1:
+                            alt_traces = ez_alt
+                            homo_traces = ez_homo
+                            diff_traces = ez_alt - ez_homo
+                        else:
+                            alt_traces.append(ez_alt)
+                            homo_traces.append(ez_homo)
+                            diff_traces.append(ez_alt - ez_homo)
+                    else:
+                        # shape is (time,), just append
+                        alt_traces.append(ez_alt)
+                        homo_traces.append(ez_homo)
+                        diff_traces.append(ez_alt - ez_homo)
+                except KeyError as e:
+                    print(f"Warning: {rx_name} not found in output files.")
                     pass
                     
             self.diff_traces = np.array(diff_traces)
@@ -69,8 +109,15 @@ class GPRModelData:
             
     def get_rx_x_array(self):
         """Returns the x-coordinates of the receiver array."""
-        rx_dx = self.block_width / self.rx_per_block
-        return np.array([(i + 0.5) * rx_dx for i in range(self.n_blocks * self.rx_per_block)])
+        if hasattr(self, 'mode') and self.mode == 'bscan':
+            # If a B-scan, the 'x_array' for plotting AVO/Migrations corresponds to the moving array steps.
+            bscan_step_x = self.model_params.get('bscan_step_x', 0.05)
+            # Adjust offset relative to start 
+            start_x = self.model_params.get('tx_start_x', 0.0) 
+            return np.array([start_x + i * bscan_step_x for i in range(self.actual_traces)])
+        else:
+            rx_dx = self.block_width / self.rx_per_block
+            return np.array([(i + 0.5) * rx_dx for i in range(self.total_rx)])
 
     def apply_svd_filter(self, n_components_to_mute=1):
         """Mutes the first N singular components of the difference traces."""
@@ -154,6 +201,48 @@ class GPRModelData:
         coefs, _ = pywt.cwt(avg_trace, scales, wavelet, sampling_period=self.dt)
         return freqs, np.abs(coefs)
 
+    def compute_spectral_centroid(self, traces):
+        """
+        Computes the average spectral centroid (frequency focus) of the given traces.
+        """
+        if len(traces) == 0: return 0.0
+        
+        # Compute FFT along the time axis (axis=1)
+        spectra = np.abs(np.fft.rfft(traces, axis=1))
+        freqs = np.fft.rfftfreq(traces.shape[1], d=self.dt)
+        
+        # Calculate centroid for each trace
+        centroids = np.sum(freqs * spectra, axis=1) / (np.sum(spectra, axis=1) + 1e-12)
+        
+        # Return the mean centroid across all traces
+        return np.mean(centroids)
+
+    def extract_avo(self, traces, tx_x=None):
+        """
+        Extracts the maximum amplitude of the envelope for each trace, representing
+        Amplitude vs Offset.
+        Returns: (rx_x_array, amplitudes, offsets)
+        """
+        if len(traces) == 0: return None, None, None
+        rx_x_array = self.get_rx_x_array()
+        
+        # Get envelope of traces
+        env_traces = self.apply_envelope(traces)
+        
+        # Maximum amplitude per trace
+        amplitudes = np.max(env_traces, axis=1)
+        
+        if tx_x is None:
+            tx_x = getattr(self, 'width', 0.5) / 2.0
+            
+        # Ensure sizes match
+        num_traces = len(traces)
+        if len(rx_x_array) > num_traces:
+            rx_x_array = rx_x_array[:num_traces]
+            
+        offsets = np.abs(rx_x_array - tx_x)
+        return rx_x_array, amplitudes, offsets
+
     def fk_transform(self, traces):
         """
         Transforms traces (x, t) to Frequency-Wavenumber (F-K) domain.
@@ -173,6 +262,47 @@ class GPRModelData:
         
         fk_mag = np.abs(fk_data)
         return k, freqs, fk_mag
+
+    def compute_music_spectrum(self, traces, num_sources=2):
+        """
+        Computes the high-resolution spatial spectrum using the MUSIC algorithm.
+        This resolves sub-wavelength block spacing much better than standard F-K transform.
+        """
+        if len(traces) == 0: return None, None
+        
+        # Calculate spatial covariance matrix of the traces
+        # traces shape: (num_rx, num_t)
+        # R shape: (num_rx, num_rx)
+        R = traces @ traces.T / traces.shape[1]
+        
+        # Eigenvalue decomposition
+        eigenvalues, eigenvectors = np.linalg.eigh(R)
+        
+        # Sort eigenvalues and eigenvectors in descending order
+        idx = np.argsort(eigenvalues)[::-1]
+        eigenvalues = eigenvalues[idx]
+        eigenvectors = eigenvectors[:, idx]
+        
+        # Extract noise subspace
+        En = eigenvectors[:, num_sources:]
+        
+        # Wavenumbers to search (rad/m) - focus on sub-wavelength scale
+        k_search = np.linspace(10, 500, 2000)
+        
+        rx_x_array = self.get_rx_x_array()
+        music_spectrum = np.zeros_like(k_search)
+        
+        for i, k in enumerate(k_search):
+            # Steering vector (assuming plane waves or far-field)
+            a = np.exp(-1j * k * rx_x_array)
+            # P_MUSIC = 1 / (a^H * En * En^H * a)
+            den = (a.conj().T @ En) @ (En.conj().T @ a)
+            music_spectrum[i] = 1.0 / np.abs(den + 1e-10)
+            
+        # Normalize spectrum
+        music_spectrum = music_spectrum / np.max(music_spectrum)
+        
+        return k_search, music_spectrum
 
     def migrate(self, traces, tx_x, velocity, max_depth, dz=0.002):
         """
