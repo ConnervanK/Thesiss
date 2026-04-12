@@ -73,7 +73,7 @@ def rtm_imaging():
     # For a 1.5 GHz Ricker, the peak occurs exactly at 1.0 / 1.5 GHz = 0.666 ns.
     # To place the targets at their true spatial locations, we must advance the phase (remove the delay) in the backpropagation.
     # A slightly empirical offset is t_delay ~ 0.81 ns due to zero-offset coupling effects.
-    t_delay = 0.82e-9
+    t_delay = 0.82e-9 #0.82e-9
 
     for f_idx in valid_f_indices:
         f = freqs[f_idx]
@@ -107,6 +107,8 @@ def rtm_imaging():
 
     # Take absolute amplitude for the final image envelope
     env_image = np.abs(image)
+    
+
     # Plot results
     plt.figure(figsize=(10, 6))
     plt.imshow(env_image, extent=[grid_x[0], grid_x[-1], grid_y[0], grid_y[-1]], 
