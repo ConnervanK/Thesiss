@@ -61,7 +61,7 @@ def trmusic_imaging():
     t_delay = 0.82e-9 
     
     # We expect 2 scatterers, so signal subspace dimension is 2
-    num_scatterers = 4
+    num_scatterers = 6
 
     for f_idx in valid_f_indices:
         f = freqs[f_idx]

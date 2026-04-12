@@ -56,61 +56,67 @@ def trmusic_bscan_imaging():
     f_min, f_max = 0.5e9, 2.5e9
     valid_f_indices = np.where((freqs >= f_min) & (freqs <= f_max))[0]
     t_delay = 0.82e-9 
-    num_scatterers = 2
-
-    # Here, we treat the moving sub-array by forming a sliding sub-aperture MDM.
-    # A single (1 x 11) data vector yields a rank-1 subspace, so 2 scatterers will smear.
-    # By stacking neighboring Tx positions (e.g., 5 Tx positions), we get a 5x11 local MDM.
-    # The local MDM has enough rank to separate the targets and preserves the near-paraxial
-    # block factorization of the Green's function.
-    sub_ap_size = 5
-    half_sub = sub_ap_size // 2
-
-    for f_idx in valid_f_indices:
+    
+    # Use Broadband Covariance Matrix method.
+    # Stack all Tx-Rx traces into a single measurement vector per frequency.
+    # Over multiple frequencies, we build a spatial covariance matrix, which 
+    # provides enough snapshots to resolve coherent scatterers and properly
+    # handles arbitrary moving Tx/Rx geometries (unlike strict MDM SVD which requires fixed arrays).
+    
+    num_elements = num_runs * num_rx
+    R_cov = np.zeros((num_elements, num_elements), dtype=complex)
+    
+    # Pre-build data vectors
+    d_f_all = np.zeros((num_elements, len(valid_f_indices)), dtype=complex)
+    
+    for idx, f_idx in enumerate(valid_f_indices):
         f = freqs[f_idx]
-        k = 2 * np.pi * f / v 
-        I_f = np.zeros((len(grid_y), len(grid_x)), dtype=float)
+        d_vec = D_f[:, :, f_idx].flatten() * np.exp(1j * 2 * np.pi * f * t_delay)
+        d_f_all[:, idx] = d_vec
+        R_cov += np.outer(d_vec, np.conj(d_vec))
         
-        # Evaluate Sub-Aperture TR-MUSIC 
-        for tx_i_idx in range(half_sub, num_runs - half_sub):
-            # Local Multistatic Data Matrix for Sub-aperture (sub_ap_size x num_rx)
-            D_mat = D_f[tx_i_idx - half_sub : tx_i_idx + half_sub + 1, :, f_idx] * np.exp(1j * 2 * np.pi * f * t_delay)
+    R_cov /= len(valid_f_indices)
+    
+    U, S, Vh = np.linalg.svd(R_cov, full_matrices=True)
+    # broadband covariance MUSIC often needs more "signal" dimensions for two 
+    # spatially distributed coherent pulses. Try 2 or 3 targets.
+    num_scatterers = 2
+    Un = U[:, num_scatterers:]
+    
+    # Pseudo-Spectrum computation over spatial grid
+    # Steering vector will be size 440x1 at each point
+    tx_x_flat = np.repeat(tx_x_arr, num_rx)
+    rx_x_flat = np.zeros(num_elements)
+    for i in range(num_runs):
+        rx_x_flat[i*num_rx : (i+1)*num_rx] = tx_x_arr[i] + offsets
+
+    I_map = np.zeros((len(grid_y), len(grid_x)), dtype=float)
+
+    # Broadband incoherent sum
+    for idx, f_idx in enumerate(valid_f_indices):
+        f = freqs[f_idx]
+        k = 2 * np.pi * f / v
+        
+        for y_idx, z in enumerate(grid_y):
+            X_focal = grid_x
             
-            # SVD on local MDM
-            # D_mat size: 5 x 11
-            U, S, Vh = np.linalg.svd(D_mat, full_matrices=True)
+            d_tx = np.sqrt((X_focal[:, None] - tx_x_flat[None, :])**2 + (z - 0.45)**2)
+            d_rx = np.sqrt((X_focal[:, None] - rx_x_flat[None, :])**2 + (z - 0.45)**2)
             
-            # Signal subspace rank up to num_scatterers=2
-            # Tx noise subspace Un: 5 x (5-2) = 5 x 3
-            Un = U[:, num_scatterers:]
-            # Rx noise subspace Vn: 11 x (11-2) = 11 x 9
-            Vn = Vh[num_scatterers:, :].T
+            # g size: (Nx, 440). We use Green's function for two-way propagation
+            g = np.exp(-1j * k * (d_tx + d_rx)) / (np.sqrt(d_tx * d_rx) + 1e-15)
             
-            tx_x_local = tx_x_arr[tx_i_idx - half_sub : tx_i_idx + half_sub + 1]
-            tx_x_center = tx_x_arr[tx_i_idx]
-            rx_x_local = tx_x_center + offsets
+            # Normalize steering vector
+            g_norm = np.linalg.norm(g, axis=1, keepdims=True)
+            g = g / (g_norm + 1e-15)
             
-            for y_idx, z in enumerate(grid_y):
-                X_focal = grid_x
-                
-                # Tx steering vector (5 x Nx)
-                d_tx = np.sqrt((X_focal[:, None] - tx_x_local[None, :])**2 + (z - 0.45)**2)
-                g_tx = np.exp(-1j * k * d_tx) / np.sqrt(d_tx)
-                g_tx = g_tx / (np.linalg.norm(g_tx, axis=1, keepdims=True) + 1e-15)
-                
-                # Rx steering vector (11 x Nx)
-                d_rx = np.sqrt((X_focal[:, None] - rx_x_local[None, :])**2 + (z - 0.45)**2)
-                g_rx = np.exp(-1j * k * d_rx) / np.sqrt(d_rx)
-                g_rx = g_rx / (np.linalg.norm(g_rx, axis=1, keepdims=True) + 1e-15)
-                
-                # Projections onto Noise subspaces
-                proj_tx = np.sum(np.abs(np.conj(g_tx) @ Un)**2, axis=1)
-                proj_rx = np.sum(np.abs(np.conj(g_rx) @ Vn)**2, axis=1)
-                
-                # Double-sided projection pseudo-spectrum
-                I_f[y_idx, :] += 1.0 / (proj_tx + proj_rx + 1e-15)
-                
-        image += I_f / (len(valid_f_indices) * (num_runs - 2*half_sub))
+            # Project onto noise subspace
+            # g is (Nx, 440), Un is (440, 440-Ns)
+            proj = np.sum(np.abs(np.conj(g) @ Un)**2, axis=1)
+            
+            I_map[y_idx, :] += 1.0 / (proj + 1e-15)
+            
+    image = I_map / len(valid_f_indices)
 
     # Convert to dB
     image = 10 * np.log10(image / np.max(image))

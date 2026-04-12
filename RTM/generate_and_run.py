@@ -20,10 +20,12 @@ def generate_in_file():
         
         # Two air cavities (cylinders across the z slice to represent 2D circles)
         # 6cm spacing between centers, each 1cm radius
+        f.write("#cylinder: 0.35 0.25 0 0.35 0.25 0.002 0.01 free_space\n")
         f.write("#cylinder: 0.41 0.25 0 0.41 0.25 0.002 0.01 free_space\n")
         f.write("#cylinder: 0.47 0.25 0 0.47 0.25 0.002 0.01 free_space\n")
         f.write("#cylinder: 0.53 0.25 0 0.53 0.25 0.002 0.01 free_space\n\n")
         f.write("#cylinder: 0.59 0.25 0 0.59 0.25 0.002 0.01 free_space\n")
+        f.write("#cylinder: 0.65 0.25 0 0.65 0.25 0.002 0.01 free_space\n")
         
         # 20 Transmitters stepping across
         tx_start = 0.1
