@@ -40,6 +40,13 @@ def trmusic_bscan_imaging():
         for rx_j_idx in range(num_rx):
             traces[tx_i_idx, rx_j_idx, mute_mask] *= (0.5 * (1 - np.cos(np.pi * t_arr[mute_mask] / 2.5e-9)))
 
+    # Direct wave removal via Background Subtraction
+    for rx_j_idx in range(num_rx):
+        mean_trace = np.mean(traces[:, rx_j_idx, :], axis=0)
+        for tx_i_idx in range(num_runs):
+            traces[tx_i_idx, rx_j_idx, :] -= mean_trace
+
+
     print("Executing Time Reversal MUSIC for Multi-Receiver B-Scan...")
     
     c = 299792458.0
@@ -80,6 +87,7 @@ def trmusic_bscan_imaging():
     U, S, Vh = np.linalg.svd(R_cov, full_matrices=True)
     # broadband covariance MUSIC often needs more "signal" dimensions for two 
     # spatially distributed coherent pulses. Try 2 or 3 targets.
+    # We revert the numbers back to 2 targets.
     num_scatterers = 2
     Un = U[:, num_scatterers:]
     

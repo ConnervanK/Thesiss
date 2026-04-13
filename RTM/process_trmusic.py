@@ -88,7 +88,7 @@ def trmusic_imaging():
             # Steering vector g
             # For 2D, green function is proportional to exp(-jkd) / sqrt(d) (Hankel function approx)
             # In far-field or basic TR-MUSIC: g = exp(-jkd)
-            g = np.exp(-1j * k * d_to_array) / np.sqrt(d_to_array)
+            g = np.exp(-1j * k * d_to_array) / (4*np.pi*np.sqrt(d_to_array))
             
             # Normalize steering vectors
             g_norm = np.linalg.norm(g, axis=1, keepdims=True)
