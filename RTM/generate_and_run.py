@@ -14,19 +14,27 @@ def generate_in_file():
         # Enough time for two-way travel: depth ~0.25m -> d_total ~0.5m. v=1.22e8 m/s -> t ~ 4.1 ns. Use 8 ns
         f.write("#time_window: 8e-9\n")
         f.write("#material: 6 0 1 0 ice\n\n")
+        f.write("#material: 80 0 1 0 water\n\n")
         
         f.write("#waveform: ricker 1 1.5e9 my_ricker\n")
         f.write("#box: 0 0 0 1.0 0.5 0.002 ice\n\n")
         
-        # Two air cavities (cylinders across the z slice to represent 2D circles)
-        # 6cm spacing between centers, each 1cm radius
-        f.write("#cylinder: 0.35 0.25 0 0.35 0.25 0.002 0.01 free_space\n")
-        f.write("#cylinder: 0.41 0.25 0 0.41 0.25 0.002 0.01 free_space\n")
-        f.write("#cylinder: 0.47 0.25 0 0.47 0.25 0.002 0.01 free_space\n")
-        f.write("#cylinder: 0.53 0.25 0 0.53 0.25 0.002 0.01 free_space\n\n")
-        f.write("#cylinder: 0.59 0.25 0 0.59 0.25 0.002 0.01 free_space\n")
-        f.write("#cylinder: 0.65 0.25 0 0.65 0.25 0.002 0.01 free_space\n")
+        # 5 air cavities (cylinders across the z slice to represent 2D circles)
+        # 5cm spacing between centers, each 1cm radius
+        f.write("#cylinder: 0.40 0.25 0 0.40 0.25 0.002 0.01 free_space\n")
+        f.write("#cylinder: 0.45 0.25 0 0.45 0.25 0.002 0.01 free_space\n")
+        f.write("#cylinder: 0.50 0.25 0 0.50 0.25 0.002 0.01 free_space\n\n")
+        f.write("#cylinder: 0.55 0.25 0 0.55 0.25 0.002 0.01 free_space\n")
+        f.write("#cylinder: 0.60 0.25 0 0.60 0.25 0.002 0.01 free_space\n")
+
+        # 5 blocks that vary in material properties instead of air cavities, to ensure we have some scattered energy to work with for TR-MUSIC
+        # f.write("#box: 0.25 0.20 0 0.35 0.25 0.002 water\n")
+        # f.write("#box: 0.35 0.20 0 0.45 0.25 0.002 free_space\n")
+        # f.write("#box: 0.45 0.20 0 0.55 0.25 0.002 water\n\n")
+        # f.write("#box: 0.55 0.20 0 0.65 0.25 0.002 free_space\n")
+        # f.write("#box: 0.65 0.20 0 0.75 0.25 0.002 water\n")
         
+    
         # 20 Transmitters stepping across
         tx_start = 0.1
         rx_x = np.linspace(0.1, 0.9, 20)

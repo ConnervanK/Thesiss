@@ -92,6 +92,7 @@ def create_input_file(
 
     target_model_run = 56 # Assuming from user's -restart 55
     tx_rx_offset = source_receiver_steps
+    rx_y = y_air_bottom
     
     if mode == 'bscan':
         tx_start_x = x_first_measurement

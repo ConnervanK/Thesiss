@@ -115,10 +115,16 @@ def rtm_imaging():
                origin='lower', aspect='auto', cmap='plasma')
     
     # Overlay the true geometry of our sub-wavelength air pockets
-    circle1 = plt.Circle((0.47, 0.25), 0.01, color='lime', fill=False, lw=2, label='True target positions')
-    circle2 = plt.Circle((0.53, 0.25), 0.01, color='lime', fill=False, lw=2)
+    circle1 = plt.Circle((0.40, 0.25), 0.005, color='lime', fill=False, lw=2, label='True target positions')
+    circle2 = plt.Circle((0.45, 0.25), 0.005, color='lime', fill=False, lw=2)
+    circle3 = plt.Circle((0.50, 0.25), 0.005, color='lime', fill=False, lw=2)
+    circle4 = plt.Circle((0.55, 0.25), 0.005, color='lime', fill=False, lw=2)
+    circle5 = plt.Circle((0.60, 0.25), 0.005, color='lime', fill=False, lw=2)
     plt.gca().add_patch(circle1)
     plt.gca().add_patch(circle2)
+    plt.gca().add_patch(circle3)
+    plt.gca().add_patch(circle4)
+    plt.gca().add_patch(circle5)
     
     plt.title('Reverse Time Migration (Reflection Matrix - FMC array)')
     plt.xlabel('X (m)')
