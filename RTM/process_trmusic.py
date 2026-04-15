@@ -110,16 +110,10 @@ def trmusic_imaging():
     plt.imshow(image, extent=[grid_x[0], grid_x[-1], grid_y[0], grid_y[-1]],
                origin='lower', aspect='auto', cmap='plasma')
 
-    circle1 = plt.Circle((0.40, 0.25), 0.005, color='lime', fill=False, lw=2, label='True target positions')
-    circle2 = plt.Circle((0.45, 0.25), 0.005, color='lime', fill=False, lw=2)
-    circle3 = plt.Circle((0.50, 0.25), 0.005, color='lime', fill=False, lw=2)
-    circle4 = plt.Circle((0.55, 0.25), 0.005, color='lime', fill=False, lw=2)
-    circle5 = plt.Circle((0.60, 0.25), 0.005, color='lime', fill=False, lw=2)
+    circle1 = plt.Circle((0.47, 0.25), 0.01, color='lime', fill=False, lw=2, label='True target positions')
+    circle2 = plt.Circle((0.53, 0.25), 0.01, color='lime', fill=False, lw=2)
     plt.gca().add_patch(circle1)
     plt.gca().add_patch(circle2)
-    plt.gca().add_patch(circle3)
-    plt.gca().add_patch(circle4)
-    plt.gca().add_patch(circle5)
 
     plt.title('High-Resolution TR-MUSIC Pseudo-spectrum')
     plt.xlabel('X (m)')

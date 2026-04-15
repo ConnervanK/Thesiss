@@ -18,7 +18,7 @@ def main():
         'c': 3 * 1e8,                        # speed of light in m/s
         'permittivity_ice': 6,
         'permittivity_air': 1,
-        'permittivity_fracture': 6,
+        'permittivity_fracture': 10,
         'conductivity_ice': 1e-6,
         'conductivity_air': 0,
         'conductivity_fracture': 0.001,
