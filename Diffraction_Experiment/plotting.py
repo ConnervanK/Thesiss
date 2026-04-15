@@ -147,63 +147,63 @@ def plot_time_traces(out_alt, out_homo, n_blocks, block_width, rx_offset, save_f
             # --- SVD Filtering ---
             # Remove 1 (first) singular component to suppress strong reflectors/events
             n_comp = 0
-            svd_filtered_traces = apply_svd_filter(diff_traces, n_components_to_mute=n_comp)
+            # svd_filtered_traces = apply_svd_filter(diff_traces, n_components_to_mute=n_comp)
             
-            fig_svd, ax_svd = plt.subplots(figsize=(10, 8))
-            plot_traces_kernel(ax_svd, svd_filtered_traces, time, n_blocks, block_width, f"{title} (SVD Muted: {n_comp} comp)")
-            svd_save_filename = save_filename.replace('.png', '_svd.png')
-            plt.tight_layout()
-            plt.savefig(svd_save_filename, bbox_inches='tight', dpi=300)
-            plt.close(fig_svd)
-            print(f"Plot saved to: {svd_save_filename}")
+            # fig_svd, ax_svd = plt.subplots(figsize=(10, 8))
+            # plot_traces_kernel(ax_svd, svd_filtered_traces, time, n_blocks, block_width, f"{title} (SVD Muted: {n_comp} comp)")
+            # svd_save_filename = save_filename.replace('.png', '_svd.png')
+            # plt.tight_layout()
+            # plt.savefig(svd_save_filename, bbox_inches='tight', dpi=300)
+            # plt.close(fig_svd)
+            # print(f"Plot saved to: {svd_save_filename}")
 
-            # --- Cross Correlation ---
-            cc_traces = calculate_cross_correlation(homo_traces, diff_traces)
-            fig_cc, ax_cc = plt.subplots(figsize=(10, 8))
-            # Just reusing plot_traces_kernel. Note that CC output is dimensionless or energy squared
-            # the time axis might represent lag instead depending on the goal, but 'same' mode centers it
-            plot_traces_kernel(ax_cc, cc_traces, time, n_blocks, block_width, f"Cross-Correlation (Avg Homo vs Diff)")
-            cc_save_filename = save_filename.replace('.png', '_cc.png')
-            plt.tight_layout()
-            plt.savefig(cc_save_filename, bbox_inches='tight', dpi=300)
-            plt.close(fig_cc)
-            print(f"Plot saved to: {cc_save_filename}")
+            # # --- Cross Correlation ---
+            # cc_traces = calculate_cross_correlation(homo_traces, diff_traces)
+            # fig_cc, ax_cc = plt.subplots(figsize=(10, 8))
+            # # Just reusing plot_traces_kernel. Note that CC output is dimensionless or energy squared
+            # # the time axis might represent lag instead depending on the goal, but 'same' mode centers it
+            # plot_traces_kernel(ax_cc, cc_traces, time, n_blocks, block_width, f"Cross-Correlation (Avg Homo vs Diff)")
+            # cc_save_filename = save_filename.replace('.png', '_cc.png')
+            # plt.tight_layout()
+            # plt.savefig(cc_save_filename, bbox_inches='tight', dpi=300)
+            # plt.close(fig_cc)
+            # print(f"Plot saved to: {cc_save_filename}")
 
-            # --- Depth Migration & Envelope ---
-            # Derive velocities and tx position for migration
-            v_ice = 3e8 / np.sqrt(6)
-            f_central = 1.5e9
-            wavelength_fracture = (3e8 / np.sqrt(6)) / f_central
-            rx_x_init_array = np.array([(i + 0.5) * block_width for i in range(n_blocks)])
-            source_receiver_steps = wavelength_fracture / 10
-            x_first_measurement = 1/2 * wavelength_fracture
-            tx_start_x = x_first_measurement + 54 * source_receiver_steps
-            max_depth = 0.5 # We know fracture is around 0.3-0.4m depth
+            # # --- Depth Migration & Envelope ---
+            # # Derive velocities and tx position for migration
+            # v_ice = 3e8 / np.sqrt(6)
+            # f_central = 1.5e9
+            # wavelength_fracture = (3e8 / np.sqrt(6)) / f_central
+            # rx_x_init_array = np.array([(i + 0.5) * block_width for i in range(n_blocks)])
+            # source_receiver_steps = wavelength_fracture / 10
+            # x_first_measurement = 1/2 * wavelength_fracture
+            # tx_start_x = x_first_measurement + 54 * source_receiver_steps
+            # max_depth = 0.5 # We know fracture is around 0.3-0.4m depth
             
-            # Step 1: Migrate the SVD filtered traces using Ice velocity
-            migrated_img, depths = kirchhoff_migration(
-                traces=svd_filtered_traces, time_array=time, rx_x_array=rx_x_init_array, 
-                tx_x=tx_start_x, velocity=v_ice, max_depth=max_depth, dz=0.002
-            )
+            # # Step 1: Migrate the SVD filtered traces using Ice velocity
+            # migrated_img, depths = kirchhoff_migration(
+            #     traces=svd_filtered_traces, time_array=time, rx_x_array=rx_x_init_array, 
+            #     tx_x=tx_start_x, velocity=v_ice, max_depth=max_depth, dz=0.002
+            # )
             
-            # Step 2: Apply Hilbert envelope to get the Energy Blobs from wavelets
-            migrated_envelope = envelope(migrated_img)
+            # # Step 2: Apply Hilbert envelope to get the Energy Blobs from wavelets
+            # migrated_envelope = envelope(migrated_img)
             
-            # Plot the migrated image
-            fig_mig, ax_mig = plt.subplots(figsize=(10, 6))
-            im_m = ax_mig.imshow(migrated_envelope, aspect='auto', cmap='hot', 
-                                 extent=[0, n_blocks * block_width, np.max(depths), np.min(depths)])
-            ax_mig.set_title("Migrated Block Model Structure (SVD + Envelope)")
-            ax_mig.set_xlabel('Length (m)', fontsize=12)
-            ax_mig.set_ylabel('Depth (m)', fontsize=12)
-            cbar_m = fig_mig.colorbar(im_m, ax=ax_mig, pad=0.02)
-            cbar_m.set_label('Energy', fontsize=10)
-            print(f"Maximum migrated envelope value: {migrated_envelope.max()}")
-            mig_save_filename = save_filename.replace('.png', '_migrated.png')
-            plt.tight_layout()
-            plt.savefig(mig_save_filename, bbox_inches='tight', dpi=300)
-            plt.close(fig_mig)
-            print(f"Plot saved to: {mig_save_filename}")
+            # # Plot the migrated image
+            # fig_mig, ax_mig = plt.subplots(figsize=(10, 6))
+            # im_m = ax_mig.imshow(migrated_envelope, aspect='auto', cmap='hot', 
+            #                      extent=[0, n_blocks * block_width, np.max(depths), np.min(depths)])
+            # ax_mig.set_title("Migrated Block Model Structure (SVD + Envelope)")
+            # ax_mig.set_xlabel('Length (m)', fontsize=12)
+            # ax_mig.set_ylabel('Depth (m)', fontsize=12)
+            # cbar_m = fig_mig.colorbar(im_m, ax=ax_mig, pad=0.02)
+            # cbar_m.set_label('Energy', fontsize=10)
+            # print(f"Maximum migrated envelope value: {migrated_envelope.max()}")
+            # mig_save_filename = save_filename.replace('.png', '_migrated.png')
+            # plt.tight_layout()
+            # plt.savefig(mig_save_filename, bbox_inches='tight', dpi=300)
+            # plt.close(fig_mig)
+            # print(f"Plot saved to: {mig_save_filename}")
 
             # --- Wavelet Transform (Time-Frequency Image) ---
             freqs, cwt_image = compute_cwt_image(diff_traces, dt, wavelet='cmor1.5-1.0')

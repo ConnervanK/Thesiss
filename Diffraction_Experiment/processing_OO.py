@@ -135,6 +135,11 @@ class GPRModelData:
         if len(traces) == 0: return traces
         return np.abs(hilbert(traces, axis=1))
 
+    def compute_instantaneous_phase(self, traces):
+        """Applies Hilbert transform to calculate the instantaneous phase."""
+        if len(traces) == 0: return traces
+        return np.angle(hilbert(traces, axis=1))
+
     def calculate_diffraction_energy(self, traces):
         """Calculates the total energy (L2 norm squared) of the diffracted field traces."""
         return np.sum(np.square(traces))
@@ -188,10 +193,12 @@ class GPRModelData:
             cc_traces.append(cc)
         return np.array(cc_traces)
 
-    def compute_cwt_image(self, wavelet='cmor1.5-1.0', freqs=None):
-        """Computes Continuous Wavelet Transform (CWT) magnitude of the global average difference trace."""
-        if len(self.diff_traces) == 0: return None, None
-        avg_trace = np.mean(self.diff_traces, axis=0) 
+    def compute_cwt_image(self, traces=None, wavelet='cmor1.5-1.0', freqs=None, return_phase=False):
+        """Computes Continuous Wavelet Transform (CWT) magnitude or phase of the global average trace."""
+        if traces is None:
+            traces = self.diff_traces
+        if len(traces) == 0: return None, None
+        avg_trace = np.mean(traces, axis=0) 
         
         if freqs is None:
             freqs = np.linspace(0.1e9, 3.5e9, 100) 
@@ -199,6 +206,12 @@ class GPRModelData:
         sampling_freq = 1.0 / self.dt
         scales = pywt.frequency2scale(wavelet, freqs / sampling_freq)
         coefs, _ = pywt.cwt(avg_trace, scales, wavelet, sampling_period=self.dt)
+        if return_phase:
+            phase = np.angle(coefs)
+            mag = np.abs(coefs)
+            # Scale phase by normalized magnitude to suppress phase errors in low-energy regions
+            scaled_phase = phase * (mag / np.max(mag))
+            return freqs, scaled_phase
         return freqs, np.abs(coefs)
 
     def compute_spectral_centroid(self, traces):

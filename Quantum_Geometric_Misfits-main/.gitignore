@@ -1,0 +1,33 @@
+quantum_env/
+__pycache__/
+*.pyc
+figures/
+build/
+*.png
+*.gif
+# test*
+fix*
+
+# latex
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+*.lof
+*.lot
+*.idx
+*.ilg
+*.ind
+*.dvi
+*.bcf
+*.run.xml
+*.bbl
+*.pdf
