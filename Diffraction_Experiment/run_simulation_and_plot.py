@@ -126,6 +126,26 @@ def main():
         plot_cwt_image(gpr_model.time, cwt_freqs_alt_phase, cwt_alt_phase_image,
                        "Wavelet Transform Phase of Global Avg Alternating Trace", "plot_alt_cwt_phase.png")
 
+    # 7.1 Phase-Weighted Stacking (PWS) CWT
+    pws_diff = gpr_model.phase_weighted_stack(traces=gpr_model.diff_traces, power=2)
+    cwt_freqs_pws, cwt_pws_image = gpr_model.compute_cwt_image(traces=np.array([pws_diff]))
+    if cwt_freqs_pws is not None:
+        plot_cwt_image(gpr_model.time, cwt_freqs_pws, cwt_pws_image,
+                       "Wavelet Transform of PWS Difference Stack (Power=2)", "plot_diff_cwt_pws.png")
+
+    cwt_freqs_pws_phase, cwt_pws_phase_image = gpr_model.compute_cwt_image(traces=np.array([pws_diff]), return_phase=True)
+    if cwt_freqs_pws_phase is not None:
+        plot_cwt_image(gpr_model.time, cwt_freqs_pws_phase, cwt_pws_phase_image,
+                       "Wavelet Transform Phase of PWS Difference Stack", "plot_diff_cwt_pws_phase.png")
+
+    # 7.2 3D CWT Example
+    # Resolves CWT for each individual trace to avoid average-loss. Array shape: (num_traces, num_freqs, num_time)
+    cwt_freqs_3d, cwt_3d_diff = gpr_model.compute_cwt_3d(traces=gpr_model.diff_traces)
+    if cwt_freqs_3d is not None and len(cwt_3d_diff) > 0:
+        # Plotting the CWT for the very first trace as an example
+        plot_cwt_image(gpr_model.time, cwt_freqs_3d, cwt_3d_diff[0],
+                       "Wavelet Transform of Difference Trace 1", "plot_diff_cwt_trace_1.png")
+
     # # 8. Prestack Kirchhoff Depth Migration + Envelope
     # # Geometry Setup
     # v_ice = model_params['c'] / np.sqrt(model_params['permittivity_ice'])

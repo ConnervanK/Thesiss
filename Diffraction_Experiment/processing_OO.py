@@ -223,6 +223,58 @@ class GPRModelData:
             return freqs, scaled_phase
         return freqs, np.abs(coefs)
 
+    def compute_cwt_3d(self, traces=None, wavelet='cmor1.5-1.0', freqs=None, return_phase=False):
+        """
+        Computes the CWT for each individual trace, forming a 3D array: 
+        (num_traces, num_freqs, num_time)
+        """
+        if traces is None:
+            traces = self.diff_traces
+        if len(traces) == 0: return None, None
+        
+        if freqs is None:
+            freqs = np.linspace(0.1e9, 5.5e9, 100) 
+            
+        sampling_freq = 1.0 / self.dt
+        scales = pywt.frequency2scale(wavelet, freqs / sampling_freq)
+        
+        cwt_3d = []
+        for trace in traces:
+            coefs, _ = pywt.cwt(trace, scales, wavelet, sampling_period=self.dt)
+            if return_phase:
+                phase = np.angle(coefs)
+                mag = np.abs(coefs)
+                scaled_phase = phase * (mag / np.max(mag))
+                cwt_3d.append(scaled_phase)
+            else:
+                cwt_3d.append(np.abs(coefs))
+                
+        return freqs, np.array(cwt_3d)
+
+    def phase_weighted_stack(self, traces=None, power=2):
+        """
+        Performs Phase-Weighted Stacking (PWS) on an ensemble of traces.
+        The linear stack is weighted by the instantaneous phase coherence.
+        Returns a single 1D trace.
+        """
+        if traces is None:
+            traces = self.diff_traces
+        if len(traces) == 0: return None
+        
+        # 1. Compute linear stack (average trace)
+        linear_stack = np.mean(traces, axis=0)
+        
+        # 2. Compute instantaneous phase for all traces
+        analytic_signal = hilbert(traces, axis=1)
+        instantaneous_phase = np.angle(analytic_signal)
+        
+        # 3. Compute phase coherence c(t) = |(1/N) * sum(e^{i*phi(t)})|
+        phase_coherence = np.abs(np.mean(np.exp(1j * instantaneous_phase), axis=0))
+        
+        # 4. Weight the stack by coherence
+        pws = linear_stack * (phase_coherence ** power)
+        return pws
+
     def compute_spectral_centroid(self, traces):
         """
         Computes the average spectral centroid (frequency focus) of the given traces.
