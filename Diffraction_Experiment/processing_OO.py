@@ -26,12 +26,12 @@ class GPRModelData:
         self.homo_traces = None
         self.alt_traces = None
 
-    def run_simulation(self):
+    def run_simulation(self, force_rerun=False):
         """Runs the full GPRMax pipeline and loads the resulting data."""
         if self.model_params is None:
             raise ValueError("No model parameters specified.")
         
-        if os.path.exists(self.out_alt_file) and os.path.exists(self.out_homo_file):
+        if not force_rerun and os.path.exists(self.out_alt_file) and os.path.exists(self.out_homo_file):
             print(f"Loading existing `{self.out_alt_file}` and `{self.out_homo_file}`, skipping simulation.")
             out_ctx = create_input_file(**self.model_params)
         else:
@@ -193,6 +193,15 @@ class GPRModelData:
             cc_traces.append(cc)
         return np.array(cc_traces)
 
+    def auto_correlate_diff(self):
+        """Autocorrelates each difference trace with itself."""
+        if len(self.diff_traces) == 0: return []
+        cc_traces = []
+        for diff_trace in self.diff_traces:
+            cc = np.correlate(diff_trace, diff_trace, mode='same')
+            cc_traces.append(cc)
+        return np.array(cc_traces)
+
     def compute_cwt_image(self, traces=None, wavelet='cmor1.5-1.0', freqs=None, return_phase=False):
         """Computes Continuous Wavelet Transform (CWT) magnitude or phase of the global average trace."""
         if traces is None:
@@ -201,7 +210,7 @@ class GPRModelData:
         avg_trace = np.mean(traces, axis=0) 
         
         if freqs is None:
-            freqs = np.linspace(0.1e9, 3.5e9, 100) 
+            freqs = np.linspace(0.1e9, 5.5e9, 100) 
             
         sampling_freq = 1.0 / self.dt
         scales = pywt.frequency2scale(wavelet, freqs / sampling_freq)

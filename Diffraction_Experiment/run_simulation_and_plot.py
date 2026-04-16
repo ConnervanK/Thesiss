@@ -28,7 +28,7 @@ def main():
         
         # --- Mode selection: 'static' or 'bscan' ---
         'mode': 'static',                    # Switch to 'bscan' to run moving Tx-Rx array 
-        'rx_per_block': 1,                   # Used only if mode == 'static'
+        'rx_per_block': 3,                   # Used only if mode == 'static'
         
         # --- B-scan parameters (used if mode == 'bscan') ---
         'rx_count': 1,                       # Number of receivers in moving array
@@ -48,7 +48,8 @@ def main():
     )
 
     # 2. Run the simulation through the object
-    gpr_model.run_simulation()
+    # Force rerun so that modifications in forward.py take effect
+    gpr_model.run_simulation(force_rerun=True)
 
     # (Optional) Plot the full domain snapshots using the attributes stored in gpr_model
     plot_snapshots(
@@ -65,13 +66,13 @@ def main():
     plot_wiggle_traces(gpr_model, gpr_model.diff_traces,
                        "Difference Traces (Raw Amplitude)", "plot_diff_raw.png")
 
-    phase_diff_traces = gpr_model.compute_instantaneous_phase(gpr_model.diff_traces)
-    plot_wiggle_traces(gpr_model, phase_diff_traces,
-                       "Difference Traces (Instantaneous Phase)", "plot_diff_phase.png")
+    # phase_diff_traces = gpr_model.compute_instantaneous_phase(gpr_model.diff_traces)
+    # plot_wiggle_traces(gpr_model, phase_diff_traces,
+    #                    "Difference Traces (Instantaneous Phase)", "plot_diff_phase.png")
 
-    phase_alt_traces = gpr_model.compute_instantaneous_phase(gpr_model.alt_traces)
-    plot_wiggle_traces(gpr_model, phase_alt_traces,
-                       "Alternating Traces (Instantaneous Phase)", "plot_alt_phase.png")
+    # phase_alt_traces = gpr_model.compute_instantaneous_phase(gpr_model.alt_traces)
+    # plot_wiggle_traces(gpr_model, phase_alt_traces,
+    #                    "Alternating Traces (Instantaneous Phase)", "plot_alt_phase.png")
 
     # # 4. Apply SVD Filter
     # n_comp_mute = 1 # Number of horizontal modes to drop
@@ -83,6 +84,10 @@ def main():
     # cc_traces = gpr_model.cross_correlate()
     # plot_wiggle_traces(gpr_model, cc_traces,
     #                    "Cross-Correlation (Avg Homo vs Diff)", "plot_diff_cc.png")
+
+    auto_cc_traces = gpr_model.auto_correlate_diff()
+    plot_wiggle_traces(gpr_model, auto_cc_traces,
+                       "Auto-Correlation of Difference Traces", "plot_diff_autocc.png")
 
     # # 6. Transform to F-K Domain
     # # We apply this to the svd_filtered_traces to see the diffraction energy
@@ -107,6 +112,14 @@ def main():
     if cwt_freqs_diff_phase is not None:
         plot_cwt_image(gpr_model.time, cwt_freqs_diff_phase, cwt_diff_phase_image,
                        "Wavelet Transform Phase of Global Avg Difference Trace", "plot_diff_cwt_phase.png")
+                       
+        # Compute and plot the time derivative of the phase
+        unwrapped_phase = np.unwrap(cwt_diff_phase_image, axis=1)
+        dt = gpr_model.time[1] - gpr_model.time[0]
+        phase_derivative = np.gradient(unwrapped_phase, dt, axis=1)
+        
+        plot_cwt_image(gpr_model.time, cwt_freqs_diff_phase, phase_derivative,
+                       "Time Derivative of WT Phase (Instantaneous Frequency)", "plot_diff_cwt_phase_derivative.png")
 
     cwt_freqs_alt_phase, cwt_alt_phase_image = gpr_model.compute_cwt_image(traces=gpr_model.alt_traces, return_phase=True)
     if cwt_freqs_alt_phase is not None:

@@ -60,7 +60,7 @@ def create_input_file(
     conductivity_fracture_plus  = conductivity_fracture * 1.1
     conductivity_fracture_minus = conductivity_fracture * 0.9
 
-    block_size = (1/8) * wavelength_fracture
+    block_size = (1/5) * wavelength_fracture
 
     dx_min = wavelength_fracture / 20
     dx_dy_dz = dx_min
@@ -70,7 +70,7 @@ def create_input_file(
 
     domain_height = air_thickness + fracture_depth + thickness_fracture + depth_below_fracture
 
-    TW = (5 / f_central) + (2 * (domain_height - air_thickness) / c_ice)
+    TW = (5 / f_central) + (2.5 * (domain_height - air_thickness) / c_ice)
     snapshot_time = TW / 10
     n_snapshots = 10
 
