@@ -53,9 +53,9 @@ def create_input_file(
     c_fracture = c / np.sqrt(permittivity_fracture)
     wavelength_fracture = c_fracture / f_central
 
-    thickness_fracture = wavelength_fracture / 10
+    thickness_fracture = wavelength_fracture / 5
 
-    permittivity_fracture_plus  = permittivity_fracture * 1.0
+    permittivity_fracture_plus  = permittivity_fracture * 0.9
     permittivity_fracture_minus = permittivity_fracture * 1.0
     conductivity_fracture_plus  = conductivity_fracture * 1.1
     conductivity_fracture_minus = conductivity_fracture * 0.9
