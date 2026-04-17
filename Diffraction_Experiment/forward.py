@@ -54,13 +54,15 @@ def create_input_file(
 
     
 
-    permittivity_fracture_plus  = 1.0 #permittivity_fracture * 0.9
-    permittivity_fracture_minus = 80 #permittivity_fracture * 1.0
-    conductivity_fracture_plus  = 0 #conductivity_fracture * 1.1
-    conductivity_fracture_minus = 0.01 #conductivity_fracture * 0.9
+    permittivity_fracture_plus  = 1.0 # air permittivity_fracture * 0.9
+    permittivity_fracture_minus = 80 # water permittivity_fracture * 1.0
+    conductivity_fracture_plus  = 0 # air conductivity_fracture * 1.1
+    conductivity_fracture_minus = 0.01 # water conductivity_fracture * 0.9
 
+    permittivity_fracture_average = 50 #(permittivity_fracture_plus + permittivity_fracture_minus) / 2
+    conductivity_fracture_average = 0.01 #(conductivity_fracture_plus + conductivity_fracture_minus) / 2
 
-    block_size = (1/5) * wavelength_ice
+    block_size = (1/4) * wavelength_ice
 
     wavelength_plus = (c / np.sqrt(permittivity_fracture_plus)) / f_central
     wavelength_minus = (c / np.sqrt(permittivity_fracture_minus)) / f_central
@@ -69,7 +71,7 @@ def create_input_file(
     
     thickness_fracture = min(wavelength_plus, wavelength_minus) / 5
 
-    dx_min = min_wavelength / 20
+    dx_min = min_wavelength / 30
     dx_dy_dz = dx_min
     source_receiver_steps = wavelength_ice / 10
 
@@ -189,7 +191,7 @@ def create_input_file(
 
         f.write('\n#material: {} {} 1 0 ice'.format(permittivity_ice, conductivity_ice))
         f.write('\n#material: {} {} 1 0 air'.format(permittivity_air, conductivity_air))
-        f.write('\n#material: {} {} 1 0 fracture_homo'.format(permittivity_fracture, conductivity_fracture))
+        f.write('\n#material: {} {} 1 0 fracture_homo'.format(permittivity_fracture_average, conductivity_fracture_average))
 
         f.write('\n#waveform: ricker 1 {} my_ricker'.format(f_central))
         f.write('\n#hertzian_dipole: z {} {} 0 my_ricker'.format(tx_start_x, rx_y))

@@ -18,10 +18,10 @@ def main():
         'c': 3 * 1e8,                        # speed of light in m/s
         'permittivity_ice': 3.15,
         'permittivity_air': 1,
-        'permittivity_fracture': 10,
+        'permittivity_fracture': 10, #80,
         'conductivity_ice': 1e-6,
         'conductivity_air': 0,
-        'conductivity_fracture': 1e-3,
+        'conductivity_fracture': 1e-3, #1,
         'fracture_depth': 0.3,
         'depth_below_fracture': 0.1,
         'air_thickness': 0.05,
@@ -120,6 +120,13 @@ def main():
         
         plot_cwt_image(gpr_model.time, cwt_freqs_diff_phase, phase_derivative,
                        "Time Derivative of WT Phase (Instantaneous Frequency)", "plot_diff_cwt_phase_derivative.png")
+
+        # Compute and plot the frequency derivative of the phase
+        unwrapped_phase_freq = np.unwrap(cwt_diff_phase_image, axis=0)
+        phase_derivative_freq = np.gradient(unwrapped_phase_freq, cwt_freqs_diff_phase, axis=0)
+        
+        plot_cwt_image(gpr_model.time, cwt_freqs_diff_phase, phase_derivative_freq,
+                       "Frequency Derivative of WT Phase", "plot_diff_cwt_phase_derivative_freq.png")
 
     cwt_freqs_alt_phase, cwt_alt_phase_image = gpr_model.compute_cwt_image(traces=gpr_model.alt_traces, return_phase=True)
     if cwt_freqs_alt_phase is not None:
