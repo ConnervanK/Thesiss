@@ -50,23 +50,30 @@ def create_input_file(
     
     c_ice   = c / np.sqrt(permittivity_ice)
     c_water = c / np.sqrt(permittivity_fracture)
-    c_fracture = c / np.sqrt(permittivity_fracture)
-    wavelength_fracture = c_fracture / f_central
+    wavelength_ice = c_ice / f_central
 
-    thickness_fracture = wavelength_fracture / 5
+    
 
-    permittivity_fracture_plus  = permittivity_fracture * 0.9
-    permittivity_fracture_minus = permittivity_fracture * 1.0
-    conductivity_fracture_plus  = conductivity_fracture * 1.1
-    conductivity_fracture_minus = conductivity_fracture * 0.9
+    permittivity_fracture_plus  = 1.0 #permittivity_fracture * 0.9
+    permittivity_fracture_minus = 80 #permittivity_fracture * 1.0
+    conductivity_fracture_plus  = 0 #conductivity_fracture * 1.1
+    conductivity_fracture_minus = 0.01 #conductivity_fracture * 0.9
 
-    block_size = (1/5) * wavelength_fracture
 
-    dx_min = wavelength_fracture / 20
+    block_size = (1/5) * wavelength_ice
+
+    wavelength_plus = (c / np.sqrt(permittivity_fracture_plus)) / f_central
+    wavelength_minus = (c / np.sqrt(permittivity_fracture_minus)) / f_central
+    min_wavelength = min(wavelength_plus, wavelength_minus)
+
+    
+    thickness_fracture = min(wavelength_plus, wavelength_minus) / 5
+
+    dx_min = min_wavelength / 20
     dx_dy_dz = dx_min
-    source_receiver_steps = wavelength_fracture / 10
+    source_receiver_steps = wavelength_ice / 10
 
-    domain_width   = 12 * wavelength_fracture
+    domain_width   = 12 * wavelength_ice
 
     domain_height = air_thickness + fracture_depth + thickness_fracture + depth_below_fracture
 
@@ -83,6 +90,7 @@ def create_input_file(
     y_frac_min = min(y_frac_top_gpr, y_frac_bottom_gpr)
     y_frac_max = max(y_frac_top_gpr, y_frac_bottom_gpr)
 
+    wavelength_fracture = min_wavelength
     x_first_measurement = 1/2 * wavelength_fracture
     
     n_blocks = int(np.round(domain_width / block_size))

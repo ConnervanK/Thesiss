@@ -210,7 +210,7 @@ class GPRModelData:
         avg_trace = np.mean(traces, axis=0) 
         
         if freqs is None:
-            freqs = np.linspace(0.1e9, 5.5e9, 100) 
+            freqs = np.linspace(0.1e9, 5.5e9, 100)
             
         sampling_freq = 1.0 / self.dt
         scales = pywt.frequency2scale(wavelet, freqs / sampling_freq)

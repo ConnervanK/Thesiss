@@ -16,7 +16,7 @@ def main():
     model_params = {
         'f_central': 1.5 * 1e9,              # 1.5 GHz
         'c': 3 * 1e8,                        # speed of light in m/s
-        'permittivity_ice': 6,
+        'permittivity_ice': 3.15,
         'permittivity_air': 1,
         'permittivity_fracture': 10,
         'conductivity_ice': 1e-6,
@@ -28,7 +28,7 @@ def main():
         
         # --- Mode selection: 'static' or 'bscan' ---
         'mode': 'static',                    # Switch to 'bscan' to run moving Tx-Rx array 
-        'rx_per_block': 3,                   # Used only if mode == 'static'
+        'rx_per_block': 1,                   # Used only if mode == 'static'
         
         # --- B-scan parameters (used if mode == 'bscan') ---
         'rx_count': 1,                       # Number of receivers in moving array
@@ -138,13 +138,34 @@ def main():
         plot_cwt_image(gpr_model.time, cwt_freqs_pws_phase, cwt_pws_phase_image,
                        "Wavelet Transform Phase of PWS Difference Stack", "plot_diff_cwt_pws_phase.png")
 
+    # # 7.2 3D CWT Example
+    # # Resolves CWT for each individual trace to avoid average-loss. Array shape: (num_traces, num_freqs, num_time)
+    # cwt_freqs_3d, cwt_3d_diff = gpr_model.compute_cwt_3d(traces=gpr_model.diff_traces)
+    # if cwt_freqs_3d is not None and len(cwt_3d_diff) > 0:
+    #     # Plotting the CWT for the very first trace as an example
+    #     plot_cwt_image(gpr_model.time, cwt_freqs_3d, cwt_3d_diff[0],
+    #                    "Wavelet Transform of Difference Trace 1", "plot_diff_cwt_trace_1.png")
+
     # 7.2 3D CWT Example
     # Resolves CWT for each individual trace to avoid average-loss. Array shape: (num_traces, num_freqs, num_time)
     cwt_freqs_3d, cwt_3d_diff = gpr_model.compute_cwt_3d(traces=gpr_model.diff_traces)
+    
     if cwt_freqs_3d is not None and len(cwt_3d_diff) > 0:
-        # Plotting the CWT for the very first trace as an example
-        plot_cwt_image(gpr_model.time, cwt_freqs_3d, cwt_3d_diff[0],
-                       "Wavelet Transform of Difference Trace 1", "plot_diff_cwt_trace_1.png")
+        # Create a subfolder to store all individual trace CWT images
+        cwt_output_dir = "cwt_3d_traces"
+        os.makedirs(cwt_output_dir, exist_ok=True)
+        
+        # Loop through all available traces
+        for i in range(len(cwt_3d_diff)):
+            trace_num = i + 1
+            output_filepath = os.path.join(cwt_output_dir, f"plot_diff_cwt_trace_{trace_num}.png")
+            
+            # Plot and save each trace's CWT into the subfolder
+            plot_cwt_image(gpr_model.time, cwt_freqs_3d, cwt_3d_diff[i],
+                           f"Wavelet Transform of Difference Trace {trace_num}", 
+                           output_filepath)
+            
+        print(f"[{len(cwt_3d_diff)}] 3D CWT trace plots saved in the '{cwt_output_dir}' folder.")
 
     # # 8. Prestack Kirchhoff Depth Migration + Envelope
     # # Geometry Setup
