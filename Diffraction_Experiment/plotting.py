@@ -64,7 +64,7 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
     for i, (snap_num, data_2d) in enumerate(loaded_snapshots):
         ax = axes[i]
 
-        if snap_num <= 16:
+        if snap_num <= 8:
             vlim = early_abs_max
             scale_tag = 'regular scale'
         elif snap_num <= 24:
