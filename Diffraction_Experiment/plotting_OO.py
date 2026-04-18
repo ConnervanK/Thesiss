@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import numpy as np
 
 def plot_wiggle_traces(model, traces, title, save_filename):
@@ -26,6 +27,9 @@ def plot_wiggle_traces(model, traces, title, save_filename):
     ax.set_xlabel('Length (m)', fontsize=12)
     ax.set_ylabel('Time (ns)', fontsize=12)
     ax.set_title(title, fontsize=14, weight='bold')
+
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.25))
+    ax.tick_params(axis='y', which='minor', length=4, color='k')
     
     plt.tight_layout()
     plt.savefig(save_filename, bbox_inches='tight', dpi=300)
@@ -88,6 +92,10 @@ def plot_cwt_image(time, freqs, cwt_mag, title, save_filename):
     ax.set_title(title)
     ax.set_xlabel("Time (ns)", fontsize=12)
     ax.set_ylabel("Frequency (GHz)", fontsize=12)
+
+    ax.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
+    ax.tick_params(axis='x', which='minor', length=4, color='k')
+
     cbar = fig.colorbar(im, ax=ax, pad=0.02)
     cbar.set_label('CWT Magnitude', fontsize=10)
     

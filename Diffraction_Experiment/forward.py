@@ -59,8 +59,8 @@ def create_input_file(
     conductivity_fracture_plus  = 0 # air conductivity_fracture * 1.1
     conductivity_fracture_minus = 0.01 # water conductivity_fracture * 0.9
 
-    permittivity_fracture_average = 50 #(permittivity_fracture_plus + permittivity_fracture_minus) / 2
-    conductivity_fracture_average = 0.01 #(conductivity_fracture_plus + conductivity_fracture_minus) / 2
+    permittivity_fracture_average = (permittivity_fracture_plus + permittivity_fracture_minus) / 2
+    conductivity_fracture_average = (conductivity_fracture_plus + conductivity_fracture_minus) / 2
 
     block_size = (1/4) * wavelength_ice
 
@@ -80,8 +80,8 @@ def create_input_file(
     domain_height = air_thickness + fracture_depth + thickness_fracture + depth_below_fracture
 
     TW = (5 / f_central) + (2.5 * (domain_height - air_thickness) / c_ice)
-    snapshot_time = TW / 10
-    n_snapshots = 10
+    n_snapshots = 36
+    snapshot_time = 0.25e-9  # quarter of a nanosecond
 
     fracture_top = air_thickness + fracture_depth
     fracture_bottom = fracture_top + thickness_fracture

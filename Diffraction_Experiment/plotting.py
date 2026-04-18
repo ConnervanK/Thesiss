@@ -41,9 +41,9 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
     fracture_y0 = domain_height - fracture_bottom
     fracture_y1 = domain_height - fracture_top
 
-    early_data = [d for s, d in loaded_snapshots if s <= 4]
-    mid_data = [d for s, d in loaded_snapshots if 5 <= s <= 6]
-    late_data = [d for s, d in loaded_snapshots if s > 6]
+    early_data = [d for s, d in loaded_snapshots if s <= 16]
+    mid_data = [d for s, d in loaded_snapshots if 17 <= s <= 24]
+    late_data = [d for s, d in loaded_snapshots if s > 24]
 
     early_abs_max = max(np.abs(d).max() for d in early_data) if early_data else 1.0
     mid_pct_ref = max(np.percentile(np.abs(d), 99.2) for d in mid_data) if mid_data else early_abs_max
@@ -64,10 +64,10 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
     for i, (snap_num, data_2d) in enumerate(loaded_snapshots):
         ax = axes[i]
 
-        if snap_num <= 4:
+        if snap_num <= 16:
             vlim = early_abs_max
             scale_tag = 'regular scale'
-        elif snap_num <= 6:
+        elif snap_num <= 24:
             vlim = mid_abs_max
             scale_tag = 'reflection-enhanced'
         else:
@@ -229,6 +229,10 @@ def plot_time_traces(out_alt, out_homo, n_blocks, block_width, rx_offset, save_f
                 ax_cwt.set_xlabel("Time (ns)", fontsize=12)
                 ax_cwt.set_ylabel("Frequency (GHz)", fontsize=12)
                 
+                import matplotlib.ticker as ticker
+                ax_cwt.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
+                ax_cwt.tick_params(axis='x', which='minor', length=4, color='k')
+                
                 cbar_cwt = fig_cwt.colorbar(im_cwt, ax=ax_cwt, pad=0.02)
                 cbar_cwt.set_label('CWT Magnitude', fontsize=10)
                 
@@ -262,10 +266,14 @@ def plot_traces_kernel(ax, traces, time, n_blocks, block_width, title):
     ax.set_ylabel('Time (ns)', fontsize=12)
     ax.set_title(title, fontsize=14, weight='bold')
 
+    import matplotlib.ticker as ticker
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.25))
+    ax.tick_params(axis='y', which='minor', length=4, color='k')
+
 def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, dx_dy_dz, n_blocks, block_width, rx_offset):
     print("Plotting snapshots...")
     snapshot_prefix = 'snapshot_mid_x_'
-    snapshot_indices = list(range(1, 11))
+    snapshot_indices = list(range(1, 37))
 
     # 1. Alternating snapshots
     folder_alt = r'horizontal_scattering_0p5lambda_snaps'
