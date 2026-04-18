@@ -31,7 +31,7 @@ def get_snapshots_data(snapshot_folder, snapshot_prefix, snapshot_indices):
         loaded_snapshots.append((snap_num, data_2d))
     return loaded_snapshots
 
-def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, save_filename, title):
+def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, save_filename, title, n_blocks=None, block_width=None):
     if not loaded_snapshots:
         return
 
@@ -89,6 +89,32 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
 
         ax.add_patch(Rectangle((0, depth - upper_layer_thickness), length, upper_layer_thickness, facecolor='#cfe8ff', edgecolor='blue', alpha=0.2))
         ax.add_patch(Rectangle((0, fracture_y0), length, fracture_y1 - fracture_y0, facecolor='#ffe6e6', edgecolor='red', linewidth=1.0, alpha=0.2, label='Fracture' if i == 0 else ''))
+
+        if n_blocks is not None and block_width is not None:
+            # Alternating Fracture Plot ('_alt' suffix -> diff or alt images)
+            is_alternating = ('_alt' in save_filename) or ('_diff' in save_filename)
+        
+            for b in range(n_blocks):
+                x_pos = b * block_width
+                block_w = min(block_width, domain_width - x_pos)
+                
+                # Determine block material/color
+                if is_alternating:
+                    # Plus (air) is lightblue, Minus (water/high perm) is blue
+                    block_color = '#ADD8E6' if b % 2 == 0 else '#00008B'
+                    alpha_val = 0.15 if b % 2 == 0 else 0.25
+                else:
+                    # Homogenous is somewhere in between
+                    block_color = '#4169E1'
+                    alpha_val = 0.2
+                    
+                ax.add_patch(Rectangle((x_pos, fracture_y0), block_w, fracture_y1 - fracture_y0, 
+                                       facecolor=block_color, edgecolor='none', alpha=alpha_val))
+                                       
+            # Just draw the separating lines
+            for b in range(1, n_blocks):
+                x_pos = b * block_width
+                ax.vlines(x=x_pos, ymin=fracture_y0, ymax=fracture_y1, color='red', linestyle='--', linewidth=0.5, alpha=0.5)
 
         ax.set_xlabel('Length (m)', fontsize=10)
         ax.set_ylabel('Depth (m)', fontsize=10)
@@ -280,7 +306,8 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
     alt_data = get_snapshots_data(folder_alt, snapshot_prefix, snapshot_indices)
     do_plot(
         alt_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-        'gpr_snapshots_result_alt.png', 'GPR Forward Modeling Snapshots (Alternating Block Fracture)'
+        'gpr_snapshots_result_alt.png', 'GPR Forward Modeling Snapshots (Alternating Block Fracture)',
+        n_blocks=n_blocks, block_width=block_width
     )
 
     # 2. Homogeneous snapshots
@@ -288,7 +315,8 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
     homo_data = get_snapshots_data(folder_homo, snapshot_prefix, snapshot_indices)
     do_plot(
         homo_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-        'gpr_snapshots_result_homo.png', 'GPR Forward Modeling Snapshots (Homogeneous Fracture)'
+        'gpr_snapshots_result_homo.png', 'GPR Forward Modeling Snapshots (Homogeneous Fracture)',
+        n_blocks=n_blocks, block_width=block_width
     )
 
     # 3. Difference snapshots (Alternating - Homogeneous)
@@ -298,7 +326,8 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
             diff_data.append((snap_num, data_alt - data_homo))
         do_plot(
             diff_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-            'gpr_snapshots_result_diff.png', 'GPR Forward Modeling Snapshots (Diff: Alternating - Homogeneous)'
+            'gpr_snapshots_result_diff.png', 'GPR Forward Modeling Snapshots (Diff: Alternating - Homogeneous)',
+            n_blocks=n_blocks, block_width=block_width
         )
         
     # 4. Difference Time Traces (Alternating - Homogeneous) from .out files
