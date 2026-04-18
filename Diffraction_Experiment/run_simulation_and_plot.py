@@ -28,7 +28,7 @@ def main():
         
         # --- Mode selection: 'static' or 'bscan' ---
         'mode': 'static',                    # Switch to 'bscan' to run moving Tx-Rx array 
-        'rx_per_block': 1,                   # Used only if mode == 'static'
+        'rx_per_block': 2,                   # Used only if mode == 'static'
         
         # --- B-scan parameters (used if mode == 'bscan') ---
         'rx_count': 1,                       # Number of receivers in moving array
