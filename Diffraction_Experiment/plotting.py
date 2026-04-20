@@ -31,7 +31,7 @@ def get_snapshots_data(snapshot_folder, snapshot_prefix, snapshot_indices):
         loaded_snapshots.append((snap_num, data_2d))
     return loaded_snapshots
 
-def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, save_filename, title, n_blocks=None, block_width=None):
+def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, save_filename, title, n_blocks=None, block_width=None, rx_per_block=1):
     if not loaded_snapshots:
         return
 
@@ -116,10 +116,11 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
             tx_x = domain_width / 2
             
             # Draw receivers
-            for b in range(n_blocks):
-                rx_x = (b + 0.5) * block_width
+            rx_dx = block_width / rx_per_block
+            for rx_idx in range(n_blocks * rx_per_block):
+                rx_x = (rx_idx + 0.5) * rx_dx
                 if rx_x > 0 and rx_x < domain_width:
-                    ax.plot(rx_x, y_air_bottom, 'g^', markersize=3, alpha=0.6, label='Receiver' if (b == 0 and i == 0) else '')
+                    ax.plot(rx_x, y_air_bottom, 'g^', markersize=3, alpha=0.6, label='Receiver' if (rx_idx == 0 and i == 0) else '')
                     
             # Draw transmitter
             ax.plot(tx_x, y_air_bottom, 'r*', markersize=6, alpha=0.9, label='Transmitter' if i == 0 else '')
@@ -332,7 +333,7 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
     do_plot(
         alt_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
         'gpr_snapshots_result_alt.png', 'GPR Forward Modeling Snapshots (Alternating Block Fracture)',
-        n_blocks=n_blocks, block_width=block_width
+        n_blocks=n_blocks, block_width=block_width, rx_per_block=rx_per_block
     )
 
     # 2. Homogeneous snapshots
@@ -341,7 +342,7 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
     do_plot(
         homo_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
         'gpr_snapshots_result_homo.png', 'GPR Forward Modeling Snapshots (Homogeneous Fracture)',
-        n_blocks=n_blocks, block_width=block_width
+        n_blocks=n_blocks, block_width=block_width, rx_per_block=rx_per_block
     )
 
     # 3. Difference snapshots (Alternating - Homogeneous)
@@ -352,7 +353,7 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
         do_plot(
             diff_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
             'gpr_snapshots_result_diff.png', 'GPR Forward Modeling Snapshots (Diff: Alternating - Homogeneous)',
-            n_blocks=n_blocks, block_width=block_width
+            n_blocks=n_blocks, block_width=block_width, rx_per_block=rx_per_block
         )
         
     # 4. Difference Time Traces (Alternating - Homogeneous) from .out files
