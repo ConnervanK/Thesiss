@@ -55,7 +55,8 @@ def main():
     plot_snapshots(
         gpr_model.width, gpr_model.height, gpr_model.air_thick, gpr_model.f_top, 
         gpr_model.f_bottom, gpr_model.snap_time, gpr_model.dx_dy_dz, 
-        gpr_model.n_blocks, gpr_model.block_width, gpr_model.rx_offset
+        gpr_model.n_blocks, gpr_model.block_width, gpr_model.rx_offset,
+        rx_per_block=gpr_model.rx_per_block
     )
 
     if len(gpr_model.time) == 0:

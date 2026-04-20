@@ -117,7 +117,16 @@ class GPRModelData:
             return np.array([start_x + i * bscan_step_x for i in range(self.actual_traces)])
         else:
             rx_dx = self.block_width / self.rx_per_block
-            return np.array([(i + 0.5) * rx_dx for i in range(self.total_rx)])
+            domain_width = self.width
+            dx_dy_dz = self.dx_dy_dz
+            valid_x = []
+            for i in range(self.n_blocks * self.rx_per_block):
+                rx_x_init = (i + 0.5) * rx_dx
+                if rx_x_init > dx_dy_dz and rx_x_init < domain_width - dx_dy_dz:
+                    valid_x.append(rx_x_init)
+            
+            # Match the length to what was actually loaded (in case partial loading happened)
+            return np.array(valid_x)[:len(self.diff_traces)]
 
     def apply_svd_filter(self, n_components_to_mute=1):
         """Mutes the first N singular components of the difference traces."""

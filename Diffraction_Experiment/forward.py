@@ -105,7 +105,7 @@ def create_input_file(
     rx_y = y_air_bottom
     
     if mode == 'bscan':
-        tx_start_x = x_first_measurement
+        tx_start_x = domain_width / 2 #x_first_measurement
         rx_start_x = tx_start_x + tx_rx_offset
         actual_traces = bscan_traces
         
@@ -119,8 +119,7 @@ def create_input_file(
         total_rx = rx_count
     else:
         # Puts the source in the middle to measure the block diffractions.
-        # "Assuming from user's -restart 55"
-        tx_start_x = x_first_measurement + 54 * source_receiver_steps
+        tx_start_x = domain_width / 2
         rx_start_x = tx_start_x + tx_rx_offset
         actual_traces = 1
         total_rx = n_blocks * rx_per_block

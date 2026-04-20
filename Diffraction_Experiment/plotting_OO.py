@@ -13,9 +13,14 @@ def plot_wiggle_traces(model, traces, title, save_filename):
     
     rx_dx = model.block_width / model.rx_per_block
     scale = (rx_dx * 0.8) / max_val
+    rx_x_arr = model.get_rx_x_array()
     
     for i, trace in enumerate(traces):
-        x_base = (i + 0.5) * rx_dx
+        if hasattr(model, 'mode') and model.mode == 'bscan' and hasattr(model, 'actual_traces') and model.actual_traces == 1:
+            x_base = rx_x_arr[0] if len(rx_x_arr) > 0 else 0
+        else:
+            x_base = rx_x_arr[i] if i < len(rx_x_arr) else (i + 0.5) * rx_dx
+
         scaled_trace = x_base + trace * scale
         
         ax.plot(scaled_trace, model.time, 'k-', linewidth=0.8)

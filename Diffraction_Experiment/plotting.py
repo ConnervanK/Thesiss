@@ -111,6 +111,19 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
                 ax.add_patch(Rectangle((x_pos, fracture_y0), block_w, fracture_y1 - fracture_y0, 
                                        facecolor=block_color, edgecolor='none', alpha=alpha_val))
                                        
+            # Illustrate tx/rx positions
+            y_air_bottom = domain_height - air_thickness
+            tx_x = domain_width / 2
+            
+            # Draw receivers
+            for b in range(n_blocks):
+                rx_x = (b + 0.5) * block_width
+                if rx_x > 0 and rx_x < domain_width:
+                    ax.plot(rx_x, y_air_bottom, 'g^', markersize=3, alpha=0.6, label='Receiver' if (b == 0 and i == 0) else '')
+                    
+            # Draw transmitter
+            ax.plot(tx_x, y_air_bottom, 'r*', markersize=6, alpha=0.9, label='Transmitter' if i == 0 else '')
+                                       
             # Just draw the separating lines
             for b in range(1, n_blocks):
                 x_pos = b * block_width
@@ -135,7 +148,7 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
     plt.close(fig)
     print(f"Plot saved to: {save_filename}")
 
-def plot_time_traces(out_alt, out_homo, n_blocks, block_width, rx_offset, save_filename, title):
+def plot_time_traces(out_alt, out_homo, n_blocks, block_width, rx_offset, save_filename, title, rx_per_block=1):
     fig, ax = plt.subplots(figsize=(10, 8))
     try:
         with h5py.File(out_alt, 'r') as fa, h5py.File(out_homo, 'r') as fh:
@@ -145,17 +158,25 @@ def plot_time_traces(out_alt, out_homo, n_blocks, block_width, rx_offset, save_f
             
             diff_traces = []
             homo_traces = []
+            rx_x_positions = []
             
-            for i in range(n_blocks):
-                # The first receiver was rx1. The next blocks start at rx2.
-                rx_name = f'rx{i+2}'
-                try:
-                    ez_alt = np.array(fa['rxs'][rx_name]['Ez'])
-                    ez_homo = np.array(fh['rxs'][rx_name]['Ez'])
-                    homo_traces.append(ez_homo)
-                    diff_traces.append(ez_alt - ez_homo)
-                except KeyError:
-                    pass
+            rx_idx = 1
+            rx_dx = block_width / rx_per_block
+            for i in range(n_blocks * rx_per_block):
+                rx_x_init = (i + 0.5) * rx_dx
+                dx_dy_dz = 0.002 # safe minimum
+                domain_width = n_blocks * block_width
+                if rx_x_init > dx_dy_dz and rx_x_init < domain_width - dx_dy_dz:
+                    rx_name = f'rx{rx_idx}'
+                    try:
+                        ez_alt = np.array(fa['rxs'][rx_name]['Ez'])
+                        ez_homo = np.array(fh['rxs'][rx_name]['Ez'])
+                        homo_traces.append(ez_homo)
+                        diff_traces.append(ez_alt - ez_homo)
+                        rx_x_positions.append(rx_x_init)
+                    except KeyError:
+                        pass
+                    rx_idx += 1
             
             if not diff_traces:
                 return
@@ -164,7 +185,7 @@ def plot_time_traces(out_alt, out_homo, n_blocks, block_width, rx_offset, save_f
             homo_traces = np.array(homo_traces)
             
             # --- Standard Difference Plot ---
-            plot_traces_kernel(ax, diff_traces, time, n_blocks, block_width, title)
+            plot_traces_kernel(ax, diff_traces, time, n_blocks, block_width, title, rx_x_positions, rx_per_block=rx_per_block)
             plt.tight_layout()
             plt.savefig(save_filename, bbox_inches='tight', dpi=300)
             plt.close(fig)
@@ -271,15 +292,19 @@ def plot_time_traces(out_alt, out_homo, n_blocks, block_width, rx_offset, save_f
     except Exception as e:
         print(f"Error plotting traces: {e}")
 
-def plot_traces_kernel(ax, traces, time, n_blocks, block_width, title):
+def plot_traces_kernel(ax, traces, time, n_blocks, block_width, title, rx_x_positions=None, rx_per_block=1):
     """Helper method to plot wiggle traces on a given axis."""
     max_val = np.max(np.abs(traces))
     if max_val == 0: max_val = 1
-    scale = (block_width * 0.8) / max_val  # Amplify amplitudes
+    rx_dx = block_width / rx_per_block
+    scale = (rx_dx * 0.8) / max_val  # Amplify amplitudes
     
     for i, trace in enumerate(traces):
-        # We don't have the 54 * step offset anymore
-        x_base = (i + 0.5) * block_width
+        if rx_x_positions is not None and i < len(rx_x_positions):
+            x_base = rx_x_positions[i]
+        else:
+            x_base = (i + 0.5) * rx_dx
+            
         scaled_trace = x_base + trace * scale
         
         ax.plot(scaled_trace, time, 'k-', linewidth=0.8)
@@ -296,7 +321,7 @@ def plot_traces_kernel(ax, traces, time, n_blocks, block_width, title):
     ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.25))
     ax.tick_params(axis='y', which='minor', length=4, color='k')
 
-def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, dx_dy_dz, n_blocks, block_width, rx_offset):
+def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, dx_dy_dz, n_blocks, block_width, rx_offset, rx_per_block=1):
     print("Plotting snapshots...")
     snapshot_prefix = 'snapshot_mid_x_'
     snapshot_indices = list(range(1, 37))
@@ -335,5 +360,6 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
         'horizontal_scattering_0p5lambda.out',
         'horizontal_scattering_homogeneous.out',
         n_blocks, block_width, rx_offset,
-        'gpr_snapshots_result_diff_traces.png', 'GPR Difference Time Traces (Alternating - Homogeneous)'
+        'gpr_snapshots_result_diff_traces.png', 'GPR Difference Time Traces (Alternating - Homogeneous)',
+        rx_per_block=rx_per_block
     )
