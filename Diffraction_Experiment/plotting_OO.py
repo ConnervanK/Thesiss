@@ -79,14 +79,15 @@ def plot_fk_image(k, freqs, fk_mag, title, save_filename, block_width=None):
     plt.close(fig)
     print(f"Plot saved to: {save_filename}")
 
-def plot_cwt_image(time, freqs, cwt_mag, title, save_filename):
+def plot_cwt_image(time, freqs, cwt_mag, title, save_filename, vmin=None, vmax=None, cmap='jet'):
     """Plots Continuous Wavelet Transform (Time-Frequency)."""
     fig, ax = plt.subplots(figsize=(10, 6))
     freqs_ghz = freqs / 1e9
     
     im = ax.imshow(
-        cwt_mag, aspect='auto', cmap='jet', origin='lower',
-        extent=[time[0], time[-1], freqs_ghz[0], freqs_ghz[-1]]
+        cwt_mag, aspect='auto', cmap=cmap, origin='lower',
+        extent=[time[0], time[-1], freqs_ghz[0], freqs_ghz[-1]],
+        vmin=vmin, vmax=vmax
     )
     
     ax.set_title(title)
@@ -97,7 +98,28 @@ def plot_cwt_image(time, freqs, cwt_mag, title, save_filename):
     ax.tick_params(axis='x', which='minor', length=4, color='k')
 
     cbar = fig.colorbar(im, ax=ax, pad=0.02)
-    cbar.set_label('CWT Magnitude', fontsize=10)
+    cbar.set_label('CWT Value', fontsize=10)
+    
+    plt.tight_layout()
+    plt.savefig(save_filename, bbox_inches='tight', dpi=300)
+    plt.close(fig)
+    print(f"Plot saved to: {save_filename}")
+
+def plot_cwt_cross_sections(time, freqs, cwt_data, f1, f2, title, save_filename):
+    """Plots a 1D cross section of the CWT phase/magnitude at two distinct frequencies."""
+    f1_idx = np.argmin(np.abs(freqs - f1))
+    f2_idx = np.argmin(np.abs(freqs - f2))
+    
+    fig, ax = plt.subplots(figsize=(10, 4))
+    
+    ax.plot(time, cwt_data[f1_idx, :], 'b-', label=f'{freqs[f1_idx]/1e9:.2f} GHz')
+    ax.plot(time, cwt_data[f2_idx, :], 'r-', label=f'{freqs[f2_idx]/1e9:.2f} GHz')
+    
+    ax.set_title(title)
+    ax.set_xlabel("Time (ns)", fontsize=12)
+    ax.set_ylabel("Phase (rad)", fontsize=12)
+    ax.grid(True, linestyle='--', alpha=0.6)
+    ax.legend(loc='best')
     
     plt.tight_layout()
     plt.savefig(save_filename, bbox_inches='tight', dpi=300)

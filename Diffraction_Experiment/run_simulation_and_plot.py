@@ -4,7 +4,7 @@ import numpy as np
 # Import modules from our new files
 from plotting import plot_snapshots
 from processing_OO import GPRModelData
-from plotting_OO import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image
+from plotting_OO import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections
 
 def main():
     # Setup directory
@@ -111,7 +111,21 @@ def main():
     cwt_freqs_diff_phase, cwt_diff_phase_image = gpr_model.compute_cwt_image(traces=gpr_model.diff_traces, return_phase=True)
     if cwt_freqs_diff_phase is not None:
         plot_cwt_image(gpr_model.time, cwt_freqs_diff_phase, cwt_diff_phase_image,
-                       "Wavelet Transform Phase of Global Avg Difference Trace", "plot_diff_cwt_phase.png")
+                       "Wavelet Transform Phase of Global Avg Difference Trace", "plot_diff_cwt_phase.png", cmap='hsv')
+                       
+        # Visualize explicit wave cycles bounded between -1 and 1 without phase jumps
+        # Scaled by normalized CWT magnitude to hide phase where signal energy is zero
+        mag_norm_diff = cwt_diff_image / (np.max(cwt_diff_image) + 1e-12)
+        wave_cycles_diff = np.cos(cwt_diff_phase_image) * mag_norm_diff
+        
+        plot_cwt_image(gpr_model.time, cwt_freqs_diff_phase, wave_cycles_diff,
+                       "Normalized Wave Cycles (Diff)", "plot_diff_cwt_phase_unwrapped.png", cmap='PuOr', vmin=-1, vmax=1)
+        
+        # Cross sections at 1.5 GHz (Central) and 2.5 GHz (Higher offset)
+        plot_cwt_cross_sections(gpr_model.time, cwt_freqs_diff_phase, wave_cycles_diff,
+                                f1=1.5e9, f2=2.5e9,
+                                title=("Wave Cycle Evolution over Time (1.5GHz vs 2.5GHz)"),
+                                save_filename="plot_diff_phase_cross_section.png")
                        
         # Compute and plot the time derivative of the phase
         unwrapped_phase = np.unwrap(cwt_diff_phase_image, axis=1)
@@ -128,10 +142,27 @@ def main():
         plot_cwt_image(gpr_model.time, cwt_freqs_diff_phase, phase_derivative_freq,
                        "Frequency Derivative of WT Phase", "plot_diff_cwt_phase_derivative_freq.png")
 
+        # Scaled Frequency Derivative of the phase (hides noise where signal is zero)
+        phase_derivative_freq_scaled = phase_derivative_freq * mag_norm_diff
+        plot_cwt_image(gpr_model.time, cwt_freqs_diff_phase, phase_derivative_freq_scaled,
+                       "Scaled Frequency Derivative of WT Phase", "plot_diff_cwt_phase_derivative_freq_scaled.png")
+
     cwt_freqs_alt_phase, cwt_alt_phase_image = gpr_model.compute_cwt_image(traces=gpr_model.alt_traces, return_phase=True)
     if cwt_freqs_alt_phase is not None:
         plot_cwt_image(gpr_model.time, cwt_freqs_alt_phase, cwt_alt_phase_image,
-                       "Wavelet Transform Phase of Global Avg Alternating Trace", "plot_alt_cwt_phase.png")
+                       "Wavelet Transform Phase of Global Avg Alternating Trace", "plot_alt_cwt_phase.png", cmap='hsv')
+        
+        # Visualize explicit wave cycles for alt trace
+        mag_norm_alt = cwt_alt_image / (np.max(cwt_alt_image) + 1e-12)
+        wave_cycles_alt = np.cos(cwt_alt_phase_image) * mag_norm_alt
+        
+        plot_cwt_image(gpr_model.time, cwt_freqs_alt_phase, wave_cycles_alt,
+                       "Normalized Wave Cycles (Alt)", "plot_alt_cwt_phase_unwrapped.png", cmap='PuOr', vmin=-1, vmax=1)
+        
+        plot_cwt_cross_sections(gpr_model.time, cwt_freqs_alt_phase, wave_cycles_alt,
+                                f1=1.5e9, f2=2.5e9,
+                                title=("Wave Cycle Evolution over Time (Alt, 1.5GHz vs 2.5GHz)"),
+                                save_filename="plot_alt_phase_cross_section.png")
 
     # 7.1 Phase-Weighted Stacking (PWS) CWT
     pws_diff = gpr_model.phase_weighted_stack(traces=gpr_model.diff_traces, power=2)

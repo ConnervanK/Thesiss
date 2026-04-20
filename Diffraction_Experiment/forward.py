@@ -143,7 +143,6 @@ def create_input_file(
         f.write('\n#hertzian_dipole: z {} {} 0 my_ricker'.format(tx_start_x, rx_y))
         
         if mode == 'static':
-            f.write('\n#rx: {} {} 0'.format(rx_start_x, rx_y))
             rx_dx = block_width / rx_per_block
             for i in range(n_blocks * rx_per_block):
                 rx_x_init = (i + 0.5) * rx_dx
@@ -197,11 +196,10 @@ def create_input_file(
         f.write('\n#hertzian_dipole: z {} {} 0 my_ricker'.format(tx_start_x, rx_y))
         
         if mode == 'static':
-            f.write('\n#rx: {} {} 0'.format(rx_start_x, rx_y))
             rx_dx = block_width / rx_per_block
             for i in range(n_blocks * rx_per_block):
                 rx_x_init = (i + 0.5) * rx_dx
-                if rx_x_init > dx_dy_dz and rx_x_init < domain_width - dx_dy_dz:
+                if rx_x_init > dx_dy_dz and rx_x_init < domain_width - dx_dy_dz: 
                     f.write('\n#rx: {} {} 0'.format(rx_x_init, rx_y))
         elif mode == 'bscan':
             f.write('\n#src_steps: {} 0 0'.format(bscan_step_x))

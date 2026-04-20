@@ -217,10 +217,8 @@ class GPRModelData:
         coefs, _ = pywt.cwt(avg_trace, scales, wavelet, sampling_period=self.dt)
         if return_phase:
             phase = np.angle(coefs)
-            mag = np.abs(coefs)
-            # Scale phase by normalized magnitude to suppress phase errors in low-energy regions
-            scaled_phase = phase * (mag / np.max(mag))
-            return freqs, scaled_phase
+            # Return raw unscaled phase so 'np.unwrap' can mathematically detect the exact 2*pi jumps
+            return freqs, phase
         return freqs, np.abs(coefs)
 
     def compute_cwt_3d(self, traces=None, wavelet='cmor1.5-1.0', freqs=None, return_phase=False):
@@ -243,9 +241,7 @@ class GPRModelData:
             coefs, _ = pywt.cwt(trace, scales, wavelet, sampling_period=self.dt)
             if return_phase:
                 phase = np.angle(coefs)
-                mag = np.abs(coefs)
-                scaled_phase = phase * (mag / np.max(mag))
-                cwt_3d.append(scaled_phase)
+                cwt_3d.append(phase)
             else:
                 cwt_3d.append(np.abs(coefs))
                 
