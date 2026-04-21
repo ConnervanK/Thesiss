@@ -67,6 +67,16 @@ def main():
     plot_wiggle_traces(gpr_model, gpr_model.diff_traces,
                        "Difference Traces (Raw Amplitude)", "plot_diff_raw.png")
 
+    # 3.1 Normal Moveout (NMO) Correction
+    # Get velocity of the background medium (ice)
+    v_ice = model_params['c'] / np.sqrt(model_params['permittivity_ice'])
+    # Assume source is at center of domain since tx_start_x is not dynamically fetched yet
+    tx_start_x = getattr(gpr_model, 'tx_start_x', gpr_model.width / 2.0)
+    
+    # nmo_traces = gpr_model.apply_nmo(gpr_model.diff_traces, velocity=v_ice * 1.1, tx_x=tx_start_x, max_stretch=0.5)
+    # plot_wiggle_traces(gpr_model, nmo_traces,
+    #                    "Difference Traces (NMO Corrected)", "plot_diff_nmo.png")
+
     # phase_diff_traces = gpr_model.compute_instantaneous_phase(gpr_model.diff_traces)
     # plot_wiggle_traces(gpr_model, phase_diff_traces,
     #                    "Difference Traces (Instantaneous Phase)", "plot_diff_phase.png")

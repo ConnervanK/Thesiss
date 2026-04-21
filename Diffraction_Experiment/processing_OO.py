@@ -280,6 +280,53 @@ class GPRModelData:
         pws = linear_stack * (phase_coherence ** power)
         return pws
 
+    def apply_nmo(self, traces, velocity, tx_x=None, max_stretch=1.0):
+        """
+        Applies Normal Moveout (NMO) correction to the given traces.
+        Corrects for the travel-time delay due to the offset between Tx and Rx.
+        """
+        if traces is None or len(traces) == 0:
+            return traces
+            
+        nmo_traces = np.zeros_like(traces)
+        
+        rx_x_array = self.get_rx_x_array()
+        if len(rx_x_array) > len(traces):
+            rx_x_array = rx_x_array[:len(traces)]
+            
+        if tx_x is None:
+            # If not provided, assume Tx is in the center or calculate it based on out_ctx
+            tx_x = getattr(self, 'tx_start_x', self.width / 2.0)
+            
+        # Physical offset for each trace
+        offsets = np.abs(rx_x_array - tx_x)
+        
+        # Time axis
+        t = self.time
+        dt = t[1] - t[0] if len(t) > 1 else 1e-11
+        
+        for i in range(len(traces)):
+            x = offsets[i]
+            trace = traces[i]
+            
+            # The NMO equation: t^2 = t0^2 + (x/v)^2
+            # Note: t is in nanoseconds (ns), so x/v (seconds) must be multiplied by 1e9 to match units!
+            # To find the amplitude at t0, we evaluate the trace at t = sqrt(t0^2 + (x/v)^2)
+            t_squared = t**2 + ((x / velocity) * 1e9)**2
+            t_lookup = np.sqrt(t_squared)
+            
+            # Interpolate the trace at calculated times
+            nmo_trace = np.interp(t_lookup, t, trace, left=0.0, right=0.0)
+            
+            # NMO stretch Mute: stretch = (t_lookup - t) / t
+            t_safe = np.where(t == 0, 1e-12, t)
+            stretch = (t_lookup - t) / t_safe
+            nmo_trace[stretch > max_stretch] = 0.0
+            
+            nmo_traces[i] = nmo_trace
+            
+        return nmo_traces
+
     def compute_spectral_centroid(self, traces):
         """
         Computes the average spectral centroid (frequency focus) of the given traces.
