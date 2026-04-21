@@ -327,6 +327,103 @@ class GPRModelData:
             
         return nmo_traces
 
+    def frequency_domain_shift(self, trace, delta_t):
+        """
+        Shifts a 1D array `trace` in the time domain by `delta_t` (in seconds)
+        using the Fourier Shift Theorem to allow for sub-sample shifts.
+        """
+        N = len(trace)
+        F = np.fft.rfft(trace)
+        freqs = np.fft.rfftfreq(N, d=self.dt)
+        # Shift theorem: F(w) * exp(-j * 2 * pi * f * delta_t)
+        F_shifted = F * np.exp(-1j * 2 * np.pi * freqs * delta_t)
+        return np.fft.irfft(F_shifted, n=N)
+
+    def extract_window(self, trace, center_time, window_width):
+        """
+        Extracts a window of a trace around a center time.
+        Any points outside the window are set to zero, or we could taper it.
+        """
+        # smooth taper (Tukey window) or a simple rect window
+        from scipy.signal.windows import tukey
+        window = np.zeros_like(trace)
+        start_idx = max(0, int((center_time - window_width/2) / self.dt))
+        end_idx = min(len(trace), int((center_time + window_width/2) / self.dt))
+        
+        if end_idx > start_idx:
+            # apply tukey alpha 0.2 to smooth edges
+            taper = tukey(end_idx - start_idx, alpha=0.2)
+            window[start_idx:end_idx] = trace[start_idx:end_idx] * taper
+            
+        return window
+
+    def compute_xwt(self, trace1, trace2, wavelet='cmor1.5-1.0', freqs=None):
+        """
+        Computes the Cross-Wavelet Transform (XWT) between two traces.
+        """
+        if freqs is None:
+            freqs = np.linspace(0.1e9, 5.5e9, 100)
+            
+        sampling_freq = 1.0 / self.dt
+        scales = pywt.frequency2scale(wavelet, freqs / sampling_freq)
+        
+        coefs1, _ = pywt.cwt(trace1, scales, wavelet, sampling_period=self.dt)
+        coefs2, _ = pywt.cwt(trace2, scales, wavelet, sampling_period=self.dt)
+        
+        # Cross wavelet transform
+        xwt = coefs1 * np.conj(coefs2)
+        power = np.abs(xwt)
+        phase = np.angle(xwt)
+        
+        return freqs, power, phase
+
+    def run_shift_and_correlate(self, traces, depth, velocity, tx_x=None, window_width=2e-9):
+        """
+        Calculates the Geometric Time Shift for a horizontal fracture at depth d.
+        Applying the Shift-and-Correlate method, traces are shifted relative to adjacent ones, 
+        windowed, and their XWT is computed. Returns the power and phase of the XWT.
+        """
+        if len(traces) < 2:
+            return None, None, None
+
+        if tx_x is None:
+            tx_x = getattr(self, 'tx_start_x', self.width / 2.0)
+            
+        rx_array = self.get_rx_x_array()
+        offsets = np.abs(rx_array - tx_x)
+        
+        # t(x) = sqrt(x^2 + (2d)^2) / v
+        t_arrivals = np.sqrt(offsets**2 + (4 * (depth**2))) / velocity
+        
+        xwt_power_list = []
+        xwt_phase_list = []
+        freqs_out = None
+        
+        for i in range(len(traces) - 1):
+            t1 = t_arrivals[i]
+            t2 = t_arrivals[i+1]
+            delta_tau = t2 - t1
+            
+            trace1 = traces[i]
+            trace2 = traces[i+1]
+            
+            # Sub-sample frequency domain shift (move trace2 backwards by delta_tau)
+            # advancing trace 2 so that its arrival perfectly matches trace 1
+            shifted_trace2 = self.frequency_domain_shift(trace2, -delta_tau)
+            
+            # Extract window around identical arrival time t1 for BOTH
+            # After trace2 was shifted to align with t1, both have arrival aligned to t1
+            window1 = self.extract_window(trace1, t1, window_width)
+            window2 = self.extract_window(shifted_trace2, t1, window_width)
+            
+            # Compute Cross-Wavelet Transform (XWT) on the aligned windows
+            freqs_out, power, phase = self.compute_xwt(window1, window2)
+            
+            xwt_power_list.append(power)
+            xwt_phase_list.append(phase)
+            
+        return freqs_out, np.array(xwt_power_list), np.array(xwt_phase_list)
+
     def compute_spectral_centroid(self, traces):
         """
         Computes the average spectral centroid (frequency focus) of the given traces.

@@ -131,8 +131,62 @@ def plot_cwt_cross_sections(time, freqs, cwt_data, f1, f2, title, save_filename)
     plt.close(fig)
     print(f"Plot saved to: {save_filename}")
 
+
+def plot_xwt_phase_arrows(time, freqs, xwt_power, xwt_phase, title, save_filename, vmin=None, vmax=None, cmap='jet'):
+    """
+    Plots the Cross-Wavelet Transform power with phase arrows.
+    Right-pointing (→): In-phase (0)
+    Left-pointing (←): Out-of-phase (180 / π)
+    Down-pointing (↓): T1 leads T2 by 90° (π/2)
+    Up-pointing (↑): T2 leads T1 by 90° (-π/2)
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+    freqs_ghz = freqs / 1e9
+    
+    im = ax.imshow(
+        xwt_power, aspect='auto', cmap=cmap, origin='lower',
+        extent=[time[0], time[-1], freqs_ghz[0], freqs_ghz[-1]],
+        vmin=vmin, vmax=vmax
+    )
+    
+    # Overlay phase arrows. Subsample to avoid clutter.
+    dt = max(1, len(time) // 30)
+    df = max(1, len(freqs) // 15)
+    
+    X, Y = np.meshgrid(time, freqs_ghz)
+    
+    Ph = xwt_phase[::df, ::dt]
+    # Ph = angle(W1) - angle(W2). If T1 leads T2 by 90deg, phase is pi/2.
+    # sin(pi/2) = 1, cos = 0. To make it point down, we use V = -sin.
+    U = np.cos(Ph)
+    V = -np.sin(Ph)
+    
+    # Adjust scale to keep arrows proportional
+    # Find a good scale heuristic based on plot bounds
+    time_span = time[-1] - time[0]
+    freq_span = freqs_ghz[-1] - freqs_ghz[0]
+    span_ratio = freq_span / time_span if time_span > 0 else 1.0
+
+    ax.quiver(X[::df, ::dt], Y[::df, ::dt], U, V * span_ratio, 
+              angles='xy', pivot='mid', 
+              color='black', scale=70, width=0.003, headwidth=3, headlength=4, alpha=0.7)
+    
+    ax.set_title(title)
+    ax.set_xlabel("Time (ns)", fontsize=12)
+    ax.set_ylabel("Frequency (GHz)", fontsize=12)
+
+    ax.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
+    ax.tick_params(axis='x', which='minor', length=4, color='k')
+
+    cbar = fig.colorbar(im, ax=ax, pad=0.02)
+    cbar.set_label('XWT Power', fontsize=10)
+    
+    plt.tight_layout()
+    plt.savefig(save_filename, bbox_inches='tight', dpi=300)
+    plt.close(fig)
+    print(f"Plot saved to: {save_filename}")
+
 def plot_migrated_image(model, img, depths, title, save_filename):
-    """Plots 2D depth migration."""
     fig, ax = plt.subplots(figsize=(10, 6))
     
     im = ax.imshow(

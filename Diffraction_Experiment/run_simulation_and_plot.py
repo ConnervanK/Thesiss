@@ -4,7 +4,7 @@ import numpy as np
 # Import modules from our new files
 from plotting import plot_snapshots
 from processing_OO import GPRModelData
-from plotting_OO import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections
+from plotting_OO import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections, plot_xwt_phase_arrows
 
 def main():
     # Setup directory
@@ -216,7 +216,28 @@ def main():
             
         print(f"[{len(cwt_3d_diff)}] 3D CWT trace plots saved in the '{cwt_output_dir}' folder.")
 
-    # # 8. Prestack Kirchhoff Depth Migration + Envelope
+    # 8. Shift-and-Correlate XWT Strategy
+    print("Computing Geometric Time Shift and XWT...")
+    freqs_xwt, power_xwt, phase_xwt = gpr_model.run_shift_and_correlate(
+        gpr_model.diff_traces, 
+        depth=model_params['fracture_depth'], 
+        velocity=v_ice, 
+        tx_x=tx_start_x, 
+        window_width=3e-9
+    )
+    
+    if freqs_xwt is not None and len(power_xwt) > 0:
+        # For demonstration, plot the XWT between the first two adjacent traces (i.e. Trace 1 and Trace 2)
+        # Power describes magnitude similarity, Phase arrows denote angular lead/lag
+        plot_xwt_phase_arrows(gpr_model.time, freqs_xwt, power_xwt[0], phase_xwt[0],
+                       "Cross-Wavelet Transform (XWT) - Traces 1 & 2", "plot_diff_xwt_t1_t2.png")
+        
+        # Optionally, you can also view XWT of other adjacent pairs
+        if len(power_xwt) > 5:
+            plot_xwt_phase_arrows(gpr_model.time, freqs_xwt, power_xwt[5], phase_xwt[5],
+                           "Cross-Wavelet Transform (XWT) - Traces 6 & 7", "plot_diff_xwt_t6_t7.png")
+                           
+    # # 9. Prestack Kirchhoff Depth Migration + Envelope
     # # Geometry Setup
     # v_ice = model_params['c'] / np.sqrt(model_params['permittivity_ice'])
     # wavelength_fracture = (model_params['c'] / np.sqrt(model_params['permittivity_fracture'])) / model_params['f_central']
