@@ -132,6 +132,26 @@ def plot_cwt_cross_sections(time, freqs, cwt_data, f1, f2, title, save_filename)
     print(f"Plot saved to: {save_filename}")
 
 
+def plot_aligned_traces(time, trace1, trace2, title, save_filename):
+    """
+    Plots two single traces (one shifted or windowed) overlapping to visualize alignment.
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    ax.plot(time * 1e9, trace1, label='Trace 1 (Windowed)', linewidth=1.5, alpha=0.9)
+    ax.plot(time * 1e9, trace2, label='Trace 2 (Shifted & Windowed)', linewidth=1.5, alpha=0.9, linestyle='--')
+    
+    ax.set_title(title, fontsize=14)
+    ax.set_xlabel("Time (ns)", fontsize=12)
+    ax.set_ylabel("Amplitude", fontsize=12)
+    ax.legend(loc='best')
+    ax.grid(True, linestyle='--', alpha=0.6)
+    
+    plt.tight_layout()
+    plt.savefig(save_filename, dpi=300)
+    plt.close(fig)
+    print(f"Plot saved to: {save_filename}")
+
 def plot_xwt_phase_arrows(time, freqs, xwt_power, xwt_phase, title, save_filename, vmin=None, vmax=None, cmap='jet'):
     """
     Plots the Cross-Wavelet Transform power with phase arrows.
@@ -175,7 +195,7 @@ def plot_xwt_phase_arrows(time, freqs, xwt_power, xwt_phase, title, save_filenam
     ax.set_xlabel("Time (ns)", fontsize=12)
     ax.set_ylabel("Frequency (GHz)", fontsize=12)
 
-    ax.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
+    ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
     ax.tick_params(axis='x', which='minor', length=4, color='k')
 
     cbar = fig.colorbar(im, ax=ax, pad=0.02)

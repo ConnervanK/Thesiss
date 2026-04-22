@@ -4,7 +4,7 @@ import numpy as np
 # Import modules from our new files
 from plotting import plot_snapshots
 from processing_OO import GPRModelData
-from plotting_OO import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections, plot_xwt_phase_arrows
+from plotting_OO import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections, plot_xwt_phase_arrows, plot_aligned_traces
 
 def main():
     # Setup directory
@@ -49,15 +49,15 @@ def main():
 
     # 2. Run the simulation through the object
     # Force rerun so that modifications in forward.py take effect
-    gpr_model.run_simulation(force_rerun=True)
+    gpr_model.run_simulation(force_rerun=False)
 
     # (Optional) Plot the full domain snapshots using the attributes stored in gpr_model
-    plot_snapshots(
-        gpr_model.width, gpr_model.height, gpr_model.air_thick, gpr_model.f_top, 
-        gpr_model.f_bottom, gpr_model.snap_time, gpr_model.dx_dy_dz, 
-        gpr_model.n_blocks, gpr_model.block_width, gpr_model.rx_offset,
-        rx_per_block=gpr_model.rx_per_block
-    )
+    # plot_snapshots(
+    #     gpr_model.width, gpr_model.height, gpr_model.air_thick, gpr_model.f_top, 
+    #     gpr_model.f_bottom, gpr_model.snap_time, gpr_model.dx_dy_dz, 
+    #     gpr_model.n_blocks, gpr_model.block_width, gpr_model.rx_offset,
+    #     rx_per_block=gpr_model.rx_per_block
+    # )
 
     if len(gpr_model.time) == 0:
         print("Traces could not be loaded. Ensure the simulation generated .out files.")
@@ -195,47 +195,107 @@ def main():
     #     plot_cwt_image(gpr_model.time, cwt_freqs_3d, cwt_3d_diff[0],
     #                    "Wavelet Transform of Difference Trace 1", "plot_diff_cwt_trace_1.png")
 
-    # 7.2 3D CWT Example
-    # Resolves CWT for each individual trace to avoid average-loss. Array shape: (num_traces, num_freqs, num_time)
-    cwt_freqs_3d, cwt_3d_diff = gpr_model.compute_cwt_3d(traces=gpr_model.diff_traces)
+    # # 7.2 3D CWT Example
+    # # Resolves CWT for each individual trace to avoid average-loss. Array shape: (num_traces, num_freqs, num_time)
+    # cwt_freqs_3d, cwt_3d_diff = gpr_model.compute_cwt_3d(traces=gpr_model.diff_traces)
     
-    if cwt_freqs_3d is not None and len(cwt_3d_diff) > 0:
-        # Create a subfolder to store all individual trace CWT images
-        cwt_output_dir = "cwt_3d_traces"
-        os.makedirs(cwt_output_dir, exist_ok=True)
+    # if cwt_freqs_3d is not None and len(cwt_3d_diff) > 0:
+    #     # Create a subfolder to store all individual trace CWT images
+    #     cwt_output_dir = "cwt_3d_traces"
+    #     os.makedirs(cwt_output_dir, exist_ok=True)
         
-        # Loop through all available traces
-        for i in range(len(cwt_3d_diff)):
-            trace_num = i + 1
-            output_filepath = os.path.join(cwt_output_dir, f"plot_diff_cwt_trace_{trace_num}.png")
+    #     # Loop through all available traces
+    #     for i in range(len(cwt_3d_diff)):
+    #         trace_num = i + 1
+    #         output_filepath = os.path.join(cwt_output_dir, f"plot_diff_cwt_trace_{trace_num}.png")
             
-            # Plot and save each trace's CWT into the subfolder
-            plot_cwt_image(gpr_model.time, cwt_freqs_3d, cwt_3d_diff[i],
-                           f"Wavelet Transform of Difference Trace {trace_num}", 
-                           output_filepath)
+    #         # Plot and save each trace's CWT into the subfolder
+    #         plot_cwt_image(gpr_model.time, cwt_freqs_3d, cwt_3d_diff[i],
+    #                        f"Wavelet Transform of Difference Trace {trace_num}", 
+    #                        output_filepath)
             
-        print(f"[{len(cwt_3d_diff)}] 3D CWT trace plots saved in the '{cwt_output_dir}' folder.")
+    #     print(f"[{len(cwt_3d_diff)}] 3D CWT trace plots saved in the '{cwt_output_dir}' folder.")
 
     # 8. Shift-and-Correlate XWT Strategy
     print("Computing Geometric Time Shift and XWT...")
-    freqs_xwt, power_xwt, phase_xwt = gpr_model.run_shift_and_correlate(
+    
+    # Define custom trace pairs to evaluate (e.g. adjacent and non-adjacent)
+    num_diff_traces = len(gpr_model.diff_traces)
+    trace_pairs_to_test = [(10, 11)] # Default adjacent example
+    if num_diff_traces > 5:
+        trace_pairs_to_test.append((50, 51)) # Another adjacent example
+        trace_pairs_to_test.append((50, 60)) # Example of non-adjacent (gap 4)
+    if num_diff_traces > 10:
+        trace_pairs_to_test.append((50, 80)) # Example of further non-adjacent (gap 9)
+        
+    freqs_xwt, power_xwt, phase_xwt, shifted_windows, aligned_traces_full = gpr_model.run_shift_and_correlate(
         gpr_model.diff_traces, 
         depth=model_params['fracture_depth'], 
         velocity=v_ice, 
         tx_x=tx_start_x, 
-        window_width=3e-9
+        window_width=3e-9,
+        trace_pairs=trace_pairs_to_test
     )
     
     if freqs_xwt is not None and len(power_xwt) > 0:
-        # For demonstration, plot the XWT between the first two adjacent traces (i.e. Trace 1 and Trace 2)
-        # Power describes magnitude similarity, Phase arrows denote angular lead/lag
-        plot_xwt_phase_arrows(gpr_model.time, freqs_xwt, power_xwt[0], phase_xwt[0],
-                       "Cross-Wavelet Transform (XWT) - Traces 1 & 2", "plot_diff_xwt_t1_t2.png")
-        
-        # Optionally, you can also view XWT of other adjacent pairs
-        if len(power_xwt) > 5:
-            plot_xwt_phase_arrows(gpr_model.time, freqs_xwt, power_xwt[5], phase_xwt[5],
-                           "Cross-Wavelet Transform (XWT) - Traces 6 & 7", "plot_diff_xwt_t6_t7.png")
+        for idx, (t1, t2) in enumerate(trace_pairs_to_test):
+            # Power describes magnitude similarity, Phase arrows denote angular lead/lag
+            plot_xwt_phase_arrows(gpr_model.time * 1e9, freqs_xwt, power_xwt[idx], phase_xwt[idx],
+                           f"Cross-Wavelet Transform (XWT) - Traces {t1+1} & {t2+1}", f"plot_diff_xwt_t{t1+1}_t{t2+1}.png")
+                           
+            plot_aligned_traces(gpr_model.time, shifted_windows[idx][0], shifted_windows[idx][1],
+                                f"Windowed - Traces {t1+1} & {t2+1}", f"plot_diff_xwt_windowed_t{t1+1}_t{t2+1}.png")
+                                
+            plot_aligned_traces(gpr_model.time, aligned_traces_full[idx][0], aligned_traces_full[idx][1],
+                                f"Full Aligned - Traces {t1+1} & {t2+1}", f"plot_diff_xwt_full_aligned_t{t1+1}_t{t2+1}.png")
+
+    # 8.5 Align all traces globally to visualize the flattened hyperbola reflection
+    print("Aligning all traces geometrically to visualize the flattened hyperbola...")
+    ref_idx = len(gpr_model.diff_traces) // 2
+    best_velocity, best_score = gpr_model.estimate_best_alignment_velocity(
+        gpr_model.diff_traces,
+        depth=model_params['fracture_depth'],
+        velocity_init=v_ice,
+        tx_x=tx_start_x,
+        reference_idx=ref_idx,
+        window_width=3e-9,
+        search_factors=(0.85, 1.15),
+        n_trials=31,
+    )
+    print(f"Best alignment velocity: {best_velocity:.3e} m/s (coherence score: {best_score:.4f})")
+
+    aligned_all = gpr_model.align_all_traces(
+        gpr_model.diff_traces, 
+        depth=model_params['fracture_depth'], 
+        velocity=best_velocity,
+        tx_x=tx_start_x, 
+        reference_idx=ref_idx
+    )
+    plot_wiggle_traces(
+        gpr_model, 
+        aligned_all, 
+        "All Geometrically Aligned Traces (Flat Hyperbola)", 
+        "plot_diff_aligned_bscan.png"
+    )
+
+    # 8.6 Fine-tune the alignment using empirical cross-correlation (perfectly flatten it)
+    print("Running data-driven residual alignment to perfectly flatten the reflection...")
+    # Identify the arrival time of the reference trace to window around the target reflection
+    ref_offset = np.abs(gpr_model.get_rx_x_array()[ref_idx] - tx_start_x)
+    ref_arrival_time = np.sqrt(ref_offset**2 + (4 * (model_params['fracture_depth']**2))) / best_velocity
+
+    aligned_all_fine = gpr_model.residual_align_traces(
+        aligned_all, 
+        reference_idx=ref_idx,
+        window_center=ref_arrival_time, 
+        window_width=3e-9
+    )
+    plot_wiggle_traces(
+        gpr_model, 
+        aligned_all_fine, 
+        "Fine-Tuned Geometrical & Residual Aligned Traces", 
+        "plot_diff_aligned_bscan_fine.png"
+    )
                            
     # # 9. Prestack Kirchhoff Depth Migration + Envelope
     # # Geometry Setup

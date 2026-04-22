@@ -377,14 +377,156 @@ class GPRModelData:
         
         return freqs, power, phase
 
-    def run_shift_and_correlate(self, traces, depth, velocity, tx_x=None, window_width=2e-9):
+    def align_all_traces(self, traces, depth, velocity, tx_x=None, reference_idx=0):
+        """
+        Shifts all traces geometrically in the frequency domain so that the reflection
+        from a horizontal fracture at given depth becomes perfectly horizontal, 
+        aligned to the arrival time of the reference trace.
+        """
+        if len(traces) == 0: return traces
+        if tx_x is None:
+            tx_x = getattr(self, 'tx_start_x', self.width / 2.0)
+            
+        rx_array = self.get_rx_x_array()
+        if len(rx_array) > len(traces):
+            rx_array = rx_array[:len(traces)]
+            
+        # Physical offset for each trace
+        offsets = np.abs(rx_array - tx_x)
+        
+        # Expected travel time for a horizontal reflector at given depth
+        t_arrivals = np.sqrt(offsets**2 + (4 * (depth**2))) / velocity
+        
+        target_t = t_arrivals[reference_idx]
+        
+        aligned_traces = []
+        for i in range(len(traces)):
+            # delta_tau is how much later trace i arrives compared to reference
+            delta_tau = t_arrivals[i] - target_t
+            # Shift trace i backwards (negative delta_tau) so it aligns with target_t
+            shifted = self.frequency_domain_shift(traces[i], -delta_tau)
+            aligned_traces.append(shifted)
+            
+        return np.array(aligned_traces)
+
+    def estimate_best_alignment_velocity(
+        self,
+        traces,
+        depth,
+        velocity_init,
+        tx_x=None,
+        reference_idx=0,
+        window_width=3e-9,
+        search_factors=(0.85, 1.15),
+        n_trials=31,
+    ):
+        """
+        Finds the best velocity for geometric flattening by maximizing
+        trace-to-trace coherence in a reflection window after alignment.
+        """
+        if traces is None or len(traces) == 0:
+            return velocity_init, 0.0
+        if tx_x is None:
+            tx_x = getattr(self, 'tx_start_x', self.width / 2.0)
+
+        rx_array = self.get_rx_x_array()
+        if len(rx_array) > len(traces):
+            rx_array = rx_array[:len(traces)]
+
+        lo, hi = search_factors
+        vel_candidates = np.linspace(velocity_init * lo, velocity_init * hi, n_trials)
+
+        best_velocity = velocity_init
+        best_score = -np.inf
+
+        ref_offset = np.abs(rx_array[reference_idx] - tx_x)
+
+        for vel in vel_candidates:
+            aligned = self.align_all_traces(
+                traces,
+                depth=depth,
+                velocity=vel,
+                tx_x=tx_x,
+                reference_idx=reference_idx,
+            )
+
+            ref_arrival = np.sqrt(ref_offset**2 + (4 * (depth**2))) / vel
+            windows = np.array([
+                self.extract_window(tr, ref_arrival, window_width) for tr in aligned
+            ])
+
+            # Coherence score: ratio between stacked energy and average single-trace energy.
+            stack = np.mean(windows, axis=0)
+            coherent_energy = np.sum(stack**2)
+            average_energy = np.mean(np.sum(windows**2, axis=1)) + 1e-12
+            score = coherent_energy / average_energy
+
+            if score > best_score:
+                best_score = score
+                best_velocity = vel
+
+        return best_velocity, best_score
+
+    def residual_align_traces(self, traces, reference_idx=0, window_center=6.0e-9, window_width=3.0e-9):
+        """
+        Fine-tunes the alignment of given traces using cross-correlation with a reference trace.
+        Calculates and applies an empirical (data-driven) residual time shift to optimally flatten events.
+        """
+        if len(traces) == 0: return traces
+        
+        ref_trace = traces[reference_idx]
+        
+        # Extract window if specified
+        if window_center is not None and window_width is not None:
+            ref_window = self.extract_window(ref_trace, window_center, window_width)
+        else:
+            ref_window = ref_trace
+            
+        aligned = []
+        for i in range(len(traces)):
+            if i == reference_idx:
+                aligned.append(traces[i])
+                continue
+                
+            trace = traces[i]
+            if window_center is not None and window_width is not None:
+                tr_window = self.extract_window(trace, window_center, window_width)
+            else:
+                tr_window = trace
+                
+            # Cross correlate
+            cc = np.correlate(tr_window, ref_window, mode='full')
+            lags = np.arange(-len(tr_window)+1, len(tr_window))
+            
+            # Find the peak of the cross-correlation
+            peak_idx = np.argmax(cc)
+            lag_samples = lags[peak_idx]
+            
+            # Parabolic interpolation for sub-sample accuracy
+            if 0 < peak_idx < len(cc) - 1:
+                alpha, beta, gamma = cc[peak_idx-1], cc[peak_idx], cc[peak_idx+1]
+                p = 0.5 * (alpha - gamma) / (alpha - 2*beta + gamma + 1e-12)
+                sub_lag = lag_samples + p
+            else:
+                sub_lag = lag_samples
+                
+            # delta_tau is the delay of 'trace' relative to 'ref_trace' in seconds
+            delta_tau = sub_lag * self.dt
+            
+            # Shift the trace backward (negative delta_tau) so it aligns with ref_trace
+            shifted = self.frequency_domain_shift(traces[i], -delta_tau)
+            aligned.append(shifted)
+            
+        return np.array(aligned)
+
+    def run_shift_and_correlate(self, traces, depth, velocity, tx_x=None, window_width=2e-9, trace_pairs=None):
         """
         Calculates the Geometric Time Shift for a horizontal fracture at depth d.
-        Applying the Shift-and-Correlate method, traces are shifted relative to adjacent ones, 
+        Applying the Shift-and-Correlate method, traces are shifted relative to specified pairs, 
         windowed, and their XWT is computed. Returns the power and phase of the XWT.
         """
         if len(traces) < 2:
-            return None, None, None
+            return None, None, None, None
 
         if tx_x is None:
             tx_x = getattr(self, 'tx_start_x', self.width / 2.0)
@@ -397,15 +539,23 @@ class GPRModelData:
         
         xwt_power_list = []
         xwt_phase_list = []
+        shifted_windows_list = []
+        aligned_traces_full_list = []
         freqs_out = None
         
-        for i in range(len(traces) - 1):
+        if trace_pairs is None:
+            trace_pairs = [(i, i+1) for i in range(len(traces) - 1)]
+            
+        for (i, j) in trace_pairs:
+            if i >= len(traces) or j >= len(traces):
+                continue
+                
             t1 = t_arrivals[i]
-            t2 = t_arrivals[i+1]
+            t2 = t_arrivals[j]
             delta_tau = t2 - t1
             
             trace1 = traces[i]
-            trace2 = traces[i+1]
+            trace2 = traces[j]
             
             # Sub-sample frequency domain shift (move trace2 backwards by delta_tau)
             # advancing trace 2 so that its arrival perfectly matches trace 1
@@ -421,8 +571,10 @@ class GPRModelData:
             
             xwt_power_list.append(power)
             xwt_phase_list.append(phase)
+            shifted_windows_list.append((window1, window2))
+            aligned_traces_full_list.append((trace1, shifted_trace2))
             
-        return freqs_out, np.array(xwt_power_list), np.array(xwt_phase_list)
+        return freqs_out, np.array(xwt_power_list), np.array(xwt_phase_list), shifted_windows_list, aligned_traces_full_list
 
     def compute_spectral_centroid(self, traces):
         """
