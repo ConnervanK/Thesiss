@@ -3,6 +3,41 @@ import glob
 import shutil
 import numpy as np
 import subprocess
+import stat
+import time
+import sys
+
+
+def _rmtree_onerror(func, path, exc_info):
+    """Best-effort handler for read-only files during shutil.rmtree on Windows."""
+    try:
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    except Exception:
+        pass
+
+
+def safe_remove_dir(path, retries=3, delay_s=0.4):
+    """Remove a directory tree robustly on Windows without hard-failing the run."""
+    if not os.path.isdir(path):
+        return True
+
+    for attempt in range(1, retries + 1):
+        try:
+            shutil.rmtree(path, onerror=_rmtree_onerror)
+            return True
+        except PermissionError as e:
+            if attempt < retries:
+                print(f"Directory busy/locked, retrying ({attempt}/{retries}) for {path}: {e}")
+                time.sleep(delay_s)
+                continue
+            print(f"Warning: could not remove locked directory {path}: {e}")
+            return False
+        except Exception as e:
+            print(f"Warning: could not remove directory {path}: {e}")
+            return False
+
+    return False
 
 def clear_results(directory="."):
     """
@@ -22,7 +57,9 @@ def clear_results(directory="."):
     for folder in glob.glob(os.path.join(directory, "*_snaps")):
         if os.path.isdir(folder):
             try:
-                shutil.rmtree(folder)
+                removed = safe_remove_dir(folder)
+                if not removed:
+                    continue
                 print(f"Removed directory: {folder}")
             except Exception as e:
                 print(f"Error removing directory {folder}: {e}")
@@ -79,7 +116,7 @@ def create_input_file(
 
     domain_height = air_thickness + fracture_depth + thickness_fracture + depth_below_fracture
 
-    TW = (5 / f_central) + (2.5 * (domain_height - air_thickness) / c_ice)
+    TW = (5 / f_central) + (3 * (domain_height - air_thickness) / c_ice)
     n_snapshots = 36
     snapshot_time = 0.25e-9  # quarter of a nanosecond
 
@@ -248,24 +285,29 @@ def create_input_file(
 
 def run_gprmax(traces_count=1):
     print("Running gprMax with GPU support via PowerShell...")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    py_exe = sys.executable
+    alt_in = os.path.join(base_dir, "horizontal_scattering_0p5lambda.in")
+    homo_in = os.path.join(base_dir, "horizontal_scattering_homogeneous.in")
+
     snapshots_dir_alt = "horizontal_scattering_0p5lambda_snaps"
     if os.path.exists(snapshots_dir_alt):
         print(f"Removing old snapshots directory: {snapshots_dir_alt}")
-        shutil.rmtree(snapshots_dir_alt)
+        safe_remove_dir(snapshots_dir_alt)
 
     snapshots_dir_homo = "horizontal_scattering_homogeneous_snaps"
     if os.path.exists(snapshots_dir_homo):
         print(f"Removing old snapshots directory: {snapshots_dir_homo}")
-        shutil.rmtree(snapshots_dir_homo)
+        safe_remove_dir(snapshots_dir_homo)
 
     ps_command = f'''
     $envDump = cmd /c '"C:\\Progra~2\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat" && set'
     $envDump | ForEach-Object {{ $p = $_ -split '=',2; if($p.Length -eq 2){{ Set-Item -Path env:$($p[0]) -Value $p[1] }} }}
     
-    python -m gprMax "C:\\Users\\Administrator\\Thesis\\Diffraction_Experiment\\horizontal_scattering_0p5lambda.in" -n {traces_count} -gpu
+    & "{py_exe}" -m gprMax "{alt_in}" -n {traces_count} -gpu
     if ($LASTEXITCODE -ne 0) {{ exit $LASTEXITCODE }}
     
-    python -m gprMax "C:\\Users\\Administrator\\Thesis\\Diffraction_Experiment\\horizontal_scattering_homogeneous.in" -n {traces_count} -gpu
+    & "{py_exe}" -m gprMax "{homo_in}" -n {traces_count} -gpu
     if ($LASTEXITCODE -ne 0) {{ exit $LASTEXITCODE }}
     '''
     
@@ -277,16 +319,18 @@ def run_gprmax(traces_count=1):
         from tools.outputfiles_merge import merge_files
         
         # Merge alternating file
-        merge_files(r"C:\Users\Administrator\Thesis\Diffraction_Experiment\horizontal_scattering_0p5lambda", removefiles=True)
-        merged_alt = r"C:\Users\Administrator\Thesis\Diffraction_Experiment\horizontal_scattering_0p5lambda_merged.out"
-        target_alt = r"C:\Users\Administrator\Thesis\Diffraction_Experiment\horizontal_scattering_0p5lambda.out"
+        alt_base = os.path.join(base_dir, "horizontal_scattering_0p5lambda")
+        merge_files(alt_base, removefiles=True)
+        merged_alt = os.path.join(base_dir, "horizontal_scattering_0p5lambda_merged.out")
+        target_alt = os.path.join(base_dir, "horizontal_scattering_0p5lambda.out")
         if os.path.exists(merged_alt):
             shutil.move(merged_alt, target_alt)
             
         # Merge homogeneous file
-        merge_files(r"C:\Users\Administrator\Thesis\Diffraction_Experiment\horizontal_scattering_homogeneous", removefiles=True)
-        merged_homo = r"C:\Users\Administrator\Thesis\Diffraction_Experiment\horizontal_scattering_homogeneous_merged.out"
-        target_homo = r"C:\Users\Administrator\Thesis\Diffraction_Experiment\horizontal_scattering_homogeneous.out"
+        homo_base = os.path.join(base_dir, "horizontal_scattering_homogeneous")
+        merge_files(homo_base, removefiles=True)
+        merged_homo = os.path.join(base_dir, "horizontal_scattering_homogeneous_merged.out")
+        target_homo = os.path.join(base_dir, "horizontal_scattering_homogeneous.out")
         if os.path.exists(merged_homo):
             shutil.move(merged_homo, target_homo)
             

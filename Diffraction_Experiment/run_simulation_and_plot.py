@@ -7,8 +7,8 @@ from processing_OO import GPRModelData
 from plotting_OO import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections, plot_xwt_phase_arrows, plot_aligned_traces
 
 def main():
-    # Setup directory
-    target_dir = r"C:\Users\Administrator\Thesis\Diffraction_Experiment"
+    # Setup directory 
+    target_dir = r"C:\Users\Administrator\OneDrive\Thesis\Diffraction_Experiment"
     if os.path.exists(target_dir):
         os.chdir(target_dir)
         
@@ -49,15 +49,15 @@ def main():
 
     # 2. Run the simulation through the object
     # Force rerun so that modifications in forward.py take effect
-    gpr_model.run_simulation(force_rerun=False)
+    gpr_model.run_simulation(force_rerun=True)
 
     # (Optional) Plot the full domain snapshots using the attributes stored in gpr_model
-    # plot_snapshots(
-    #     gpr_model.width, gpr_model.height, gpr_model.air_thick, gpr_model.f_top, 
-    #     gpr_model.f_bottom, gpr_model.snap_time, gpr_model.dx_dy_dz, 
-    #     gpr_model.n_blocks, gpr_model.block_width, gpr_model.rx_offset,
-    #     rx_per_block=gpr_model.rx_per_block
-    # )
+    plot_snapshots(
+        gpr_model.width, gpr_model.height, gpr_model.air_thick, gpr_model.f_top, 
+        gpr_model.f_bottom, gpr_model.snap_time, gpr_model.dx_dy_dz, 
+        gpr_model.n_blocks, gpr_model.block_width, gpr_model.rx_offset,
+        rx_per_block=gpr_model.rx_per_block
+    )
 
     if len(gpr_model.time) == 0:
         print("Traces could not be loaded. Ensure the simulation generated .out files.")
