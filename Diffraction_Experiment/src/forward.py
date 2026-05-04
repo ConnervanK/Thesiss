@@ -162,7 +162,8 @@ def create_input_file(
         total_rx = n_blocks * rx_per_block
 
     # 1. Generate Alternating Input File
-    out_file_alt = 'horizontal_scattering_0p5lambda.in'
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out_file_alt = os.path.join(base_dir, 'configs', 'horizontal_scattering_0p5lambda.in')
 
     with open(out_file_alt, 'w') as f:
         f.write('#title: Horizontal Scattering Experiment')
@@ -216,7 +217,7 @@ def create_input_file(
     print(f"Created: {out_file_alt}")
 
     # 2. Generate Homogeneous Input File
-    out_file_homo = 'horizontal_scattering_homogeneous.in'
+    out_file_homo = os.path.join(base_dir, 'configs', 'horizontal_scattering_homogeneous.in')
 
     with open(out_file_homo, 'w') as f:
         f.write('#title: Horizontal Scattering Homogeneous')
@@ -285,12 +286,12 @@ def create_input_file(
 
 def run_gprmax(traces_count=1):
     print("Running gprMax with GPU support via PowerShell...")
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     py_exe = sys.executable
-    alt_in = os.path.join(base_dir, "horizontal_scattering_0p5lambda.in")
-    homo_in = os.path.join(base_dir, "horizontal_scattering_homogeneous.in")
+    alt_in = os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda.in")
+    homo_in = os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous.in")
 
-    snapshots_dir_alt = "horizontal_scattering_0p5lambda_snaps"
+    snapshots_dir_alt = os.path.join(base_dir, "data", "outputs", "horizontal_scattering_0p5lambda_snaps")
     if os.path.exists(snapshots_dir_alt):
         print(f"Removing old snapshots directory: {snapshots_dir_alt}")
         safe_remove_dir(snapshots_dir_alt)
@@ -319,19 +320,34 @@ def run_gprmax(traces_count=1):
         from tools.outputfiles_merge import merge_files
         
         # Merge alternating file
-        alt_base = os.path.join(base_dir, "horizontal_scattering_0p5lambda")
+        alt_base = os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda")
         merge_files(alt_base, removefiles=True)
-        merged_alt = os.path.join(base_dir, "horizontal_scattering_0p5lambda_merged.out")
-        target_alt = os.path.join(base_dir, "horizontal_scattering_0p5lambda.out")
+        merged_alt = os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda_merged.out")
+        target_alt = os.path.join(base_dir, "data", "outputs", "horizontal_scattering_0p5lambda.out")
         if os.path.exists(merged_alt):
             shutil.move(merged_alt, target_alt)
+        elif os.path.exists(os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda.out")):
+            shutil.move(os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda.out"), target_alt)
             
         # Merge homogeneous file
-        homo_base = os.path.join(base_dir, "horizontal_scattering_homogeneous")
+        homo_base = os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous")
         merge_files(homo_base, removefiles=True)
-        merged_homo = os.path.join(base_dir, "horizontal_scattering_homogeneous_merged.out")
-        target_homo = os.path.join(base_dir, "horizontal_scattering_homogeneous.out")
+        merged_homo = os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous_merged.out")
+        target_homo = os.path.join(base_dir, "data", "outputs", "horizontal_scattering_homogeneous.out")
         if os.path.exists(merged_homo):
             shutil.move(merged_homo, target_homo)
+        elif os.path.exists(os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous.out")):
+            shutil.move(os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous.out"), target_homo)
+
+        # Move snapshot folders to data/outputs
+        snaps_alt_src = os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda_snaps")
+        snaps_alt_dst = os.path.join(base_dir, "data", "outputs", "horizontal_scattering_0p5lambda_snaps")
+        if os.path.exists(snaps_alt_src):
+            shutil.move(snaps_alt_src, snaps_alt_dst)
+
+        snaps_homo_src = os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous_snaps")
+        snaps_homo_dst = os.path.join(base_dir, "data", "outputs", "horizontal_scattering_homogeneous_snaps")
+        if os.path.exists(snaps_homo_src):
+            shutil.move(snaps_homo_src, snaps_homo_dst)
             
         print("Merging complete.")
