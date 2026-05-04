@@ -22,7 +22,7 @@ def main():
         'conductivity_ice': 1e-6,
         'conductivity_air': 0,
         'conductivity_fracture': 1e-3, #1,
-        'fracture_depth': 0.3,
+        'fracture_depth': 0.6,
         'depth_below_fracture': 0.1,
         'air_thickness': 0.05,
         
