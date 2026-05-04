@@ -67,12 +67,12 @@ def clear_results(directory="."):
 def create_input_file(
         f_central=1.5 * 1e9,
         c=3 * 1e8,
-        permittivity_ice=6,
+        permittivity_ice=3.15,
         permittivity_air=1,
-        permittivity_fracture=6,
+        permittivity_fracture=80,
         conductivity_ice=1e-6,
         conductivity_air=0,
-        conductivity_fracture=0.001,
+        conductivity_fracture=0.01,
         fracture_depth=0.3,
         depth_below_fracture=0.1,
         air_thickness=0.05,
@@ -93,6 +93,7 @@ def create_input_file(
 
     permittivity_fracture_plus  = 1.0 # air permittivity_fracture * 0.9
     permittivity_fracture_minus = 80 # water permittivity_fracture * 1.0
+
     conductivity_fracture_plus  = 0 # air conductivity_fracture * 1.1
     conductivity_fracture_minus = 0.01 # water conductivity_fracture * 0.9
 

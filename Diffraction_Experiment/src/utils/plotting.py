@@ -258,7 +258,7 @@ def get_snapshots_data(snapshot_folder, snapshot_prefix, snapshot_indices):
         loaded_snapshots.append((snap_num, data_2d))
     return loaded_snapshots
 
-def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, save_filename, title, n_blocks=None, block_width=None, rx_per_block=1):
+def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, save_filename, title, n_blocks=None, block_width=None, rx_per_block=1, is_diff=False):
     if not loaded_snapshots:
         return
 
@@ -276,11 +276,16 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
     mid_pct_ref = max(np.percentile(np.abs(d), 99.2) for d in mid_data) if mid_data else early_abs_max
     late_pct_ref = max(np.percentile(np.abs(d), 99.7) for d in late_data) if late_data else early_abs_max
 
-    mid_abs_max = min(mid_pct_ref, early_abs_max * 0.22)
-    mid_abs_max = max(mid_abs_max, early_abs_max * 0.035)
+    if is_diff:
+        # Relax constraints for diff data so it doesn't saturate
+        mid_abs_max = mid_pct_ref
+        late_abs_max = late_pct_ref
+    else:
+        mid_abs_max = min(mid_pct_ref, early_abs_max * 0.22)
+        mid_abs_max = max(mid_abs_max, early_abs_max * 0.035)
 
-    late_abs_max = min(late_pct_ref, early_abs_max * 0.32)
-    late_abs_max = max(late_abs_max, early_abs_max * 0.06)
+        late_abs_max = min(late_pct_ref, early_abs_max * 0.32)
+        late_abs_max = max(late_abs_max, early_abs_max * 0.06)
 
     n_plots = len(loaded_snapshots)
     ncols = 2
@@ -580,7 +585,7 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
         do_plot(
             diff_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
             os.path.join('data', 'outputs', 'gpr_snapshots_result_diff.png'), 'GPR Forward Modeling Snapshots (Diff: Alternating - Homogeneous)',
-            n_blocks=n_blocks, block_width=block_width, rx_per_block=rx_per_block
+            n_blocks=n_blocks, block_width=block_width, rx_per_block=rx_per_block, is_diff=True
         )
         
     # 4. Difference Time Traces (Alternating - Homogeneous) from .out files
@@ -591,3 +596,20 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
         os.path.join('data', 'outputs', 'gpr_snapshots_result_diff_traces.png'), 'GPR Difference Time Traces (Alternating - Homogeneous)',
         rx_per_block=rx_per_block
     )
+
+def plot_csd(trace1, trace2, fs, title, save_filename, nperseg=256):
+    """
+    Plots the Cross Spectral Density (CSD) of two traces.
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    ax.csd(trace1, trace2, Fs=fs, NFFT=nperseg, scale_by_freq=True, noverlap=nperseg//2)
+    
+    ax.set_title(title, fontsize=14)
+    ax.set_xlabel('Frequency (Hz)', fontsize=12)
+    ax.set_ylabel('CSD (dB/Hz)', fontsize=12)
+    ax.grid(True, linestyle='--', alpha=0.6)
+    
+    plt.tight_layout()
+    plt.savefig(save_filename, dpi=300)
+    plt.close()

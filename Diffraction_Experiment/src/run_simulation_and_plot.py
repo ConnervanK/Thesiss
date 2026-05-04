@@ -4,7 +4,7 @@ import numpy as np
 # Import modules from our new files
 from utils.plotting import plot_snapshots
 from utils.processing import GPRModelData
-from utils.plotting import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections, plot_xwt_phase_arrows, plot_aligned_traces
+from utils.plotting import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections, plot_xwt_phase_arrows, plot_aligned_traces, plot_csd
 
 def main():
     # Setup directory 
@@ -18,10 +18,10 @@ def main():
         'c': 3 * 1e8,                        # speed of light in m/s
         'permittivity_ice': 3.15,
         'permittivity_air': 1,
-        'permittivity_fracture': 10, #80,
+        'permittivity_fracture': 80, #80,
         'conductivity_ice': 1e-6,
         'conductivity_air': 0,
-        'conductivity_fracture': 1e-3, #1,
+        'conductivity_fracture': 0.01, #1,
         'fracture_depth': 0.6,
         'depth_below_fracture': 0.1,
         'air_thickness': 0.1,
@@ -296,6 +296,21 @@ def main():
         "Fine-Tuned Geometrical & Residual Aligned Traces", 
         os.path.join("data", "outputs", "plot_diff_aligned_bscan_fine.png")
     )
+    
+    # 10. Cross Spectral Density
+    print("Computing Cross Spectral Density on two selected traces...")
+    t1_idx = 10
+    t2_idx = 11
+    if len(aligned_all_fine) > 11:
+        dt = gpr_model.time[1] - gpr_model.time[0]
+        fs = 1.0 / dt
+        plot_csd(
+            aligned_all_fine[t1_idx], 
+            aligned_all_fine[t2_idx], 
+            fs, 
+            f"Cross Spectral Density: Trace {t1_idx+1} vs {t2_idx+1}", 
+            os.path.join("data", "outputs", f"plot_diff_csd_t{t1_idx+1}_t{t2_idx+1}.png")
+        )
                            
     # # 9. Prestack Kirchhoff Depth Migration + Envelope
     # # Geometry Setup
