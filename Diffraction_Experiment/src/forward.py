@@ -6,6 +6,7 @@ import subprocess
 import stat
 import time
 import sys
+from fractions import Fraction
 
 
 def _rmtree_onerror(func, path, exc_info):
@@ -81,7 +82,10 @@ def create_input_file(
         rx_count=1,             # Number of receivers used if mode == 'bscan'
         rx_spacing=0.05,        # Receiver spacing if mode == 'bscan' and rx_count > 1
         bscan_traces=50,        # Number of traces for 'bscan'
-        bscan_step_x=0.05       # Movement step for 'bscan'
+        bscan_step_x=0.05,      # Movement step for 'bscan'
+        block_size=None,        # Absolute block size in metres. If None, uses block_size_fraction * wavelength_ice
+        block_size_fraction=(1/4),
+        time_lapse_shift=0.0    # Lateral shift (m) for the time-lapse model (must be < wavelength_ice)
     ):
     print(f"Generating gprMax input file (mode: {mode})...")
     
@@ -100,7 +104,19 @@ def create_input_file(
     permittivity_fracture_average = (permittivity_fracture_plus + permittivity_fracture_minus) / 2
     conductivity_fracture_average = (conductivity_fracture_plus + conductivity_fracture_minus) / 2
 
-    block_size = (1/4) * wavelength_ice
+    # Determine block size (meters). Prefer explicit `block_size` if provided, else use fraction.
+    if block_size is None:
+        block_size = block_size_fraction * wavelength_ice
+
+    # Create a human- and filesystem-friendly label for this block size using a rational fraction of wavelength
+    frac = block_size / wavelength_ice
+    fr = Fraction(frac).limit_denominator(32)
+    if fr.numerator == 0:
+        block_label = f"0Lambda"
+        block_label_print = "0Lambda"
+    else:
+        block_label = f"{fr.numerator}_{fr.denominator}Lambda"
+        block_label_print = f"{fr.numerator}/{fr.denominator}Lambda"
 
     wavelength_plus = (c / np.sqrt(permittivity_fracture_plus)) / f_central
     wavelength_minus = (c / np.sqrt(permittivity_fracture_minus)) / f_central
@@ -215,7 +231,7 @@ def create_input_file(
         # when adding more than exactly 127 receivers to the VTK file export.
         # f.write('\n#geometry_view: 0 0 0 {} {} {} {} {} {} horizontal_scattering_0p5lambda n'.format(domain_width, domain_height, dx_dy_dz, dx_dy_dz, dx_dy_dz, dx_dy_dz))
 
-    print(f"Created: {out_file_alt}")
+    print(f"Created: {out_file_alt}  (block size: {block_size:.4e} m -> {block_label_print})")
 
     # 2. Generate Homogeneous Input File
     out_file_homo = os.path.join(base_dir, 'configs', 'horizontal_scattering_homogeneous.in')
@@ -265,6 +281,58 @@ def create_input_file(
 
     print(f"Created: {out_file_homo}")
 
+    # 3. Optionally generate a time-lapse shifted alternating file when a small shift is provided
+    timelapse_file = None
+    if time_lapse_shift and abs(time_lapse_shift) < wavelength_ice:
+        timelapse_file = os.path.join(base_dir, 'configs', 'horizontal_scattering_0p5lambda_timelapse.in')
+        with open(timelapse_file, 'w') as f:
+            f.write('#title: Horizontal Scattering Experiment (Time-Lapse Shifted)')
+            f.write('\n#domain: {} {} {}'.format(domain_width, domain_height, dx_dy_dz))
+            f.write('\n#dx_dy_dz: {} {} {}'.format(dx_dy_dz, dx_dy_dz, dx_dy_dz))
+            f.write('\n#time_window: {}'.format(TW))
+
+            f.write('\n#material: {} {} 1 0 ice'.format(permittivity_ice, conductivity_ice))
+            f.write('\n#material: {} {} 1 0 air'.format(permittivity_air, conductivity_air))
+            f.write('\n#material: {} {} 1 0 fracture_plus'.format(permittivity_fracture_plus, conductivity_fracture_plus))
+            f.write('\n#material: {} {} 1 0 fracture_minus'.format(permittivity_fracture_minus, conductivity_fracture_minus))
+
+            f.write('\n#waveform: ricker 1 {} my_ricker'.format(f_central))
+            f.write('\n#hertzian_dipole: z {} {} 0 my_ricker'.format(tx_start_x, rx_y))
+
+            if mode == 'static':
+                rx_dx = block_width / rx_per_block
+                for i in range(n_blocks * rx_per_block):
+                    rx_x_init = (i + 0.5) * rx_dx
+                    if rx_x_init > dx_dy_dz and rx_x_init < domain_width - dx_dy_dz:
+                        f.write('\n#rx: {} {} 0'.format(rx_x_init, rx_y))
+            elif mode == 'bscan':
+                f.write('\n#src_steps: {} 0 0'.format(bscan_step_x))
+                f.write('\n#rx_steps: {} 0 0'.format(bscan_step_x))
+                for i in range(rx_count):
+                    rx_x_init = rx_start_x + i * rx_spacing
+                    f.write('\n#rx: {} {} 0'.format(rx_x_init, rx_y))
+
+            f.write('\n#box: 0 {} 0 {} {} {} air'.format(y_air_bottom, domain_width, domain_height, dx_dy_dz))
+            f.write('\n#box: 0 0 0 {} {} {} ice'.format(domain_width, y_air_bottom, dx_dy_dz))
+
+            # Shift the blocks by the requested (small) amount
+            for i in range(n_blocks):
+                x0 = i * block_width + time_lapse_shift
+                x1 = (i + 1) * block_width + time_lapse_shift if i < n_blocks - 1 else domain_width + time_lapse_shift
+                mat = 'fracture_plus' if i % 2 == 0 else 'fracture_minus'
+                f.write('\n#box: {} {} 0 {} {} {} {}'.format(x0, y_frac_min, x1, y_frac_max, dx_dy_dz, mat))
+
+            f.write('\n#python:')
+            f.write('\nfor i in range(1, {} + 1):'.format(n_snapshots))
+            f.write(
+                "\n    print('#snapshot: 0 0 0 {} {} {} {} {} {} {{}} snapshot_mid_x_{{}}'.format(i*{}, i))".format(
+                    domain_width, domain_height, dx_dy_dz, dx_dy_dz, dx_dy_dz, dx_dy_dz, snapshot_time
+                )
+            )
+            f.write('\n#end_python:')
+
+        print(f"Created time-lapse config: {timelapse_file}")
+
     output_context = {
         'domain_width': domain_width,
         'domain_height': domain_height,
@@ -283,6 +351,9 @@ def create_input_file(
         'rx_per_block': rx_per_block
     }
 
+    # Include block label metadata for downstream routing of outputs
+    output_context['block_label'] = block_label
+    output_context['block_label_print'] = block_label_print
     return output_context
 
 def run_gprmax(traces_count=1):
@@ -352,3 +423,51 @@ def run_gprmax(traces_count=1):
             shutil.move(snaps_homo_src, snaps_homo_dst)
             
         print("Merging complete.")
+
+
+def run_gprmax_to_subdir(traces_count=1, output_subdir=None):
+    """
+    Run gprMax and move produced .out and snapshot folders
+    into `data/outputs/<output_subdir>` if provided.
+    """
+    run_gprmax(traces_count=traces_count)
+
+    if output_subdir is None:
+        return
+
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    dest_dir = os.path.join(base_dir, "data", "outputs", output_subdir)
+    os.makedirs(dest_dir, exist_ok=True)
+
+    # Move known .out candidates from configs into the destination
+    candidates = [
+        os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda_merged.out"),
+        os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda.out"),
+        os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous_merged.out"),
+        os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous.out"),
+    ]
+    for src in candidates:
+        if os.path.exists(src):
+            try:
+                shutil.move(src, os.path.join(dest_dir, os.path.basename(src)))
+            except Exception:
+                pass
+
+    # Move any snapshot folders created by gprMax into the labeled subdir.
+    # gprMax writes numbered siblings like `horizontal_scattering_0p5lambda_snaps1`,
+    # `horizontal_scattering_0p5lambda_snaps2`, etc. so we move the entire family.
+    snapshot_roots = [
+        os.path.join(base_dir, "configs", "horizontal_scattering_0p5lambda_snaps"),
+        os.path.join(base_dir, "configs", "horizontal_scattering_homogeneous_snaps"),
+        os.path.join(base_dir, "data", "outputs", "horizontal_scattering_0p5lambda_snaps"),
+        os.path.join(base_dir, "data", "outputs", "horizontal_scattering_homogeneous_snaps"),
+    ]
+    for root in snapshot_roots:
+        for src in glob.glob(root + "*"):
+            if os.path.isdir(src):
+                try:
+                    shutil.move(src, os.path.join(dest_dir, os.path.basename(src)))
+                except Exception:
+                    pass
+
+    print(f"Moved gprMax outputs into: {dest_dir}")

@@ -5,6 +5,7 @@ import numpy as np
 from utils.plotting import plot_snapshots
 from utils.processing import GPRModelData
 from utils.plotting import plot_wiggle_traces, plot_fk_image, plot_cwt_image, plot_migrated_image, plot_cwt_cross_sections, plot_xwt_phase_arrows, plot_aligned_traces, plot_csd
+import forward
 
 def main():
     # Setup directory 
@@ -28,22 +29,65 @@ def main():
         
         # --- Mode selection: 'static' or 'bscan' ---
         'mode': 'static',                    # Switch to 'bscan' to run moving Tx-Rx array 
-        'rx_per_block': 2,                   # Used only if mode == 'static'
+        'rx_per_block': 1,                   # Used only if mode == 'static'
         
         # --- B-scan parameters (used if mode == 'bscan') ---
         'rx_count': 1,                       # Number of receivers in moving array
         'rx_spacing': 0.02,                  # Metres between receivers in the array
         'bscan_traces': 20,                  # Number of traces for the B-scan
         'bscan_step_x': 0.02                 # Movement step size in metres
+        ,
+        # --- Block size control ---
+        'block_size': None,                  # Absolute block size (m). If None uses fraction below.
+        'block_size_fraction': 1/6,          # Fraction of ice wavelength used when block_size is None
+        'time_lapse_shift': 0.1              # Lateral shift (m) for time-lapse variant; must be < wavelength_ice
     }
 
     # ==========================
     # Object-Oriented Processing
     # ==========================
-    # 1. Instantiate the Model Object WITH parameters
+    # 0. Generate input files and run forward model (optional). Compute block size.
+    # Compute ice wavelength for block fraction calculation
+    c = model_params['c']
+    f_central = model_params['f_central']
+    permittivity_ice = model_params['permittivity_ice']
+    c_ice = c / np.sqrt(permittivity_ice)
+    wavelength_ice = c_ice / f_central
+
+    # Determine block_size in meters
+    block_size = model_params.get('block_size', None)
+    if block_size is None:
+        block_size = model_params.get('block_size_fraction', 1/8) * wavelength_ice
+
+    # Allow user to set a small time-lapse shift (meters)
+    time_lapse_shift = model_params.get('time_lapse_shift', 0.1)
+
+    # Call forward.create_input_file to write .in files (and optional time-lapse .in)
+    call_params = model_params.copy()
+    call_params['block_size'] = block_size
+    call_params['time_lapse_shift'] = time_lapse_shift
+    output_context = forward.create_input_file(**call_params)
+
+    # Run gprMax and move outputs into a labeled subfolder for this block size
+    block_label = output_context.get('block_label', None)
+    if block_label is None:
+        block_label = f"{int(round(block_size*1e6))}um"
+    
+    # For static mode: one measurement with fixed Tx and array of Rx -> traces_count=1
+    # For bscan mode: moving Tx-Rx pair -> traces_count=bscan_traces
+    if call_params.get('mode') == 'static':
+        traces_count = 1
+    else:
+        traces_count = call_params.get('bscan_traces', 1)
+    forward.run_gprmax_to_subdir(traces_count=traces_count, output_subdir=block_label)
+
+    # 1. Instantiate the Model Object WITH parameters (pointing to output files in labeled subfolder)
+    out_alt_path = os.path.join('data', 'outputs', block_label, 'horizontal_scattering_0p5lambda.out')
+    out_homo_path = os.path.join('data', 'outputs', block_label, 'horizontal_scattering_homogeneous.out')
+
     gpr_model = GPRModelData(
-        out_alt_file=r'configs\horizontal_scattering_0p5lambda.out', 
-        out_homo_file=r'configs\horizontal_scattering_homogeneous.out',
+        out_alt_file=out_alt_path,
+        out_homo_file=out_homo_path,
         model_params=model_params
     )
 
@@ -56,7 +100,8 @@ def main():
         gpr_model.width, gpr_model.height, gpr_model.air_thick, gpr_model.f_top, 
         gpr_model.f_bottom, gpr_model.snap_time, gpr_model.dx_dy_dz, 
         gpr_model.n_blocks, gpr_model.block_width, gpr_model.rx_offset,
-        rx_per_block=gpr_model.rx_per_block
+        rx_per_block=gpr_model.rx_per_block,
+        output_dir=os.path.join('data', 'outputs', block_label)
     )
 
     if len(gpr_model.time) == 0:
@@ -239,6 +284,10 @@ def main():
     
     if freqs_xwt is not None and len(power_xwt) > 0:
         for idx, (t1, t2) in enumerate(trace_pairs_to_test):
+            # Only plot if this index was actually computed
+            if idx >= len(power_xwt):
+                print(f"Skipping traces {t1+1} & {t2+1}: not computed (only {len(power_xwt)} pairs available)")
+                continue
             # Power describes magnitude similarity, Phase arrows denote angular lead/lag
             plot_xwt_phase_arrows(gpr_model.time * 1e9, freqs_xwt, power_xwt[idx], phase_xwt[idx],
                            f"Cross-Wavelet Transform (XWT) - Traces {t1+1} & {t2+1}", os.path.join("data", "outputs", f"plot_diff_xwt_t{t1+1}_t{t2+1}.png"))
@@ -299,17 +348,17 @@ def main():
     
     # 10. Cross Spectral Density
     print("Computing Cross Spectral Density on two selected traces...")
-    t1_idx = 10
-    t2_idx = 11
+    t1_idx = 20
+    t2_idx = 30
     if len(aligned_all_fine) > 11:
-        dt = gpr_model.time[1] - gpr_model.time[0]
-        fs = 1.0 / dt
+        fs_hz = 1.0 / gpr_model.dt
         plot_csd(
             aligned_all_fine[t1_idx], 
             aligned_all_fine[t2_idx], 
-            fs, 
+            fs_hz, 
             f"Cross Spectral Density: Trace {t1_idx+1} vs {t2_idx+1}", 
-            os.path.join("data", "outputs", f"plot_diff_csd_t{t1_idx+1}_t{t2_idx+1}.png")
+            os.path.join("data", "outputs", f"plot_diff_csd_t{t1_idx+1}_t{t2_idx+1}.png"),
+            source_freq_hz=model_params['f_central']
         )
                            
     # # 9. Prestack Kirchhoff Depth Migration + Envelope

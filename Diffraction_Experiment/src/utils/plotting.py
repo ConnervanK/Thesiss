@@ -2,7 +2,9 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import glob
 import numpy as np
+from scipy.signal import csd as scipy_csd
 
 def plot_wiggle_traces(model, traces, title, save_filename):
     """Plots standard wiggle traces from the model data."""
@@ -236,7 +238,49 @@ import h5py
 
 from utils.processing import apply_svd_filter, calculate_cross_correlation, envelope, kirchhoff_migration, compute_cwt_image
 
+def _resolve_snapshot_folder(snapshot_folder, snapshot_prefix, snapshot_indices):
+    if os.path.isdir(snapshot_folder):
+        candidate = os.path.join(snapshot_folder, f'{snapshot_prefix}{snapshot_indices[0]}.vti')
+        if os.path.exists(candidate):
+            return snapshot_folder
+
+    parent_dir = os.path.dirname(snapshot_folder)
+    base_name = os.path.basename(snapshot_folder)
+    candidates = sorted(
+        folder for folder in glob.glob(os.path.join(parent_dir, f"{base_name}*"))
+        if os.path.isdir(folder)
+    )
+
+    for folder in candidates:
+        candidate = os.path.join(folder, f'{snapshot_prefix}{snapshot_indices[0]}.vti')
+        if os.path.exists(candidate):
+            return folder
+
+    # Fallback: climb to the project root and look in the sibling configs/ directory.
+    current_dir = os.path.abspath(snapshot_folder)
+    project_root = None
+    for _ in range(6):
+        current_dir = os.path.dirname(current_dir)
+        if os.path.isdir(os.path.join(current_dir, 'configs')):
+            project_root = current_dir
+            break
+
+    if project_root is not None:
+        fallback_root = os.path.join(project_root, 'configs')
+        fallback_candidates = sorted(
+            folder for folder in glob.glob(os.path.join(fallback_root, f"{base_name}*"))
+            if os.path.isdir(folder)
+        )
+        for folder in fallback_candidates:
+            candidate = os.path.join(folder, f'{snapshot_prefix}{snapshot_indices[0]}.vti')
+            if os.path.exists(candidate):
+                return folder
+
+    return snapshot_folder
+
+
 def get_snapshots_data(snapshot_folder, snapshot_prefix, snapshot_indices):
+    snapshot_folder = _resolve_snapshot_folder(snapshot_folder, snapshot_prefix, snapshot_indices)
     loaded_snapshots = []
     for snap_num in snapshot_indices:
         snapshot_path = os.path.join(snapshot_folder, f'{snapshot_prefix}{snap_num}.vti')
@@ -554,26 +598,29 @@ def plot_traces_kernel(ax, traces, time, n_blocks, block_width, title, rx_x_posi
     ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.25))
     ax.tick_params(axis='y', which='minor', length=4, color='k')
 
-def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, dx_dy_dz, n_blocks, block_width, rx_offset, rx_per_block=1):
+def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, dx_dy_dz, n_blocks, block_width, rx_offset, rx_per_block=1, output_dir=None):
+    if output_dir is None:
+        output_dir = os.path.join('data', 'outputs')
+    
     print("Plotting snapshots...")
     snapshot_prefix = 'snapshot_mid_x_'
     snapshot_indices = list(range(1, 37))
 
     # 1. Alternating snapshots
-    folder_alt = os.path.join('data', 'outputs', 'horizontal_scattering_0p5lambda_snaps')
+    folder_alt = os.path.join(output_dir, 'horizontal_scattering_0p5lambda_snaps')
     alt_data = get_snapshots_data(folder_alt, snapshot_prefix, snapshot_indices)
     do_plot(
         alt_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-        os.path.join('data', 'outputs', 'gpr_snapshots_result_alt.png'), 'GPR Forward Modeling Snapshots (Alternating Block Fracture)',
+        os.path.join(output_dir, 'gpr_snapshots_result_alt.png'), 'GPR Forward Modeling Snapshots (Alternating Block Fracture)',
         n_blocks=n_blocks, block_width=block_width, rx_per_block=rx_per_block
     )
 
     # 2. Homogeneous snapshots
-    folder_homo = os.path.join('data', 'outputs', 'horizontal_scattering_homogeneous_snaps')
+    folder_homo = os.path.join(output_dir, 'horizontal_scattering_homogeneous_snaps')
     homo_data = get_snapshots_data(folder_homo, snapshot_prefix, snapshot_indices)
     do_plot(
         homo_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-        os.path.join('data', 'outputs', 'gpr_snapshots_result_homo.png'), 'GPR Forward Modeling Snapshots (Homogeneous Background)',
+        os.path.join(output_dir, 'gpr_snapshots_result_homo.png'), 'GPR Forward Modeling Snapshots (Homogeneous Background)',
         n_blocks=n_blocks, block_width=block_width, rx_per_block=rx_per_block
     )
 
@@ -584,32 +631,69 @@ def plot_snapshots(domain_width, domain_height, air_thickness, fracture_top, fra
             diff_data.append((snap_num, data_alt - data_homo))
         do_plot(
             diff_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-            os.path.join('data', 'outputs', 'gpr_snapshots_result_diff.png'), 'GPR Forward Modeling Snapshots (Diff: Alternating - Homogeneous)',
+            os.path.join(output_dir, 'gpr_snapshots_result_diff.png'), 'GPR Forward Modeling Snapshots (Diff: Alternating - Homogeneous)',
             n_blocks=n_blocks, block_width=block_width, rx_per_block=rx_per_block, is_diff=True
         )
         
     # 4. Difference Time Traces (Alternating - Homogeneous) from .out files
     plot_time_traces(
-        os.path.join('data', 'outputs', 'horizontal_scattering_0p5lambda.out'),
-        os.path.join('data', 'outputs', 'horizontal_scattering_homogeneous.out'),
+        os.path.join(output_dir, 'horizontal_scattering_0p5lambda.out'),
+        os.path.join(output_dir, 'horizontal_scattering_homogeneous.out'),
         n_blocks, block_width, rx_offset,
-        os.path.join('data', 'outputs', 'gpr_snapshots_result_diff_traces.png'), 'GPR Difference Time Traces (Alternating - Homogeneous)',
+        os.path.join(output_dir, 'gpr_snapshots_result_diff_traces.png'), 'GPR Difference Time Traces (Alternating - Homogeneous)',
         rx_per_block=rx_per_block
     )
 
-def plot_csd(trace1, trace2, fs, title, save_filename, nperseg=256):
-    """
-    Plots the Cross Spectral Density (CSD) of two traces.
-    """
-    fig, ax = plt.subplots(figsize=(10, 6))
-    
-    ax.csd(trace1, trace2, Fs=fs, NFFT=nperseg, scale_by_freq=True, noverlap=nperseg//2)
-    
-    ax.set_title(title, fontsize=14)
-    ax.set_xlabel('Frequency (Hz)', fontsize=12)
-    ax.set_ylabel('CSD (dB/Hz)', fontsize=12)
-    ax.grid(True, linestyle='--', alpha=0.6)
-    
+def plot_csd(trace1, trace2, fs_hz, title, save_filename, nperseg=256, source_freq_hz=None, x_limit_ghz=10.0):
+    """Plots cross-spectral magnitude and phase difference for two traces."""
+    freqs_hz, cross_psd = scipy_csd(
+        trace1,
+        trace2,
+        fs=fs_hz,
+        nperseg=nperseg,
+        noverlap=nperseg // 2,
+        scaling='density',
+        return_onesided=True,
+    )
+
+    freqs_ghz = freqs_hz / 1e9
+    magnitude_db = 10.0 * np.log10(np.maximum(np.abs(cross_psd), 1e-30))
+    phase_rad = np.unwrap(np.angle(cross_psd))
+
+    fig, (ax_mag, ax_phase) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+
+    ax_mag.plot(freqs_ghz, magnitude_db, color='navy', linewidth=1.2)
+    ax_mag.set_ylabel('Magnitude (dB/Hz)', fontsize=12)
+    ax_mag.set_title(title, fontsize=14)
+    ax_mag.grid(True, linestyle='--', alpha=0.6)
+    if source_freq_hz is not None:
+        ax_mag.axvline(source_freq_hz / 1e9, color='crimson', linestyle='--', linewidth=1.2, alpha=0.8)
+
+    ax_phase.plot(freqs_ghz, phase_rad, color='darkgreen', linewidth=1.2)
+    ax_phase.set_xlabel('Frequency (GHz)', fontsize=12)
+    ax_phase.set_ylabel('Phase Difference (rad)', fontsize=12)
+    ax_phase.grid(True, linestyle='--', alpha=0.6)
+    if source_freq_hz is not None:
+        ax_phase.axvline(source_freq_hz / 1e9, color='crimson', linestyle='--', linewidth=1.2, alpha=0.8)
+
+    if x_limit_ghz is not None:
+        upper_limit = min(x_limit_ghz, float(freqs_ghz[-1]))
+        ax_phase.set_xlim(0, upper_limit)
+
+        visible_mask = freqs_ghz <= upper_limit
+        if np.any(visible_mask):
+            visible_mag = magnitude_db[visible_mask]
+            visible_phase = phase_rad[visible_mask]
+
+            mag_max = float(np.max(visible_mag))
+            mag_min = float(np.min(visible_mag))
+            ax_mag.set_ylim(mag_min - 5.0, mag_max + 5.0)
+
+            phase_min = float(np.min(visible_phase))
+            phase_max = float(np.max(visible_phase))
+            phase_pad = max(1.0, 0.05 * (phase_max - phase_min))
+            ax_phase.set_ylim(phase_min - phase_pad, phase_max + phase_pad)
+
     plt.tight_layout()
     plt.savefig(save_filename, dpi=300)
-    plt.close()
+    plt.close(fig)
