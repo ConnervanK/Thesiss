@@ -6,14 +6,14 @@ import glob
 import numpy as np
 from scipy.signal import csd as scipy_csd
 
-def plot_wiggle_traces(model, traces, title, save_filename):
+def plot_wiggle_traces(model, traces, title, save_filename, domain_width=None):
     """Plots standard wiggle traces from the model data."""
     fig, ax = plt.subplots(figsize=(10, 8))
     
     max_val = np.max(np.abs(traces))
     if max_val == 0: max_val = 1
     
-    rx_dx = model.block_width / model.rx_per_block
+    rx_dx = model.rx_spacing if hasattr(model, 'rx_spacing') and model.rx_spacing > 0 else (model.block_width / model.rx_per_block)
     scale = (rx_dx * 0.8) / max_val
     rx_x_arr = model.get_rx_x_array()
     
@@ -30,7 +30,15 @@ def plot_wiggle_traces(model, traces, title, save_filename):
         ax.axvline(x_base, color='k', linestyle=':', linewidth=0.5, alpha=0.3)
         
     ax.set_ylim(model.time[-1], model.time[0])
-    ax.set_xlim(0, model.n_blocks * model.block_width)
+    
+    if domain_width:
+        ax.set_xlim(0, domain_width)
+    else:
+        min_x = min(rx_x_arr[0], model.tx_start_x) if hasattr(model, 'tx_start_x') else rx_x_arr[0]
+        max_x = max(rx_x_arr[-1], model.tx_start_x) if hasattr(model, 'tx_start_x') else rx_x_arr[-1]
+        padding = (max_x - min_x) * 0.1 if max_x > min_x else rx_dx * 2
+        ax.set_xlim(min_x - padding, max_x + padding)
+
     ax.set_xlabel('Length (m)', fontsize=12)
     ax.set_ylabel('Time (ns)', fontsize=12)
     ax.set_title(title, fontsize=14, weight='bold')

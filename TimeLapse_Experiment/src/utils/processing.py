@@ -10,123 +10,80 @@ class GPRModelData:
     Object-oriented wrapper for a GPR forward modeling result.
     It encapsulates the data loading, difference tracing, and all processing steps.
     """
-    def __init__(self, out_alt_file, out_homo_file, model_params=None):
-        self.out_alt_file = out_alt_file
-        self.out_homo_file = out_homo_file
+    def __init__(self, baseline_file, timelapse_file, tx_start_x=0.0, rx_start_x=0.0, rx_spacing=0.0, rx_count=50, model_params=None):
+        self.baseline_file = baseline_file
+        self.timelapse_file = timelapse_file
         self.model_params = model_params
+        self.tx_start_x = tx_start_x
+        self.rx_start_x = rx_start_x
+        self.rx_spacing = rx_spacing
+        self.rx_count = rx_count
         
-        self.n_blocks = None
-        self.block_width = None
-        self.rx_offset = None
+        self.n_blocks = model_params.get('n_blocks', 10) if model_params else 10
+        self.block_width = model_params.get('block_width', 0.1) if model_params else 0.1
+        self.rx_offset = 0
         self.rx_per_block = 1
         
         self.time = None
         self.dt = None
+        self.baseline_traces = None
+        self.timelapse_traces = None
         self.diff_traces = None
-        self.homo_traces = None
-        self.alt_traces = None
 
     def run_simulation(self, force_rerun=False):
-        """Runs the full GPRMax pipeline and loads the resulting data."""
-        if self.model_params is None:
-            raise ValueError("No model parameters specified.")
-        
-        if not force_rerun and os.path.exists(self.out_alt_file) and os.path.exists(self.out_homo_file):
-            print(f"Loading existing `{self.out_alt_file}` and `{self.out_homo_file}`, skipping simulation.")
-            out_ctx = create_input_file(**self.model_params)
-        else:
-            clear_results()
-            out_ctx = create_input_file(**self.model_params)
-            run_gprmax(traces_count=out_ctx['actual_traces'])
+        pass # Migrated out
 
-        # Store attributes
-        self.width = out_ctx['domain_width']
-        self.height = out_ctx['domain_height']
-        self.air_thick = out_ctx['air_thickness']
-        self.f_top = out_ctx['fracture_top']
-        self.f_bottom = out_ctx['fracture_bottom']
-        self.snap_time = out_ctx['snapshot_time']
-        self.dx_dy_dz = out_ctx['dx_dy_dz']
-        self.n_blocks = out_ctx['n_blocks']
-        self.block_width = out_ctx['block_width']
-        self.rx_offset = out_ctx['rx_start_x'] - out_ctx['tx_start_x']
-        self.rx_per_block = out_ctx.get('rx_per_block', 1)
-        self.mode = out_ctx.get('mode', 'static')
-        
-        self.total_rx = out_ctx['total_rx']
-        self.actual_traces = out_ctx['actual_traces']
+    def load_data(self):
+        with h5py.File(self.baseline_file, 'r') as fa, h5py.File(self.timelapse_file, 'r') as fh:
+            if 'rxs' in fa and 'rxs' in fh:
+                rx_group_alt = fa['rxs']
+                rx_group_homo = fh['rxs']
+            else:
+                rx_group_alt = fa
+                rx_group_homo = fh
 
-        self._load_data()
+            rx_keys_alt = [k for k in rx_group_alt.keys() if k.startswith('rx') and k != 'rxs']
+            rx_keys_homo = [k for k in rx_group_homo.keys() if k.startswith('rx') and k != 'rxs']
 
-    def _load_data(self):
-        with h5py.File(self.out_alt_file, 'r') as fa, h5py.File(self.out_homo_file, 'r') as fh:
-            iterations = fa.attrs['Iterations']
-            self.dt = fa.attrs['dt']
-            self.time = np.arange(iterations) * self.dt * 1e9 # in ns
+            def extract_number(k):
+                return int(k[2:])
+
+            rx_keys_alt.sort(key=extract_number)
+            rx_keys_homo.sort(key=extract_number)
             
-            diff_traces = []
-            homo_traces = []
             alt_traces = []
+            homo_traces = []
             
-            # The receivers in the output are simply numbered rx1, rx2... up to total_rx
-            for i in range(self.total_rx):
-                rx_name = f'rx{i+1}'
-                # Inside 'static' mode, we used to skip the rx1 because rx1 was positioned at source location. 
-                # Our rewritten logic outputs the exact array receivers natively, so we just start from rx1!
-                try:
-                    ez_alt = np.array(fa['rxs'][rx_name]['Ez'])
-                    ez_homo = np.array(fh['rxs'][rx_name]['Ez'])
-                    
-                    if self.actual_traces > 1:
-                        # B-scan matrix: shape (time, traces). 
-                        # We transpose so Shape: (traces, time), which handles as an ensemble of classical trace arrays.
-                        ez_alt = ez_alt.T
-                        ez_homo = ez_homo.T
-                        
-                        # In the single rx case (bscan with 1 source, 1 rx), 'diff_traces' 
-                        # is logically 'ez_alt_transposed', behaving like a single pseudo-spatial array 
-                        # just like 'static'.
-                        if self.total_rx == 1:
-                            alt_traces = ez_alt
-                            homo_traces = ez_homo
-                            diff_traces = ez_alt - ez_homo
-                        else:
-                            alt_traces.append(ez_alt)
-                            homo_traces.append(ez_homo)
-                            diff_traces.append(ez_alt - ez_homo)
-                    else:
-                        # shape is (time,), just append
-                        alt_traces.append(ez_alt)
-                        homo_traces.append(ez_homo)
-                        diff_traces.append(ez_alt - ez_homo)
-                except KeyError as e:
-                    print(f"Warning: {rx_name} not found in output files.")
-                    pass
-                    
-            self.diff_traces = np.array(diff_traces)
-            self.homo_traces = np.array(homo_traces)
-            self.alt_traces = np.array(alt_traces)
+            self.dt = fa.attrs['dt']
+            iterations = fa.attrs['Iterations']
+            self.time = np.arange(iterations) * self.dt
             
+            for key_alt, key_homo in zip(rx_keys_alt, rx_keys_homo):
+                if isinstance(rx_group_alt[key_alt], h5py.Group):
+                    ez_alt = np.array(rx_group_alt[key_alt]['Ez'])
+                    ez_homo = np.array(rx_group_homo[key_homo]['Ez'])
+                else:
+                    ez_alt = np.array(rx_group_alt[key_alt])
+                    ez_homo = np.array(rx_group_homo[key_homo])
+                alt_traces.append(ez_alt)
+                homo_traces.append(ez_homo)
+            
+            self.baseline_traces = np.array(alt_traces)
+            self.timelapse_traces = np.array(homo_traces)
+            
+            if len(self.baseline_traces.shape) == 3:
+                self.baseline_traces = self.baseline_traces[:, 0, :]
+                self.timelapse_traces = self.timelapse_traces[:, 0, :]
+            
+            self.diff_traces = self.subtract()
+
+    def subtract(self, other_traces=None):
+        if other_traces is not None:
+             return self.baseline_traces - other_traces
+        return self.baseline_traces - self.timelapse_traces
+
     def get_rx_x_array(self):
-        """Returns the x-coordinates of the receiver array."""
-        if hasattr(self, 'mode') and self.mode == 'bscan':
-            # If a B-scan, the 'x_array' for plotting AVO/Migrations corresponds to the moving array steps.
-            bscan_step_x = self.model_params.get('bscan_step_x', 0.05)
-            # Adjust offset relative to start 
-            start_x = self.model_params.get('tx_start_x', 0.0) 
-            return np.array([start_x + i * bscan_step_x for i in range(self.actual_traces)])
-        else:
-            rx_dx = self.block_width / self.rx_per_block
-            domain_width = self.width
-            dx_dy_dz = self.dx_dy_dz
-            valid_x = []
-            for i in range(self.n_blocks * self.rx_per_block):
-                rx_x_init = (i + 0.5) * rx_dx
-                if rx_x_init > dx_dy_dz and rx_x_init < domain_width - dx_dy_dz:
-                    valid_x.append(rx_x_init)
-            
-            # Match the length to what was actually loaded (in case partial loading happened)
-            return np.array(valid_x)[:len(self.diff_traces)]
+        return np.linspace(self.rx_start_x, self.rx_start_x + self.rx_spacing * max(1, self.rx_count - 1), self.rx_count)
 
     def apply_svd_filter(self, n_components_to_mute=1):
         """Mutes the first N singular components of the difference traces."""
@@ -194,8 +151,8 @@ class GPRModelData:
         
     def cross_correlate(self):
         """Cross correlates the average homogeneous trace with each difference trace."""
-        if len(self.homo_traces) == 0 or len(self.diff_traces) == 0: return []
-        avg_homo = np.mean(self.homo_traces, axis=0)
+        if len(self.baseline_traces) == 0 or len(self.diff_traces) == 0: return []
+        avg_homo = np.mean(self.baseline_traces, axis=0)
         cc_traces = []
         for diff_trace in self.diff_traces:
             cc = np.correlate(diff_trace, avg_homo, mode='same')
