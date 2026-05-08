@@ -15,14 +15,12 @@ def main():
 
     print(f"Loading data from {block_label}...")
     
-    # Re-compute EXACT parameters from forward.py to ensure plots align centrally:
+    # Fixed geometry matching forward.py: domain always 4 m, source at x=2 m
     f_central = 1.5e9
     c = 3e8
     permittivity_ice = 3.15
     c_ice = c / np.sqrt(permittivity_ice)
     wavelength_ice = c_ice / f_central
-    rx_spread = 2.0
-    domain_width_approx = max(12 * wavelength_ice, rx_spread + 2.0)
     
     air_thickness = 0.1
     fracture_depth = 0.6
@@ -33,15 +31,17 @@ def main():
     min_wavelength = min(wavelength_plus, wavelength_minus)
     thickness_fracture = min_wavelength / 5
     depth_below_fracture = 0.1
-    domain_height_approx = air_thickness + fracture_depth + thickness_fracture + depth_below_fracture
     
+    # Fixed domain and source position (must match forward.py)
+    domain_width = 4.0
+    domain_height_approx = air_thickness + fracture_depth + thickness_fracture + depth_below_fracture
     dx_dy_dz = min_wavelength / 30
-    domain_width = np.ceil(domain_width_approx / dx_dy_dz) * dx_dy_dz
     domain_height = np.ceil(domain_height_approx / dx_dy_dz) * dx_dy_dz
 
-    # Use the correctly snapped bounds matching forward.py
-    tx_start_x = domain_width / 2
-    rx_count = 50
+    # Fixed transmitter and receiver positions
+    tx_start_x = 2.0
+    rx_count = 20
+    rx_spread = 2.0
     rx_start_x = tx_start_x - (rx_spread / 2.0)
     rx_spacing = rx_spread / max(1, rx_count - 1)
     
@@ -150,7 +150,8 @@ def main():
         do_plot(
             baseline_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
             os.path.join(out_plot_dir, "baseline_snapshots.png"), "Baseline GPR Snapshots",
-            n_blocks=n_blocks, block_width=block_width
+            n_blocks=n_blocks, block_width=block_width,
+            tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
         )
     
     timelapse_snaps_dir = os.path.join(out_plot_dir, "horizontal_scattering_timelapse_snaps")
@@ -159,7 +160,8 @@ def main():
         do_plot(
             timelapse_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
             os.path.join(out_plot_dir, "timelapse_snapshots.png"), "Time-Lapse GPR Snapshots",
-            n_blocks=n_blocks, block_width=block_width
+            n_blocks=n_blocks, block_width=block_width,
+            tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
         )
         
         # Difference Snapshots
@@ -174,7 +176,8 @@ def main():
         do_plot(
             diff_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
             os.path.join(out_plot_dir, "difference_snapshots.png"), "Difference GPR Snapshots",
-            n_blocks=n_blocks, block_width=block_width, is_diff=True
+            n_blocks=n_blocks, block_width=block_width, is_diff=True,
+            tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
         )
 
     print("Process and Plot complete.")

@@ -95,7 +95,8 @@ def create_input_file(
     dx_min = min_wavelength / 30
     dx_dy_dz = dx_min
 
-    domain_width = max(12 * wavelength_ice, rx_spread + 2.0)
+    # Fixed geometry: domain always 4 m wide, source at x=2 m
+    domain_width = 4.0
     domain_height = air_thickness + fracture_depth + thickness_fracture + depth_below_fracture
 
     domain_width = np.ceil(domain_width / dx_dy_dz) * dx_dy_dz
@@ -119,7 +120,8 @@ def create_input_file(
     if n_blocks % 2 != 0: n_blocks += 1
     block_width = domain_width / n_blocks
 
-    tx_start_x = domain_width / 2
+    # Fixed transmitter position at center
+    tx_start_x = 2.0
     rx_y = y_air_bottom
     
     rx_min_x = tx_start_x - (rx_spread / 2.0)

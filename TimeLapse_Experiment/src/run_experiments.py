@@ -17,7 +17,7 @@ class GPRExperiment:
         print(f"Running simulation for {block_label}...")
         forward.run_gprmax_to_subdir(output_subdir=block_label)
         print(f"Finished simulation for {block_label}.")
-
+ 
 def main():
     target_dir = r"c:\Users\Administrator\OneDrive\Thesis\TimeLapse_Experiment"
     
@@ -36,7 +36,7 @@ def main():
         'air_thickness': 0.1,
         
         # Receivers positioning
-        'rx_count': 50,
+        'rx_count': 20,
         'rx_spread': 2.0,  # Spread uniformly across 2 meters centered at source
         
         # Block size settings

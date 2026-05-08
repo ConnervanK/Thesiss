@@ -310,7 +310,7 @@ def get_snapshots_data(snapshot_folder, snapshot_prefix, snapshot_indices):
         loaded_snapshots.append((snap_num, data_2d))
     return loaded_snapshots
 
-def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, save_filename, title, n_blocks=None, block_width=None, rx_per_block=1, is_diff=False):
+def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time, save_filename, title, n_blocks=None, block_width=None, rx_per_block=1, is_diff=False, tx_x=2.0, rx_start_x=1.0, rx_spacing=None, rx_count=None):
     if not loaded_snapshots:
         return
 
@@ -397,14 +397,20 @@ def do_plot(loaded_snapshots, domain_width, domain_height, air_thickness, fractu
                                        
             # Illustrate tx/rx positions
             y_air_bottom = domain_height - air_thickness
-            tx_x = domain_width / 2
             
-            # Draw receivers
-            rx_dx = block_width / rx_per_block
-            for rx_idx in range(n_blocks * rx_per_block):
-                rx_x = (rx_idx + 0.5) * rx_dx
-                if rx_x > 0 and rx_x < domain_width:
-                    ax.plot(rx_x, y_air_bottom, 'g^', markersize=3, alpha=0.6, label='Receiver' if (rx_idx == 0 and i == 0) else '')
+            # Draw receivers at actual positions (if provided)
+            if rx_start_x is not None and rx_spacing is not None and rx_count is not None:
+                for rx_idx in range(rx_count):
+                    rx_x = rx_start_x + rx_idx * rx_spacing
+                    if rx_x > 0 and rx_x < domain_width:
+                        ax.plot(rx_x, y_air_bottom, 'g^', markersize=3, alpha=0.6, label='Receiver' if (rx_idx == 0 and i == 0) else '')
+            else:
+                # Fallback: use block-based distribution if receiver params not provided
+                rx_dx = block_width / rx_per_block
+                for rx_idx in range(n_blocks * rx_per_block):
+                    rx_x = (rx_idx + 0.5) * rx_dx
+                    if rx_x > 0 and rx_x < domain_width:
+                        ax.plot(rx_x, y_air_bottom, 'g^', markersize=3, alpha=0.6, label='Receiver' if (rx_idx == 0 and i == 0) else '')
                     
             # Draw transmitter
             ax.plot(tx_x, y_air_bottom, 'r*', markersize=6, alpha=0.9, label='Transmitter' if i == 0 else '')
