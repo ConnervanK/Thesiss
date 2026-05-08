@@ -8,7 +8,7 @@ def main():
     target_dir = r"c:\Users\Administrator\OneDrive\Thesis\TimeLapse_Experiment"
     os.chdir(target_dir)
 
-    block_label = "1_4Lambda"
+    block_label = "1_8Lambda"
     
     baseline_file = os.path.join(target_dir, "data", "outputs", block_label, "horizontal_scattering_baseline.out")
     timelapse_file = os.path.join(target_dir, "data", "outputs", block_label, "horizontal_scattering_timelapse.out")
@@ -55,6 +55,13 @@ def main():
     )
     
     gpr_model.load_data()
+
+    # Refresh plotting geometry from the loaded files so receiver count changes
+    # in the forward model are reflected in every downstream plot.
+    rx_count = gpr_model.baseline_traces.shape[0]
+    rx_spacing = rx_spread / max(1, rx_count - 1)
+    gpr_model.rx_count = rx_count
+    gpr_model.rx_spacing = rx_spacing
 
     out_plot_dir = os.path.join("data", "outputs", block_label)
     

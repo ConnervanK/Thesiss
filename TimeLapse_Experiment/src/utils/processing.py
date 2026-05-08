@@ -74,6 +74,9 @@ class GPRModelData:
             if len(self.baseline_traces.shape) == 3:
                 self.baseline_traces = self.baseline_traces[:, 0, :]
                 self.timelapse_traces = self.timelapse_traces[:, 0, :]
+
+            # Keep the receiver count synchronized with the loaded data.
+            self.rx_count = len(self.baseline_traces)
             
             self.diff_traces = self.subtract()
 

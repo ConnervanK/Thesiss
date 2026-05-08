@@ -36,11 +36,11 @@ def main():
         'air_thickness': 0.1,
         
         # Receivers positioning
-        'rx_count': 20,
+        'rx_count': 50,
         'rx_spread': 2.0,  # Spread uniformly across 2 meters centered at source
         
         # Block size settings
-        'block_size_fraction': 1/4, # 1/4 of central wavelength in ice
+        'block_size_fraction': 1/8, # 1/4 of central wavelength in ice
         
         # Time-lapse settings
         'time_lapse_shift': 0.05    # Shift in meters
