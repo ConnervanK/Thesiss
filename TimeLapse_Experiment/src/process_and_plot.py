@@ -1,8 +1,8 @@
 import os
 import numpy as np
-from utils.processing import GPRModelData
+from utils.processing import GPRModelData, kirchhoff_migration
 from utils.plotting import plot_wiggle_traces, plot_csd, plot_xwt_phase_arrows
-from utils.plotting import plot_aligned_traces, get_snapshots_data, do_plot
+from utils.plotting import plot_aligned_traces, get_snapshots_data, do_plot, plot_migrated_image
 
 def main():
     target_dir = r"c:\Users\Administrator\OneDrive\Thesis\TimeLapse_Experiment"
@@ -78,7 +78,29 @@ def main():
                        "Difference Traces", os.path.join(out_plot_dir, "difference_traces.png"),
                        domain_width=domain_width)
 
-    # 2. Trace Alignment
+    # 2. Kirchhoff Migration on Difference Traces
+    print("Running Kirchhoff migration on difference traces...")
+    assert gpr_model.time is not None, "load_data() must be called before migration"
+    max_migration_depth = fracture_depth + thickness_fracture + depth_below_fracture
+    migrated_img, z_array = kirchhoff_migration(
+        gpr_model.baseline_traces,
+        time_array=gpr_model.time * 1e9,      # kirchhoff_migration expects ns
+        rx_x_array=gpr_model.get_rx_x_array(),
+        tx_x=tx_start_x,
+        velocity=c_ice,
+        max_depth=max_migration_depth,
+        dz=0.005,
+    )
+    plot_migrated_image(
+        migrated_img, z_array,
+        rx_x_array=gpr_model.get_rx_x_array(),
+        tx_x=tx_start_x,
+        title="Kirchhoff Migration — Difference Traces",
+        save_filename=os.path.join(out_plot_dir, "kirchhoff_migration.png"),
+        fracture_depth=fracture_depth,
+    )
+
+    # 3. Trace Alignment
     v_ice = c_ice
     ref_idx = rx_count // 2
     
@@ -138,56 +160,56 @@ def main():
             os.path.join(out_plot_dir, "xwt_phase.png")
         )
 
-    # 5. Plot Snapshots
-    print("Plotting Snapshots...")
-    snapshot_time = 0.25e-9
-    snapshot_prefix = 'snapshot_mid_x_'
-    snapshot_indices = list(range(1, 37))
-    n_blocks = int(np.round(domain_width / (0.25 * wavelength_ice)))
-    if n_blocks < 1: n_blocks = 1
-    if n_blocks % 2 != 0: n_blocks += 1
-    block_width = domain_width / n_blocks
+    # # 5. Plot Snapshots
+    # print("Plotting Snapshots...")
+    # snapshot_time = 0.25e-9
+    # snapshot_prefix = 'snapshot_mid_x_'
+    # snapshot_indices = list(range(1, 37))
+    # n_blocks = int(np.round(domain_width / (0.25 * wavelength_ice)))
+    # if n_blocks < 1: n_blocks = 1
+    # if n_blocks % 2 != 0: n_blocks += 1
+    # block_width = domain_width / n_blocks
 
-    fracture_top = air_thickness + fracture_depth
-    fracture_bottom = fracture_top + thickness_fracture
+    # fracture_top = air_thickness + fracture_depth
+    # fracture_bottom = fracture_top + thickness_fracture
 
-    baseline_snaps_dir = os.path.join(out_plot_dir, "horizontal_scattering_baseline_snaps")
-    baseline_snaps_data = get_snapshots_data(baseline_snaps_dir, snapshot_prefix, snapshot_indices)
-    if baseline_snaps_data:
-        do_plot(
-            baseline_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-            os.path.join(out_plot_dir, "baseline_snapshots.png"), "Baseline GPR Snapshots",
-            n_blocks=n_blocks, block_width=block_width,
-            tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
-        )
+    # baseline_snaps_dir = os.path.join(out_plot_dir, "horizontal_scattering_baseline_snaps")
+    # baseline_snaps_data = get_snapshots_data(baseline_snaps_dir, snapshot_prefix, snapshot_indices)
+    # if baseline_snaps_data:
+    #     do_plot(
+    #         baseline_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
+    #         os.path.join(out_plot_dir, "baseline_snapshots.png"), "Baseline GPR Snapshots",
+    #         n_blocks=n_blocks, block_width=block_width,
+    #         tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
+    #     )
     
-    timelapse_snaps_dir = os.path.join(out_plot_dir, "horizontal_scattering_timelapse_snaps")
-    timelapse_snaps_data = get_snapshots_data(timelapse_snaps_dir, snapshot_prefix, snapshot_indices)
-    if timelapse_snaps_data:
-        do_plot(
-            timelapse_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-            os.path.join(out_plot_dir, "timelapse_snapshots.png"), "Time-Lapse GPR Snapshots",
-            n_blocks=n_blocks, block_width=block_width,
-            tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
-        )
+    # timelapse_snaps_dir = os.path.join(out_plot_dir, "horizontal_scattering_timelapse_snaps")
+    # timelapse_snaps_data = get_snapshots_data(timelapse_snaps_dir, snapshot_prefix, snapshot_indices)
+    # if timelapse_snaps_data:
+    #     do_plot(
+    #         timelapse_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
+    #         os.path.join(out_plot_dir, "timelapse_snapshots.png"), "Time-Lapse GPR Snapshots",
+    #         n_blocks=n_blocks, block_width=block_width,
+    #         tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
+    #     )
         
-        # Difference Snapshots
-        diff_snaps_data = []
-        for i in range(len(baseline_snaps_data)):
-            snap_num = baseline_snaps_data[i][0]
-            b_data = baseline_snaps_data[i][1]
-            t_data = timelapse_snaps_data[i][1]
-            diff_data = t_data - b_data
-            diff_snaps_data.append((snap_num, diff_data))
+    #     # Difference Snapshots
+    #     diff_snaps_data = []
+    #     for i in range(len(baseline_snaps_data)):
+    #         snap_num = baseline_snaps_data[i][0]
+    #         b_data = baseline_snaps_data[i][1]
+    #         t_data = timelapse_snaps_data[i][1]
+    #         diff_data = t_data - b_data
+    #         diff_snaps_data.append((snap_num, diff_data))
         
-        do_plot(
-            diff_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
-            os.path.join(out_plot_dir, "difference_snapshots.png"), "Difference GPR Snapshots",
-            n_blocks=n_blocks, block_width=block_width, is_diff=True,
-            tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
-        )
+    #     do_plot(
+    #         diff_snaps_data, domain_width, domain_height, air_thickness, fracture_top, fracture_bottom, snapshot_time,
+    #         os.path.join(out_plot_dir, "difference_snapshots.png"), "Difference GPR Snapshots",
+    #         n_blocks=n_blocks, block_width=block_width, is_diff=True,
+    #         tx_x=tx_start_x, rx_start_x=rx_start_x, rx_spacing=rx_spacing, rx_count=rx_count
+    #     )
 
-    print("Process and Plot complete.")
+    # print("Process and Plot complete.")
 
 if __name__ == "__main__":
     main()

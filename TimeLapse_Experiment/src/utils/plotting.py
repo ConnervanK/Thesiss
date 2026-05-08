@@ -182,24 +182,41 @@ def plot_xwt_phase_arrows(time, freqs, xwt_power, xwt_phase, title, save_filenam
     # Overlay phase arrows. Subsample to avoid clutter.
     dt = max(1, len(time) // 30)
     df = max(1, len(freqs) // 15)
-    
+
     X, Y = np.meshgrid(time, freqs_ghz)
-    
+
+    # Subsampled phase matrix
     Ph = xwt_phase[::df, ::dt]
-    # Ph = angle(W1) - angle(W2). If T1 leads T2 by 90deg, phase is pi/2.
-    # sin(pi/2) = 1, cos = 0. To make it point down, we use V = -sin.
+    # Unit direction vectors from phase
     U = np.cos(Ph)
     V = -np.sin(Ph)
-    
-    # Adjust scale to keep arrows proportional
-    # Find a good scale heuristic based on plot bounds
+
+    # Compensate for axis aspect: frequency axis is in GHz, time in ns
     time_span = time[-1] - time[0]
     freq_span = freqs_ghz[-1] - freqs_ghz[0]
     span_ratio = freq_span / time_span if time_span > 0 else 1.0
 
-    ax.quiver(X[::df, ::dt], Y[::df, ::dt], U, V * span_ratio, 
-              angles='xy', pivot='mid', 
-              color='black', scale=70, width=0.003, headwidth=3, headlength=4, alpha=0.7)
+    # Scale V to match aspect so arrows visually represent phase direction
+    V_scaled = V * span_ratio
+
+    # Normalize vectors to unit length, then set a fixed arrow length in data units
+    norm = np.sqrt(U**2 + V_scaled**2)
+    norm[norm == 0] = 1.0
+    U_unit = U / norm
+    V_unit = V_scaled / norm
+
+    # Arrow length chosen as a fraction of the smaller plot span to keep arrows readable
+    arrow_len = max(0.02, 0.06 * min(time_span, freq_span))
+
+    U_plot = U_unit * arrow_len
+    V_plot = V_unit * arrow_len
+
+    # Use scale_units='xy' and scale=1 to interpret U_plot/V_plot in data coordinates
+    ax.quiver(
+        X[::df, ::dt], Y[::df, ::dt], U_plot, V_plot,
+        angles='xy', pivot='mid', color='black', scale=1, scale_units='xy',
+        width=0.003, headwidth=3, headlength=4, alpha=0.8
+    )
     
     ax.set_title(title)
     ax.set_xlabel("Time (ns)", fontsize=12)
@@ -216,24 +233,81 @@ def plot_xwt_phase_arrows(time, freqs, xwt_power, xwt_phase, title, save_filenam
     plt.close(fig)
     print(f"Plot saved to: {save_filename}")
 
-def plot_migrated_image(model, img, depths, title, save_filename):
+def plot_migrated_image(migrated_img, z_array, rx_x_array, tx_x, title, save_filename, fracture_depth=None):
     fig, ax = plt.subplots(figsize=(10, 6))
-    
+
+    vlim = np.percentile(np.abs(migrated_img), 99)
+    if vlim == 0:
+        vlim = 1.0
+
     im = ax.imshow(
-        img, aspect='auto', cmap='hot', 
-        extent=[0, model.n_blocks * model.block_width, np.max(depths), np.min(depths)]
+        migrated_img, aspect='auto', cmap='seismic',
+        extent=[rx_x_array[0], rx_x_array[-1], z_array[-1], z_array[0]],
+        vmin=-vlim, vmax=vlim,
+        origin='upper'
     )
-    
-    ax.set_title(title)
-    ax.set_xlabel('Length (m)', fontsize=12)
+
+    if fracture_depth is not None:
+        ax.axhline(fracture_depth, color='lime', linestyle='--', linewidth=1.2,
+                   label=f'Fracture depth ({fracture_depth:.2f} m)')
+
+    ax.plot(tx_x, z_array[0], 'r*', markersize=10, zorder=5, label='Tx')
+    ax.legend(loc='upper right', fontsize=9)
+
+    ax.set_title(title, fontsize=14, weight='bold')
+    ax.set_xlabel('x (m)', fontsize=12)
     ax.set_ylabel('Depth (m)', fontsize=12)
+
     cbar = fig.colorbar(im, ax=ax, pad=0.02)
-    cbar.set_label('Energy / Amplitude', fontsize=10)
-    
+    cbar.set_label('Amplitude', fontsize=10)
+
     plt.tight_layout()
     plt.savefig(save_filename, bbox_inches='tight', dpi=300)
     plt.close(fig)
     print(f"Plot saved to: {save_filename}")
+
+
+def plot_bscan_section(traces, time, x_array, title, save_filename,
+                       fracture_depth=None, velocity=None, tx_rx_offset=0.0):
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    time_ns = time * 1e9
+    vlim = np.percentile(np.abs(traces), 99)
+    if vlim == 0:
+        vlim = 1.0
+
+    im = ax.imshow(
+        traces.T,
+        aspect='auto',
+        cmap='seismic',
+        origin='upper',
+        vmin=-vlim,
+        vmax=vlim,
+        extent=[x_array[0], x_array[-1], time_ns[-1], time_ns[0]],
+    )
+
+    if fracture_depth is not None and velocity is not None:
+        half = tx_rx_offset / 2.0
+        t_frac_ns = np.sqrt(half**2 + fracture_depth**2) * 2 / velocity * 1e9
+        ax.axhline(t_frac_ns, color='lime', linestyle='--', linewidth=1.2,
+                   label=f'Expected fracture arrival ({t_frac_ns:.2f} ns)')
+        ax.legend(loc='upper right', fontsize=9)
+
+    ax.set_title(title, fontsize=14, weight='bold')
+    ax.set_xlabel('Midpoint position (m)', fontsize=12)
+    ax.set_ylabel('Two-way travel time (ns)', fontsize=12)
+
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.25))
+    ax.tick_params(axis='y', which='minor', length=4, color='k')
+
+    cbar = fig.colorbar(im, ax=ax, pad=0.02)
+    cbar.set_label('Amplitude (V/m)', fontsize=10)
+
+    plt.tight_layout()
+    plt.savefig(save_filename, bbox_inches='tight', dpi=300)
+    plt.close(fig)
+    print(f"Plot saved to: {save_filename}")
+
 
 import os
 import matplotlib
