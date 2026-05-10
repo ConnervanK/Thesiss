@@ -233,25 +233,41 @@ def plot_xwt_phase_arrows(time, freqs, xwt_power, xwt_phase, title, save_filenam
     plt.close(fig)
     print(f"Plot saved to: {save_filename}")
 
-def plot_migrated_image(migrated_img, z_array, rx_x_array, tx_x, title, save_filename, fracture_depth=None):
+def plot_migrated_image(migrated_img, z_array, rx_x_array, tx_x, title, save_filename,
+                        fracture_depth=None, envelope=True):
+    from scipy.signal import hilbert as _hilbert
+
+    if envelope:
+        display_img = np.abs(_hilbert(migrated_img, axis=0))
+        cmap = 'hot_r'
+        vlim = np.percentile(display_img, 99)
+        if vlim == 0:
+            vlim = 1.0
+        vmin, vmax = 0, vlim
+        cbar_label = 'Envelope amplitude'
+    else:
+        display_img = migrated_img
+        cmap = 'seismic'
+        vlim = np.percentile(np.abs(migrated_img), 99)
+        if vlim == 0:
+            vlim = 1.0
+        vmin, vmax = -vlim, vlim
+        cbar_label = 'Amplitude'
+
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    vlim = np.percentile(np.abs(migrated_img), 99)
-    if vlim == 0:
-        vlim = 1.0
-
     im = ax.imshow(
-        migrated_img, aspect='auto', cmap='seismic',
+        display_img, aspect='auto', cmap=cmap,
         extent=[rx_x_array[0], rx_x_array[-1], z_array[-1], z_array[0]],
-        vmin=-vlim, vmax=vlim,
+        vmin=vmin, vmax=vmax,
         origin='upper'
     )
 
     if fracture_depth is not None:
-        ax.axhline(fracture_depth, color='lime', linestyle='--', linewidth=1.2,
+        ax.axhline(fracture_depth, color='cyan', linestyle='--', linewidth=1.2,
                    label=f'Fracture depth ({fracture_depth:.2f} m)')
 
-    ax.plot(tx_x, z_array[0], 'r*', markersize=10, zorder=5, label='Tx')
+    ax.plot(tx_x, z_array[0], 'b*', markersize=10, zorder=5, label='Tx')
     ax.legend(loc='upper right', fontsize=9)
 
     ax.set_title(title, fontsize=14, weight='bold')
@@ -259,7 +275,7 @@ def plot_migrated_image(migrated_img, z_array, rx_x_array, tx_x, title, save_fil
     ax.set_ylabel('Depth (m)', fontsize=12)
 
     cbar = fig.colorbar(im, ax=ax, pad=0.02)
-    cbar.set_label('Amplitude', fontsize=10)
+    cbar.set_label(cbar_label, fontsize=10)
 
     plt.tight_layout()
     plt.savefig(save_filename, bbox_inches='tight', dpi=300)

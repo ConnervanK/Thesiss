@@ -707,54 +707,58 @@ def envelope(traces):
     amplitude_envelope = np.abs(analytic_signal)
     return amplitude_envelope
 
-def kirchhoff_migration(traces, time_array, rx_x_array, tx_x, velocity, max_depth, dz=0.005):
+def kirchhoff_migration(traces, time_array, rx_x_array, tx_x, velocity, max_depth, dz=0.005,
+                        max_angle_deg=65.0, apply_obliquity=True):
     """
     Prestack Depth Migration for a common shot gather.
     traces: 2D array (num_receivers, num_time_steps)
-    time_array: 1D array of time (seconds)
+    time_array: 1D array of time in nanoseconds
     rx_x_array: 1D array of receiver x-coordinates (meters)
     tx_x: float, transmitter x-coordinate (meters)
     velocity: propagation velocity (meters/second)
     max_depth: float, maximum depth to migrate (meters)
     dz: vertical step size for output (meters)
+    max_angle_deg: aperture mute — skip contributions beyond this angle from vertical (degrees)
+    apply_obliquity: weight each contribution by the average cosine of incidence angles
     Returns:
         migrated_image: 2D array (depth_steps, rx_x_steps)
         z_array: 1D array of depths
     """
     dt = time_array[1] - time_array[0]
     z_array = np.arange(0, max_depth + dz, dz)
-    
-    num_rx = len(rx_x_array)
-    num_out_x = num_rx
-    x_out_array = rx_x_array # We migrate to the same horizontal positions as the receivers
-    
-    migrated_image = np.zeros((len(z_array), num_out_x))
-    
-    # We do a simple diffraction summation (Kirchhoff)
+    x_out_array = rx_x_array
+
+    migrated_image = np.zeros((len(z_array), len(x_out_array)))
+    cos_min = np.cos(np.deg2rad(max_angle_deg))
+
     for iz, z in enumerate(z_array):
         if z == 0:
             continue
         for ix_out, x_out in enumerate(x_out_array):
-            # For this image point (x_out, z), calculate distance from TX
             dist_tx = np.sqrt((x_out - tx_x)**2 + z**2)
-            
-            # Loop over all receivers (traces) and sum the corresponding travel time amplitude
+            cos_tx = z / dist_tx
+
+            # Aperture mute on the transmitter leg
+            if cos_tx < cos_min:
+                continue
+
             for irx, rx_x in enumerate(rx_x_array):
+                if irx >= traces.shape[0]:
+                    continue
                 dist_rx = np.sqrt((x_out - rx_x)**2 + z**2)
-                
-                # Total travel time from tx -> diffractor -> rx
-                t_total_sec = (dist_tx + dist_rx) / velocity
-                
-                # time_array is in nanoseconds, so we convert t_total to nanoseconds
-                t_total_ns = t_total_sec * 1e9
-                
-                # Find the index in the time trace
+                cos_rx = z / dist_rx
+
+                # Aperture mute on the receiver leg
+                if cos_rx < cos_min:
+                    continue
+
+                t_total_ns = (dist_tx + dist_rx) / velocity * 1e9
                 t_idx = int(np.round((t_total_ns - time_array[0]) / dt))
-                
+
                 if 0 <= t_idx < len(time_array):
-                    # Add the trace amplitude to the output image point
-                    migrated_image[iz, ix_out] += traces[irx, t_idx]
-                    
+                    w = (cos_tx + cos_rx) * 0.5 if apply_obliquity else 1.0
+                    migrated_image[iz, ix_out] += w * traces[irx, t_idx]
+
     return migrated_image, z_array
 
 def calculate_cross_correlation(homo_traces, diff_traces):

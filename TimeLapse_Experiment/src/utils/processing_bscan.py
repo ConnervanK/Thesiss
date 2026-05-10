@@ -137,7 +137,8 @@ class GPRBScanData:
     # Migration
     # ------------------------------------------------------------------
 
-    def kirchhoff_migration_bscan(self, traces, velocity, max_depth, dz=0.005):
+    def kirchhoff_migration_bscan(self, traces, velocity, max_depth, dz=0.005,
+                                   max_angle_deg=65.0, apply_obliquity=True):
         """
         Common-offset Kirchhoff depth migration.
 
@@ -145,8 +146,9 @@ class GPRBScanData:
         t = (dist(x_out, tx_i) + dist(x_out, rx_i)) / velocity,
         where tx_i and rx_i are the positions of the moving Tx/Rx pair for trace i.
 
-        time_array (self.time) is in seconds; velocity in m/s.
-        The output x-axis is the midpoint array.
+        self.time is in seconds; velocity in m/s.
+        max_angle_deg: aperture mute — skip contributions beyond this angle from vertical.
+        apply_obliquity: weight each contribution by the average cosine of incidence angles.
         """
         assert self.time is not None, "load_data() must be called first"
         time_ns = self.time * 1e9
@@ -158,6 +160,7 @@ class GPRBScanData:
 
         z_array = np.arange(0, max_depth + dz, dz)
         migrated = np.zeros((len(z_array), len(midpoints)))
+        cos_min = np.cos(np.deg2rad(max_angle_deg))
 
         for iz, z in enumerate(z_array):
             if z == 0:
@@ -166,9 +169,16 @@ class GPRBScanData:
                 for i in range(len(traces)):
                     dist_tx = np.sqrt((x_out - tx_arr[i]) ** 2 + z ** 2)
                     dist_rx = np.sqrt((x_out - rx_arr[i]) ** 2 + z ** 2)
+                    cos_tx = z / dist_tx
+                    cos_rx = z / dist_rx
+
+                    if cos_tx < cos_min or cos_rx < cos_min:
+                        continue
+
                     t_ns = (dist_tx + dist_rx) / velocity * 1e9
                     t_idx = int(np.round((t_ns - time_ns[0]) / dt_ns))
                     if 0 <= t_idx < traces.shape[1]:
-                        migrated[iz, ix_out] += traces[i, t_idx]
+                        w = (cos_tx + cos_rx) * 0.5 if apply_obliquity else 1.0
+                        migrated[iz, ix_out] += w * traces[i, t_idx]
 
         return migrated, z_array
