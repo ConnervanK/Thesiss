@@ -1,0 +1,1101 @@
+=== STDOUT ===
+
+=== Electromagnetic modelling software based on the Finite-Difference Time-Domain (FDTD) method 
+
+    www.gprmax.com   __  __
+     __ _ _ __  _ __|  \/  | __ ___  __
+    / _` | '_ \| '__| |\/| |/ _` \ \/ /
+   | (_| | |_) | |  | |  | | (_| |>  <
+    \__, | .__/|_|  |_|  |_|\__,_/_/\_\\
+    |___/|_|
+                     v3.1.7 (Big Smoke)
+
+ Copyright (C) 2015-2023: The University of Edinburgh
+ Authors: Craig Warren and Antonis Giannopoulos
+
+ gprMax is free software: you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software
+  Foundation, either version 3 of the License, or (at your option) any later
+  version.
+ gprMax is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License along with
+  gprMax.  If not, see www.gnu.org/licenses.
+
+Host: ADMINIT-2O2O4GE | unknown unknown | unknown x unknown (8 cores, 16 cores with Hyper-Threading) | 31.9GiB RAM | Windows 11 (64-bit)
+GPU(s) detected: 0 - NVIDIA GeForce RTX 5060, 7.96GiB
+
+--- Model 1/1, input file: C:\Users\Administrator\OneDrive\Thesis\TimeLapse_Notebooks\resolution_study\study_0p5lambda\backprop\backprop.in 
+
+Constants/variables used/available for Python scripting: {c: 299792458.0, current_model_run: 1, e0: 8.8541878188e-12, inputfile: C:\Users\Administrator\OneDrive\Thesis\TimeLapse_Notebooks\resolution_study\study_0p5lambda\backprop\backprop.in, m0: 1.25663706127e-06, number_model_runs: 1, z0: 376.7303134118051}
+
+Model title: FDTD time-reversal backprop  study_0p5lambda  xs1=1.971583m  xs2=2.028233m  eps_r_bp=12.6
+Number of CPU (OpenMP) threads: 8
+GPU solving using: 0 - NVIDIA GeForce RTX 5060
+Spatial discretisation: 0.0007454 x 0.0007454 x 0.0007454m
+Domain size: 4 x 0.0007454 x 0.8m (5366 x 1 x 1073 = 5.75772e+06 cells)
+Mode: 2D TMy
+Time step (at CFL limit): 1.75814e-12 secs
+Time window: 1.5e-08 secs (8533 iterations)
+
+Excitation file: C:\Users\Administrator\OneDrive\Thesis\TimeLapse_Notebooks\resolution_study\study_0p5lambda\backprop\excitation.txt
+User waveform waveform_000 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_001 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_002 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_003 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_004 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_005 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_006 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_007 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_008 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_009 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_010 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_011 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_012 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_013 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_014 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_015 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_016 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_017 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_018 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_019 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_020 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_021 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_022 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_023 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_024 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_025 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_026 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_027 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_028 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_029 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_030 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_031 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_032 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_033 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_034 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_035 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_036 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_037 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_038 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_039 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_040 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_041 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_042 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_043 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_044 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_045 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_046 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_047 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_048 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_049 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_050 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_051 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_052 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_053 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_054 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_055 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_056 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_057 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_058 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_059 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_060 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_061 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_062 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_063 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_064 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_065 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_066 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_067 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_068 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_069 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_070 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_071 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_072 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_073 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_074 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_075 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_076 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_077 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_078 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_079 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_080 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_081 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_082 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_083 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_084 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_085 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_086 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_087 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_088 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_089 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_090 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_091 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_092 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_093 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_094 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_095 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_096 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_097 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_098 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_099 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_100 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_101 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_102 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_103 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_104 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_105 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_106 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_107 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_108 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_109 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_110 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_111 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_112 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_113 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_114 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_115 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_116 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_117 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_118 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_119 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_120 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_121 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_122 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_123 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_124 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_125 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_126 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_127 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_128 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_129 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_130 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_131 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_132 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_133 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_134 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_135 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_136 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_137 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_138 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_139 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_140 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_141 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_142 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_143 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_144 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_145 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_146 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_147 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_148 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_149 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_150 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_151 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_152 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_153 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_154 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_155 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_156 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_157 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_158 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_159 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_160 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_161 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_162 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_163 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_164 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_165 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_166 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_167 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_168 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_169 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_170 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_171 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_172 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_173 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_174 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_175 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_176 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_177 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_178 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_179 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_180 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_181 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_182 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_183 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_184 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_185 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_186 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_187 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_188 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_189 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_190 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_191 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_192 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_193 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_194 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_195 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_196 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_197 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_198 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_199 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_200 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_201 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_202 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_203 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_204 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_205 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_206 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_207 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_208 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_209 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_210 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_211 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_212 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_213 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_214 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_215 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_216 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_217 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_218 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_219 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_220 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_221 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_222 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_223 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_224 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_225 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_226 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_227 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_228 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_229 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_230 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_231 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_232 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_233 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_234 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_235 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_236 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_237 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_238 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_239 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_240 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_241 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_242 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_243 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_244 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_245 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_246 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_247 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_248 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_249 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_250 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_251 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_252 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_253 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_254 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_255 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_256 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_257 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_258 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_259 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_260 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_261 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_262 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_263 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_264 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_265 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_266 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_267 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+User waveform waveform_268 created using user-defined time array and, if required, interpolation parameters (kind: linear, fill value: nan).
+
+WARNING: '#hertzian_dipole: y 0.5009088 0.0003727 0.0007454 waveform_000' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.500909m, 0m, 0.0007454m, using waveform waveform_000 created.
+WARNING: '#hertzian_dipole: y 0.5120898 0.0003727 0.0007454 waveform_001' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.51209m, 0m, 0.0007454m, using waveform waveform_001 created.
+WARNING: '#hertzian_dipole: y 0.5232708 0.0003727 0.0007454 waveform_002' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.523271m, 0m, 0.0007454m, using waveform waveform_002 created.
+WARNING: '#hertzian_dipole: y 0.5344518 0.0003727 0.0007454 waveform_003' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.534452m, 0m, 0.0007454m, using waveform waveform_003 created.
+WARNING: '#hertzian_dipole: y 0.5456328 0.0003727 0.0007454 waveform_004' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.545633m, 0m, 0.0007454m, using waveform waveform_004 created.
+WARNING: '#hertzian_dipole: y 0.5568138 0.0003727 0.0007454 waveform_005' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.556814m, 0m, 0.0007454m, using waveform waveform_005 created.
+WARNING: '#hertzian_dipole: y 0.5679948 0.0003727 0.0007454 waveform_006' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.567995m, 0m, 0.0007454m, using waveform waveform_006 created.
+WARNING: '#hertzian_dipole: y 0.5791758 0.0003727 0.0007454 waveform_007' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.579176m, 0m, 0.0007454m, using waveform waveform_007 created.
+WARNING: '#hertzian_dipole: y 0.5903568 0.0003727 0.0007454 waveform_008' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.590357m, 0m, 0.0007454m, using waveform waveform_008 created.
+WARNING: '#hertzian_dipole: y 0.6015378 0.0003727 0.0007454 waveform_009' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.601538m, 0m, 0.0007454m, using waveform waveform_009 created.
+WARNING: '#hertzian_dipole: y 0.6127188 0.0003727 0.0007454 waveform_010' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.612719m, 0m, 0.0007454m, using waveform waveform_010 created.
+WARNING: '#hertzian_dipole: y 0.6238998 0.0003727 0.0007454 waveform_011' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.6239m, 0m, 0.0007454m, using waveform waveform_011 created.
+WARNING: '#hertzian_dipole: y 0.6350808 0.0003727 0.0007454 waveform_012' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.635081m, 0m, 0.0007454m, using waveform waveform_012 created.
+WARNING: '#hertzian_dipole: y 0.6462618 0.0003727 0.0007454 waveform_013' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.646262m, 0m, 0.0007454m, using waveform waveform_013 created.
+WARNING: '#hertzian_dipole: y 0.6574428 0.0003727 0.0007454 waveform_014' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.657443m, 0m, 0.0007454m, using waveform waveform_014 created.
+WARNING: '#hertzian_dipole: y 0.6686238 0.0003727 0.0007454 waveform_015' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.668624m, 0m, 0.0007454m, using waveform waveform_015 created.
+WARNING: '#hertzian_dipole: y 0.6798048 0.0003727 0.0007454 waveform_016' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.679805m, 0m, 0.0007454m, using waveform waveform_016 created.
+WARNING: '#hertzian_dipole: y 0.6909858 0.0003727 0.0007454 waveform_017' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.690986m, 0m, 0.0007454m, using waveform waveform_017 created.
+WARNING: '#hertzian_dipole: y 0.7021668 0.0003727 0.0007454 waveform_018' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.702167m, 0m, 0.0007454m, using waveform waveform_018 created.
+WARNING: '#hertzian_dipole: y 0.7133478 0.0003727 0.0007454 waveform_019' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.713348m, 0m, 0.0007454m, using waveform waveform_019 created.
+WARNING: '#hertzian_dipole: y 0.7245288 0.0003727 0.0007454 waveform_020' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.724529m, 0m, 0.0007454m, using waveform waveform_020 created.
+WARNING: '#hertzian_dipole: y 0.7357098 0.0003727 0.0007454 waveform_021' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.73571m, 0m, 0.0007454m, using waveform waveform_021 created.
+WARNING: '#hertzian_dipole: y 0.7468908 0.0003727 0.0007454 waveform_022' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.746891m, 0m, 0.0007454m, using waveform waveform_022 created.
+WARNING: '#hertzian_dipole: y 0.7580718 0.0003727 0.0007454 waveform_023' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.758072m, 0m, 0.0007454m, using waveform waveform_023 created.
+WARNING: '#hertzian_dipole: y 0.7692528 0.0003727 0.0007454 waveform_024' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.769253m, 0m, 0.0007454m, using waveform waveform_024 created.
+WARNING: '#hertzian_dipole: y 0.7804338 0.0003727 0.0007454 waveform_025' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.780434m, 0m, 0.0007454m, using waveform waveform_025 created.
+WARNING: '#hertzian_dipole: y 0.7916148 0.0003727 0.0007454 waveform_026' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.791615m, 0m, 0.0007454m, using waveform waveform_026 created.
+WARNING: '#hertzian_dipole: y 0.8027958 0.0003727 0.0007454 waveform_027' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.802796m, 0m, 0.0007454m, using waveform waveform_027 created.
+WARNING: '#hertzian_dipole: y 0.8139768 0.0003727 0.0007454 waveform_028' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.813977m, 0m, 0.0007454m, using waveform waveform_028 created.
+WARNING: '#hertzian_dipole: y 0.8251578 0.0003727 0.0007454 waveform_029' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.825158m, 0m, 0.0007454m, using waveform waveform_029 created.
+WARNING: '#hertzian_dipole: y 0.8363388 0.0003727 0.0007454 waveform_030' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.836339m, 0m, 0.0007454m, using waveform waveform_030 created.
+WARNING: '#hertzian_dipole: y 0.8475198 0.0003727 0.0007454 waveform_031' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.84752m, 0m, 0.0007454m, using waveform waveform_031 created.
+WARNING: '#hertzian_dipole: y 0.8587008 0.0003727 0.0007454 waveform_032' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.858701m, 0m, 0.0007454m, using waveform waveform_032 created.
+WARNING: '#hertzian_dipole: y 0.8698818 0.0003727 0.0007454 waveform_033' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.869882m, 0m, 0.0007454m, using waveform waveform_033 created.
+WARNING: '#hertzian_dipole: y 0.8810628 0.0003727 0.0007454 waveform_034' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.881063m, 0m, 0.0007454m, using waveform waveform_034 created.
+WARNING: '#hertzian_dipole: y 0.8922438 0.0003727 0.0007454 waveform_035' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.892244m, 0m, 0.0007454m, using waveform waveform_035 created.
+WARNING: '#hertzian_dipole: y 0.9034248 0.0003727 0.0007454 waveform_036' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.903425m, 0m, 0.0007454m, using waveform waveform_036 created.
+WARNING: '#hertzian_dipole: y 0.9146058 0.0003727 0.0007454 waveform_037' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.914606m, 0m, 0.0007454m, using waveform waveform_037 created.
+WARNING: '#hertzian_dipole: y 0.9257868 0.0003727 0.0007454 waveform_038' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.925787m, 0m, 0.0007454m, using waveform waveform_038 created.
+WARNING: '#hertzian_dipole: y 0.9369678 0.0003727 0.0007454 waveform_039' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.936968m, 0m, 0.0007454m, using waveform waveform_039 created.
+WARNING: '#hertzian_dipole: y 0.9481488 0.0003727 0.0007454 waveform_040' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.948149m, 0m, 0.0007454m, using waveform waveform_040 created.
+WARNING: '#hertzian_dipole: y 0.9593298 0.0003727 0.0007454 waveform_041' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.95933m, 0m, 0.0007454m, using waveform waveform_041 created.
+WARNING: '#hertzian_dipole: y 0.9705108 0.0003727 0.0007454 waveform_042' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.970511m, 0m, 0.0007454m, using waveform waveform_042 created.
+WARNING: '#hertzian_dipole: y 0.9816918 0.0003727 0.0007454 waveform_043' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.981692m, 0m, 0.0007454m, using waveform waveform_043 created.
+WARNING: '#hertzian_dipole: y 0.9928728 0.0003727 0.0007454 waveform_044' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 0.992873m, 0m, 0.0007454m, using waveform waveform_044 created.
+WARNING: '#hertzian_dipole: y 1.0040538 0.0003727 0.0007454 waveform_045' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.00405m, 0m, 0.0007454m, using waveform waveform_045 created.
+WARNING: '#hertzian_dipole: y 1.0152348 0.0003727 0.0007454 waveform_046' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.01523m, 0m, 0.0007454m, using waveform waveform_046 created.
+WARNING: '#hertzian_dipole: y 1.0264158 0.0003727 0.0007454 waveform_047' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.02642m, 0m, 0.0007454m, using waveform waveform_047 created.
+WARNING: '#hertzian_dipole: y 1.0375968 0.0003727 0.0007454 waveform_048' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.0376m, 0m, 0.0007454m, using waveform waveform_048 created.
+WARNING: '#hertzian_dipole: y 1.0487778 0.0003727 0.0007454 waveform_049' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.04878m, 0m, 0.0007454m, using waveform waveform_049 created.
+WARNING: '#hertzian_dipole: y 1.0599588 0.0003727 0.0007454 waveform_050' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.05996m, 0m, 0.0007454m, using waveform waveform_050 created.
+WARNING: '#hertzian_dipole: y 1.0711398 0.0003727 0.0007454 waveform_051' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.07114m, 0m, 0.0007454m, using waveform waveform_051 created.
+WARNING: '#hertzian_dipole: y 1.0823208 0.0003727 0.0007454 waveform_052' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.08232m, 0m, 0.0007454m, using waveform waveform_052 created.
+WARNING: '#hertzian_dipole: y 1.0935018 0.0003727 0.0007454 waveform_053' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.0935m, 0m, 0.0007454m, using waveform waveform_053 created.
+WARNING: '#hertzian_dipole: y 1.1046828 0.0003727 0.0007454 waveform_054' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.10468m, 0m, 0.0007454m, using waveform waveform_054 created.
+WARNING: '#hertzian_dipole: y 1.1158638 0.0003727 0.0007454 waveform_055' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.11586m, 0m, 0.0007454m, using waveform waveform_055 created.
+WARNING: '#hertzian_dipole: y 1.1270448 0.0003727 0.0007454 waveform_056' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.12704m, 0m, 0.0007454m, using waveform waveform_056 created.
+WARNING: '#hertzian_dipole: y 1.1382258 0.0003727 0.0007454 waveform_057' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.13823m, 0m, 0.0007454m, using waveform waveform_057 created.
+WARNING: '#hertzian_dipole: y 1.1494068 0.0003727 0.0007454 waveform_058' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.14941m, 0m, 0.0007454m, using waveform waveform_058 created.
+WARNING: '#hertzian_dipole: y 1.1605878 0.0003727 0.0007454 waveform_059' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.16059m, 0m, 0.0007454m, using waveform waveform_059 created.
+WARNING: '#hertzian_dipole: y 1.1717688 0.0003727 0.0007454 waveform_060' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.17177m, 0m, 0.0007454m, using waveform waveform_060 created.
+WARNING: '#hertzian_dipole: y 1.1829498 0.0003727 0.0007454 waveform_061' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.18295m, 0m, 0.0007454m, using waveform waveform_061 created.
+WARNING: '#hertzian_dipole: y 1.1941308 0.0003727 0.0007454 waveform_062' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.19413m, 0m, 0.0007454m, using waveform waveform_062 created.
+WARNING: '#hertzian_dipole: y 1.2053118 0.0003727 0.0007454 waveform_063' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.20531m, 0m, 0.0007454m, using waveform waveform_063 created.
+WARNING: '#hertzian_dipole: y 1.2164928 0.0003727 0.0007454 waveform_064' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.21649m, 0m, 0.0007454m, using waveform waveform_064 created.
+WARNING: '#hertzian_dipole: y 1.2276738 0.0003727 0.0007454 waveform_065' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.22767m, 0m, 0.0007454m, using waveform waveform_065 created.
+WARNING: '#hertzian_dipole: y 1.2388548 0.0003727 0.0007454 waveform_066' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.23885m, 0m, 0.0007454m, using waveform waveform_066 created.
+WARNING: '#hertzian_dipole: y 1.2500358 0.0003727 0.0007454 waveform_067' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.25004m, 0m, 0.0007454m, using waveform waveform_067 created.
+WARNING: '#hertzian_dipole: y 1.2612168 0.0003727 0.0007454 waveform_068' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.26122m, 0m, 0.0007454m, using waveform waveform_068 created.
+WARNING: '#hertzian_dipole: y 1.2723978 0.0003727 0.0007454 waveform_069' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.2724m, 0m, 0.0007454m, using waveform waveform_069 created.
+WARNING: '#hertzian_dipole: y 1.2835788 0.0003727 0.0007454 waveform_070' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.28358m, 0m, 0.0007454m, using waveform waveform_070 created.
+WARNING: '#hertzian_dipole: y 1.2947598 0.0003727 0.0007454 waveform_071' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.29476m, 0m, 0.0007454m, using waveform waveform_071 created.
+WARNING: '#hertzian_dipole: y 1.3059408 0.0003727 0.0007454 waveform_072' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.30594m, 0m, 0.0007454m, using waveform waveform_072 created.
+WARNING: '#hertzian_dipole: y 1.3171218 0.0003727 0.0007454 waveform_073' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.31712m, 0m, 0.0007454m, using waveform waveform_073 created.
+WARNING: '#hertzian_dipole: y 1.3283028 0.0003727 0.0007454 waveform_074' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.3283m, 0m, 0.0007454m, using waveform waveform_074 created.
+WARNING: '#hertzian_dipole: y 1.3394838 0.0003727 0.0007454 waveform_075' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.33948m, 0m, 0.0007454m, using waveform waveform_075 created.
+WARNING: '#hertzian_dipole: y 1.3506648 0.0003727 0.0007454 waveform_076' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.35066m, 0m, 0.0007454m, using waveform waveform_076 created.
+WARNING: '#hertzian_dipole: y 1.3618458 0.0003727 0.0007454 waveform_077' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.36185m, 0m, 0.0007454m, using waveform waveform_077 created.
+WARNING: '#hertzian_dipole: y 1.3730268 0.0003727 0.0007454 waveform_078' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.37303m, 0m, 0.0007454m, using waveform waveform_078 created.
+WARNING: '#hertzian_dipole: y 1.3842078 0.0003727 0.0007454 waveform_079' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.38421m, 0m, 0.0007454m, using waveform waveform_079 created.
+WARNING: '#hertzian_dipole: y 1.3953888 0.0003727 0.0007454 waveform_080' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.39539m, 0m, 0.0007454m, using waveform waveform_080 created.
+WARNING: '#hertzian_dipole: y 1.4065698 0.0003727 0.0007454 waveform_081' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.40657m, 0m, 0.0007454m, using waveform waveform_081 created.
+WARNING: '#hertzian_dipole: y 1.4177508 0.0003727 0.0007454 waveform_082' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.41775m, 0m, 0.0007454m, using waveform waveform_082 created.
+WARNING: '#hertzian_dipole: y 1.4289318 0.0003727 0.0007454 waveform_083' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.42893m, 0m, 0.0007454m, using waveform waveform_083 created.
+WARNING: '#hertzian_dipole: y 1.4401128 0.0003727 0.0007454 waveform_084' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.44011m, 0m, 0.0007454m, using waveform waveform_084 created.
+WARNING: '#hertzian_dipole: y 1.4512938 0.0003727 0.0007454 waveform_085' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.45129m, 0m, 0.0007454m, using waveform waveform_085 created.
+WARNING: '#hertzian_dipole: y 1.4624748 0.0003727 0.0007454 waveform_086' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.46247m, 0m, 0.0007454m, using waveform waveform_086 created.
+WARNING: '#hertzian_dipole: y 1.4736558 0.0003727 0.0007454 waveform_087' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.47366m, 0m, 0.0007454m, using waveform waveform_087 created.
+WARNING: '#hertzian_dipole: y 1.4848368 0.0003727 0.0007454 waveform_088' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.48484m, 0m, 0.0007454m, using waveform waveform_088 created.
+WARNING: '#hertzian_dipole: y 1.4960178 0.0003727 0.0007454 waveform_089' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.49602m, 0m, 0.0007454m, using waveform waveform_089 created.
+WARNING: '#hertzian_dipole: y 1.5071988 0.0003727 0.0007454 waveform_090' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.5072m, 0m, 0.0007454m, using waveform waveform_090 created.
+WARNING: '#hertzian_dipole: y 1.5183798 0.0003727 0.0007454 waveform_091' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.51838m, 0m, 0.0007454m, using waveform waveform_091 created.
+WARNING: '#hertzian_dipole: y 1.5295608 0.0003727 0.0007454 waveform_092' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.52956m, 0m, 0.0007454m, using waveform waveform_092 created.
+WARNING: '#hertzian_dipole: y 1.5407418 0.0003727 0.0007454 waveform_093' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.54074m, 0m, 0.0007454m, using waveform waveform_093 created.
+WARNING: '#hertzian_dipole: y 1.5519228 0.0003727 0.0007454 waveform_094' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.55192m, 0m, 0.0007454m, using waveform waveform_094 created.
+WARNING: '#hertzian_dipole: y 1.5631038 0.0003727 0.0007454 waveform_095' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.5631m, 0m, 0.0007454m, using waveform waveform_095 created.
+WARNING: '#hertzian_dipole: y 1.5742848 0.0003727 0.0007454 waveform_096' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.57428m, 0m, 0.0007454m, using waveform waveform_096 created.
+WARNING: '#hertzian_dipole: y 1.5854658 0.0003727 0.0007454 waveform_097' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.58547m, 0m, 0.0007454m, using waveform waveform_097 created.
+WARNING: '#hertzian_dipole: y 1.5966468 0.0003727 0.0007454 waveform_098' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.59665m, 0m, 0.0007454m, using waveform waveform_098 created.
+WARNING: '#hertzian_dipole: y 1.6078278 0.0003727 0.0007454 waveform_099' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.60783m, 0m, 0.0007454m, using waveform waveform_099 created.
+WARNING: '#hertzian_dipole: y 1.6190088 0.0003727 0.0007454 waveform_100' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.61901m, 0m, 0.0007454m, using waveform waveform_100 created.
+WARNING: '#hertzian_dipole: y 1.6301898 0.0003727 0.0007454 waveform_101' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.63019m, 0m, 0.0007454m, using waveform waveform_101 created.
+WARNING: '#hertzian_dipole: y 1.6413708 0.0003727 0.0007454 waveform_102' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.64137m, 0m, 0.0007454m, using waveform waveform_102 created.
+WARNING: '#hertzian_dipole: y 1.6525518 0.0003727 0.0007454 waveform_103' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.65255m, 0m, 0.0007454m, using waveform waveform_103 created.
+WARNING: '#hertzian_dipole: y 1.6637328 0.0003727 0.0007454 waveform_104' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.66373m, 0m, 0.0007454m, using waveform waveform_104 created.
+WARNING: '#hertzian_dipole: y 1.6749138 0.0003727 0.0007454 waveform_105' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.67491m, 0m, 0.0007454m, using waveform waveform_105 created.
+WARNING: '#hertzian_dipole: y 1.6860948 0.0003727 0.0007454 waveform_106' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.68609m, 0m, 0.0007454m, using waveform waveform_106 created.
+WARNING: '#hertzian_dipole: y 1.6972758 0.0003727 0.0007454 waveform_107' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.69728m, 0m, 0.0007454m, using waveform waveform_107 created.
+WARNING: '#hertzian_dipole: y 1.7084568 0.0003727 0.0007454 waveform_108' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.70846m, 0m, 0.0007454m, using waveform waveform_108 created.
+WARNING: '#hertzian_dipole: y 1.7196378 0.0003727 0.0007454 waveform_109' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.71964m, 0m, 0.0007454m, using waveform waveform_109 created.
+WARNING: '#hertzian_dipole: y 1.7308188 0.0003727 0.0007454 waveform_110' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.73082m, 0m, 0.0007454m, using waveform waveform_110 created.
+WARNING: '#hertzian_dipole: y 1.7419998 0.0003727 0.0007454 waveform_111' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.742m, 0m, 0.0007454m, using waveform waveform_111 created.
+WARNING: '#hertzian_dipole: y 1.7531808 0.0003727 0.0007454 waveform_112' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.75318m, 0m, 0.0007454m, using waveform waveform_112 created.
+WARNING: '#hertzian_dipole: y 1.7643618 0.0003727 0.0007454 waveform_113' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.76436m, 0m, 0.0007454m, using waveform waveform_113 created.
+WARNING: '#hertzian_dipole: y 1.7755428 0.0003727 0.0007454 waveform_114' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.77554m, 0m, 0.0007454m, using waveform waveform_114 created.
+WARNING: '#hertzian_dipole: y 1.7867238 0.0003727 0.0007454 waveform_115' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.78672m, 0m, 0.0007454m, using waveform waveform_115 created.
+WARNING: '#hertzian_dipole: y 1.7979048 0.0003727 0.0007454 waveform_116' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.7979m, 0m, 0.0007454m, using waveform waveform_116 created.
+WARNING: '#hertzian_dipole: y 1.8090858 0.0003727 0.0007454 waveform_117' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.80909m, 0m, 0.0007454m, using waveform waveform_117 created.
+WARNING: '#hertzian_dipole: y 1.8202668 0.0003727 0.0007454 waveform_118' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.82027m, 0m, 0.0007454m, using waveform waveform_118 created.
+WARNING: '#hertzian_dipole: y 1.8314478 0.0003727 0.0007454 waveform_119' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.83145m, 0m, 0.0007454m, using waveform waveform_119 created.
+WARNING: '#hertzian_dipole: y 1.8426288 0.0003727 0.0007454 waveform_120' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.84263m, 0m, 0.0007454m, using waveform waveform_120 created.
+WARNING: '#hertzian_dipole: y 1.8538098 0.0003727 0.0007454 waveform_121' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.85381m, 0m, 0.0007454m, using waveform waveform_121 created.
+WARNING: '#hertzian_dipole: y 1.8649908 0.0003727 0.0007454 waveform_122' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.86499m, 0m, 0.0007454m, using waveform waveform_122 created.
+WARNING: '#hertzian_dipole: y 1.8761718 0.0003727 0.0007454 waveform_123' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.87617m, 0m, 0.0007454m, using waveform waveform_123 created.
+WARNING: '#hertzian_dipole: y 1.8873528 0.0003727 0.0007454 waveform_124' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.88735m, 0m, 0.0007454m, using waveform waveform_124 created.
+WARNING: '#hertzian_dipole: y 1.8985338 0.0003727 0.0007454 waveform_125' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.89853m, 0m, 0.0007454m, using waveform waveform_125 created.
+WARNING: '#hertzian_dipole: y 1.9097148 0.0003727 0.0007454 waveform_126' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.90971m, 0m, 0.0007454m, using waveform waveform_126 created.
+WARNING: '#hertzian_dipole: y 1.9208958 0.0003727 0.0007454 waveform_127' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.9209m, 0m, 0.0007454m, using waveform waveform_127 created.
+WARNING: '#hertzian_dipole: y 1.9320768 0.0003727 0.0007454 waveform_128' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.93208m, 0m, 0.0007454m, using waveform waveform_128 created.
+WARNING: '#hertzian_dipole: y 1.9432578 0.0003727 0.0007454 waveform_129' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.94326m, 0m, 0.0007454m, using waveform waveform_129 created.
+WARNING: '#hertzian_dipole: y 1.9544388 0.0003727 0.0007454 waveform_130' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.95444m, 0m, 0.0007454m, using waveform waveform_130 created.
+WARNING: '#hertzian_dipole: y 1.9656198 0.0003727 0.0007454 waveform_131' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.96562m, 0m, 0.0007454m, using waveform waveform_131 created.
+WARNING: '#hertzian_dipole: y 1.9768008 0.0003727 0.0007454 waveform_132' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.9768m, 0m, 0.0007454m, using waveform waveform_132 created.
+WARNING: '#hertzian_dipole: y 1.9879818 0.0003727 0.0007454 waveform_133' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.98798m, 0m, 0.0007454m, using waveform waveform_133 created.
+WARNING: '#hertzian_dipole: y 1.9991628 0.0003727 0.0007454 waveform_134' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 1.99916m, 0m, 0.0007454m, using waveform waveform_134 created.
+WARNING: '#hertzian_dipole: y 2.0103438 0.0003727 0.0007454 waveform_135' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.01034m, 0m, 0.0007454m, using waveform waveform_135 created.
+WARNING: '#hertzian_dipole: y 2.0215248 0.0003727 0.0007454 waveform_136' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.02152m, 0m, 0.0007454m, using waveform waveform_136 created.
+WARNING: '#hertzian_dipole: y 2.0327058 0.0003727 0.0007454 waveform_137' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.03271m, 0m, 0.0007454m, using waveform waveform_137 created.
+WARNING: '#hertzian_dipole: y 2.0438868 0.0003727 0.0007454 waveform_138' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.04389m, 0m, 0.0007454m, using waveform waveform_138 created.
+WARNING: '#hertzian_dipole: y 2.0550678 0.0003727 0.0007454 waveform_139' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.05507m, 0m, 0.0007454m, using waveform waveform_139 created.
+WARNING: '#hertzian_dipole: y 2.0662488 0.0003727 0.0007454 waveform_140' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.06625m, 0m, 0.0007454m, using waveform waveform_140 created.
+WARNING: '#hertzian_dipole: y 2.0774298 0.0003727 0.0007454 waveform_141' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.07743m, 0m, 0.0007454m, using waveform waveform_141 created.
+WARNING: '#hertzian_dipole: y 2.0886108 0.0003727 0.0007454 waveform_142' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.08861m, 0m, 0.0007454m, using waveform waveform_142 created.
+WARNING: '#hertzian_dipole: y 2.0997918 0.0003727 0.0007454 waveform_143' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.09979m, 0m, 0.0007454m, using waveform waveform_143 created.
+WARNING: '#hertzian_dipole: y 2.1109728 0.0003727 0.0007454 waveform_144' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.11097m, 0m, 0.0007454m, using waveform waveform_144 created.
+WARNING: '#hertzian_dipole: y 2.1221538 0.0003727 0.0007454 waveform_145' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.12215m, 0m, 0.0007454m, using waveform waveform_145 created.
+WARNING: '#hertzian_dipole: y 2.1333348 0.0003727 0.0007454 waveform_146' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.13333m, 0m, 0.0007454m, using waveform waveform_146 created.
+WARNING: '#hertzian_dipole: y 2.1445158 0.0003727 0.0007454 waveform_147' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.14452m, 0m, 0.0007454m, using waveform waveform_147 created.
+WARNING: '#hertzian_dipole: y 2.1556968 0.0003727 0.0007454 waveform_148' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.1557m, 0m, 0.0007454m, using waveform waveform_148 created.
+WARNING: '#hertzian_dipole: y 2.1668778 0.0003727 0.0007454 waveform_149' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.16688m, 0m, 0.0007454m, using waveform waveform_149 created.
+WARNING: '#hertzian_dipole: y 2.1780588 0.0003727 0.0007454 waveform_150' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.17806m, 0m, 0.0007454m, using waveform waveform_150 created.
+WARNING: '#hertzian_dipole: y 2.1892398 0.0003727 0.0007454 waveform_151' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.18924m, 0m, 0.0007454m, using waveform waveform_151 created.
+WARNING: '#hertzian_dipole: y 2.2004208 0.0003727 0.0007454 waveform_152' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.20042m, 0m, 0.0007454m, using waveform waveform_152 created.
+WARNING: '#hertzian_dipole: y 2.2116018 0.0003727 0.0007454 waveform_153' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.2116m, 0m, 0.0007454m, using waveform waveform_153 created.
+WARNING: '#hertzian_dipole: y 2.2227828 0.0003727 0.0007454 waveform_154' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.22278m, 0m, 0.0007454m, using waveform waveform_154 created.
+WARNING: '#hertzian_dipole: y 2.2339638 0.0003727 0.0007454 waveform_155' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.23396m, 0m, 0.0007454m, using waveform waveform_155 created.
+WARNING: '#hertzian_dipole: y 2.2451448 0.0003727 0.0007454 waveform_156' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.24514m, 0m, 0.0007454m, using waveform waveform_156 created.
+WARNING: '#hertzian_dipole: y 2.2563258 0.0003727 0.0007454 waveform_157' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.25633m, 0m, 0.0007454m, using waveform waveform_157 created.
+WARNING: '#hertzian_dipole: y 2.2675068 0.0003727 0.0007454 waveform_158' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.26751m, 0m, 0.0007454m, using waveform waveform_158 created.
+WARNING: '#hertzian_dipole: y 2.2786878 0.0003727 0.0007454 waveform_159' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.27869m, 0m, 0.0007454m, using waveform waveform_159 created.
+WARNING: '#hertzian_dipole: y 2.2898688 0.0003727 0.0007454 waveform_160' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.28987m, 0m, 0.0007454m, using waveform waveform_160 created.
+WARNING: '#hertzian_dipole: y 2.3010498 0.0003727 0.0007454 waveform_161' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.30105m, 0m, 0.0007454m, using waveform waveform_161 created.
+WARNING: '#hertzian_dipole: y 2.3122308 0.0003727 0.0007454 waveform_162' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.31223m, 0m, 0.0007454m, using waveform waveform_162 created.
+WARNING: '#hertzian_dipole: y 2.3234118 0.0003727 0.0007454 waveform_163' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.32341m, 0m, 0.0007454m, using waveform waveform_163 created.
+WARNING: '#hertzian_dipole: y 2.3345928 0.0003727 0.0007454 waveform_164' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.33459m, 0m, 0.0007454m, using waveform waveform_164 created.
+WARNING: '#hertzian_dipole: y 2.3457738 0.0003727 0.0007454 waveform_165' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.34577m, 0m, 0.0007454m, using waveform waveform_165 created.
+WARNING: '#hertzian_dipole: y 2.3569548 0.0003727 0.0007454 waveform_166' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.35695m, 0m, 0.0007454m, using waveform waveform_166 created.
+WARNING: '#hertzian_dipole: y 2.3681358 0.0003727 0.0007454 waveform_167' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.36814m, 0m, 0.0007454m, using waveform waveform_167 created.
+WARNING: '#hertzian_dipole: y 2.3793168 0.0003727 0.0007454 waveform_168' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.37932m, 0m, 0.0007454m, using waveform waveform_168 created.
+WARNING: '#hertzian_dipole: y 2.3904978 0.0003727 0.0007454 waveform_169' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.3905m, 0m, 0.0007454m, using waveform waveform_169 created.
+WARNING: '#hertzian_dipole: y 2.4016788 0.0003727 0.0007454 waveform_170' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.40168m, 0m, 0.0007454m, using waveform waveform_170 created.
+WARNING: '#hertzian_dipole: y 2.4128598 0.0003727 0.0007454 waveform_171' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.41286m, 0m, 0.0007454m, using waveform waveform_171 created.
+WARNING: '#hertzian_dipole: y 2.4240408 0.0003727 0.0007454 waveform_172' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.42404m, 0m, 0.0007454m, using waveform waveform_172 created.
+WARNING: '#hertzian_dipole: y 2.4352218 0.0003727 0.0007454 waveform_173' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.43522m, 0m, 0.0007454m, using waveform waveform_173 created.
+WARNING: '#hertzian_dipole: y 2.4464028 0.0003727 0.0007454 waveform_174' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.4464m, 0m, 0.0007454m, using waveform waveform_174 created.
+WARNING: '#hertzian_dipole: y 2.4575838 0.0003727 0.0007454 waveform_175' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.45758m, 0m, 0.0007454m, using waveform waveform_175 created.
+WARNING: '#hertzian_dipole: y 2.4687648 0.0003727 0.0007454 waveform_176' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.46876m, 0m, 0.0007454m, using waveform waveform_176 created.
+WARNING: '#hertzian_dipole: y 2.4799458 0.0003727 0.0007454 waveform_177' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.47995m, 0m, 0.0007454m, using waveform waveform_177 created.
+WARNING: '#hertzian_dipole: y 2.4911268 0.0003727 0.0007454 waveform_178' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.49113m, 0m, 0.0007454m, using waveform waveform_178 created.
+WARNING: '#hertzian_dipole: y 2.5023078 0.0003727 0.0007454 waveform_179' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.50231m, 0m, 0.0007454m, using waveform waveform_179 created.
+WARNING: '#hertzian_dipole: y 2.5134888 0.0003727 0.0007454 waveform_180' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.51349m, 0m, 0.0007454m, using waveform waveform_180 created.
+WARNING: '#hertzian_dipole: y 2.5246698 0.0003727 0.0007454 waveform_181' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.52467m, 0m, 0.0007454m, using waveform waveform_181 created.
+WARNING: '#hertzian_dipole: y 2.5358508 0.0003727 0.0007454 waveform_182' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.53585m, 0m, 0.0007454m, using waveform waveform_182 created.
+WARNING: '#hertzian_dipole: y 2.5470318 0.0003727 0.0007454 waveform_183' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.54703m, 0m, 0.0007454m, using waveform waveform_183 created.
+WARNING: '#hertzian_dipole: y 2.5582128 0.0003727 0.0007454 waveform_184' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.55821m, 0m, 0.0007454m, using waveform waveform_184 created.
+WARNING: '#hertzian_dipole: y 2.5693938 0.0003727 0.0007454 waveform_185' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.56939m, 0m, 0.0007454m, using waveform waveform_185 created.
+WARNING: '#hertzian_dipole: y 2.5805748 0.0003727 0.0007454 waveform_186' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.58057m, 0m, 0.0007454m, using waveform waveform_186 created.
+WARNING: '#hertzian_dipole: y 2.5917558 0.0003727 0.0007454 waveform_187' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.59176m, 0m, 0.0007454m, using waveform waveform_187 created.
+WARNING: '#hertzian_dipole: y 2.6029368 0.0003727 0.0007454 waveform_188' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.60294m, 0m, 0.0007454m, using waveform waveform_188 created.
+WARNING: '#hertzian_dipole: y 2.6141178 0.0003727 0.0007454 waveform_189' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.61412m, 0m, 0.0007454m, using waveform waveform_189 created.
+WARNING: '#hertzian_dipole: y 2.6252988 0.0003727 0.0007454 waveform_190' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.6253m, 0m, 0.0007454m, using waveform waveform_190 created.
+WARNING: '#hertzian_dipole: y 2.6364798 0.0003727 0.0007454 waveform_191' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.63648m, 0m, 0.0007454m, using waveform waveform_191 created.
+WARNING: '#hertzian_dipole: y 2.6476608 0.0003727 0.0007454 waveform_192' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.64766m, 0m, 0.0007454m, using waveform waveform_192 created.
+WARNING: '#hertzian_dipole: y 2.6588418 0.0003727 0.0007454 waveform_193' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.65884m, 0m, 0.0007454m, using waveform waveform_193 created.
+WARNING: '#hertzian_dipole: y 2.6700228 0.0003727 0.0007454 waveform_194' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.67002m, 0m, 0.0007454m, using waveform waveform_194 created.
+WARNING: '#hertzian_dipole: y 2.6812038 0.0003727 0.0007454 waveform_195' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.6812m, 0m, 0.0007454m, using waveform waveform_195 created.
+WARNING: '#hertzian_dipole: y 2.6923848 0.0003727 0.0007454 waveform_196' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.69238m, 0m, 0.0007454m, using waveform waveform_196 created.
+WARNING: '#hertzian_dipole: y 2.7035658 0.0003727 0.0007454 waveform_197' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.70357m, 0m, 0.0007454m, using waveform waveform_197 created.
+WARNING: '#hertzian_dipole: y 2.7147468 0.0003727 0.0007454 waveform_198' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.71475m, 0m, 0.0007454m, using waveform waveform_198 created.
+WARNING: '#hertzian_dipole: y 2.7259278 0.0003727 0.0007454 waveform_199' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.72593m, 0m, 0.0007454m, using waveform waveform_199 created.
+WARNING: '#hertzian_dipole: y 2.7371088 0.0003727 0.0007454 waveform_200' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.73711m, 0m, 0.0007454m, using waveform waveform_200 created.
+WARNING: '#hertzian_dipole: y 2.7482898 0.0003727 0.0007454 waveform_201' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.74829m, 0m, 0.0007454m, using waveform waveform_201 created.
+WARNING: '#hertzian_dipole: y 2.7594708 0.0003727 0.0007454 waveform_202' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.75947m, 0m, 0.0007454m, using waveform waveform_202 created.
+WARNING: '#hertzian_dipole: y 2.7706518 0.0003727 0.0007454 waveform_203' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.77065m, 0m, 0.0007454m, using waveform waveform_203 created.
+WARNING: '#hertzian_dipole: y 2.7818328 0.0003727 0.0007454 waveform_204' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.78183m, 0m, 0.0007454m, using waveform waveform_204 created.
+WARNING: '#hertzian_dipole: y 2.7930138 0.0003727 0.0007454 waveform_205' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.79301m, 0m, 0.0007454m, using waveform waveform_205 created.
+WARNING: '#hertzian_dipole: y 2.8041948 0.0003727 0.0007454 waveform_206' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.80419m, 0m, 0.0007454m, using waveform waveform_206 created.
+WARNING: '#hertzian_dipole: y 2.8153758 0.0003727 0.0007454 waveform_207' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.81538m, 0m, 0.0007454m, using waveform waveform_207 created.
+WARNING: '#hertzian_dipole: y 2.8265568 0.0003727 0.0007454 waveform_208' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.82656m, 0m, 0.0007454m, using waveform waveform_208 created.
+WARNING: '#hertzian_dipole: y 2.8377378 0.0003727 0.0007454 waveform_209' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.83774m, 0m, 0.0007454m, using waveform waveform_209 created.
+WARNING: '#hertzian_dipole: y 2.8489188 0.0003727 0.0007454 waveform_210' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.84892m, 0m, 0.0007454m, using waveform waveform_210 created.
+WARNING: '#hertzian_dipole: y 2.8600998 0.0003727 0.0007454 waveform_211' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.8601m, 0m, 0.0007454m, using waveform waveform_211 created.
+WARNING: '#hertzian_dipole: y 2.8712808 0.0003727 0.0007454 waveform_212' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.87128m, 0m, 0.0007454m, using waveform waveform_212 created.
+WARNING: '#hertzian_dipole: y 2.8824618 0.0003727 0.0007454 waveform_213' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.88246m, 0m, 0.0007454m, using waveform waveform_213 created.
+WARNING: '#hertzian_dipole: y 2.8936428 0.0003727 0.0007454 waveform_214' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.89364m, 0m, 0.0007454m, using waveform waveform_214 created.
+WARNING: '#hertzian_dipole: y 2.9048238 0.0003727 0.0007454 waveform_215' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.90482m, 0m, 0.0007454m, using waveform waveform_215 created.
+WARNING: '#hertzian_dipole: y 2.9160048 0.0003727 0.0007454 waveform_216' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.916m, 0m, 0.0007454m, using waveform waveform_216 created.
+WARNING: '#hertzian_dipole: y 2.9271858 0.0003727 0.0007454 waveform_217' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.92719m, 0m, 0.0007454m, using waveform waveform_217 created.
+WARNING: '#hertzian_dipole: y 2.9383668 0.0003727 0.0007454 waveform_218' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.93837m, 0m, 0.0007454m, using waveform waveform_218 created.
+WARNING: '#hertzian_dipole: y 2.9495478 0.0003727 0.0007454 waveform_219' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.94955m, 0m, 0.0007454m, using waveform waveform_219 created.
+WARNING: '#hertzian_dipole: y 2.9607288 0.0003727 0.0007454 waveform_220' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.96073m, 0m, 0.0007454m, using waveform waveform_220 created.
+WARNING: '#hertzian_dipole: y 2.9719098 0.0003727 0.0007454 waveform_221' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.97191m, 0m, 0.0007454m, using waveform waveform_221 created.
+WARNING: '#hertzian_dipole: y 2.9830908 0.0003727 0.0007454 waveform_222' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.98309m, 0m, 0.0007454m, using waveform waveform_222 created.
+WARNING: '#hertzian_dipole: y 2.9942718 0.0003727 0.0007454 waveform_223' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 2.99427m, 0m, 0.0007454m, using waveform waveform_223 created.
+WARNING: '#hertzian_dipole: y 3.0054528 0.0003727 0.0007454 waveform_224' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.00545m, 0m, 0.0007454m, using waveform waveform_224 created.
+WARNING: '#hertzian_dipole: y 3.0166338 0.0003727 0.0007454 waveform_225' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.01663m, 0m, 0.0007454m, using waveform waveform_225 created.
+WARNING: '#hertzian_dipole: y 3.0278148 0.0003727 0.0007454 waveform_226' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.02781m, 0m, 0.0007454m, using waveform waveform_226 created.
+WARNING: '#hertzian_dipole: y 3.0389958 0.0003727 0.0007454 waveform_227' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.039m, 0m, 0.0007454m, using waveform waveform_227 created.
+WARNING: '#hertzian_dipole: y 3.0501768 0.0003727 0.0007454 waveform_228' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.05018m, 0m, 0.0007454m, using waveform waveform_228 created.
+WARNING: '#hertzian_dipole: y 3.0613578 0.0003727 0.0007454 waveform_229' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.06136m, 0m, 0.0007454m, using waveform waveform_229 created.
+WARNING: '#hertzian_dipole: y 3.0725388 0.0003727 0.0007454 waveform_230' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.07254m, 0m, 0.0007454m, using waveform waveform_230 created.
+WARNING: '#hertzian_dipole: y 3.0837198 0.0003727 0.0007454 waveform_231' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.08372m, 0m, 0.0007454m, using waveform waveform_231 created.
+WARNING: '#hertzian_dipole: y 3.0949008 0.0003727 0.0007454 waveform_232' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.0949m, 0m, 0.0007454m, using waveform waveform_232 created.
+WARNING: '#hertzian_dipole: y 3.1060818 0.0003727 0.0007454 waveform_233' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.10608m, 0m, 0.0007454m, using waveform waveform_233 created.
+WARNING: '#hertzian_dipole: y 3.1172628 0.0003727 0.0007454 waveform_234' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.11726m, 0m, 0.0007454m, using waveform waveform_234 created.
+WARNING: '#hertzian_dipole: y 3.1284438 0.0003727 0.0007454 waveform_235' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.12844m, 0m, 0.0007454m, using waveform waveform_235 created.
+WARNING: '#hertzian_dipole: y 3.1396248 0.0003727 0.0007454 waveform_236' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.13962m, 0m, 0.0007454m, using waveform waveform_236 created.
+WARNING: '#hertzian_dipole: y 3.1508058 0.0003727 0.0007454 waveform_237' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.15081m, 0m, 0.0007454m, using waveform waveform_237 created.
+WARNING: '#hertzian_dipole: y 3.1619868 0.0003727 0.0007454 waveform_238' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.16199m, 0m, 0.0007454m, using waveform waveform_238 created.
+WARNING: '#hertzian_dipole: y 3.1731678 0.0003727 0.0007454 waveform_239' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.17317m, 0m, 0.0007454m, using waveform waveform_239 created.
+WARNING: '#hertzian_dipole: y 3.1843488 0.0003727 0.0007454 waveform_240' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.18435m, 0m, 0.0007454m, using waveform waveform_240 created.
+WARNING: '#hertzian_dipole: y 3.1955298 0.0003727 0.0007454 waveform_241' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.19553m, 0m, 0.0007454m, using waveform waveform_241 created.
+WARNING: '#hertzian_dipole: y 3.2067108 0.0003727 0.0007454 waveform_242' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.20671m, 0m, 0.0007454m, using waveform waveform_242 created.
+WARNING: '#hertzian_dipole: y 3.2178918 0.0003727 0.0007454 waveform_243' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.21789m, 0m, 0.0007454m, using waveform waveform_243 created.
+WARNING: '#hertzian_dipole: y 3.2290728 0.0003727 0.0007454 waveform_244' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.22907m, 0m, 0.0007454m, using waveform waveform_244 created.
+WARNING: '#hertzian_dipole: y 3.2402538 0.0003727 0.0007454 waveform_245' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.24025m, 0m, 0.0007454m, using waveform waveform_245 created.
+WARNING: '#hertzian_dipole: y 3.2514348 0.0003727 0.0007454 waveform_246' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.25143m, 0m, 0.0007454m, using waveform waveform_246 created.
+WARNING: '#hertzian_dipole: y 3.2626158 0.0003727 0.0007454 waveform_247' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.26262m, 0m, 0.0007454m, using waveform waveform_247 created.
+WARNING: '#hertzian_dipole: y 3.2737968 0.0003727 0.0007454 waveform_248' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.2738m, 0m, 0.0007454m, using waveform waveform_248 created.
+WARNING: '#hertzian_dipole: y 3.2849778 0.0003727 0.0007454 waveform_249' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.28498m, 0m, 0.0007454m, using waveform waveform_249 created.
+WARNING: '#hertzian_dipole: y 3.2961588 0.0003727 0.0007454 waveform_250' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.29616m, 0m, 0.0007454m, using waveform waveform_250 created.
+WARNING: '#hertzian_dipole: y 3.3073398 0.0003727 0.0007454 waveform_251' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.30734m, 0m, 0.0007454m, using waveform waveform_251 created.
+WARNING: '#hertzian_dipole: y 3.3185208 0.0003727 0.0007454 waveform_252' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.31852m, 0m, 0.0007454m, using waveform waveform_252 created.
+WARNING: '#hertzian_dipole: y 3.3297018 0.0003727 0.0007454 waveform_253' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.3297m, 0m, 0.0007454m, using waveform waveform_253 created.
+WARNING: '#hertzian_dipole: y 3.3408828 0.0003727 0.0007454 waveform_254' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.34088m, 0m, 0.0007454m, using waveform waveform_254 created.
+WARNING: '#hertzian_dipole: y 3.3520638 0.0003727 0.0007454 waveform_255' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.35206m, 0m, 0.0007454m, using waveform waveform_255 created.
+WARNING: '#hertzian_dipole: y 3.3632448 0.0003727 0.0007454 waveform_256' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.36324m, 0m, 0.0007454m, using waveform waveform_256 created.
+WARNING: '#hertzian_dipole: y 3.3744258 0.0003727 0.0007454 waveform_257' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.37443m, 0m, 0.0007454m, using waveform waveform_257 created.
+WARNING: '#hertzian_dipole: y 3.3856068 0.0003727 0.0007454 waveform_258' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.38561m, 0m, 0.0007454m, using waveform waveform_258 created.
+WARNING: '#hertzian_dipole: y 3.3967878 0.0003727 0.0007454 waveform_259' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.39679m, 0m, 0.0007454m, using waveform waveform_259 created.
+WARNING: '#hertzian_dipole: y 3.4079688 0.0003727 0.0007454 waveform_260' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.40797m, 0m, 0.0007454m, using waveform waveform_260 created.
+WARNING: '#hertzian_dipole: y 3.4191498 0.0003727 0.0007454 waveform_261' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.41915m, 0m, 0.0007454m, using waveform waveform_261 created.
+WARNING: '#hertzian_dipole: y 3.4303308 0.0003727 0.0007454 waveform_262' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.43033m, 0m, 0.0007454m, using waveform waveform_262 created.
+WARNING: '#hertzian_dipole: y 3.4415118 0.0003727 0.0007454 waveform_263' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.44151m, 0m, 0.0007454m, using waveform waveform_263 created.
+WARNING: '#hertzian_dipole: y 3.4526928 0.0003727 0.0007454 waveform_264' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.45269m, 0m, 0.0007454m, using waveform waveform_264 created.
+WARNING: '#hertzian_dipole: y 3.4638738 0.0003727 0.0007454 waveform_265' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.46387m, 0m, 0.0007454m, using waveform waveform_265 created.
+WARNING: '#hertzian_dipole: y 3.4750548 0.0003727 0.0007454 waveform_266' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.47505m, 0m, 0.0007454m, using waveform waveform_266 created.
+WARNING: '#hertzian_dipole: y 3.4862358 0.0003727 0.0007454 waveform_267' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.48624m, 0m, 0.0007454m, using waveform waveform_267 created.
+WARNING: '#hertzian_dipole: y 3.4974168 0.0003727 0.0007454 waveform_268' sources and receivers should not normally be positioned within the PML.
+Hertzian dipole with polarity y at 3.49742m, 0m, 0.0007454m, using waveform waveform_268 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.20011e-08 secs with filename snap_000 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.21048e-08 secs with filename snap_001 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.22085e-08 secs with filename snap_002 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.23105e-08 secs with filename snap_003 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.24142e-08 secs with filename snap_004 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.2518e-08 secs with filename snap_005 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.26199e-08 secs with filename snap_006 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.27237e-08 secs with filename snap_007 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.28274e-08 secs with filename snap_008 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.29294e-08 secs with filename snap_009 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.30331e-08 secs with filename snap_010 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.31351e-08 secs with filename snap_011 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.32388e-08 secs with filename snap_012 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.33425e-08 secs with filename snap_013 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.34445e-08 secs with filename snap_014 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.35482e-08 secs with filename snap_015 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.3652e-08 secs with filename snap_016 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.37539e-08 secs with filename snap_017 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.38577e-08 secs with filename snap_018 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.39614e-08 secs with filename snap_019 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.40634e-08 secs with filename snap_020 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.41671e-08 secs with filename snap_021 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.42708e-08 secs with filename snap_022 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.43728e-08 secs with filename snap_023 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.44765e-08 secs with filename snap_024 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.45785e-08 secs with filename snap_025 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.46822e-08 secs with filename snap_026 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.4786e-08 secs with filename snap_027 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.48879e-08 secs with filename snap_028 created.
+Snapshot from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m, discretisation 0.0029816m, 0.0007454m, 0.0029816m, at 1.49917e-08 secs with filename snap_029 created.
+Material ice_bp with eps_r=12.6, sigma=0 S/m; mu_r=1, sigma*=0 Ohm/m created.
+
+Memory (RAM) required: ~731MB host + ~731MB GPU
+
+
+Processing geometry related cmds:   0%|                | 0/1 [00:00<?, ?cmds/s]
+                                                                               
+Box from 0m, 0m, 0m, to 3.99982m, 0.0007454m, 0.799814m of material(s) ice_bp created, dielectric smoothing is on.
+
+Processing geometry related cmds:   0%|                | 0/1 [00:00<?, ?cmds/s]
+Processing geometry related cmds: 100%|████████| 1/1 [00:00<00:00,  8.54cmds/s]
+Processing geometry related cmds: 100%|████████| 1/1 [00:00<00:00,  8.53cmds/s]
+
+PML: formulation: HORIPML, order: 1, thickness: x0: 10, y0: 0, z0: 10, xmax: 10, ymax: 0, zmax: 10 cells
+
+Building PML boundaries:   0%|                           | 0/4 [00:00<?, ?it/s]
+Building PML boundaries: 100%|██████████████████| 4/4 [00:00<00:00, 403.42it/s]
+
+
+Building main grid:   0%|                                | 0/2 [00:00<?, ?it/s]
+Building main grid: 100%|████████████████████████| 2/2 [00:00<00:00, 16.42it/s]
+Building main grid: 100%|████████████████████████| 2/2 [00:00<00:00, 16.39it/s]
+
+Memory (RAM) required - updated (snapshots): ~989MB
+
+
+Materials:
+    |            |         |       | sigma |      | sigma*  | Dielectric 
+ ID | Name       | Type    | eps_r | [S/m] | mu_r | [Ohm/m] | smoothable 
+----+------------+---------+-------+-------+------+---------+------------
+  0 | pec        | builtin | 1     | inf   | 1    | 0       | False      
+  1 | free_space | builtin | 1     | 0     | 1    | 0       | True       
+  2 | ice_bp     |         | 12.6  | 0     | 1    | 0       | True       
+
+WARNING: Numerical dispersion analysis not carried out as waveform does not fit within specified time window and is therefore being truncated.
+
+Output file: C:\Users\Administrator\OneDrive\Thesis\TimeLapse_Notebooks\resolution_study\study_0p5lambda\backprop\backprop.out
+
+
+Running simulation, model 1/1:   0%|                  | 0/8533 [00:00<?, ?it/s]
+Running simulation, model 1/1:   2%|▏     | 186/8533 [00:00<00:04, 1704.41it/s]
+Running simulation, model 1/1:   4%|▎     | 357/8533 [00:00<00:06, 1224.17it/s]
+Running simulation, model 1/1:   6%|▎     | 487/8533 [00:00<00:07, 1116.71it/s]
+Running simulation, model 1/1:   7%|▍     | 602/8533 [00:00<00:07, 1071.59it/s]
+Running simulation, model 1/1:   8%|▍     | 711/8533 [00:00<00:07, 1066.85it/s]
+Running simulation, model 1/1:  10%|▌     | 819/8533 [00:00<00:07, 1032.50it/s]
+Running simulation, model 1/1:  11%|▋     | 923/8533 [00:00<00:07, 1028.90it/s]
+Running simulation, model 1/1:  12%|▌    | 1027/8533 [00:00<00:07, 1026.35it/s]
+Running simulation, model 1/1:  13%|▊     | 1130/8533 [00:01<00:07, 993.15it/s]
+Running simulation, model 1/1:  14%|▊     | 1231/8533 [00:01<00:07, 994.33it/s]
+Running simulation, model 1/1:  16%|▉     | 1331/8533 [00:01<00:07, 995.43it/s]
+Running simulation, model 1/1:  17%|█     | 1432/8533 [00:01<00:07, 999.51it/s]
+Running simulation, model 1/1:  18%|█     | 1533/8533 [00:01<00:07, 997.17it/s]
+Running simulation, model 1/1:  19%|▉    | 1638/8533 [00:01<00:06, 1011.92it/s]
+Running simulation, model 1/1:  20%|█    | 1740/8533 [00:01<00:06, 1014.11it/s]
+Running simulation, model 1/1:  22%|█    | 1842/8533 [00:01<00:06, 1009.86it/s]
+Running simulation, model 1/1:  23%|█▎    | 1944/8533 [00:01<00:06, 975.22it/s]
+Running simulation, model 1/1:  24%|█▍    | 2044/8533 [00:01<00:06, 982.37it/s]
+Running simulation, model 1/1:  25%|█▌    | 2145/8533 [00:02<00:06, 990.11it/s]
+Running simulation, model 1/1:  26%|█▌    | 2245/8533 [00:02<00:06, 987.42it/s]
+Running simulation, model 1/1:  28%|█▍   | 2351/8533 [00:02<00:06, 1008.00it/s]
+Running simulation, model 1/1:  29%|█▍   | 2452/8533 [00:02<00:06, 1007.44it/s]
+Running simulation, model 1/1:  30%|█▍   | 2553/8533 [00:02<00:05, 1003.41it/s]
+Running simulation, model 1/1:  31%|█▊    | 2655/8533 [00:02<00:06, 976.01it/s]
+Running simulation, model 1/1:  32%|█▉    | 2756/8533 [00:02<00:05, 985.59it/s]
+Running simulation, model 1/1:  33%|██    | 2855/8533 [00:02<00:05, 985.94it/s]
+Running simulation, model 1/1:  35%|██    | 2954/8533 [00:02<00:05, 986.76it/s]
+Running simulation, model 1/1:  36%|██▏   | 3055/8533 [00:02<00:05, 993.53it/s]
+Running simulation, model 1/1:  37%|██▏   | 3155/8533 [00:03<00:05, 992.96it/s]
+Running simulation, model 1/1:  38%|█▉   | 3258/8533 [00:03<00:05, 1003.41it/s]
+Running simulation, model 1/1:  39%|█▉   | 3359/8533 [00:03<00:05, 1002.10it/s]
+Running simulation, model 1/1:  41%|██   | 3461/8533 [00:03<00:05, 1007.29it/s]
+Running simulation, model 1/1:  42%|██   | 3562/8533 [00:03<00:04, 1007.08it/s]
+Running simulation, model 1/1:  43%|██▏  | 3663/8533 [00:03<00:04, 1006.80it/s]
+Running simulation, model 1/1:  44%|██▏  | 3764/8533 [00:03<00:04, 1004.85it/s]
+Running simulation, model 1/1:  45%|██▋   | 3865/8533 [00:03<00:04, 973.12it/s]
+Running simulation, model 1/1:  46%|██▊   | 3963/8533 [00:03<00:04, 972.71it/s]
+Running simulation, model 1/1:  48%|██▊   | 4062/8533 [00:04<00:04, 975.83it/s]
+Running simulation, model 1/1:  49%|██▉   | 4167/8533 [00:04<00:04, 997.27it/s]
+Running simulation, model 1/1:  50%|███   | 4267/8533 [00:04<00:04, 997.37it/s]
+Running simulation, model 1/1:  51%|███   | 4367/8533 [00:04<00:04, 993.74it/s]
+Running simulation, model 1/1:  52%|██▌  | 4472/8533 [00:04<00:04, 1010.23it/s]
+Running simulation, model 1/1:  54%|██▋  | 4574/8533 [00:04<00:03, 1006.44it/s]
+Running simulation, model 1/1:  55%|███▎  | 4675/8533 [00:04<00:03, 968.92it/s]
+Running simulation, model 1/1:  56%|███▎  | 4775/8533 [00:04<00:03, 977.91it/s]
+Running simulation, model 1/1:  57%|███▍  | 4879/8533 [00:04<00:03, 995.51it/s]
+Running simulation, model 1/1:  58%|███▌  | 4980/8533 [00:04<00:03, 999.00it/s]
+Running simulation, model 1/1:  60%|██▉  | 5081/8533 [00:05<00:03, 1000.39it/s]
+Running simulation, model 1/1:  61%|███  | 5182/8533 [00:05<00:03, 1002.24it/s]
+Running simulation, model 1/1:  62%|███  | 5283/8533 [00:05<00:03, 1003.60it/s]
+Running simulation, model 1/1:  63%|███▏ | 5384/8533 [00:05<00:03, 1002.17it/s]
+Running simulation, model 1/1:  64%|███▏ | 5485/8533 [00:05<00:03, 1004.08it/s]
+Running simulation, model 1/1:  65%|███▎ | 5586/8533 [00:05<00:02, 1005.17it/s]
+Running simulation, model 1/1:  67%|███▉  | 5687/8533 [00:05<00:02, 971.64it/s]
+Running simulation, model 1/1:  68%|████  | 5788/8533 [00:05<00:02, 982.20it/s]
+Running simulation, model 1/1:  69%|████▏ | 5889/8533 [00:05<00:02, 990.04it/s]
+Running simulation, model 1/1:  70%|████▏ | 5989/8533 [00:05<00:02, 990.06it/s]
+Running simulation, model 1/1:  71%|████▎ | 6091/8533 [00:06<00:02, 998.77it/s]
+Running simulation, model 1/1:  73%|████▎ | 6191/8533 [00:06<00:02, 996.57it/s]
+Running simulation, model 1/1:  74%|███▋ | 6296/8533 [00:06<00:02, 1012.05it/s]
+Running simulation, model 1/1:  75%|████▍ | 6398/8533 [00:06<00:02, 975.13it/s]
+Running simulation, model 1/1:  76%|████▌ | 6500/8533 [00:06<00:02, 987.78it/s]
+Running simulation, model 1/1:  77%|████▋ | 6600/8533 [00:06<00:01, 989.62it/s]
+Running simulation, model 1/1:  79%|████▋ | 6701/8533 [00:06<00:01, 995.58it/s]
+Running simulation, model 1/1:  80%|████▊ | 6801/8533 [00:06<00:01, 989.89it/s]
+Running simulation, model 1/1:  81%|████▊ | 6901/8533 [00:06<00:02, 783.00it/s]
+Running simulation, model 1/1:  82%|████▉ | 7002/8533 [00:07<00:01, 774.02it/s]
+Running simulation, model 1/1:  83%|█████ | 7120/8533 [00:07<00:01, 799.41it/s]
+Running simulation, model 1/1:  85%|█████ | 7237/8533 [00:07<00:01, 816.29it/s]
+Running simulation, model 1/1:  86%|█████▏| 7354/8533 [00:07<00:01, 826.68it/s]
+Running simulation, model 1/1:  88%|█████▎| 7471/8533 [00:07<00:01, 834.36it/s]
+Running simulation, model 1/1:  89%|█████▎| 7589/8533 [00:07<00:01, 840.55it/s]
+Running simulation, model 1/1:  90%|█████▍| 7706/8533 [00:07<00:00, 843.39it/s]
+Running simulation, model 1/1:  92%|█████▌| 7823/8533 [00:08<00:00, 847.05it/s]
+Running simulation, model 1/1:  93%|█████▌| 7941/8533 [00:08<00:00, 848.82it/s]
+Running simulation, model 1/1:  94%|█████▋| 8058/8533 [00:08<00:00, 850.49it/s]
+Running simulation, model 1/1:  96%|█████▋| 8175/8533 [00:08<00:00, 851.46it/s]
+Running simulation, model 1/1:  97%|█████▊| 8292/8533 [00:08<00:00, 851.39it/s]
+Running simulation, model 1/1:  99%|█████▉| 8410/8533 [00:08<00:00, 852.52it/s]
+Running simulation, model 1/1: 100%|█████▉| 8527/8533 [00:08<00:00, 852.85it/s]
+Running simulation, model 1/1: 100%|██████| 8533/8533 [00:08<00:00, 961.33it/s]
+
+
+Writing snapshot file 1 of 30, snap_000.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 1 of 30, snap_000.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 2 of 30, snap_001.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 2 of 30, snap_001.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 3 of 30, snap_002.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 3 of 30, snap_002.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 4 of 30, snap_003.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 4 of 30, snap_003.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 5 of 30, snap_004.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 5 of 30, snap_004.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 6 of 30, snap_005.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 6 of 30, snap_005.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 7 of 30, snap_006.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 7 of 30, snap_006.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 8 of 30, snap_007.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 8 of 30, snap_007.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 9 of 30, snap_008.vti:   0%| | 0.00/8.63M [00:00<?, ?byte
+Writing snapshot file 9 of 30, snap_008.vti: 100%|█| 8.63M/8.63M [00:00<00:00, 
+
+Writing snapshot file 10 of 30, snap_009.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 10 of 30, snap_009.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 11 of 30, snap_010.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 11 of 30, snap_010.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 12 of 30, snap_011.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 12 of 30, snap_011.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 13 of 30, snap_012.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 13 of 30, snap_012.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 14 of 30, snap_013.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 14 of 30, snap_013.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 15 of 30, snap_014.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 15 of 30, snap_014.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 16 of 30, snap_015.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 16 of 30, snap_015.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 17 of 30, snap_016.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 17 of 30, snap_016.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 18 of 30, snap_017.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 18 of 30, snap_017.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 19 of 30, snap_018.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 19 of 30, snap_018.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 20 of 30, snap_019.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 20 of 30, snap_019.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 21 of 30, snap_020.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 21 of 30, snap_020.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 22 of 30, snap_021.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 22 of 30, snap_021.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 23 of 30, snap_022.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 23 of 30, snap_022.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 24 of 30, snap_023.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 24 of 30, snap_023.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 25 of 30, snap_024.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 25 of 30, snap_024.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 26 of 30, snap_025.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 26 of 30, snap_025.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 27 of 30, snap_026.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 27 of 30, snap_026.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 28 of 30, snap_027.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 28 of 30, snap_027.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 29 of 30, snap_028.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 29 of 30, snap_028.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Writing snapshot file 30 of 30, snap_029.vti:   0%| | 0.00/8.63M [00:00<?, ?byt
+Writing snapshot file 30 of 30, snap_029.vti: 100%|█| 8.63M/8.63M [00:00<00:00,
+
+Memory (RAM) used: ~918MB host + ~1.77GB GPU
+Solving time [HH:MM:SS]: 0:00:08.881886
+
+=== Simulation completed in [HH:MM:SS]: 0:04:30.295902 ========================
+
+
+=== STDERR ===
+(no output captured)
