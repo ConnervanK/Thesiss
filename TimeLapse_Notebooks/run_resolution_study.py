@@ -7,7 +7,7 @@ in a homogeneous ice medium, using gprMax zero-offset B-scan simulations.
 
 Resolution ladder
 -----------------
-  2λ  →  1λ  →  0.5λ  →  0.25λ  →  0.125λ   (λ = v_ice / f_c)
+  2λ  →  1λ  →  0.5λ  →  0.25λ  →  0.125λ  →  0.0625λ   (λ = v_ice / f_c)
 
 Directory layout produced
 -------------------------
