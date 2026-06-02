@@ -296,7 +296,7 @@ def clssa_phase_decomposition(
     f_max_GHz: float = 4.0,
     n_freqs: int = 60,
     n_theta: int = 181,
-    win_ns: float = 5.0,
+    win_ns: float = 2.0,
     alpha: float = 1e-2,
 ):
     """
@@ -323,7 +323,12 @@ def clssa_phase_decomposition(
     f_min_GHz, f_max_GHz : frequency band [GHz]
     n_freqs   : number of discrete frequency components
     n_theta   : number of phase angles in the phase gather
-    win_ns    : full sliding-window length [ns]
+    win_ns    : full sliding-window length [ns].
+                Rule of thumb: 2–4 dominant periods (2/f_c to 4/f_c).
+                TOO LONG → CLSSA sees the same event in many windows and
+                assigns amplitude at the wrong times (double-image artefact).
+                TOO SHORT → poor frequency resolution (Δf ≈ 1/win_ns).
+                Default 2.0 ns ≈ 3 cycles at 1.5 GHz GPR.
     alpha     : Tikhonov regularisation (fraction of normalised Gram diagonal)
 
     Returns
@@ -340,34 +345,42 @@ def clssa_phase_decomposition(
     half = int(round(win_ns / dt / 2))
     n_win = 2 * half + 1
 
-    # Reflect-pad the trace so every output step uses a full window.
-    # This eliminates slow per-sample edge solves and pushes boundary
-    # artefacts outside the signal — same principle as CWT reflect_pad.
-    trace_pad = np.pad(trace, half, mode="reflect")   # length n + 2*half
+    # Zero-pad the trace so every output step uses a full window.
+    # Zero-padding (NOT reflect) is essential: reflect mirroring injects
+    # copies of any event near the pad boundary back into the padded region,
+    # causing the CLSSA to detect those mirror images as real spectral events
+    # at the wrong time (double-image artefact).
+    trace_pad = np.pad(trace, half, mode="constant", constant_values=0.0)
 
     # Hanning window — applied to kernel sinusoids (NOT to the data)
     h = np.hanning(n_win)                              # (n_win,)
     t_loc = (np.arange(n_win) - half) * dt             # centred at 0
 
-    # Central kernel G_c: (n_win, n_freqs)
+    # Kernel G_c: (n_win, n_freqs)
+    # G_c[j, k] = h[j] * exp(i 2pi f_k t_loc[j])  — windowed sinusoid
     G_c = h[:, None] * np.exp(
         1j * 2 * np.pi * freqs_GHz[None, :] * t_loc[:, None]
     )
-    # Normalise columns so alpha has consistent meaning across window lengths
-    col_norms = np.linalg.norm(G_c, axis=0)            # (n_freqs,)
-    G_n = G_c / col_norms[None, :]
 
-    # Regularised Gram matrix (precomputed once — same for all steps)
-    A_c   = G_n.conj().T @ G_n + alpha * np.eye(n_freqs)
-    A_inv = np.linalg.inv(A_c)
-    W     = G_n.conj()                                 # (n_win, n_freqs)
+    # ── Windowed DFT (matched-filter solution) ────────────────────────────────
+    # The Tikhonov inversion (A_inv @ G_n^H d) has correct time-localisation
+    # only when the Gram matrix G_n^H G_n is well-conditioned.  For a 2 ns
+    # window covering 0.5–4 GHz with n_freqs=60, the rank of G is ~10 and
+    # the condition number is ~10^15 — no finite alpha tames this.
+    #
+    # In the limit alpha → ∞, the Tikhonov solution collapses to the windowed
+    # matched filter:
+    #   C[:, it] = G_c^H d_it / ||h||²
+    #            = sum_j h[j] exp(-i 2pi f_k t_loc[j]) d[it+j] / ||h||²
+    # This is the standard STFT at arbitrary (non-FFT) frequencies and has
+    # perfect time localisation by construction.  It is the correct CLSSA
+    # solution when the Gram matrix is rank-deficient.
+    norm_h2 = float(np.dot(h, h))              # scalar: sum h_j^2
+    W       = G_c.conj()                       # (n_win, n_freqs): analysis filters
 
     # ── Vectorised batch over all n steps ────────────────────────────────────
-    # sliding_window_view over padded trace: shape (n, n_win)
-    D   = np.lib.stride_tricks.sliding_window_view(trace_pad, n_win)  # (n, n_win)
-    RHS = D @ W                                        # (n, n_freqs)
-    M   = (A_inv @ RHS.T)                             # (n_freqs, n)
-    C   = M / col_norms[:, None]
+    D = np.lib.stride_tricks.sliding_window_view(trace_pad, n_win)  # (n, n_win)
+    C = (D @ W).T / norm_h2                    # (n_freqs, n)
 
     # ── Amplitude, phase, phase gather ───────────────────────────────────────
     A_out        = np.abs(C)
@@ -461,6 +474,146 @@ def plot_clssa_decomposition(
         ax.axvspan(-105, -75, color="magenta", alpha=0.18, zorder=0)
         ax.text(-90, t0 + (t1 - t0) * 0.02, "-90°\nthin-bed",
                 color="magenta", fontsize=7, ha="center", va="top", fontweight="bold")
+
+    plt.tight_layout()
+    return fig
+
+
+
+
+def plot_dominant_phase(
+    A,
+    theta_2d_deg,
+    phase_gather,
+    freqs_GHz,
+    time_ns,
+    theta_deg,
+    title: str = "Phase fingerprint",
+    event_ns: float = None,
+    half_win_ns: float = 1.5,
+):
+    """
+    Phasor diagram: plot (R(t), I(t)) for each sample in the event window.
+
+    The broadband phasor P(t) = R(t) + i·I(t) where:
+        R(t) = ∫ Re[C(f,t)] df   (in-phase)
+        I(t) = ∫ Im[C(f,t)] df   (quadrature)
+
+    θ_dom is directly readable from geometry — no carrier-rotation ambiguity:
+        Near R-axis (|θ| < 45°  or  |θ| > 135°) → polarity reflector
+        Near I-axis (45° < |θ| < 135°)           → thin-bed / sub-resolution layer
+
+    Dot size scales with envelope amplitude so high-energy samples stand out.
+    Dot colour encodes time within the window (blue=early → red=late).
+
+    Parameters
+    ----------
+    event_ns : float, optional
+        Centre time of the event window [ns]. If None, global amplitude peak.
+    half_win_ns : float
+        Half-width of the event window [ns].
+    """
+    C      = A * np.exp(1j * np.deg2rad(theta_2d_deg))
+    R      = np.trapezoid(np.real(C), freqs_GHz, axis=0)
+    I_comp = np.trapezoid(np.imag(C), freqs_GHz, axis=0)
+    env    = np.sqrt(R**2 + I_comp**2)
+
+    dt_trace = float(time_ns[1] - time_ns[0])
+    if event_ns is None:
+        i_peak = int(np.argmax(env))
+    else:
+        i_peak = int(np.argmin(np.abs(time_ns - event_ns)))
+    half_samps = int(round(half_win_ns / dt_trace))
+    i_lo = max(0, i_peak - half_samps)
+    i_hi = min(len(time_ns), i_peak + half_samps + 1)
+
+    R_win   = R[i_lo:i_hi]
+    I_win   = I_comp[i_lo:i_hi]
+    t_win   = time_ns[i_lo:i_hi]
+    env_win = env[i_lo:i_hi]
+
+    i_pk_local = int(np.argmax(env_win))
+    th_at_peak = float(np.rad2deg(np.arctan2(I_win[i_pk_local], R_win[i_pk_local])))
+    r_pk  = float(env_win[i_pk_local])
+    r_max = float(env_win.max()) * 1.22
+
+    fig, ax = plt.subplots(figsize=(7, 7))
+    fig.suptitle(
+        f"{title}\n"
+        f"Peak at t = {t_win[i_pk_local]:.3f} ns  |  θ_dom = {th_at_peak:.1f}°",
+        fontsize=10, fontweight="bold",
+    )
+
+    # ── Shading: thin-bed zone (near I-axis) and polarity zone (near R-axis) ──
+    # Thin-bed: |θ| in (45°, 135°)  ↔  |R| < |I|  ↔  |x| < |y|
+    # Draw as a vertical strip of width r_max*sin(45°)*2 around the I-axis.
+    strip = r_max * np.sin(np.deg2rad(45))
+    ax.axvspan(-strip, strip, color="orchid", alpha=0.10, zorder=0,
+               label="thin-bed zone (45° < |θ| < 135°)")
+    ax.axhspan(-strip, strip, color="steelblue", alpha=0.07, zorder=0,
+               label="polarity zone (|θ| < 45° or |θ| > 135°)")
+
+    # ── Phasor trail: faint connecting line ──────────────────────────────────
+    ax.plot(R_win, I_win, color="gray", lw=0.6, alpha=0.35, zorder=2)
+
+    # ── Scatter: colour = time, size = amplitude ──────────────────────────────
+    t_norm  = (t_win - t_win[0]) / (t_win[-1] - t_win[0] + 1e-30)
+    env_norm = env_win / (env_win.max() + 1e-30)
+    dot_sizes = 20 + 200 * env_norm**2          # small background, large near peak
+    sc = ax.scatter(R_win, I_win, c=t_norm, cmap="coolwarm",
+                    s=dot_sizes, alpha=0.85, zorder=3, linewidths=0)
+    fig.colorbar(sc, ax=ax, fraction=0.035, pad=0.04,
+                 label="Relative time in window  (blue = early,  red = late)")
+
+    # ── Reference circle at peak amplitude ───────────────────────────────────
+    theta_circ = np.linspace(0, 2 * np.pi, 300)
+    ax.plot(r_pk * np.cos(theta_circ), r_pk * np.sin(theta_circ),
+            "k--", lw=0.9, alpha=0.45, label="peak-amplitude circle")
+
+    # ── Diagonal zone boundaries at ±45° and ±135° ───────────────────────────
+    for ang_deg in (45, 135):
+        ang = np.deg2rad(ang_deg)
+        ax.plot([-r_max * np.cos(ang), r_max * np.cos(ang)],
+                [-r_max * np.sin(ang), r_max * np.sin(ang)],
+                color="gray", lw=0.7, ls="--", alpha=0.5)
+
+    # ── Cardinal axis lines ───────────────────────────────────────────────────
+    ax.axhline(0, color="gray", lw=0.9, ls=":", zorder=1)
+    ax.axvline(0, color="gray", lw=0.9, ls=":", zorder=1)
+
+    off = r_max * 0.06
+    ax.annotate("0°  polarity (+)",     (r_max * 0.97,  off), fontsize=8,
+                ha="right", va="bottom", color="steelblue", fontweight="bold")
+    ax.annotate("180°  polarity (−)",  (-r_max * 0.97,  off), fontsize=8,
+                ha="left",  va="bottom", color="steelblue", fontweight="bold")
+    ax.annotate("+90°\nthin-bed",       (off,  r_max * 0.95), fontsize=8,
+                ha="left",  va="top",    color="purple",     fontweight="bold")
+    ax.annotate("−90°\nthin-bed",       (off, -r_max * 0.95), fontsize=8,
+                ha="left",  va="bottom", color="purple",     fontweight="bold")
+
+    # ── Arrow from origin to peak point ──────────────────────────────────────
+    ax.annotate(
+        "", xy=(R_win[i_pk_local], I_win[i_pk_local]), xytext=(0, 0),
+        arrowprops=dict(arrowstyle="->", color="red", lw=2.0),
+        zorder=6,
+    )
+
+    # ── Star at peak, labelled with angle ────────────────────────────────────
+    ax.scatter([R_win[i_pk_local]], [I_win[i_pk_local]],
+               marker="*", s=320, color="red", zorder=7,
+               label=f"peak  θ = {th_at_peak:.0f}°")
+
+    ax.set_xlim(-r_max, r_max)
+    ax.set_ylim(-r_max, r_max)
+    ax.set_aspect("equal")
+    ax.set_xlabel("R(t)  =  ∫ Re[C(f,t)] df  — in-phase", fontsize=10)
+    ax.set_ylabel("I(t)  =  ∫ Im[C(f,t)] df  — quadrature", fontsize=10)
+    ax.set_title(
+        "Broadband phasor  (R + i I)  per sample in event window\n"
+        "Angle from R-axis = θ_dom   |   dot size ∝ envelope amplitude",
+        fontsize=9,
+    )
+    ax.legend(fontsize=8, loc="lower right")
 
     plt.tight_layout()
     return fig
