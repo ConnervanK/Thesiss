@@ -1,0 +1,382 @@
+\documentclass{beamer}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{graphicx}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title{2D Fourier Phase-Shift Displacement Est.}
+\subtitle{GPR Time-Lapse Monitoring}
+\author{Conner van Kooten}
+\institute{Thesis Meeting}
+\date{9 June 2026}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+\maketitle
+
+% ─── Motivation frame ────────────────────────────────────────────────────────
+\begin{frame}{Motivation: Linearity of Gazdag Migration}
+
+\begin{columns}[c]
+  \begin{column}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Gazdag_migration_image.png}\\[2pt]
+    {\small Migrate baseline \& monitor,\\then subtract}
+  \end{column}
+  \hfill
+  \begin{column}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Gazdag_migration_timelapse_image.png}\\[2pt]
+    {\small Subtract B-scans first,\\then migrate the difference}
+  \end{column}
+\end{columns}
+
+\bigskip
+\begin{block}{Key observation}
+  Because Gazdag migration is a \textbf{linear} operation, both workflows
+  produce identical results:
+  \[
+    \mathcal{M}\{b\} - \mathcal{M}\{m\} \;=\; \mathcal{M}\{b - m\}
+  \]
+\end{block}
+
+\end{frame}
+
+% ─── Migration gallery ───────────────────────────────────────────────────────
+\begin{frame}{Migration Methods — Gallery}
+
+\begin{center}
+  \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{Migration_galary.png}
+\end{center}
+
+\end{frame}
+
+% ─── Lateral shift experiment ────────────────────────────────────────────────
+\begin{frame}{Lateral Shift Experiment}
+
+\begin{columns}[c]
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_galary_0p25_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{4}\lambda$}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_galary_0p125_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{8}\lambda$}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_galary_0p0625_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{16}\lambda$}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+% ─── PSF phase change ────────────────────────────────────────────────────────
+\begin{frame}{Point Spread Functions \& Phase Change}
+
+\begin{columns}[c]
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p25_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{4}\lambda$}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p125_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{8}\lambda$}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p0625_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{16}\lambda$}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+% ─── PSF phase change (zoomed) ───────────────────────────────────────────────
+\begin{frame}{Point Spread Functions \& Phase Change — Zoomed}
+
+\begin{columns}[c]
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{Lateral_shift_test_psf_0p25_lambda_zoomed.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{4}\lambda$}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{Lateral_shift_test_psf_0p125_lambda_zoomed.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{8}\lambda$}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]{Lateral_shift_test_psf_0p0625_lambda_zoomed.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{16}\lambda$}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+% ─── dΦ/dx gradient ──────────────────────────────────────────────────────────
+\begin{frame}{Phase Gradient $\partial\Phi/\partial k_x$ at Migration Apex}
+
+\begin{columns}[c]
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{dphi_dx_0p25_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{4}\lambda$}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{dphi_dx_0p125_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{8}\lambda$}
+  \end{column}
+  \begin{column}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{dphi_dx_0p0625_lambda.png}\\[2pt]
+    {\small $\Delta x = \tfrac{1}{16}\lambda$}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+% ─── Vertical shift experiment ───────────────────────────────────────────────
+\begin{frame}{Vertical Shift Experiment}
+
+\begin{columns}[c]
+  \begin{column}{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{Vertical_shift_test_galary_0p25_lambda.png}\\[1pt]
+    {\small $\Delta z = \tfrac{1}{4}\lambda$}\\[4pt]
+    \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{Vertical_shift_test_galary_0p0625_lambda.png}\\[1pt]
+    {\small $\Delta z = \tfrac{1}{16}\lambda$}
+  \end{column}
+  \begin{column}{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{Vertical_shift_test_galary_0p125_lambda.png}\\[1pt]
+    {\small $\Delta z = \tfrac{1}{8}\lambda$}\\[4pt]
+    \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{Vertical_shift_test_galary_0p03125_lambda.png}\\[1pt]
+    {\small $\Delta z = \tfrac{1}{32}\lambda$}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+% ─── Vertical PSF phase change (zoomed) ──────────────────────────────────────
+\begin{frame}{Vertical Shift — PSFs \& Phase Change}
+
+\begin{columns}[c]
+  \begin{column}{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{Vertical_shift_test_psf_0p25_lambda_zoomed.png}\\[1pt]
+    {\small $\Delta z = \tfrac{1}{4}\lambda$}\\[4pt]
+    \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{Vertical_shift_test_psf_0p0625_lambda_zoomed.png}\\[1pt]
+    {\small $\Delta z = \tfrac{1}{16}\lambda$}
+  \end{column}
+  \begin{column}{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{Vertical_shift_test_psf_0p125_lambda_zoomed.png}\\[1pt]
+    {\small $\Delta z = \tfrac{1}{8}\lambda$}\\[4pt]
+    \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{Vertical_shift_test_psf_0p03125_lambda_zoomed.png}\\[1pt]
+    {\small $\Delta z = \tfrac{1}{32}\lambda$}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+% ─── Frame 1 ─────────────────────────────────────────────────────────────────
+\begin{frame}{1. The 2D Fourier Shift Theorem}
+
+Let the baseline migrated GPR image be $b(z, x)$.
+When a point scatterer moves, the monitor image is a translated copy:
+\[
+  m(z, x) = b(z - \Delta z,\; x - \Delta x)
+\]
+
+\bigskip
+The 2D Fourier transform of the baseline image is:
+\[
+  B(k_z, k_x)
+  = \int_{-\infty}^{\infty}\!\int_{-\infty}^{\infty}
+    b(z, x)\,e^{-j(k_z z + k_x x)}\,dz\,dx
+\]
+
+\bigskip
+By the \textbf{Fourier Shift Theorem}, shifting in space becomes a linear phase
+rotation in the frequency domain:
+\[
+  M(k_z, k_x) = B(k_z, k_x) \cdot e^{-j(k_z \Delta z + k_x \Delta x)}
+\]
+
+\medskip
+\begin{block}{Key implication}
+  The amplitude spectrum is unchanged ($|M| = |B|$), but every frequency
+  coordinate $(k_z, k_x)$ receives a unique phase shift.
+\end{block}
+
+\end{frame}
+
+% ─── Frame 2 ─────────────────────────────────────────────────────────────────
+\begin{frame}{2. Isolating the Phase Plane — The Cross-Spectrum}
+
+The complex cross-spectrum $XS$ is formed by multiplying the baseline spectrum
+by the complex conjugate of the monitor spectrum:
+\[
+  XS(k_z, k_x) = B(k_z, k_x) \cdot M^{*}(k_z, k_x)
+\]
+
+Substituting the shift equation:
+\[
+  XS(k_z, k_x)
+  = B \cdot \bigl[B \cdot e^{-j(k_z \Delta z + k_x \Delta x)}\bigr]^{*}
+  = |B(k_z, k_x)|^{2} \cdot e^{j(k_z \Delta z + k_x \Delta x)}
+\]
+
+Extracting the phase via \texttt{np.angle(XS)}, the real amplitude factor
+$|B|^2$ vanishes, leaving:
+\[
+  \boxed{\Phi(k_z, k_x) = k_z\,\Delta z + k_x\,\Delta x}
+\]
+
+\begin{itemize}
+  \item This is a \textbf{flat plane} passing through the origin $(0,0,0)$.
+  \item Slope along $k_z$ $\;\Rightarrow\;$ vertical displacement $\Delta z$.
+  \item Slope along $k_x$ $\;\Rightarrow\;$ horizontal displacement $\Delta x$.
+\end{itemize}
+
+\end{frame}
+
+% ─── Frame 3 ─────────────────────────────────────────────────────────────────
+\begin{frame}{3. The Overdetermined System — Least Squares Plane Fit}
+
+A discrete GPR image yields \textbf{thousands} of frequency-domain pixels.
+Each valid bin $i = 1, \dots, N$ provides an independent equation:
+\[
+  \Phi_i = k_{z,i}\,\Delta z + k_{x,i}\,\Delta x + c
+\]
+where $c$ absorbs minor calibration biases.
+
+\bigskip
+This is cast as the overdetermined matrix problem $A\,\mathbf{u} = \bm{\Phi}$:
+\[
+  \begin{bmatrix}
+    k_{z,1} & k_{x,1} & 1 \\
+    k_{z,2} & k_{x,2} & 1 \\
+    \vdots  & \vdots  & \vdots \\
+    k_{z,N} & k_{x,N} & 1
+  \end{bmatrix}
+  \begin{bmatrix} \Delta z \\ \Delta x \\ c \end{bmatrix}
+  =
+  \begin{bmatrix} \Phi_1 \\ \Phi_2 \\ \vdots \\ \Phi_N \end{bmatrix}
+\]
+
+\medskip
+\texttt{np.linalg.lstsq} solves this via SVD, compressing thousands of
+measurements into two precise scalars: $\Delta z$ and $\Delta x$.
+
+\end{frame}
+
+% ─── Frame 4a ────────────────────────────────────────────────────────────────
+\begin{frame}{4. Why Weights and the Mask are Crucial}
+
+Solving the matrix naively causes error spikes: frequency bins outside the
+antenna band contain only \emph{random numerical noise}, which destabilises
+the fit.
+
+Two mathematical safeguards enforce sub-wavelength accuracy:
+
+\bigskip
+\textbf{A. The Band-Pass Mask}
+
+Restricting the matrix to $|k_z|, |k_x| < 1.4\,k_{zc}$ keeps the algorithm
+inside the coherent envelope of the Ricker wavelet pulse.
+
+\medskip
+This guarantees that the total phase rotation $\Phi_i$ never crosses
+$\pm\pi$ radians — preventing phase \emph{wrapping}.
+
+\end{frame}
+
+% ─── Frame 4b ────────────────────────────────────────────────────────────────
+\begin{frame}{4. Why Weights and the Mask are Crucial (cont.)}
+
+\textbf{B. Amplitude Weighting ($W$)}
+
+The linear system is pre-multiplied by a diagonal weight matrix $W$, where
+each weight $W_i = |XS|_i$ is the spectral magnitude:
+\[
+  W A\,\mathbf{u} = W\,\bm{\Phi}
+\]
+
+The optimisation goal becomes minimising the \textbf{energy-weighted} residual:
+\[
+  \min \sum_{i=1}^{N}
+    |XS_i|^{2} \cdot
+    \Bigl(\Phi_i - \bigl(k_{z,i}\,\Delta z + k_{x,i}\,\Delta x + c\bigr)\Bigr)^{2}
+\]
+
+\begin{itemize}
+  \item Frequency bins at \textbf{peak antenna power} carry maximum weight.
+  \item Bins near the \textbf{noise floor} are mathematically suppressed.
+\end{itemize}
+
+\medskip
+The result: two extraordinarily precise displacement estimates,
+$\Delta z$ and $\Delta x$.
+
+\end{frame}
+
+% ─── Application: phase-shift method results ─────────────────────────────────
+\begin{frame}{Results: Horizontal, Vertical \& Diagonal Shift — $\tfrac{1}{4}\lambda$}
+\begin{center}
+  \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{Phase_shift_method_test_0p25_lambda.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Results: Horizontal, Vertical \& Diagonal Shift — $\tfrac{1}{8}\lambda$}
+\begin{center}
+  \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{Phase_shift_method_test_0p125_lambda.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Results: Horizontal, Vertical \& Diagonal Shift — $\tfrac{1}{16}\lambda$}
+\begin{center}
+  \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{Phase_shift_method_test_0p0625_lambda.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Results: Horizontal, Vertical \& Diagonal Shift — $\tfrac{1}{32}\lambda$}
+\begin{center}
+  \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{Phase_shift_method_test_0p03125_lambda.png}
+\end{center}
+\end{frame}
+
+% ─── Application: gprMax data ────────────────────────────────────────────────
+\begin{frame}{gprMax Data — $\tfrac{1}{4}\lambda$}
+\begin{center}
+  \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{gprMax_test_0p25_lambda.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{gprMax Data — $\tfrac{1}{8}\lambda$}
+\begin{center}
+  \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{gprMax_test_0p125_lambda.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{gprMax Data — $\tfrac{1}{16}\lambda$}
+\begin{center}
+  \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{gprMax_test_0p0625_lambda.png}
+\end{center}
+\end{frame}
+
+\end{document}

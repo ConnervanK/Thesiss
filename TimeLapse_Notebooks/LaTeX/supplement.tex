@@ -1,0 +1,268 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{8pt}{4pt}
+
+\title{\textbf{Supplementary Figures}\\[4pt]
+       {\large 2D Fourier Phase-Shift Displacement Estimation\\
+        GPR Time-Lapse Monitoring}}
+\author{Conner van Kooten}
+\date{9 June 2026}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\clearpage
+
+% ─── 1. Gazdag migration linearity ───────────────────────────────────────────
+\section{Gazdag Migration Linearity}
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[t]{1\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Gazdag_migration_image.png}
+    \caption{Migrate baseline \& monitor, then subtract.}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[t]{1\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Gazdag_migration_timelapse_image.png}
+    \caption{Subtract B-scans first, then migrate the difference.}
+  \end{subfigure}
+\end{figure}
+
+\clearpage
+
+% ─── 2. Migration gallery ────────────────────────────────────────────────────
+\section{Migration Methods Gallery}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{Migration_galary.png}
+\end{figure}
+
+\clearpage
+
+% ─── 3. Lateral shift experiment ─────────────────────────────────────────────
+\section{Lateral Shift Experiment}
+
+\subsection*{Gallery}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_galary_0p25_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{4}\lambda$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_galary_0p125_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{8}\lambda$}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_galary_0p0625_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{16}\lambda$}
+  \end{subfigure}
+\end{figure}
+
+\subsection*{Point Spread Functions \& Phase Change}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.8\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p25_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{4}\lambda$}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[t]{0.8\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p125_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{8}\lambda$}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[t]{0.8\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p0625_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{16}\lambda$}
+  \end{subfigure}
+\end{figure}
+
+\subsection*{Point Spread Functions \& Phase Change — Zoomed}
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p25_lambda_zoomed.png}
+    \caption{$\Delta x = \tfrac{1}{4}\lambda$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p125_lambda_zoomed.png}
+    \caption{$\Delta x = \tfrac{1}{8}\lambda$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Lateral_shift_test_psf_0p0625_lambda_zoomed.png}
+    \caption{$\Delta x = \tfrac{1}{16}\lambda$}
+  \end{subfigure}
+\end{figure}
+
+\subsection*{Phase Gradient $\partial\Phi/\partial k_x$ at Migration Apex}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.6\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{dphi_dx_0p25_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{4}\lambda$}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[t]{0.6\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{dphi_dx_0p125_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{8}\lambda$}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[t]{0.6\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{dphi_dx_0p0625_lambda.png}
+    \caption{$\Delta x = \tfrac{1}{16}\lambda$}
+  \end{subfigure}
+\end{figure}
+
+\clearpage
+
+% ─── 4. Vertical shift experiment ────────────────────────────────────────────
+\section{Vertical Shift Experiment}
+
+\subsection*{Gallery}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Vertical_shift_test_galary_0p25_lambda.png}
+    \caption{$\Delta z = \tfrac{1}{4}\lambda$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Vertical_shift_test_galary_0p125_lambda.png}
+    \caption{$\Delta z = \tfrac{1}{8}\lambda$}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Vertical_shift_test_galary_0p0625_lambda.png}
+    \caption{$\Delta z = \tfrac{1}{16}\lambda$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Vertical_shift_test_galary_0p03125_lambda.png}
+    \caption{$\Delta z = \tfrac{1}{32}\lambda$}
+  \end{subfigure}
+\end{figure}
+
+\subsection*{Point Spread Functions \& Phase Change}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Vertical_shift_test_psf_0p25_lambda_zoomed.png}
+    \caption{$\Delta z = \tfrac{1}{4}\lambda$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Vertical_shift_test_psf_0p125_lambda_zoomed.png}
+    \caption{$\Delta z = \tfrac{1}{8}\lambda$}
+  \end{subfigure}
+  \vfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Vertical_shift_test_psf_0p0625_lambda_zoomed.png}
+    \caption{$\Delta z = \tfrac{1}{16}\lambda$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Vertical_shift_test_psf_0p03125_lambda_zoomed.png}
+    \caption{$\Delta z = \tfrac{1}{32}\lambda$}
+  \end{subfigure}
+\end{figure}
+
+\clearpage
+
+% ─── 5. Phase-shift method results ───────────────────────────────────────────
+\section{Phase-Shift Method Results (Horizontal, Vertical \& Diagonal)}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{Phase_shift_method_test_0p25_lambda.png}
+  \caption{$\Delta = \tfrac{1}{4}\lambda$}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{Phase_shift_method_test_0p125_lambda.png}
+  \caption{$\Delta = \tfrac{1}{8}\lambda$}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{Phase_shift_method_test_0p0625_lambda.png}
+  \caption{$\Delta = \tfrac{1}{16}\lambda$}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{Phase_shift_method_test_0p03125_lambda.png}
+  \caption{$\Delta = \tfrac{1}{32}\lambda$}
+\end{figure}
+
+\clearpage
+
+% ─── 6. gprMax data ──────────────────────────────────────────────────────────
+\section{Application to gprMax Data}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{gprMax_test_0p25_lambda.png}
+  \caption{$\Delta = \tfrac{1}{4}\lambda$}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{gprMax_test_0p125_lambda.png}
+  \caption{$\Delta = \tfrac{1}{8}\lambda$}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{gprMax_test_0p0625_lambda.png}
+  \caption{$\Delta = \tfrac{1}{16}\lambda$}
+\end{figure}
+
+\end{document}
