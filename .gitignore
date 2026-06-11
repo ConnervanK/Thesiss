@@ -6,3 +6,9 @@
 *.jpg
 *.log
 *.txt
+*.aux
+*.fdb
+*.fls
+*.log
+*.pdf
+*.npz

@@ -1,7 +1,0 @@
-permittivity_ice      = 6
-permittivity_air      = 1
-permittivity_fracture = 80 +/- 20%
-
-conductivity_ice      = 1e-6
-conductivity_air      = 0
-conductivity_fracture = 5
