@@ -13,7 +13,7 @@ def PylopsKirchoffMigration(data, t, x, vel_model, z, wav='Ricker', wavcenter='C
     Perform Kirchhoff migration using PyLops zero offset operator. pass ns, gHz and meter
     """
     import importlib
-    import TimeLapse_Notebooks.helper_functions.KirchhoffPylopsZeroOffset as KirchhoffPylopsZeroOffset
+    import helper_functions.KirchhoffPylopsZeroOffset as KirchhoffPylopsZeroOffset
     importlib.reload(KirchhoffPylopsZeroOffset)
     from pylops.utils.wavelets import ricker
 
