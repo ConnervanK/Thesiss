@@ -1,0 +1,43 @@
+\chapter{Introduction}
+\label{ch:introduction}
+
+\draftnote{this chapter is a placeholder skeleton. Expand with a proper
+literature review and a precise statement of the research questions before
+submission.}
+
+Ground-penetrating radar (GPR) images subsurface structure by emitting a
+short electromagnetic pulse and recording its reflections from dielectric
+contrasts in the ground. The achievable image resolution is fundamentally
+limited by the wavelength of the probing pulse: two reflectors closer than
+roughly half a wavelength apart, or a single reflector that moves by a small
+fraction of a wavelength between two surveys, cannot be distinguished from
+the migrated \emph{amplitude} image alone (\cref{ch:resolution}). This is a
+practical obstacle for time-lapse monitoring applications --- tracking
+millimetre-scale ground movement, or the advance of a fluid front through a
+sub-wavelength fracture --- where the displacement or material change of
+interest is, by construction, far smaller than the wavelength of the radar
+pulse used to image it.
+
+This thesis develops and validates a \emph{phase}-based alternative: rather
+than reading displacement off the migrated amplitude image, a baseline and a
+monitor survey are migrated and compared in the two-dimensional Fourier
+domain, where the Fourier shift theorem turns any sub-wavelength translation
+into a fully resolvable linear phase ramp (\cref{ch:theory}). A weighted
+least-squares fit of this phase plane recovers the displacement with
+sub-millimetre precision, and --- critically --- separates a purely
+geometric shift from a phase rotation caused by a change in the dielectric
+properties of the target itself, which is the signature of, for example, a
+fracture filling with water.
+
+\section*{Outline}
+
+\Cref{ch:theory} derives the migration and phase-plane theory used
+throughout the thesis. \Cref{ch:methodology} describes the shared simulation
+and processing pipeline. \Cref{ch:resolution} establishes the amplitude-based
+resolution limit that motivates the phase-based approach.
+\Cref{ch:tl-horizontal,ch:tl-vertical} apply simple amplitude differencing to
+lateral and vertical sub-wavelength displacements of a point scatterer.
+\Cref{ch:phase-plane} validates the 2D phase-plane framework itself, and
+\Cref{ch:fluidflow} applies the full pipeline to a more realistic, spatially
+distributed fluid-front scenario. \Cref{ch:discussion,ch:conclusion} close
+with a discussion of the results and an outlook for field application.

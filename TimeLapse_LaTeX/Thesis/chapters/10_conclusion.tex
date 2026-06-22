@@ -1,0 +1,40 @@
+\chapter{Conclusion and Outlook}
+\label{ch:conclusion}
+
+\draftnote{this chapter is a placeholder skeleton --- rewrite once
+\cref{ch:discussion} is filled in with concrete numbers, since the claims
+below should restate quantified results, not generic statements.}
+
+\section{Summary}
+
+This thesis set out to determine whether sub-wavelength displacement and
+material change can be recovered from time-lapse GPR surveys once classical
+amplitude-based migration imaging has stopped resolving them.
+\Cref{ch:resolution} quantified that amplitude floor for two stationary
+point scatterers across three independent migration algorithms.
+\Cref{ch:tl-horizontal,ch:tl-vertical} showed that the same floor limits
+amplitude \emph{differencing} of a single displaced scatterer, both
+laterally and vertically, with and without additive noise. A 2D Fourier
+phase-plane shift estimator was then derived (\cref{ch:theory}) and
+validated (\cref{ch:phase-plane}) directly on the same datasets, and applied
+to a more field-realistic, spatially distributed fluid-front scenario
+(\cref{ch:fluidflow}), where the same fit was shown to decouple a purely
+geometric displacement from a purely dielectric material change using a
+single weighted least-squares plane fit.
+
+\section{Outlook for Field Application}
+
+\draftnote{expand with concrete next steps. Candidates already implied by
+the methodology and theory chapters: (1) validate the pipeline on a real
+zero-offset field survey with a known, controlled sub-wavelength
+displacement (e.g.\ a target on a calibrated micrometre stage) to test the
+field pre-processing assumptions of \cref{sec:meth-phaseplane} (dewow,
+time-zero correction, trace re-binning) that the synthetic data in this
+thesis sidesteps by construction; (2) run the three outstanding robustness
+experiments flagged in \cref{ch:discussion}; (3) extend the fluid-front
+model of \cref{ch:fluidflow} to a swept range of fracture thickness and
+fluid contrast, and to a front geometry that is not perfectly straight; (4)
+quantify the velocity-recalibration procedure needed when soil or ice
+moisture genuinely changes between baseline and monitor surveys, since
+\cref{sec:meth-phaseplane} noted that this is otherwise indistinguishable
+from a true vertical shift $\Dz$.}

@@ -1,0 +1,35 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Claerbout(1985)]{claerbout1985}
+Jon~F. Claerbout.
+\newblock \emph{Imaging the Earth's Interior}.
+\newblock Blackwell Scientific Publications, 1985.
+\newblock Placeholder entry --- verify against original; source of the
+  exploding-reflector model used throughout Chapter~2.
+
+\bibitem[Gazdag(1978)]{gazdag1978}
+J.~Gazdag.
+\newblock Wave equation migration with the phase-shift method.
+\newblock \emph{Geophysics}, 43\penalty0 (7):\penalty0 1342--1351, 1978.
+\newblock Placeholder entry --- verify against original.
+
+\bibitem[Schneider(1978)]{schneider1978}
+William~A. Schneider.
+\newblock Integral formulation for migration in two and three dimensions.
+\newblock \emph{Geophysics}, 43\penalty0 (1):\penalty0 49--76, 1978.
+\newblock Placeholder entry --- verify against original; Kirchhoff/integral
+  migration.
+
+\bibitem[Warren et~al.(2016)Warren, Giannopoulos, and Giannakis]{gprmax}
+Craig Warren, Antonis Giannopoulos, and Iraklis Giannakis.
+\newblock {gprMax}: Open source software to simulate electromagnetic wave
+  propagation for ground penetrating radar, 2016.
+\newblock Placeholder entry --- verify against the gprMax project citation
+  (Computer Physics Communications) before submission.
+
+\end{thebibliography}

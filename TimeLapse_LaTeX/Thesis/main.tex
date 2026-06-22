@@ -1,0 +1,45 @@
+% ============================================================
+% Subwavelength Imaging in Ground-Penetrating Radar
+% Using Time-Lapse Data --- thesis skeleton
+%
+% Compile with LuaLaTeX (figure filenames contain Unicode: lambda,
+% Delta, Phi, fraction glyphs):
+%     latexmk -lualatex main.tex
+% A .latexmkrc in this directory already forces the lualatex engine,
+% so a plain `latexmk main.tex` also works.
+% ============================================================
+\documentclass[12pt,a4paper]{report}
+
+\input{preamble}
+
+\title{Subwavelength Imaging in Ground-Penetrating Radar\\[2pt] Using Time-Lapse Data}
+\author{Conner van Kooten}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\input{chapters/00_abstract}
+
+\tableofcontents
+\listoffigures
+
+\input{chapters/01_introduction}
+\input{chapters/02_theory}
+\input{chapters/03_methodology}
+\input{chapters/04_resolution_study}
+\input{chapters/05_timelapse_horizontal}
+\input{chapters/06_timelapse_vertical}
+\input{chapters/07_phase_plane_framework}
+\input{chapters/08_fluidflow_application}
+\input{chapters/09_discussion}
+\input{chapters/10_conclusion}
+
+\appendix
+\input{appendix/A_extended_sweeps}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

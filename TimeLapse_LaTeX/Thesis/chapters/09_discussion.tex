@@ -1,0 +1,52 @@
+\chapter{Discussion}
+\label{ch:discussion}
+
+\draftnote{this chapter is a placeholder skeleton built around the
+draft-note prompts left in
+\cref{ch:resolution,ch:tl-horizontal,ch:tl-vertical,ch:phase-plane,ch:fluidflow}.
+Resolve those prompts first (they ask for specific numbers read off specific
+figures), then rewrite this chapter as connected prose rather than a list.}
+
+\section{Amplitude versus Phase: Quantifying the Improvement}
+
+\Cref{ch:resolution,ch:tl-horizontal,ch:tl-vertical} established an
+amplitude-based detectability floor, and \cref{ch:phase-plane} showed the
+phase-plane estimator remaining accurate at scales where that amplitude
+floor has already been reached. \draftnote{state the improvement factor
+explicitly: floor scale found in \cref{sec:res-comparison,sec:tl-detectability,sec:vtl-detectability}
+versus the smallest scale at which \cref{sec:tlp-horizontal-validation,sec:tlp-vertical}
+still recover $(\Dz,\Dx)$ within tolerance.}
+
+\section{Lateral/Vertical Asymmetry}
+
+\Cref{sec:th-duality} predicted, from first principles, that a migrated
+image separates lateral spatial frequency like a prism but not vertical
+frequency. \draftnote{state whether this asymmetry was visible only in the
+instantaneous-phase analysis (\cref{fig:tlp-instphase-horiz-summary} vs.\
+\cref{fig:tlp-instphase-vert-summary}) or also at the amplitude level
+(\cref{fig:tl-summary} vs.\ \cref{fig:vtl-summary}), and what that implies
+for a field deployment that cares more about one direction than the other.}
+
+\section{Noise Robustness}
+
+Direct evidence for noise robustness in this thesis is limited to the
+lateral, Laplace-noise case of \cref{sec:tl-noise,sec:tlp-noise}. The design
+notes behind the WLS estimator (\cref{sec:th-wls}) additionally propose
+three further stress tests --- an orthogonality test isolating pure
+geometric shift from pure material-change phase, a controlled SNR sweep from
+$+30\,\si{dB}$ to $-10\,\si{dB}$ comparing OLS against the WLS estimator, and
+a $20\times20$ grid sweep of true $(\Dt,\Dtheta)$ pairs reported as a 2D
+inversion-error heatmap --- for which no corresponding output figures were
+found under \texttt{TimeLapse\_Figures} at the time this skeleton was
+written. \draftnote{either run these three experiments and add the
+resulting figures to \cref{ch:phase-plane}, or explicitly scope them as
+future work in \cref{ch:conclusion} --- do not leave the gap unstated.}
+
+\section{Limitations}
+
+\draftnote{list concrete limitations: synthetic gprMax data only (no field
+validation); back-propagation migration not run on noisy or vertical-noise
+data due to computational cost; the domain-size and STFT-scale-labelling
+uncertainties flagged in \cref{ch:methodology,sec:tlp-stft}; the fluid-front
+model uses a single idealised thin-layer geometry rather than a swept range
+of fracture thicknesses or contrasts.}
