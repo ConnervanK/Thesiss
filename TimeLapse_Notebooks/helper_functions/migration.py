@@ -114,13 +114,21 @@ def gazdag_migration(data, x, t, z, vel):
 
 
 def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpoints,
-                         t0_ns, eps_r, v_ice, stride=1, n_snap=30, snap_win=1.0):
+                         t0_ns, eps_r, v_ice, stride=1, n_snap=30, snap_win=1.0,
+                         sign_bit=False):
     """
     Write gprMax excitation file and .in file for back-propagation migration.
     Files go in study_root/backprop/<slug>/.
 
     Sources are placed at the Tx-Rx midpoints (x_midpoints), consistent with the
     exploding-reflector half-velocity (v_mig = v/2) assumption.
+
+    sign_bit=True — inject sign(u) instead of the peak-normalised time-reversed
+    wavefield. Spatial focusing during back-propagation is governed by phase
+    (zero-crossings), not amplitude; sign-bit reversal keeps every phase trend
+    of the wavelet but squashes impulsive noise spikes down to the same +-1 as
+    the coherent signal, stripping them of the outsized amplitude they'd
+    otherwise inject as competing point sources. See TimeLapse_Processing.ipynb.
 
     Returns (in_path, n_src, n_snaps, t_focus_ns).
     """
@@ -133,14 +141,17 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
     dt_s  = dt_ns * 1e-9
     T_ns  = n_t * dt_ns
 
-    # Stride, time-reverse, normalise per trace
+    # Stride, time-reverse, then either sign-bit or peak-normalise per trace
     data_s   = tapered_ntr_nt[::stride]
     x_src    = x_midpoints[::stride]
     n_src    = len(x_src)
     data_rev = data_s[:, ::-1].copy()
-    peak     = np.max(np.abs(data_rev), axis=1, keepdims=True)
-    peak[peak == 0] = 1.0
-    data_rev /= peak
+    if sign_bit:
+        data_rev = np.sign(data_rev)
+    else:
+        peak     = np.max(np.abs(data_rev), axis=1, keepdims=True)
+        peak[peak == 0] = 1.0
+        data_rev /= peak
 
     # Snapshot timing: all depths focus simultaneously at t_focus = T - t0
     t_focus_ns = T_ns - t0_ns
@@ -170,8 +181,10 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
     v_half     = v_ice / 2
     in_path    = out_dir / f'backprop_{slug}.in'
 
+    excitation_mode = 'sign-bit (sign(u), amplitude stripped)' if sign_bit else 'peak-normalised'
     in_lines = [
         f'#title: Back-Propagation -- {label}',
+        f'// Excitation mode: {excitation_mode}',
         '#domain: 4.000 1.000 0.001',
         '#dx_dy_dz: 0.001 0.001 0.001',
         f'#time_window: {n_t * dt_s:.6e}',
@@ -207,5 +220,103 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
         '',
         '#messages: y',
     ]
-    in_path.write_text('\n'.join(in_lines) + '\n')
+    in_path.write_text('\n'.join(in_lines) + '\n', encoding='utf-8')
     return in_path, n_src, n_snaps, t_focus_ns
+
+
+def dispersion_limited_cutoff(eps_r, dx, min_cells_per_wavelength=3, safety_factor=0.7):
+    """
+    Highest frequency (Hz) that a gprMax grid can resolve in a material,
+    with a safety margin below the solver's own numerical-dispersion limit.
+
+    gprMax refuses to run (GeneralError: "Non-physical wave propagation")
+    whenever a source's spectral content samples the medium's wavelength
+    with fewer than `min_cells_per_wavelength` cells (gprMax's own default
+    is 3 -- see gprMax.grid.FDTDGrid.mingridsampling and dispersion_analysis()
+    in gprMax/grid.py). For #excitation_file sources this is evaluated per
+    source column, so a single noisy/sharp trace among hundreds can trip the
+    check even though most of the model is well resolved.
+
+    safety_factor < 1 leaves headroom for two reasons: (1) gprMax's check
+    measures where the spectrum drops 40 dB below its peak, not a hard
+    band-edge, and (2) the Butterworth filter applied in
+    lowpass_filter_excitation() has a gradual roll-off, so its actual -40 dB
+    point sits noticeably above the nominal cutoff passed to it. The default
+    of 0.7 was tuned empirically against gprMax's own dispersion_analysis()
+    for this study's eps_r=12.6, dx=1mm grid (nominal cutoff ~20 GHz landed
+    the real post-filter significant frequency around ~22-23 GHz, safely
+    under the ~28 GHz hard limit). Re-validate with a real gprMax run if you
+    change eps_r, dx, or the filter order substantially.
+
+    Args:
+        eps_r (float): Relative permittivity of the fastest-attenuating /
+            highest-permittivity material in the model (sets the minimum
+            wave velocity, which is the worst case for dispersion).
+        dx (float): Spatial step (m). Assumes a cubic/uniform grid as used
+            by write_backprop_files (#dx_dy_dz all equal).
+        min_cells_per_wavelength (int): gprMax's mingridsampling threshold.
+        safety_factor (float): Fraction of the theoretical limit to target.
+
+    Returns:
+        cutoff_hz (float): Suggested low-pass cutoff frequency in Hz.
+    """
+    v = 299792458.0 / np.sqrt(eps_r)
+    return safety_factor * v / (min_cells_per_wavelength * dx)
+
+
+def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, keep_backup=True):
+    """
+    Zero-phase low-pass filter every source column of a gprMax excitation
+    file in place, to bring its spectral content under gprMax's
+    numerical-dispersion limit (see dispersion_limited_cutoff).
+
+    Needed when write_backprop_files() produces virtual sources with
+    sharper/sub-wavelength focusing kernels than the simulation grid can
+    resolve -- gprMax then raises "Non-physical wave propagation" for that
+    .in file instead of running. Filtering trims only the unresolvable
+    high-frequency tail; the time column and overall pulse shape/timing are
+    left intact.
+
+    Args:
+        exc_path (str or Path): Path to the excitation.txt file (format:
+            header row 'time bp_0 bp_1 ...', then one row per time step,
+            as written by write_backprop_files).
+        cutoff_hz (float): Low-pass cutoff frequency in Hz. Use
+            dispersion_limited_cutoff() to derive this from the model's
+            material and grid spacing.
+        order (int): Butterworth filter order (higher = sharper roll-off,
+            closer to the nominal cutoff at the cost of more ringing).
+        keep_backup (bool): If True, save the pre-filter file as
+            '<exc_path>' with 'excitation' replaced by 'excitation_orig'
+            (skipped if that backup already exists).
+
+    Returns:
+        exc_path (Path): The (now filtered) excitation file path.
+    """
+    import pathlib
+    import shutil
+    from scipy.signal import butter, filtfilt
+
+    exc_path = pathlib.Path(exc_path)
+    with open(exc_path) as f:
+        header = f.readline()
+
+    data = np.loadtxt(exc_path, skiprows=1)
+    dt = data[1, 0] - data[0, 0]
+    nyquist = 0.5 / dt
+    b, a = butter(order, cutoff_hz / nyquist, btype='low')
+
+    filtered = data.copy()
+    for col in range(1, data.shape[1]):
+        filtered[:, col] = filtfilt(b, a, data[:, col])
+
+    if keep_backup:
+        backup_path = exc_path.with_name(exc_path.name.replace('excitation', 'excitation_orig'))
+        if not backup_path.exists():
+            shutil.copy(exc_path, backup_path)
+
+    with open(exc_path, 'w') as f:
+        f.write(header)
+        np.savetxt(f, filtered, fmt='%.6e')
+
+    return exc_path
