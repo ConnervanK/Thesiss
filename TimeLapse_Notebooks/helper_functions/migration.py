@@ -264,7 +264,7 @@ def dispersion_limited_cutoff(eps_r, dx, min_cells_per_wavelength=3, safety_fact
     return safety_factor * v / (min_cells_per_wavelength * dx)
 
 
-def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, keep_backup=True):
+def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, edge_exclude=0, keep_backup=True):
     """
     Zero-phase low-pass filter every source column of a gprMax excitation
     file in place, to bring its spectral content under gprMax's
@@ -277,6 +277,18 @@ def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, keep_backup=True):
     high-frequency tail; the time column and overall pulse shape/timing are
     left intact.
 
+    Filtering alone is not always enough: the outermost virtual sources sit
+    at the edge of the migration aperture and can carry near-Nyquist content
+    baked into the raw time-reversed data (observed: a single-sample swing of
+    ~0.95 out of a +-1 range, i.e. close to the simulation's own sample
+    rate). No low-pass filter can safely remove that -- too gentle and it
+    survives, too aggressive and the filter's own ringing on such a sharp
+    signal makes the measured significant frequency *worse*, not better
+    (observed maxfreq climbing past 100GHz at very low cutoffs). Dropping a
+    few edge sources entirely via `edge_exclude` (standard aperture-limiting
+    practice in migration) is the reliable fix for that failure mode; the
+    frequency-domain filter alone cannot resolve it.
+
     Args:
         exc_path (str or Path): Path to the excitation.txt file (format:
             header row 'time bp_0 bp_1 ...', then one row per time step,
@@ -286,6 +298,9 @@ def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, keep_backup=True):
             material and grid spacing.
         order (int): Butterworth filter order (higher = sharper roll-off,
             closer to the nominal cutoff at the cost of more ringing).
+        edge_exclude (int): Zero out this many source columns at each end
+            of the array (outermost sources of the migration aperture)
+            before filtering. 0 disables this (default).
         keep_backup (bool): If True, save the pre-filter file as
             '<exc_path>' with 'excitation' replaced by 'excitation_orig'
             (skipped if that backup already exists).
@@ -295,7 +310,7 @@ def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, keep_backup=True):
     """
     import pathlib
     import shutil
-    from scipy.signal import butter, filtfilt
+    from scipy.signal import butter, sosfiltfilt
 
     exc_path = pathlib.Path(exc_path)
     with open(exc_path) as f:
@@ -304,11 +319,15 @@ def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, keep_backup=True):
     data = np.loadtxt(exc_path, skiprows=1)
     dt = data[1, 0] - data[0, 0]
     nyquist = 0.5 / dt
-    b, a = butter(order, cutoff_hz / nyquist, btype='low')
+    sos = butter(order, cutoff_hz / nyquist, btype='low', output='sos')
 
     filtered = data.copy()
     for col in range(1, data.shape[1]):
-        filtered[:, col] = filtfilt(b, a, data[:, col])
+        filtered[:, col] = sosfiltfilt(sos, data[:, col])
+
+    if edge_exclude:
+        filtered[:, 1:1 + edge_exclude] = 0.0
+        filtered[:, -edge_exclude:] = 0.0
 
     if keep_backup:
         backup_path = exc_path.with_name(exc_path.name.replace('excitation', 'excitation_orig'))
