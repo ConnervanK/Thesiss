@@ -1,0 +1,305 @@
+\chapter{Time-Lapse Detection of Lateral Movement}
+\label{ch:tl-horizontal}
+
+\Cref{ch:resolution} showed that two \emph{stationary} scatterers cannot be
+resolved as separate amplitude peaks below roughly half a wavelength of
+separation. This chapter asks the closely related time-lapse question: if a
+\emph{single} scatterer moves laterally between a baseline and a monitor
+survey by a sub-wavelength amount, is that movement visible in the
+\emph{difference} of the two migrated amplitude images? The displacement is
+swept from $2\lambda$ down to $\tfrac{1}{32}\lambda$, using the same three
+migration algorithms as \cref{ch:resolution}, and the experiment is repeated
+under additive noise to test field-realistic robustness.
+
+\section{Setup: Moving Scatterer Scenarios}
+
+A single PEC cylinder ($r=\SI{28}{mm}$, depth \SI{0.676}{m}) is held fixed
+in the baseline survey and displaced laterally by each of eight scenarios in
+the monitor survey, from $2\lambda$ down to $\tfrac{1}{32}\lambda$
+(\cref{fig:tl-setup}), using the same gprMax domain and grid as
+\cref{ch:resolution}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_001_TimeLapse_Study__Model_Geometry__domain_4010_m_Δx__1_mm_PML.png}
+    \caption{Model geometry}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_002_Moving_scatterer_s1__all_8_scenarios__r__28_mm_depth__0676_m.png}
+    \caption{All 8 displacement scenarios}
+  \end{subfigure}
+  \caption{Forward-model setup for the lateral time-lapse study: (a) the
+    gprMax domain and grid; (b) the lateral displacement of scatterer
+    \texttt{s1} across all eight scenarios, $r=\SI{28}{mm}$, depth
+    \SI{0.676}{m}.}
+  \label{fig:tl-setup}
+\end{figure}
+
+\section{Raw and Noisy B-Scan Generation}
+
+\Cref{fig:tl-bscans} shows the background-baseline and time-lapsed raw
+B-scans, the background-subtracted result, and the effect of adding
+synthetic Laplace-distributed noise at $10\,\%$ of the signal standard
+deviation, used later in \cref{sec:tl-noise}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{TL_003_GPR_B-Scans__Background_Baseline_and_TimeLapsed_Models.png}
+    \caption{Background \& time-lapsed}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{TL_004_GPR_B-Scans__Background_Subtracted.png}
+    \caption{Background-subtracted}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{TL_005_GPR_B-Scans__With_Synthetic_Laplace_Noise_10_of_signal_std.png}
+    \caption{With Laplace noise}
+  \end{subfigure}
+  \caption{Raw B-scans for the lateral time-lapse study: (a) background and
+    time-lapsed models; (b) background-subtracted; (c) with synthetic
+    Laplace-distributed noise at $10\,\%$ of the signal standard deviation.}
+  \label{fig:tl-bscans}
+\end{figure}
+
+\section{Signal Conditioning}
+
+The same tapering and $t_0$-shift conditioning as \cref{ch:resolution}
+(\cref{sec:meth-conditioning}) is applied before migration
+(\cref{fig:tl-taper}).
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_006_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png}
+    \caption{Single trace}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_007_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png}
+    \caption{Full B-scan}
+  \end{subfigure}
+  \caption{Effect of tapering and the $t_0$ shift on the $2\lambda$ lateral
+    displacement dataset: (a) a single trace; (b) the full B-scan.}
+  \label{fig:tl-taper}
+\end{figure}
+
+\section{Kirchhoff Migration and Time-Lapse Differencing}
+
+\Cref{fig:tl-kirchhoff} shows the Kirchhoff-migrated image for all eight
+displacement scenarios, and the time-lapse difference (migrated monitor
+minus migrated baseline) that isolates the moved scatterer.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_008_Kirchhoff_Migration__All_8_Datasets____f_c15_GHz____aperture.png}
+    \caption{All 8 scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_009_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_010_Kirchhoff_Migration__TimeLapse_Differences_migrated__migrate.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_011_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Kirchhoff migration of the lateral time-lapse study
+    ($f_c=\SI{15}{\GHz}$, aperture $=40$): (a,b) migrated image for all
+    scenarios and zoomed; (c,d) migrated-monitor-minus-migrated-baseline
+    difference and zoomed.}
+  \label{fig:tl-kirchhoff}
+\end{figure}
+
+\section{Gazdag Migration and Time-Lapse Differencing}
+
+\Cref{fig:tl-gazdag} repeats the same analysis with Gazdag phase-shift
+migration.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_012_Gazdag_Phase-Shift_Migration__All_7_Datasets____f_c15_GHz.png}
+    \caption{All scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_013_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_014_Gazdag_Migration__TimeLapse_Differences_migrated__migrated_b.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_015_Gazdag_Migration__TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Gazdag phase-shift migration of the lateral time-lapse study
+    ($f_c=\SI{15}{\GHz}$): (a,b) migrated image and zoomed; (c,d) time-lapse
+    difference and zoomed.}
+  \label{fig:tl-gazdag}
+\end{figure}
+
+\section{Back-Propagation Migration and Time-Lapse Differencing}
+
+\Cref{fig:tl-backprop} shows the corresponding back-propagation result, for
+both the field-magnitude and $E_z$ images, focused at $t=\SI{1906}{\ns}$.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_016_Back-Propagation_E__All_7_Datasets____focus_at_1906_ns.png}
+    \caption{$\lVert\mathbf{E}\rVert$, all scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_017_Back-Propagation_E_zoomed____focus_at_1906_ns.png}
+    \caption{$\lVert\mathbf{E}\rVert$, zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_018_Back-Propagation_Ez__All_7_Datasets____focus_at_1906_ns.png}
+    \caption{$E_z$, all scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_019_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png}
+    \caption{$E_z$, zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_020_Back-Propagation__TimeLapse_Differences_Ez_Ez__Ez_baseline.png}
+    \caption{$E_z$ time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_021_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Time-reversal back-propagation migration of the lateral
+    time-lapse study, focused at $t=\SI{1906}{\ns}$: field-magnitude (a,b)
+    and $E_z$ (c,d) images, and the $E_z$ time-lapse difference (e,f).}
+  \label{fig:tl-backprop}
+\end{figure}
+
+\section{Amplitude-Based Detectability Summary}
+\label{sec:tl-detectability}
+
+\Cref{fig:tl-summary} overlays the signed time-lapse-difference amplitude
+from all three algorithms and plots the normalised lateral point-spread
+function of that difference at the true scatterer depth, as a function of
+displacement.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_022_TimeLapse_Migration_Comparison__Signed_Amplitude____f_c15_GH.png}
+    \caption{Signed-amplitude comparison}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_023_Normalised_Lateral_PSF__TimeLapse_Difference_at_True_Scatter.png}
+    \caption{Normalised lateral PSF of the difference}
+  \end{subfigure}
+  \caption{(a) Signed time-lapse-difference amplitude for all three
+    migration algorithms at $f_c=\SI{15}{\GHz}$; (b) the normalised lateral
+    PSF of the difference image at the true scatterer depth, swept across
+    lateral displacements from $2\lambda$ to $\tfrac{1}{32}\lambda$.}
+  \label{fig:tl-summary}
+\end{figure}
+
+\draftnote{state the smallest displacement at which the difference image in
+\cref{fig:tl-summary}b still shows a clear, unambiguous peak above the
+numerical background, and compare it with the amplitude resolution floor
+found for stationary scatterers in \cref{sec:res-comparison}.}
+
+\section{Robustness Under Noise}
+\label{sec:tl-noise}
+
+The same lateral displacement sweep is repeated on B-scans contaminated with
+the synthetic Laplace noise of \cref{fig:tl-bscans}c, for the two
+analytically-defined migration algorithms (Kirchhoff and Gazdag; back-propagation
+was not re-run on the noisy dataset due to its computational cost).
+\Cref{fig:tl-noisy-kirchhoff,fig:tl-noisy-gazdag} repeat the migration and
+differencing analysis of the preceding sections on this noisy data.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_024_Kirchhoff_Migration_-_All_8_Noisy_Datasets____f_c15_GHz____a.png}
+    \caption{All 8 noisy scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_025_Kirchhoff_Migration_-_Noisy_zoomed____f_c15_GHz____aperture4.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_026_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_migrated_-.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_027_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Kirchhoff migration of the \emph{noisy} lateral time-lapse data
+    ($f_c=\SI{15}{\GHz}$, aperture $=40$): (a,b) migrated image for all
+    scenarios and zoomed; (c,d) time-lapse difference and zoomed.}
+  \label{fig:tl-noisy-kirchhoff}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_028_Gazdag_Phase-Shift_Migration_-_All_8_Noisy_Datasets____f_c15.png}
+    \caption{All 8 noisy scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_029_Gazdag_Phase-Shift_Migration_-_Noisy_zoomed____f_c15_GHz.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_030_Gazdag_Migration_-_Noisy_TimeLapse_Differences_migrated_-_mi.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_031_Gazdag_Migration_-_Noisy_TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Gazdag phase-shift migration of the \emph{noisy} lateral
+    time-lapse data ($f_c=\SI{15}{\GHz}$): (a,b) migrated image and zoomed;
+    (c,d) time-lapse difference and zoomed.}
+  \label{fig:tl-noisy-gazdag}
+\end{figure}
+
+\draftnote{compare \cref{fig:tl-noisy-kirchhoff,fig:tl-noisy-gazdag} against
+the clean-data results of \cref{fig:tl-kirchhoff,fig:tl-gazdag} and state at
+which displacement scale the additive noise first prevents the time-lapse
+difference from being distinguished from background clutter.} This
+amplitude-based noise sensitivity is revisited quantitatively with the
+phase-plane estimator in \cref{sec:tlp-noise}.

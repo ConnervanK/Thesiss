@@ -1,0 +1,62 @@
+\begin{thebibliography}{8}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Annan(2009)]{annan2009}
+A.~P. Annan.
+\newblock Electromagnetic principles of ground penetrating radar.
+\newblock In Harry~M. Jol, editor, \emph{Ground Penetrating Radar: Theory and
+  Applications}. Elsevier, 2009.
+\newblock Placeholder entry --- verify against original.
+
+\bibitem[Castagna et~al.(2016)Castagna, Zhang, and Falconer]{castagna2016}
+John Castagna, Qing Zhang, and Olivia Falconer.
+\newblock Phase decomposition.
+\newblock \emph{Interpretation}, 2016.
+\newblock Placeholder entry --- referenced by name in
+  helper\_functions/phase\_decomposition.py; verify authors, volume and pages
+  against original.
+
+\bibitem[Claerbout(1985)]{claerbout1985}
+Jon~F. Claerbout.
+\newblock \emph{Imaging the Earth's Interior}.
+\newblock Blackwell Scientific Publications, 1985.
+\newblock Placeholder entry --- verify against original; source of the
+  exploding-reflector model used throughout Chapter~2.
+
+\bibitem[Daniels(2004)]{daniels2004}
+David~J. Daniels.
+\newblock \emph{Ground Penetrating Radar}.
+\newblock The Institution of Engineering and Technology, 2nd edition, 2004.
+\newblock Placeholder entry --- verify against original.
+
+\bibitem[Gazdag(1978)]{gazdag1978}
+J.~Gazdag.
+\newblock Wave equation migration with the phase-shift method.
+\newblock \emph{Geophysics}, 43\penalty0 (7):\penalty0 1342--1351, 1978.
+\newblock Placeholder entry --- verify against original.
+
+\bibitem[Schneider(1978)]{schneider1978}
+William~A. Schneider.
+\newblock Integral formulation for migration in two and three dimensions.
+\newblock \emph{Geophysics}, 43\penalty0 (1):\penalty0 49--76, 1978.
+\newblock Placeholder entry --- verify against original; Kirchhoff/integral
+  migration.
+
+\bibitem[Stolt(1978)]{stolt1978}
+R.~H. Stolt.
+\newblock Migration by {Fourier} transform.
+\newblock \emph{Geophysics}, 43\penalty0 (1):\penalty0 23--48, 1978.
+\newblock Placeholder entry --- verify against original.
+
+\bibitem[Warren et~al.(2016)Warren, Giannopoulos, and Giannakis]{gprmax}
+Craig Warren, Antonis Giannopoulos, and Iraklis Giannakis.
+\newblock {gprMax}: Open source software to simulate electromagnetic wave
+  propagation for ground penetrating radar, 2016.
+\newblock Placeholder entry --- verify against the gprMax project citation
+  (Computer Physics Communications) before submission.
+
+\end{thebibliography}

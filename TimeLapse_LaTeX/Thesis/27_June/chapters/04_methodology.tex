@@ -1,0 +1,115 @@
+\chapter{Methodology}
+\label{ch:methodology}
+
+This chapter describes the simulation and processing pipeline shared by all
+five experiments in \cref{ch:resolution,ch:tl-horizontal,ch:tl-vertical,ch:phase-plane,ch:fluidflow}.
+Each experiment varies the scatterer/material configuration and the
+displacement or material change under test, but reuses the same forward
+model, signal-conditioning steps, migration implementations, and (from
+\cref{ch:phase-plane} onward) the same phase-plane estimator.
+
+\section{Forward Modelling with gprMax}
+
+All B-scans are simulated with the open-source finite-difference
+time-domain solver gprMax \citep{gprmax}. The source is a Ricker wavelet with
+centre frequency $f_c=\SI{15}{\GHz}$ and time-zero offset
+$t_0=\SI{0.0943}{\ns}$ (\cref{fig:res-setup}a), chosen so that its usable
+bandwidth defines the dominant wavelength $\lambda$ used to express every
+displacement scale in this thesis ($2\lambda$ down to $\tfrac{1}{32}\lambda$).
+The computational domain is discretised on a uniform \SI{1}{mm} grid with
+perfectly-matched-layer (PML) absorbing boundaries.
+\draftnote{the figure titles encode the domain extent as ``4010~m''; the
+same auto-titling code elsewhere strips decimal points from floats (e.g.\
+a depth of \SI{0.676}{m} appears as \texttt{0676\_m}, and a position of
+\SI{2.0}{m} appears as \texttt{20\_m}), so this almost certainly reads as a
+domain of $\approx\SI{4.01}{m}$ rather than \SI{4010}{m} --- confirm against
+the notebook before quoting a final value.} A zero-offset (collocated
+transmitter and receiver) survey is simulated by sweeping a single
+transmitter--receiver pair across the surface.
+
+\section{Scatterer and Medium Models}
+
+Two target geometries are used across the five experiments:
+
+\begin{itemize}
+  \item \textbf{Point scatterers} (\cref{ch:resolution,ch:tl-horizontal,ch:tl-vertical}):
+    perfect-electric-conductor (PEC) cylinders of radius $r=\SI{28}{mm}$,
+    buried at a depth of \SI{0.676}{m} in ice. \Cref{ch:resolution} places
+    two such cylinders at a swept separation; \cref{ch:tl-horizontal,ch:tl-vertical}
+    instead hold one cylinder fixed as a baseline and displace a second,
+    laterally or vertically, by the same family of sub-wavelength steps.
+  \item \textbf{A distributed fluid front} (\cref{ch:fluidflow}): a
+    sub-wavelength fracture whose air-filled and water-filled regions are
+    separated by a front that advances laterally between baseline and
+    monitor surveys, following the thin-layer reflectivity model of
+    \cref{sec:th-material-change}.
+\end{itemize}
+
+\section{Signal Conditioning Pipeline}
+\label{sec:meth-conditioning}
+
+Every raw B-scan is processed identically before migration:
+\begin{enumerate}
+  \item \textbf{Background subtraction.} A background-only simulation (no
+    scatterer) is subtracted trace-by-trace to suppress the direct
+    air/ground wave and isolate the scatterer reflection
+    (e.g.\ \cref{fig:res-bscans}).
+  \item \textbf{Tapering and $t_0$ alignment.} An exponential decay taper
+    suppresses late-arriving energy, a cosine end-taper removes hyperbola
+    tails at the edge of the migration aperture, and a static shift aligns
+    the surface reflection to $t=0$ (e.g.\ \cref{fig:res-taper}).
+  \item \textbf{Noise injection (where stated).} \Cref{ch:tl-horizontal} additionally
+    tests robustness by contaminating the conditioned B-scan with synthetic
+    Laplace-distributed noise at $10\,\%$ of the signal standard deviation.
+\end{enumerate}
+
+\section{Migration Algorithms Implemented}
+
+Every conditioned B-scan in \cref{ch:resolution,ch:tl-horizontal,ch:tl-vertical,ch:fluidflow}
+is migrated with all three algorithms derived in \cref{sec:th-migration}:
+Kirchhoff delay-and-sum (PyLops zero-offset operator), Gazdag $f$-$k$
+phase-shift migration, and gprMax-based time-reversal back-propagation. All
+three share the implementation in \texttt{helper\_functions/migration.py}
+(\texttt{PylopsKirchoffMigration}, \texttt{gazdag\_migration}, and
+\texttt{write\_backprop\_files}) and the exploding-reflector convention
+$\vmig=v/2$ of \cref{eq:vmig}, so that the same velocity model and the same
+migration aperture are used for a baseline/monitor pair, which is required
+for the displacement estimate of \cref{sec:meth-phaseplane} to be valid.
+
+\section{The 2D Phase-Plane Shift-Estimation Pipeline}
+\label{sec:meth-phaseplane}
+
+\Cref{ch:phase-plane,ch:fluidflow} apply the theory of
+\cref{sec:th-fourier-shift,sec:th-wls,sec:th-material-change} to the migrated
+images produced above, via the function \texttt{estimate\_shift\_2d} defined
+in \texttt{TimeLapse\_Processing.ipynb}. The end-to-end workflow is:
+\begin{enumerate}
+  \item \textbf{Migrate} the baseline and monitor B-scan with an identical
+    velocity model and aperture (\cref{sec:th-migration}).
+  \item \textbf{Crop a region of interest (ROI)} tightly around the target
+    (in this thesis, a window of $\pm\,2.5\lambda$ about the scatterer or
+    fracture apex, located on the Hilbert-envelope peak of the baseline
+    image), so that static background structure elsewhere in the image
+    cannot drag the fitted plane towards zero.
+  \item \textbf{Taper, then take the 2D FFT} of both cropped images and form
+    the cross-spectrum $\XS$ of \cref{eq:cross-spectrum-def}.
+  \item \textbf{Mask and weight}: restrict the fit to $|\kz|,|\kx|<1.4\,k_{zc}$
+    and weight every bin by $|\XS|$ (\cref{sec:th-mask-weight}).
+  \item \textbf{Solve} the weighted least-squares system of
+    \cref{eq:wls-preweighted} for $(\Dz,\Dx,c)$.
+\end{enumerate}
+For the distributed fluid front of \cref{ch:fluidflow}, step 2 instead slides
+a small window along the known fracture geometry, and step 5 is read for its
+intercept $c$ at each position to build a spatial profile of material
+change (\cref{eq:intercept-material}), rather than a single displacement
+estimate.
+
+\paragraph{Practical considerations carried over from field application.}
+Two points are worth flagging for any future extension of this pipeline to
+real field surveys, even though the synthetic data in this thesis sidesteps
+them by construction: the ROI window should be roughly $3$--$4$ times the
+target pulse width (too small clips the signal under tapering, too large
+admits background noise into the fit); and a genuine change in soil/ice
+moisture between surveys changes the true wave velocity $v$, which the
+estimator would otherwise misinterpret as a spurious vertical shift $\Dz$
+unless the velocity is recalibrated against a known static reflector first.

@@ -1,0 +1,73 @@
+% ============================================================
+% Subwavelength Imaging in Ground-Penetrating Radar
+% Using Time-Lapse Data --- thesis skeleton
+%
+% Built on the IDEA League / RWTH Aachen Applied Geophysics MSc thesis
+% LaTeX template (MScThesis.cls).
+%
+% Compile with LuaLaTeX (figure filenames contain Unicode: lambda,
+% Delta, Phi, fraction glyphs):
+%     latexmk -lualatex main.tex
+% A .latexmkrc in this directory already forces the lualatex engine,
+% so a plain `latexmk main.tex` also works.
+% ============================================================
+\documentclass[a4paper,11pt]{MScThesis}
+
+\input{preamble}
+
+\mscName{Conner van Kooten}
+\mscTitle{Subwavelength Imaging in Ground-Penetrating Radar}
+\mscSubTitle{Using Time-Lapse Data}
+\mscDate{\today}
+\mscKeyWords{GPR, time-lapse, phase-plane, migration, sub-wavelength}
+\mscReaderOne{<supervisor 1>}
+\mscReaderTwo{<supervisor 2>}
+\setThesisInfo
+
+\begin{document}
+
+%============================= Front matter ========================================
+\frontmatter
+
+\maketitle
+
+% RWTH Aachen students only --- uncomment once the signed affidavit PDF is
+% in this directory; confirm this applies to your specific IDEA League host
+% university before including it.
+% \includepdf[scale=1,pages=-]{RWTH_only_Eidesstattliche_Versicherung.pdf}
+
+\input{chapters/00_abstract}
+\cleardoublepage
+
+\input{frontmatter/acknowledgements}
+\cleardoublepage
+
+\tocloflot
+\printnomencl
+\input{frontmatter/acronyms}
+\cleardoublepage
+
+%============================= Main matter =========================================
+\mainmatter
+
+\input{chapters/01_introduction}
+\input{chapters/02_literature_review}
+\input{chapters/03_theory}
+\input{chapters/04_methodology}
+\input{chapters/05_resolution_study}
+\input{chapters/06_timelapse_horizontal}
+\input{chapters/07_timelapse_vertical}
+\input{chapters/08_phase_plane_framework}
+\input{chapters/09_fluidflow_application}
+\input{chapters/10_discussion}
+
+\input{backmatter/summary}
+
+\bibliographystyle{plainnat}
+\printbib{references}
+
+%============================= Back matter =========================================
+\appendix
+\input{appendix/A_extended_sweeps}
+
+\end{document}

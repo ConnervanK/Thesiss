@@ -1,0 +1,54 @@
+% ============================================================
+% Shared preamble: packages, figure search path, and notation
+% macros used across every chapter. MScThesis.cls already loads its
+% own page geometry, hyperref, graphicx, amsmath/amssymb, and
+% acronym --- do not reload those here (option clashes / redefinitions).
+% ============================================================
+
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{natbib}
+\usepackage{cleveref}
+
+% MScThesis.cls already loads hyperref itself; set options via \hypersetup
+% instead of reloading the package (would cause an option clash).
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black}
+
+% --- Figure search path -------------------------------------------------
+% Source figures are never copied into the thesis project; LaTeX searches
+% the five TimeLapse_Figures study folders directly. Filenames contain
+% Unicode (lambda, Delta, Phi, fractions like one-quarter/one-eighth), so
+% this project must be compiled with LuaLaTeX (see .latexmkrc).
+\graphicspath{
+  {../../../TimeLapse_Figures/Resolution_Study/}
+  {../../../TimeLapse_Figures/TimeLapse_Study/}
+  {../../../TimeLapse_Figures/Vertical_TimeLapse_Study/}
+  {../../../TimeLapse_Figures/Diagonal_TimeLapse_Study/}
+  {../../../TimeLapse_Figures/FluidFlow_Study/}
+  {../../../TimeLapse_Figures/TimeLapse_Processing/}
+  {../../../TimeLapse_Figures/TimeLapse_Cleaning/}
+}
+
+% --- Shared notation macros ----------------------------------------------
+\newcommand{\Dz}{\Delta z}
+\newcommand{\Dx}{\Delta x}
+\newcommand{\Dt}{\Delta t}
+\newcommand{\Dphi}{\Delta \varphi}
+\newcommand{\DPhi}{\Delta \Phi}
+\newcommand{\Dtheta}{\Delta \theta}
+\newcommand{\kz}{k_z}
+\newcommand{\kx}{k_x}
+\newcommand{\vmig}{v_{\mathrm{mig}}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\XS}{\mathit{XS}}
+
+% --- Draft/placeholder marker for stub sections --------------------------
+\newcommand{\draftnote}[1]{\par\noindent\textcolor{red!60!black}{\textbf{[DRAFT --- #1]}}\par}
+
+% --- Consistent figure placement defaults ---------------------------------
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}

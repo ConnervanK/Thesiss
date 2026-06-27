@@ -1,0 +1,475 @@
+\chapter{Theoretical Background}
+\label{ch:theory}
+
+This chapter derives, in full, the theory whose motivation and literature
+context were reviewed qualitatively in \cref{ch:litreview}. It proceeds in
+two parts. \Cref{sec:th-migration} derives the three migration algorithms
+used to focus the raw GPR data
+(\cref{ch:resolution,ch:tl-horizontal,ch:tl-vertical,ch:fluidflow}).
+\Cref{sec:th-fourier-shift}--\ref{sec:th-local} then derive the 2D phase-plane
+shift-estimation method that is validated in \cref{ch:phase-plane} and applied
+to a realistic scenario in \cref{ch:fluidflow}: starting from the Fourier shift
+theorem, building the weighted least-squares (WLS) plane fit, showing exactly
+why it decouples geometric movement from material change, and finally
+connecting the global (wavenumber-domain) and local (trace-by-trace,
+time-frequency) views of the same physics.
+
+\section{GPR Migration Fundamentals}
+\label{sec:th-migration}
+
+All data in this thesis are zero-offset (collocated transmitter/receiver)
+B-scans, which makes the \emph{exploding-reflector model} applicable
+\citep{claerbout1985}: every reflector in the subsurface is treated as if it
+were an active source that radiates a pulse upward at $t=0$, recorded by
+receivers at the surface. Because the real two-way travel time corresponds to
+a wave travelling down and back up once, this fictitious one-way exploding
+source must propagate at half the true medium velocity,
+\begin{equation}
+  \vmig = \frac{v}{2},
+  \label{eq:vmig}
+\end{equation}
+so that the one-way travel time in the exploding-reflector model exactly
+matches the two-way travel time of the real survey. Every migration algorithm
+used in this thesis operates under this convention.
+
+\subsection{Kirchhoff (Delay-and-Sum) Migration}
+
+Kirchhoff migration is formulated as a linear forward operator $K$ mapping a
+reflectivity model $m(z,x)$ to recorded data $d(t,x)$ by summing the
+reflectivity along the travel-time hyperbola of every trace,
+\begin{equation}
+  t(x, x_s, z) = \frac{r}{\vmig} + t_0 ,\qquad r = \sqrt{z^2 + (x-x_s)^2},
+  \label{eq:kirchhoff-traveltime}
+\end{equation}
+where $x_s$ is the source/receiver position and $t_0$ a static time-zero
+correction. Migration is the adjoint operation: every recorded sample is
+smeared back (\emph{delay-and-sum}) along its hyperbola of possible
+origins, and the image is the sum over all traces,
+\begin{equation}
+  m_{\mathrm{mig}} = K^{\mathsf{T}} d .
+  \label{eq:kirchhoff-adjoint}
+\end{equation}
+This thesis uses the PyLops zero-offset Kirchhoff operator with an
+analytic-signal Ricker wavelet matched to the source, evaluated with a finite
+migration aperture \citep{schneider1978}.
+
+\subsection{Gazdag Phase-Shift Migration}
+
+Gazdag migration works entirely in the frequency--wavenumber ($f$-$k_x$)
+domain \citep{gazdag1978}. The recorded wavefield is downward-continued one
+depth step $\delta z$ at a time by multiplying its 2D temporal-frequency /
+horizontal-wavenumber spectrum by a phase-shift operator,
+\begin{equation}
+  U(z+\delta z, k_x, \omega) = U(z, k_x,\omega)\, e^{j k_z \delta z},
+  \qquad
+  k_z = \sqrt{\left(\frac{\omega}{\vmig}\right)^2 - k_x^2},
+  \label{eq:gazdag}
+\end{equation}
+and the image is built by applying the imaging condition --- extracting the
+$t=0$ component of the continued field --- at every depth step. Bins for
+which the argument of the square root in \cref{eq:gazdag} is negative
+correspond to evanescent energy and are set to zero before continuation;
+otherwise the unstable exponential growth of an imaginary $k_z$ produces
+migration "smile" artefacts. This thesis pads each B-scan with a $5\,\%$
+cosine taper and $100\,\%$ zero-padding in $x$ before transforming, to
+suppress wrap-around.
+
+\subsection{Back-Propagation (Time-Reversal) Migration}
+
+As an independent, purely numerical cross-check of the two analytic methods
+above, every B-scan is also migrated by literal time-reversal: each trace is
+reversed in time, normalised, and re-injected as a source at its original
+receiver position into a finite-difference time-domain (gprMax) model of a
+homogeneous medium at $\vmig$. By the time-reversal symmetry of the wave
+equation, the back-propagated field refocuses at the true scatterer location
+at the focusing time
+\begin{equation}
+  t_{\mathrm{focus}} = T - t_0 ,
+  \label{eq:backprop-focus}
+\end{equation}
+where $T$ is the trace length. The migrated image is read off as the field
+snapshot at $t_{\mathrm{focus}}$, either as the full electric-field magnitude
+$\lVert\mathbf{E}\rVert$ or as the single polarised component $E_z$. Unlike
+Kirchhoff and Gazdag migration, this method makes no high-frequency or
+zero-offset approximation beyond the exploding-reflector velocity halving
+itself, which makes it a useful independent check on the other two.
+
+\section{The 2D Fourier Shift Theorem}
+\label{sec:th-fourier-shift}
+
+Let the baseline migrated image be $b(z,x)$. If a point scatterer
+translates by a vertical distance $\Dz$ and a lateral distance $\Dx$ between
+the baseline and monitor survey, the monitor image is, to the extent that
+migration is linear and the two surveys are migrated with the same velocity
+model, a perfectly translated copy of the baseline image,
+\begin{equation}
+  m(z,x) = b(z - \Dz,\, x - \Dx).
+  \label{eq:spatial-shift}
+\end{equation}
+Taking the 2D continuous Fourier transform of the baseline image,
+\begin{equation}
+  B(\kz,\kx) = \int_{-\infty}^{\infty}\!\int_{-\infty}^{\infty}
+    b(z,x)\, e^{-j(\kz z + \kx x)}\, dz\, dx,
+  \label{eq:2d-fourier}
+\end{equation}
+the Fourier shift theorem states that the spatial translation in
+\cref{eq:spatial-shift} becomes a linear phase rotation of the spectrum,
+\begin{equation}
+  M(\kz,\kx) = B(\kz,\kx)\cdot e^{-j(\kz \Dz + \kx \Dx)}.
+  \label{eq:fourier-shift-theorem}
+\end{equation}
+The amplitude spectrum is unchanged, $|M|=|B|$, but every frequency
+coordinate $(\kz,\kx)$ acquires a phase shift proportional to that
+coordinate. This is the central fact the rest of the chapter exploits: a
+displacement that is invisible in the migrated amplitude image
+(\cref{ch:resolution}) is, in principle, exactly recoverable from the phase of
+the spectrum.
+
+\section{Isolating the Phase Plane: The Cross-Spectrum}
+\label{sec:th-cross-spectrum}
+
+The absolute phase of a single migrated image is not directly useful: it
+depends on the shape of the source wavelet and on the (arbitrary) position of
+the target within the image, and is, in general, a chaotic, wrapped function
+of $(\kz,\kx)$. The displacement information in \cref{eq:fourier-shift-theorem}
+is isolated by forming the complex \emph{cross-spectrum} between the baseline
+and monitor spectra,
+\begin{equation}
+  \XS(\kz,\kx) = B(\kz,\kx)\cdot M^{*}(\kz,\kx).
+  \label{eq:cross-spectrum-def}
+\end{equation}
+Substituting \cref{eq:fourier-shift-theorem},
+\begin{equation}
+  \XS(\kz,\kx) = B(\kz,\kx)\cdot\bigl[B(\kz,\kx)\, e^{-j(\kz \Dz + \kx \Dx)}\bigr]^{*}
+  = |B(\kz,\kx)|^{2}\, e^{j(\kz \Dz + \kx \Dx)} .
+  \label{eq:cross-spectrum-expand}
+\end{equation}
+Because $|B|^2$ is real and positive, extracting the phase of $\XS$ via
+$\Phi = \angle \XS$ makes it vanish completely, leaving
+\begin{equation}
+  \boxed{\Phi(\kz,\kx) = \kz \Dz + \kx \Dx} ,
+  \label{eq:phase-plane}
+\end{equation}
+a perfectly flat plane through the origin: its slope along $\kz$ is exactly
+the vertical displacement $\Dz$, and its slope along $\kx$ is exactly the
+lateral displacement $\Dx$.
+
+\paragraph{Units of the cross-phase spectrum.} The value of $\Phi$ is an
+angle (rad or deg); its domain, the wavenumbers $(\kz,\kx)$, has units of
+$\mathrm{rad\,m^{-1}}$. The slope of the plane in \cref{eq:phase-plane},
+$\partial\Phi/\partial\kz$, therefore has units of
+$\mathrm{rad} / (\mathrm{rad\,m^{-1}}) = \mathrm{m}$: the radians cancel, and
+what remains is a physical distance. This is the precise sense in which an
+angular rotation in the frequency domain converts directly into a
+millimetre-scale displacement.
+
+\section{Weighted Least-Squares Plane Fitting}
+\label{sec:th-wls}
+
+A discretised GPR image yields not one but $N$ frequency-bin observations of
+\cref{eq:phase-plane} inside a chosen passband (\cref{sec:th-mask-weight}),
+each of the form
+\begin{equation}
+  \Phi_i = \kz_{,i}\,\Dz + \kx_{,i}\,\Dx + c, \qquad i=1,\dots,N,
+  \label{eq:phase-plane-discrete}
+\end{equation}
+where $c$ is a small constant absorbing calibration bias (and, as shown in
+\cref{sec:th-material-change}, the signature of material change). Collecting
+all $N$ equations into the overdetermined linear system $A\mathbf{u}=\bm{\Phi}$,
+\begin{equation}
+  \underbrace{\begin{bmatrix}
+    \kz_{,1} & \kx_{,1} & 1 \\
+    \kz_{,2} & \kx_{,2} & 1 \\
+    \vdots   & \vdots   & \vdots \\
+    \kz_{,N} & \kx_{,N} & 1
+  \end{bmatrix}}_{A}
+  \underbrace{\begin{bmatrix} \Dz \\ \Dx \\ c \end{bmatrix}}_{\mathbf{u}}
+  =
+  \underbrace{\begin{bmatrix} \Phi_1 \\ \Phi_2 \\ \vdots \\ \Phi_N \end{bmatrix}}_{\bm{\Phi}}.
+  \label{eq:design-matrix}
+\end{equation}
+
+\subsection{Why ordinary least squares fails}
+
+Ordinary least squares (OLS) minimises $S(\mathbf{u}) = (\bm\Phi - A\mathbf{u})^{\mathsf T}(\bm\Phi - A\mathbf{u})$,
+giving the closed-form solution $\mathbf{u} = (A^{\mathsf T}A)^{-1}A^{\mathsf T}\bm\Phi$. This
+treats every frequency bin as equally reliable, but in a GPR spectrum a bin
+at the antenna's peak power is far more reliable than a bin at the edge of
+the band, which is dominated by background noise. OLS gives both bins equal
+weight, letting noisy bins corrupt the plane fit.
+
+\subsection{The weighted solution}
+\label{sec:th-mask-weight}
+
+Two safeguards make the fit robust enough for sub-wavelength accuracy.
+
+\paragraph{A. The band-pass mask.} The system in \cref{eq:design-matrix} is
+restricted to bins inside the coherent envelope of the source wavelet,
+$|\kz|,|\kx| < 1.4\,k_{zc}$, where $k_{zc}$ is the dominant vertical
+wavenumber of the pulse. This keeps the total phase rotation $\Phi_i$ inside
+$\pm\pi$, preventing the fit from wrapping.
+
+\paragraph{B. Amplitude weighting.} A diagonal weight matrix $W$ is built from
+the cross-spectrum magnitude, $W_{ii} = |\XS_i|$, so that high-energy bins
+dominate the fit and noise-floor bins are suppressed. The cost function
+becomes the energy-weighted residual,
+\begin{equation}
+  S_W(\mathbf{u}) = \sum_{i=1}^{N} |\XS_i|^{2}
+    \Bigl(\Phi_i - (\kz_{,i}\Dz + \kx_{,i}\Dx + c)\Bigr)^{2},
+  \label{eq:wls-cost}
+\end{equation}
+which is minimised by
+\begin{equation}
+  \mathbf{u} = \bigl(A^{\mathsf T}W^{2}A\bigr)^{-1}A^{\mathsf T}W^{2}\bm\Phi .
+  \label{eq:wls-solution}
+\end{equation}
+In practice, computing $(A^{\mathsf T}W^2 A)^{-1}$ directly squares the
+condition number of the system; the implementation instead pre-multiplies
+both sides by $W$,
+\begin{equation}
+  (WA)\,\mathbf{u} = (W\bm\Phi),
+  \label{eq:wls-preweighted}
+\end{equation}
+and solves the pre-weighted system with \texttt{numpy.linalg.lstsq} via
+singular value decomposition, which is equivalent to \cref{eq:wls-solution}
+but numerically far more stable.
+
+\section{Decoupling Geometric Movement from Material Change}
+\label{sec:th-material-change}
+
+The third column of the design matrix in \cref{eq:design-matrix} is the
+constant vector $\mathbf{1}$, deliberately included alongside the two
+wavenumber columns. This section shows why that single design choice lets the
+same fit simultaneously measure displacement \emph{and} detect a change in
+the dielectric material at the target, and why the two never contaminate
+each other.
+
+\subsection{Why a sub-wavelength fracture produces a frequency-independent phase shift}
+
+Consider a fracture of thickness $d$ much smaller than the wavelength,
+$d\ll\lambda$, embedded in a host matrix of permittivity $\eps_m$ and filled
+with a material of permittivity $\eps_f$. The wave reflects once at the top
+and once at the bottom of the fracture; for $d \ll \lambda$ these two
+reflections overlap into a single composite wavelet, and the total
+reflection coefficient can be approximated as
+\begin{equation}
+  R_{\mathrm{total}} \approx R_{\mathrm{top}} + R_{\mathrm{bottom}}\, e^{-j2kd}.
+  \label{eq:thinlayer-1}
+\end{equation}
+A first-order expansion of the exponential for $kd \ll 1$ gives
+\begin{equation}
+  R_{\mathrm{total}} \approx -j\omega\, \frac{d\sqrt{\eps_m}}{2c_0}
+    \left(\frac{\eps_m - \eps_f}{\eps_f}\right),
+  \label{eq:thinlayer-2}
+\end{equation}
+where $c_0$ is the speed of light in vacuum. The leading $-j\omega$ factor
+means a thin layer reflects the time-derivative of the incident pulse.
+
+When the fracture fluid changes between the baseline and monitor survey
+(e.g.\ air, $\eps_{\mathrm{air}}=1$, displaced by water, $\eps_{\mathrm{water}}=81$)
+while the thickness $d$ stays fixed, the ratio of the two reflection
+coefficients is
+\begin{equation}
+  \Delta R = \frac{R_{\mathrm{mon}}}{R_{\mathrm{base}}}
+  = \frac{\eps_{\mathrm{air}}\,(\eps_m - \eps_{\mathrm{water}})}
+         {\eps_{\mathrm{water}}\,(\eps_m - \eps_{\mathrm{air}})} .
+  \label{eq:thinlayer-ratio}
+\end{equation}
+Both the geometric factor $d$ and the derivative factor $-j\omega$ cancel
+exactly in this ratio, leaving a complex constant, independent of $\omega$
+and therefore independent of $\kz$ and $\kx$. In the phase domain this is a
+uniform rotation
+\begin{equation}
+  \Delta R \approx \alpha\, e^{-j\Dtheta},
+  \label{eq:thinlayer-phase}
+\end{equation}
+applied equally to every frequency in the pulse bandwidth: a flat,
+frequency-independent phase offset $\Dtheta$, with an amplitude attenuation
+$\alpha$.
+
+\subsection{Why the WLS fit puts material change exactly into the intercept}
+
+For a fluid-substitution event with no mechanical movement
+($\Dz=\Dx=0$), \cref{eq:thinlayer-phase} means every observation in
+\cref{eq:phase-plane-discrete} is the same constant, $\Phi_i = \Dtheta$ for
+all $i$. Looking at the three columns of $A$ in \cref{eq:design-matrix}:
+\begin{itemize}
+  \item the $\kz$ column spans negative to positive wavenumbers --- any
+    non-zero $\Dz$ tilts the predicted plane, which can only \emph{increase}
+    the residual against a perfectly flat target, so the optimum is $\Dz=0$;
+  \item the $\kx$ column behaves identically, forcing $\Dx=0$;
+  \item the constant column is exactly $\mathbf 1$, so setting $c=\Dtheta$
+    matches the flat target with zero residual.
+\end{itemize}
+This is possible because the wavenumber columns and the constant column are
+linearly independent (orthogonal in the sense relevant to least squares): the
+matrix inversion in \cref{eq:wls-solution} decouples them exactly, with no
+approximation. If a fracture both moves \emph{and} fills with fluid at once,
+the fitted plane both tilts (giving $\Dz,\Dx$) and shifts vertically (giving
+$c=\Dtheta$), and the two effects remain perfectly separable in the same
+single fit, with the intercept tracking the dielectric contrast,
+\begin{equation}
+  c = \Dtheta \approx \frac{2\pi d}{\lambda}
+    \left(\sqrt{\eps_{\mathrm{fluid}}} - \sqrt{\eps_{\mathrm{baseline}}}\right).
+  \label{eq:intercept-material}
+\end{equation}
+This orthogonality is exploited directly in \cref{ch:fluidflow}, where the
+target is not a discrete scatterer but a spatially extended fluid front.
+
+\section{Space-Wavenumber Duality: Lateral versus Vertical Asymmetry}
+\label{sec:th-duality}
+
+The phase-plane fit of \cref{sec:th-wls} is a \emph{global} operation: it
+acts on the whole 2D spectrum at once. \Cref{ch:phase-plane} also examines a
+\emph{local} alternative --- the spatial instantaneous phase, extracted
+trace-by-trace with a Riesz/Hilbert transform. This section shows that the
+two views are consistent, and that they reveal an important physical
+asymmetry between the lateral and vertical directions of a migrated image.
+
+\subsection{Lateral direction: position as a proxy for wavenumber}
+
+Near the apex of a migrated point scatterer, the lateral instantaneous phase
+$\phi(x)$ is well approximated by a parabola, $\phi(x)\approx\tfrac12 Cx^2+\phi_0$,
+where $C$ is the spatial curvature of the focused pulse. Its spatial
+derivative, the instantaneous lateral wavenumber, is then
+\begin{equation}
+  k_{x,\mathrm{inst}}(x) = \frac{\partial\phi}{\partial x} \approx C\,x,
+  \label{eq:kx-inst}
+\end{equation}
+i.e.\ \emph{linearly proportional to lateral position}: the migrated image
+behaves like a prism, naturally separating horizontal spatial frequencies
+across its width. If the scatterer shifts laterally by $\Dx$, a first-order
+Taylor expansion of $\phi_2(x)=\phi_1(x-\Dx)$ gives a phase-difference image
+\begin{equation}
+  \Delta\phi(x) = \phi_2(x)-\phi_1(x) \approx -k_{x,\mathrm{inst}}(x)\,\Dx
+    = -C\,x\,\Dx ,
+  \label{eq:dphi-lateral}
+\end{equation}
+i.e.\ a straight \emph{slope} in $x$, whose steepness is proportional to
+$\Dx$ — consistent with \cref{eq:phase-plane} evaluated along the $\kx$ axis.
+
+\subsection{Vertical direction: a constant plateau, not a slope}
+
+The vertical trace through a migrated scatterer is, by contrast, a
+compressed source pulse oscillating at the dominant vertical carrier
+wavenumber $k_{zc}=4\pi f_c/v$. Near the peak, its phase is linear in depth,
+$\phi(z)\approx k_{zc}(z-z_0)+\phi_0$, so the instantaneous vertical
+wavenumber is
+\begin{equation}
+  k_{z,\mathrm{inst}}(z) = \frac{\partial\phi}{\partial z} \approx k_{zc}
+  = \text{constant} ,
+  \label{eq:kz-inst}
+\end{equation}
+independent of $z$: unlike the lateral case, depth position is \emph{not} a
+proxy for vertical wavenumber, because the vertical trace does not spatially
+separate its frequency content the way the migrated lateral profile does.
+A vertical displacement $\Dz$ then produces
+\begin{equation}
+  \Delta\phi(z) \approx -k_{zc}\,\Dz ,
+  \label{eq:dphi-vertical}
+\end{equation}
+which contains no remaining $z$ dependence: $\partial[\Delta\phi(z)]/\partial z\approx0$.
+A vertical shift therefore appears in the spatial domain as a flat
+\emph{plateau} whose constant level is proportional to $\Dz$, not as a slope.
+
+\subsection{Reconciling the two pictures}
+
+Combining \cref{eq:dphi-lateral,eq:dphi-vertical}, the full 2D spatial phase
+difference near the apex $(z_0,0)$ of a scatterer displaced by
+$(\Dz,\Dx)$ is
+\begin{equation}
+  \Delta\phi(z,x) \approx -\bigl(k_{zc}\,\Dz + (C\,x)\,\Dx\bigr),
+  \label{eq:dphi-2d}
+\end{equation}
+which has exactly the same structure as the global phase plane in
+\cref{eq:phase-plane}, with the local approximations $k_{z,\mathrm{inst}}\to\kz$
+and $C\,x \to \kx$ replacing the true global wavenumber coordinates. The
+wavenumber-domain fit of \cref{sec:th-wls} is preferred over this spatial
+picture for three reasons: (i) the parabolic approximation in
+\cref{eq:kx-inst} only holds near the apex, whereas the Fourier plane in
+\cref{eq:phase-plane} is exactly flat everywhere inside the passband; (ii)
+amplitude weighting by $|\XS|$ has no clean spatial-domain analogue, since the
+spatial phase-difference image does not distinguish signal from background
+noise; and (iii) in the spatial picture a material-change intercept
+$\Dtheta$ mixes irrecoverably with the vertical term $-k_{zc}\Dz$ in
+\cref{eq:dphi-2d}, whereas the wavenumber-domain fit keeps them exactly
+orthogonal (\cref{sec:th-material-change}).
+
+\section{Time-Frequency Perspective: Local Phase and Spectral-Line Analysis}
+\label{sec:th-local}
+
+The phase-plane fit treats the migrated image as a whole. \Cref{ch:phase-plane}
+(\cref{sec:tlp-spectral-line,sec:tlp-spectrogram,sec:tlp-stft}) instead
+analyses individual unmigrated or migrated \emph{traces} with a localised
+time-frequency transform, which gives access to \emph{when} (in two-way
+time) a phase change occurs, complementing the spatial picture above.
+
+\subsection{The localised Fourier shift theorem}
+
+Let $s_1(t)$ be a baseline trace. A sliding-window transform (Gaussian or
+Hanning window $w$) gives a localised spectrum
+\begin{equation}
+  S_1(\tau,\omega) = \int_{-\infty}^{\infty} s_1(t)\,w(t-\tau)\,e^{-j\omega t}\,dt ,
+  \label{eq:stft-def}
+\end{equation}
+at window centre $\tau$ and angular frequency $\omega=2\pi f$. If the monitor
+trace is a delayed, phase-rotated copy, $s_2(t) = s_1(t-\Dt)\,e^{j\Dtheta}$,
+and the delay $\Dt$ is small compared with the window width, the window
+itself barely shifts and the \emph{localised Fourier shift theorem} applies,
+\begin{equation}
+  S_2(\tau,\omega) \approx S_1(\tau,\omega)\, e^{-j\omega\Dt}\, e^{j\Dtheta} .
+  \label{eq:local-shift}
+\end{equation}
+Forming the local cross-spectrum exactly as in \cref{eq:cross-spectrum-def}
+and taking its angle, the baseline phase and amplitude cancel, leaving the
+local analogue of \cref{eq:phase-plane},
+\begin{equation}
+  \boxed{\Delta\Phi(\tau,f) \approx -2\pi f\,\Dt + \Dtheta} .
+  \label{eq:local-phase-line}
+\end{equation}
+At the two-way time $\tau_0$ of the target reflection, a straight-line fit of
+$\Delta\Phi$ against $f$ has slope $-2\pi\Dt$ (the mechanical shift) and
+intercept $\Dtheta$ (the material change) — the exact time-domain counterpart
+of the slope/intercept decomposition in \cref{sec:th-wls}. Converting between
+the two-way-time and depth pictures uses the standard relation
+\begin{equation}
+  \Dt = \frac{2\Dz}{v} ,
+  \label{eq:dt-dz}
+\end{equation}
+so that $\omega\Dt \equiv \kz\Dz$ with $\kz = 2\omega/v$: the temporal-frequency
+slope and the vertical-wavenumber slope are the same physical quantity, viewed
+in two different but exactly equivalent coordinate systems.
+
+\subsection{Three diagnostic views used in Chapter~\ref{ch:phase-plane}}
+
+Three derived plots make \cref{eq:local-phase-line} directly visible in the
+data, and are used repeatedly in the figures of \cref{ch:phase-plane}:
+
+\begin{description}
+  \item[Spectral line, $\Delta\Phi(f)$ at fixed $\tau_0$] --- a straight line
+    through the origin for pure mechanical movement; a flat line offset from
+    zero for pure material change; a sloped line with non-zero intercept for
+    a combination of the two.
+  \item[Cross-phase spectrogram, $\Delta\Phi(\tau,f)$] --- outside the target
+    reflection this is incoherent, salt-and-pepper phase noise; at the
+    target's two-way time a coherent window appears, showing a vertical
+    fringe pattern for movement or a uniform colour block for a pure material
+    change.
+  \item[Polar vector rotation] --- the complex coefficient at the dominant
+    frequency and peak two-way time, plotted as a vector in the complex
+    plane for baseline and monitor; a material change rotates this vector by
+    exactly $\Dtheta$, with negligible length change for a purely geometric
+    shift.
+\end{description}
+
+These local, trace-based views and the global 2D wavenumber fit of
+\cref{sec:th-wls} are not competing techniques: they are Fourier duals of the
+same underlying physics, related by a spatial Fourier transform of the
+time-frequency decomposition with respect to the lateral coordinate $x$,
+which reduces (under a smooth-window approximation) directly to the global
+spectrum $U(\omega,\kx)$ used throughout this chapter. The wavenumber-domain
+fit remains the primary quantitative tool because it linearises the spatial
+curvature of \cref{eq:kx-inst} exactly and admits amplitude weighting
+natively (\cref{sec:th-mask-weight}); the local, time-frequency view is used
+in \cref{ch:phase-plane} to localise \emph{where} (in $\tau$) a phase
+anomaly originates, which the global fit alone cannot show.
