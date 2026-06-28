@@ -39,45 +39,50 @@
 \contentsline {section}{\numberline {4-5}The 2D Phase-Plane Shift-Estimation Pipeline}{16}{section.4.5}%
 \contentsline {paragraph}{Practical considerations carried over from field application.}{17}{section*.12}%
 \contentsline {chapter}{\numberline {5}Resolution Limits of Amplitude-Based Migration}{19}{chapter.5}%
+\contentsline {paragraph}{Hypothesis.}{19}{section*.13}%
 \contentsline {section}{\numberline {5-1}Ricker Wavelet and Model Setup}{19}{section.5.1}%
 \contentsline {section}{\numberline {5-2}Raw B-Scan Generation}{19}{section.5.2}%
 \contentsline {section}{\numberline {5-3}Pre-Migration Signal Conditioning}{20}{section.5.3}%
-\contentsline {section}{\numberline {5-4}Kirchhoff Migration}{20}{section.5.4}%
+\contentsline {section}{\numberline {5-4}Kirchhoff Migration}{21}{section.5.4}%
 \contentsline {section}{\numberline {5-5}Gazdag Phase-Shift Migration}{21}{section.5.5}%
 \contentsline {section}{\numberline {5-6}Back-Propagation Migration}{21}{section.5.6}%
-\contentsline {section}{\numberline {5-7}Comparing Migration Methods and the Amplitude Resolution Limit}{23}{section.5.7}%
+\contentsline {section}{\numberline {5-7}Comparing Migration Methods and the Amplitude Resolution Limit}{22}{section.5.7}%
 \contentsline {chapter}{\numberline {6}Time-Lapse Detection of Lateral Movement}{25}{chapter.6}%
+\contentsline {paragraph}{Hypothesis.}{25}{section*.21}%
 \contentsline {section}{\numberline {6-1}Setup: Moving Scatterer Scenarios}{25}{section.6.1}%
 \contentsline {section}{\numberline {6-2}Raw and Noisy B-Scan Generation}{25}{section.6.2}%
-\contentsline {section}{\numberline {6-3}Signal Conditioning}{25}{section.6.3}%
+\contentsline {section}{\numberline {6-3}Signal Conditioning}{27}{section.6.3}%
 \contentsline {section}{\numberline {6-4}Kirchhoff Migration and Time-Lapse Differencing}{27}{section.6.4}%
-\contentsline {section}{\numberline {6-5}Gazdag Migration and Time-Lapse Differencing}{27}{section.6.5}%
-\contentsline {section}{\numberline {6-6}Back-Propagation Migration and Time-Lapse Differencing}{27}{section.6.6}%
-\contentsline {section}{\numberline {6-7}Amplitude-Based Detectability Summary}{27}{section.6.7}%
-\contentsline {section}{\numberline {6-8}Robustness Under Noise}{28}{section.6.8}%
+\contentsline {section}{\numberline {6-5}Gazdag Migration and Time-Lapse Differencing}{28}{section.6.5}%
+\contentsline {section}{\numberline {6-6}Back-Propagation Migration and Time-Lapse Differencing}{28}{section.6.6}%
+\contentsline {section}{\numberline {6-7}Amplitude-Based Detectability Summary}{28}{section.6.7}%
+\contentsline {section}{\numberline {6-8}Robustness Under Noise}{30}{section.6.8}%
 \contentsline {chapter}{\numberline {7}Time-Lapse Detection of Vertical Movement}{33}{chapter.7}%
+\contentsline {paragraph}{Hypothesis.}{33}{section*.31}%
 \contentsline {section}{\numberline {7-1}Setup: Moving Scatterer Scenarios}{33}{section.7.1}%
 \contentsline {section}{\numberline {7-2}Raw B-Scan Generation}{33}{section.7.2}%
-\contentsline {section}{\numberline {7-3}Signal Conditioning}{33}{section.7.3}%
+\contentsline {section}{\numberline {7-3}Signal Conditioning}{35}{section.7.3}%
 \contentsline {section}{\numberline {7-4}Kirchhoff Migration and Time-Lapse Differencing}{35}{section.7.4}%
-\contentsline {section}{\numberline {7-5}Gazdag Migration and Time-Lapse Differencing}{35}{section.7.5}%
-\contentsline {section}{\numberline {7-6}Back-Propagation Migration and Time-Lapse Differencing}{35}{section.7.6}%
-\contentsline {section}{\numberline {7-7}Vertical Detectability Summary}{35}{section.7.7}%
+\contentsline {section}{\numberline {7-5}Gazdag Migration and Time-Lapse Differencing}{36}{section.7.5}%
+\contentsline {section}{\numberline {7-6}Back-Propagation Migration and Time-Lapse Differencing}{36}{section.7.6}%
+\contentsline {section}{\numberline {7-7}Vertical Detectability Summary}{36}{section.7.7}%
 \contentsline {chapter}{\numberline {8}The 2D Phase-Plane Framework: Validation}{39}{chapter.8}%
+\contentsline {paragraph}{Hypothesis.}{39}{section*.39}%
 \contentsline {section}{\numberline {8-1}Migrated Baseline Overview Across Scenarios}{39}{section.8.1}%
-\contentsline {section}{\numberline {8-2}Phase-Plane Fit: Horizontal Shift Validation}{39}{section.8.2}%
+\contentsline {section}{\numberline {8-2}Phase-Plane Fit: Horizontal Shift Validation}{40}{section.8.2}%
 \contentsline {section}{\numberline {8-3}Robustness Under Noise}{41}{section.8.3}%
 \contentsline {section}{\numberline {8-4}Phase-Plane Fit: Vertical Shift Validation}{41}{section.8.4}%
 \contentsline {section}{\numberline {8-5}Instantaneous Phase Imaging --- Lateral Displacement}{42}{section.8.5}%
-\contentsline {section}{\numberline {8-6}Instantaneous Phase Imaging --- Vertical Displacement}{43}{section.8.6}%
-\contentsline {section}{\numberline {8-7}Spectral-Line Phase Analysis}{43}{section.8.7}%
+\contentsline {section}{\numberline {8-6}Instantaneous Phase Imaging --- Vertical Displacement}{42}{section.8.6}%
+\contentsline {section}{\numberline {8-7}Spectral-Line Phase Analysis}{42}{section.8.7}%
 \contentsline {section}{\numberline {8-8}Cross-Phase Spectrograms}{45}{section.8.8}%
 \contentsline {section}{\numberline {8-9}Localised Fourier Shift via Short-Time Fourier Transform}{45}{section.8.9}%
 \contentsline {chapter}{\numberline {9}Application to a Realistic Fluid-Flow Scenario}{47}{chapter.9}%
+\contentsline {paragraph}{Hypothesis.}{47}{section*.51}%
 \contentsline {section}{\numberline {9-1}Setup: Raw B-Scans and Signal Conditioning}{47}{section.9.1}%
-\contentsline {section}{\numberline {9-2}Kirchhoff Migration of the Fluid Front}{48}{section.9.2}%
-\contentsline {section}{\numberline {9-3}Gazdag Migration of the Fluid Front}{48}{section.9.3}%
-\contentsline {section}{\numberline {9-4}Back-Propagation Migration of the Fluid Front}{48}{section.9.4}%
+\contentsline {section}{\numberline {9-2}Kirchhoff Migration of the Fluid Front}{47}{section.9.2}%
+\contentsline {section}{\numberline {9-3}Gazdag Migration of the Fluid Front}{49}{section.9.3}%
+\contentsline {section}{\numberline {9-4}Back-Propagation Migration of the Fluid Front}{49}{section.9.4}%
 \contentsline {section}{\numberline {9-5}Amplitude-Based Detectability Summary}{49}{section.9.5}%
 \contentsline {section}{\numberline {9-6}Phase-Plane Fit Applied to the Fluid Front}{49}{section.9.6}%
 \contentsline {chapter}{\numberline {10}Discussion}{53}{chapter.10}%
@@ -86,8 +91,8 @@
 \contentsline {section}{\numberline {10-3}Noise Robustness}{54}{section.10.3}%
 \contentsline {section}{\numberline {10-4}Limitations}{54}{section.10.4}%
 \contentsline {section}{\numberline {10-5}Outlook for Field Application}{54}{section.10.5}%
-\contentsline {chapter}{\hbox to\@tempdima {\hfil }Summary}{55}{chapter*.54}%
-\contentsline {chapter}{\hbox to\@tempdima {\hfil }Bibliography}{57}{chapter*.54}%
+\contentsline {chapter}{\hbox to\@tempdima {\hfil }Summary}{55}{chapter*.59}%
+\contentsline {chapter}{\hbox to\@tempdima {\hfil }Bibliography}{57}{chapter*.59}%
 \contentsline {chapter}{\numberline {A}Extended Wavelength-Sweep Figures}{59}{appendix.A}%
 \contentsline {section}{\numberline {A-1}Full Sweep: Lateral Instantaneous-Phase Analysis}{59}{section.A.1}%
 \contentsline {section}{\numberline {A-2}Full Sweep: Vertical Instantaneous-Phase Analysis}{59}{section.A.2}%
