@@ -3,9 +3,9 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {5-1}{\ignorespaces Diagonal displacement scenarios: lateral ($\Delta x$, rightward) and vertical ($\Delta z$, downward) components, both expressed as fractions of the dominant wavelength $\lambda $.}}{30}{table.caption.42}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
+\contentsline {table}{\numberline {7-1}{\ignorespaces Laplace and Gaussian fits to real field noise, at two pipeline stages ($n=976\,244$ samples each). The heavier-tailed Laplace distribution is adopted throughout this thesis; loc $=0$ for both stages.}}{51}{table.caption.74}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }

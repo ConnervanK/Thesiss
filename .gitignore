@@ -12,3 +12,5 @@
 *.log
 *.pdf
 *.npz
+*.rad
+*.rd3

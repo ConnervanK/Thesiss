@@ -1,9 +1,9 @@
-\chapter{Application to a Realistic Fluid-Flow Scenario}
-\label{ch:fluidflow}
+\chapter{Hypothesis 2: Fluid-Front Tracking and Material-Change Decoupling}
+\label{ch:hyp2}
 
-The preceding chapters used an idealised target: a point-like PEC cylinder,
-chosen because its response is easy to interpret and ground-truth. This
-chapter applies the same migration and phase-plane machinery to a more
+\Cref{ch:hyp1} used an idealised target: a point-like PEC cylinder, chosen
+because its response is easy to interpret and ground-truth. This chapter
+applies the same migration and phase-plane machinery to a more
 field-realistic scenario --- a spatially \emph{distributed} fluid front
 advancing laterally through a sub-wavelength fracture, following the
 thin-layer reflectivity model of \cref{sec:th-material-change}. Unlike a
@@ -11,12 +11,9 @@ point scatterer, a fluid front is not expected to move as a rigid body, so
 this chapter is also the first practical test of the geometry/material-change
 decoupling derived in \cref{sec:th-material-change}.
 
-\paragraph{Hypothesis.} The same migration and phase-plane machinery,
-applied to a spatially \emph{distributed} fluid front rather than a rigid
-point scatterer, still decouples a purely geometric displacement from a
-purely dielectric material change, extending the geometry/material-change
-decoupling of \cref{sec:th-material-change} beyond an idealised point
-target.
+\paragraph{Hypothesis 2.} Multi-dimensional phase-plane regression allows
+tracking the subwavelength translation of a fluid front and inferring the
+associated material change in a subwavelength thin fracture.
 
 \section{Setup: Raw B-Scans and Signal Conditioning}
 
@@ -200,9 +197,9 @@ difference at the true front location, exactly as in
 \label{sec:ff-phaseplane}
 
 The fluid front is not a rigid point scatterer, so the phase-plane fit here
-tests something qualitatively different from \cref{ch:phase-plane}: rather
-than recovering a single $(\Dz,\Dx)$ displacement, the goal is to confirm
-that the fit correctly attributes the front's advance to the
+tests something qualitatively different from \cref{ch:hyp1}: rather than
+recovering a single $(\Dz,\Dx)$ displacement, the goal is to confirm that
+the fit correctly attributes the front's advance to the
 \emph{material-change} channel $c=\Dtheta$ of \cref{sec:th-material-change}
 rather than to a spurious geometric shift, since the fracture walls
 themselves do not move. \Cref{fig:ff-phaseplane} applies the estimator,
@@ -241,4 +238,6 @@ region spans $[x_0, x_0+\Dx_{\mathrm{true}}]$, its centroid sits at
 $x_0+\Dx_{\mathrm{true}}/2$, so a raw centroid-shift readout must be doubled,
 $\Dx_{\mathrm{true}} = 2\,\Dx_{\mathrm{raw}}$, to recover the true front
 displacement --- confirm whether this correction is already baked into the
-values plotted in \cref{fig:ff-phaseplane} or must be applied separately.}
+values plotted in \cref{fig:ff-phaseplane} or must be applied separately.
+Noisy fluid-front data, where it exists, is presented in \cref{ch:hyp3}
+rather than here.}

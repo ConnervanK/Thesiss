@@ -5,10 +5,10 @@ This chapter derives, in full, the theory whose motivation and literature
 context were reviewed qualitatively in \cref{ch:litreview}. It proceeds in
 two parts. \Cref{sec:th-migration} derives the three migration algorithms
 used to focus the raw GPR data
-(\cref{ch:resolution,ch:tl-horizontal,ch:tl-vertical,ch:fluidflow}).
+(\cref{sec:meth-resolution,ch:hyp1,ch:hyp2}).
 \Cref{sec:th-fourier-shift}--\ref{sec:th-local} then derive the 2D phase-plane
-shift-estimation method that is validated in \cref{ch:phase-plane} and applied
-to a realistic scenario in \cref{ch:fluidflow}: starting from the Fourier shift
+shift-estimation method that is validated in \cref{sec:hyp1-phaseplane} and applied
+to a realistic scenario in \cref{ch:hyp2}: starting from the Fourier shift
 theorem, building the weighted least-squares (WLS) plane fit, showing exactly
 why it decouples geometric movement from material change, and finally
 connecting the global (wavenumber-domain) and local (trace-by-trace,
@@ -122,7 +122,7 @@ The amplitude spectrum is unchanged, $|M|=|B|$, but every frequency
 coordinate $(\kz,\kx)$ acquires a phase shift proportional to that
 coordinate. This is the central fact the rest of the chapter exploits: a
 displacement that is invisible in the migrated amplitude image
-(\cref{ch:resolution}) is, in principle, exactly recoverable from the phase of
+(\cref{sec:meth-resolution}) is, in principle, exactly recoverable from the phase of
 the spectrum.
 
 \section{Isolating the Phase Plane: The Cross-Spectrum}
@@ -313,14 +313,14 @@ single fit, with the intercept tracking the dielectric contrast,
     \left(\sqrt{\eps_{\mathrm{fluid}}} - \sqrt{\eps_{\mathrm{baseline}}}\right).
   \label{eq:intercept-material}
 \end{equation}
-This orthogonality is exploited directly in \cref{ch:fluidflow}, where the
+This orthogonality is exploited directly in \cref{ch:hyp2}, where the
 target is not a discrete scatterer but a spatially extended fluid front.
 
 \section{Space-Wavenumber Duality: Lateral versus Vertical Asymmetry}
 \label{sec:th-duality}
 
 The phase-plane fit of \cref{sec:th-wls} is a \emph{global} operation: it
-acts on the whole 2D spectrum at once. \Cref{ch:phase-plane} also examines a
+acts on the whole 2D spectrum at once. \Cref{sec:hyp1-phaseplane} also examines a
 \emph{local} alternative --- the spatial instantaneous phase, extracted
 trace-by-trace with a Riesz/Hilbert transform. This section shows that the
 two views are consistent, and that they reveal an important physical
@@ -398,7 +398,7 @@ orthogonal (\cref{sec:th-material-change}).
 \section{Time-Frequency Perspective: Local Phase and Spectral-Line Analysis}
 \label{sec:th-local}
 
-The phase-plane fit treats the migrated image as a whole. \Cref{ch:phase-plane}
+The phase-plane fit treats the migrated image as a whole. \Cref{sec:hyp1-phaseplane}
 (\cref{sec:tlp-spectral-line,sec:tlp-spectrogram,sec:tlp-stft}) instead
 analyses individual unmigrated or migrated \emph{traces} with a localised
 time-frequency transform, which gives access to \emph{when} (in two-way
@@ -440,10 +440,10 @@ so that $\omega\Dt \equiv \kz\Dz$ with $\kz = 2\omega/v$: the temporal-frequency
 slope and the vertical-wavenumber slope are the same physical quantity, viewed
 in two different but exactly equivalent coordinate systems.
 
-\subsection{Three diagnostic views used in Chapter~\ref{ch:phase-plane}}
+\subsection{Three diagnostic views used in Chapter~\ref{sec:hyp1-phaseplane}}
 
 Three derived plots make \cref{eq:local-phase-line} directly visible in the
-data, and are used repeatedly in the figures of \cref{ch:phase-plane}:
+data, and are used repeatedly in the figures of \cref{sec:hyp1-phaseplane}:
 
 \begin{description}
   \item[Spectral line, $\Delta\Phi(f)$ at fixed $\tau_0$] --- a straight line
@@ -471,5 +471,5 @@ spectrum $U(\omega,\kx)$ used throughout this chapter. The wavenumber-domain
 fit remains the primary quantitative tool because it linearises the spatial
 curvature of \cref{eq:kx-inst} exactly and admits amplitude weighting
 natively (\cref{sec:th-mask-weight}); the local, time-frequency view is used
-in \cref{ch:phase-plane} to localise \emph{where} (in $\tau$) a phase
+in \cref{sec:hyp1-phaseplane} to localise \emph{where} (in $\tau$) a phase
 anomaly originates, which the global fit alone cannot show.

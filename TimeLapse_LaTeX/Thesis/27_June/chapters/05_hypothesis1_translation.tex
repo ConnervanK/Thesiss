@@ -1,0 +1,1025 @@
+\chapter{Hypothesis 1: Subwavelength Translation in Lateral, Vertical, and Diagonal Directions}
+\label{ch:hyp1}
+
+\Cref{sec:meth-resolution} showed that two \emph{stationary} scatterers
+cannot be resolved as separate amplitude peaks below roughly half a
+wavelength of separation. This chapter asks the closely related time-lapse
+question: if a \emph{single} scatterer moves between a baseline and a
+monitor survey by a sub-wavelength amount, is that movement visible in the
+\emph{difference} of the two migrated amplitude images, and --- if not ---
+can the 2D phase-plane estimator of \cref{sec:meth-phaseplane} recover it
+instead? The displacement is swept from $2\lambda$ down to
+$\tfrac{1}{32}\lambda$, using the same three migration algorithms throughout,
+and the question is tested independently in three directions: lateral
+(\cref{sec:hyp1-lateral}), vertical (\cref{sec:hyp1-vertical}), and diagonal
+(\cref{sec:hyp1-diagonal}). \Cref{sec:hyp1-phaseplane} then applies the
+global 2D weighted least-squares (WLS) phase-plane fit to all three
+directions, and \cref{sec:hyp1-h15} explores an optional, local alternative
+to that global fit.
+
+\paragraph{Hypothesis 1.} Multi-dimensional phase-plane regression allows
+tracking the subwavelength translation of a scatterer in the lateral,
+vertical, and diagonal directions, using both amplitude- and phase-based
+inference.
+
+\paragraph{Hypothesis 1.5 (Optional).} Tracking the local phase gradients
+$\partial\varphi/\partial x$ and $\partial\varphi/\partial y$ gives an
+equivalent, simpler alternative to the global 2D phase-plane fit for
+inferring horizontal and vertical translation.
+
+\section{Lateral Movement}
+\label{sec:hyp1-lateral}
+
+A single PEC cylinder ($r=\SI{28}{mm}$, depth \SI{0.676}{m}) is held fixed
+in the baseline survey and displaced laterally by each of eight scenarios in
+the monitor survey, from $2\lambda$ down to $\tfrac{1}{32}\lambda$
+(\cref{fig:tl-setup}), using the same gprMax domain and grid as
+\cref{sec:meth-resolution}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_001_TimeLapse_Study__Model_Geometry__domain_4010_m_Δx__1_mm_PML.png}
+    \caption{Model geometry}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_002_Moving_scatterer_s1__all_8_scenarios__r__28_mm_depth__0676_m.png}
+    \caption{All 8 displacement scenarios}
+  \end{subfigure}
+  \caption{Forward-model setup for the lateral time-lapse study: (a) the
+    gprMax domain and grid; (b) the lateral displacement of scatterer
+    \texttt{s1} across all eight scenarios, $r=\SI{28}{mm}$, depth
+    \SI{0.676}{m}.}
+  \label{fig:tl-setup}
+\end{figure}
+
+\Cref{fig:tl-bscans} shows the background-baseline and time-lapsed raw
+B-scans, the background-subtracted result, and (for later use in
+\cref{ch:hyp3}) the effect of adding synthetic Laplace-distributed noise at
+$10\,\%$ of the signal standard deviation.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{TL_003_GPR_B-Scans__Background_Baseline_and_TimeLapsed_Models.png}
+    \caption{Background \& time-lapsed}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{TL_004_GPR_B-Scans__Background_Subtracted.png}
+    \caption{Background-subtracted}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{TL_005_GPR_B-Scans__With_Synthetic_Laplace_Noise_10_of_signal_std.png}
+    \caption{With Laplace noise}
+  \end{subfigure}
+  \caption{Raw B-scans for the lateral time-lapse study: (a) background and
+    time-lapsed models; (b) background-subtracted; (c) with synthetic
+    Laplace-distributed noise at $10\,\%$ of the signal standard deviation
+    (used in \cref{ch:hyp3}).}
+  \label{fig:tl-bscans}
+\end{figure}
+
+The same tapering and $t_0$-shift conditioning as \cref{sec:meth-resolution}
+(\cref{sec:meth-conditioning}) is applied before migration
+(\cref{fig:tl-taper}).
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_006_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png}
+    \caption{Single trace}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_007_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png}
+    \caption{Full B-scan}
+  \end{subfigure}
+  \caption{Effect of tapering and the $t_0$ shift on the $2\lambda$ lateral
+    displacement dataset: (a) a single trace; (b) the full B-scan.}
+  \label{fig:tl-taper}
+\end{figure}
+
+\Cref{fig:tl-kirchhoff,fig:tl-gazdag,fig:tl-backprop} show, respectively,
+the Kirchhoff-, Gazdag-, and back-propagation-migrated images for all
+displacement scenarios, and the time-lapse difference (migrated monitor
+minus migrated baseline) that isolates the moved scatterer.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_008_Kirchhoff_Migration__All_8_Datasets____f_c15_GHz____aperture.png}
+    \caption{All 8 scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_009_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_010_Kirchhoff_Migration__TimeLapse_Differences_migrated__migrate.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_011_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Kirchhoff migration of the lateral time-lapse study
+    ($f_c=\SI{15}{\GHz}$, aperture $=40$): (a,b) migrated image for all
+    scenarios and zoomed; (c,d) migrated-monitor-minus-migrated-baseline
+    difference and zoomed.}
+  \label{fig:tl-kirchhoff}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_012_Gazdag_Phase-Shift_Migration__All_7_Datasets____f_c15_GHz.png}
+    \caption{All scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_013_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_014_Gazdag_Migration__TimeLapse_Differences_migrated__migrated_b.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_015_Gazdag_Migration__TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Gazdag phase-shift migration of the lateral time-lapse study
+    ($f_c=\SI{15}{\GHz}$): (a,b) migrated image and zoomed; (c,d) time-lapse
+    difference and zoomed.}
+  \label{fig:tl-gazdag}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_016_Back-Propagation_E__All_7_Datasets____focus_at_1906_ns.png}
+    \caption{$\lVert\mathbf{E}\rVert$, all scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_017_Back-Propagation_E_zoomed____focus_at_1906_ns.png}
+    \caption{$\lVert\mathbf{E}\rVert$, zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_018_Back-Propagation_Ez__All_7_Datasets____focus_at_1906_ns.png}
+    \caption{$E_z$, all scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_019_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png}
+    \caption{$E_z$, zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_020_Back-Propagation__TimeLapse_Differences_Ez_Ez__Ez_baseline.png}
+    \caption{$E_z$ time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_021_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Time-reversal back-propagation migration of the lateral
+    time-lapse study, focused at $t=\SI{1906}{\ns}$: field-magnitude (a,b)
+    and $E_z$ (c,d) images, and the $E_z$ time-lapse difference (e,f).}
+  \label{fig:tl-backprop}
+\end{figure}
+
+\subsection*{Amplitude-Based Detectability Summary}
+\label{sec:tl-detectability}
+
+\Cref{fig:tl-summary} overlays the signed time-lapse-difference amplitude
+from all three algorithms and plots the normalised lateral point-spread
+function of that difference at the true scatterer depth, as a function of
+displacement.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_022_TimeLapse_Migration_Comparison__Signed_Amplitude____f_c15_GH.png}
+    \caption{Signed-amplitude comparison}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TL_023_Normalised_Lateral_PSF__TimeLapse_Difference_at_True_Scatter.png}
+    \caption{Normalised lateral PSF of the difference}
+  \end{subfigure}
+  \caption{(a) Signed time-lapse-difference amplitude for all three
+    migration algorithms at $f_c=\SI{15}{\GHz}$; (b) the normalised lateral
+    PSF of the difference image at the true scatterer depth, swept across
+    lateral displacements from $2\lambda$ to $\tfrac{1}{32}\lambda$.}
+  \label{fig:tl-summary}
+\end{figure}
+
+\draftnote{state the smallest displacement at which the difference image in
+\cref{fig:tl-summary}b still shows a clear, unambiguous peak above the
+numerical background, and compare it with the amplitude resolution floor
+found for stationary scatterers in \cref{sec:meth-resolution}. The noisy
+version of this sweep, and the noise-mitigation strategies tested against
+it, are presented in \cref{ch:hyp3} rather than here.}
+
+\section{Vertical Movement}
+\label{sec:hyp1-vertical}
+
+This section mirrors \cref{sec:hyp1-lateral}, replacing lateral displacement
+of the scatterer with \emph{vertical} (depth) displacement. The two
+directions are not expected to behave identically: \cref{sec:th-duality}
+showed that a migrated image separates lateral spatial frequencies like a
+prism but does not separate vertical ones, so the amplitude-based
+detectability established here is an important point of comparison for the
+phase-based vertical results of \cref{sec:hyp1-phaseplane}.
+
+A single PEC cylinder ($r=\SI{28}{mm}$) sits at lateral position
+$x=\SI{2.0}{m}$ and is displaced \emph{downward} from its baseline depth
+across seven scenarios, from $1\lambda$ down to $\tfrac{1}{32}\lambda$
+(\cref{fig:vtl-setup}), using the same domain and grid as
+\cref{sec:meth-resolution,sec:hyp1-lateral}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_001_Vertical_TimeLapse_Study__Model_Geometry__domain_4010_m_Δx.png}
+    \caption{Model geometry}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_002_Moving_scatterer__all_7_scenarios__r__28_mm_x__20_mBaseline.png}
+    \caption{All 7 vertical displacement scenarios}
+  \end{subfigure}
+  \caption{Forward-model setup for the vertical time-lapse study: (a) the
+    gprMax domain and grid; (b) the vertical displacement of the scatterer
+    across all seven scenarios, $r=\SI{28}{mm}$, fixed at $x=\SI{2.0}{m}$.}
+  \label{fig:vtl-setup}
+\end{figure}
+
+\Cref{fig:vtl-bscans} shows the background-baseline and vertically
+time-lapsed raw B-scans and the background-subtracted result, with the
+expected arrival times for each scenario marked, and \cref{fig:vtl-taper}
+the effect of the standard tapering and $t_0$-shift conditioning on the
+$1\lambda$ dataset.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_003_GPR_B-Scans__Background_Baseline_and_Vertical_TimeLapsed_Mod.png}
+    \caption{Background \& time-lapsed}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_004_GPR_B-Scans__Background_Subtracted__green_dashed__expected_a.png}
+    \caption{Background-subtracted}
+  \end{subfigure}
+  \caption{Raw B-scans for the vertical time-lapse study: (a) background and
+    time-lapsed models; (b) background-subtracted, with expected arrival
+    times marked (green, dashed).}
+  \label{fig:vtl-bscans}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_005_Effect_of_Tapering_and_t0_Shift__1λ_dataset_single_trace.png}
+    \caption{Single trace}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_006_B-scan_effect_of_tapering_and_t0_shift__1λ_dataset.png}
+    \caption{Full B-scan}
+  \end{subfigure}
+  \caption{Effect of tapering and the $t_0$ shift on the $1\lambda$ vertical
+    displacement dataset: (a) a single trace; (b) the full B-scan.}
+  \label{fig:vtl-taper}
+\end{figure}
+
+\Cref{fig:vtl-kirchhoff,fig:vtl-gazdag,fig:vtl-backprop} repeat the same
+three-algorithm migration-and-differencing analysis for the vertical
+displacement scenarios.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_007_Kirchhoff_Migration__All_7_Datasets____f_c15_GHz____aperture.png}
+    \caption{All 7 scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_008_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_009_Kirchhoff_Migration__TimeLapse_Differences_migrated__migrate.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_010_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Kirchhoff migration of the vertical time-lapse study
+    ($f_c=\SI{15}{\GHz}$, aperture $=40$): (a,b) migrated image for all
+    scenarios and zoomed; (c,d) time-lapse difference and zoomed.}
+  \label{fig:vtl-kirchhoff}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_011_Gazdag_Phase-Shift_Migration__All_7_Datasets____f_c15_GHz.png}
+    \caption{All scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_012_Gazdag_Phase-Shift_Migration_zoomed____f_cf_c_GHz_GHz.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_013_Gazdag_Migration__TimeLapse_Differences_migrated__migrated_b.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_014_Gazdag_Migration__TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Gazdag phase-shift migration of the vertical time-lapse study
+    ($f_c=\SI{15}{\GHz}$): (a,b) migrated image and zoomed; (c,d) time-lapse
+    difference and zoomed.}
+  \label{fig:vtl-gazdag}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_015_Back-Propagation_E__All_7_Datasets____focus_at_1906_ns.png}
+    \caption{$\lVert\mathbf{E}\rVert$, all scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_016_Back-Propagation_E_zoomed____focus_at_1906_ns.png}
+    \caption{$\lVert\mathbf{E}\rVert$, zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_017_Back-Propagation_Ez__All_7_Datasets____focus_at_1906_ns.png}
+    \caption{$E_z$, all scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_018_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png}
+    \caption{$E_z$, zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_019_Back-Propagation__TimeLapse_Differences_Ez_Ez__Ez_baseline.png}
+    \caption{$E_z$ time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_020_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Time-reversal back-propagation migration of the vertical
+    time-lapse study, focused at $t=\SI{1906}{\ns}$: field-magnitude (a,b)
+    and $E_z$ (c,d) images, and the $E_z$ time-lapse difference (e,f).}
+  \label{fig:vtl-backprop}
+\end{figure}
+
+\subsection*{Vertical Detectability Summary}
+\label{sec:vtl-detectability}
+
+\Cref{fig:vtl-summary} overlays the signed time-lapse-difference amplitude
+from all three algorithms and plots the normalised \emph{vertical}
+point-spread function of that difference at $x=\SI{2.0}{m}$, as a function
+of vertical displacement.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_021_Vertical_TimeLapse_Migration_Comparison__Signed_Amplitude.png}
+    \caption{Signed-amplitude comparison}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{VTL_022_Normalised_Vertical_PSF__TimeLapse_Difference_at_x__20_m.png}
+    \caption{Normalised vertical PSF of the difference}
+  \end{subfigure}
+  \caption{(a) Signed time-lapse-difference amplitude for all three
+    migration algorithms; (b) the normalised vertical PSF of the difference
+    image at $x=\SI{2.0}{m}$, swept across vertical displacements from
+    $1\lambda$ to $\tfrac{1}{32}\lambda$.}
+  \label{fig:vtl-summary}
+\end{figure}
+
+\draftnote{compare the smallest reliably-detected vertical displacement in
+\cref{fig:vtl-summary}b against the lateral result of
+\cref{fig:tl-summary}b (\cref{sec:tl-detectability}) and discuss whether the
+lateral/vertical asymmetry predicted by the instantaneous-phase theory of
+\cref{sec:th-duality} is also visible at the amplitude level, or only
+emerges once the phase-plane estimator of \cref{sec:hyp1-phaseplane} is
+applied.}
+
+\section{Diagonal Movement}
+\label{sec:hyp1-diagonal}
+
+The third and final translation direction combines the previous two: the
+scatterer moves simultaneously laterally and vertically, along a fixed
+$2{:}1$ diagonal ($\Dx = 2\,\Dz$ in every scenario), so that all scenarios
+lie on the same line through the baseline position. A single PEC cylinder
+at $x=\SI{2.0}{m}$, baseline depth \SI{0.676}{m}, is displaced diagonally
+across five scenarios (\cref{tab:dtl-scenarios}), using the same domain and
+grid as \cref{sec:meth-resolution,sec:hyp1-lateral,sec:hyp1-vertical}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Diagonal displacement scenarios: lateral ($\Dx$, rightward) and
+    vertical ($\Dz$, downward) components, both expressed as fractions of
+    the dominant wavelength $\lambda$.}
+  \label{tab:dtl-scenarios}
+  \begin{tabular}{lcc}
+    \toprule
+    Scenario & $\Dx$ (right) & $\Dz$ (down) \\
+    \midrule
+    Baseline   & 0                       & 0 \\
+    1          & $1\lambda$              & $\tfrac12\lambda$ \\
+    2          & $\tfrac12\lambda$       & $\tfrac14\lambda$ \\
+    3          & $\tfrac14\lambda$       & $\tfrac18\lambda$ \\
+    4          & $\tfrac18\lambda$       & $\tfrac{1}{16}\lambda$ \\
+    5          & $\tfrac{1}{16}\lambda$  & $\tfrac{1}{32}\lambda$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_001_Diagonal_TimeLapse_Study__Model_Geometry__domain_4010_m_Δx.png}
+    \caption{Model geometry}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_002_Diagonal_scatterer_path__all_6_scenarios__r__28_mm.png}
+    \caption{All scenarios, diagonal path}
+  \end{subfigure}
+  \caption{Forward-model setup for the diagonal time-lapse study: (a) the
+    gprMax domain and grid; (b) the diagonal displacement path of the
+    scatterer across all scenarios, $r=\SI{28}{mm}$.}
+  \label{fig:dtl-setup}
+\end{figure}
+
+\Cref{fig:dtl-bscans} shows the background-baseline and diagonally
+time-lapsed raw B-scans, the background-subtracted result, and the effect
+of the synthetic Laplace noise used later in \cref{ch:hyp3}; \cref{fig:dtl-taper}
+shows the standard tapering and $t_0$-shift conditioning on the scenario-1
+dataset.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{DTL_003_GPR_B-Scans__Background_Baseline_and_Diagonal_TimeLapsed_Mod.png}
+    \caption{Background \& time-lapsed}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{DTL_004_GPR_B-Scans__Background_Subtracted__green_dashed__expected_a.png}
+    \caption{Background-subtracted}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\textwidth}
+    \includegraphics[width=\linewidth]{DTL_005_GPR_B-Scans__With_Synthetic_Laplace_Noise_10_of_signal_std.png}
+    \caption{With Laplace noise}
+  \end{subfigure}
+  \caption{Raw B-scans for the diagonal time-lapse study: (a) background and
+    time-lapsed models; (b) background-subtracted, with expected arrival
+    times marked; (c) with synthetic Laplace-distributed noise at $10\,\%$
+    of the signal standard deviation (used in \cref{ch:hyp3}).}
+  \label{fig:dtl-bscans}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_007_Effect_of_Tapering_and_t0_Shift__Scenario_1_dataset_single_t.png}
+    \caption{Single trace}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_008_B-scan_effect_of_tapering_and_t0_shift__Scenario_1_dataset.png}
+    \caption{Full B-scan}
+  \end{subfigure}
+  \caption{Effect of tapering and the $t_0$ shift on the scenario-1
+    ($1\lambda,\tfrac12\lambda$) diagonal displacement dataset: (a) a single
+    trace; (b) the full B-scan.}
+  \label{fig:dtl-taper}
+\end{figure}
+
+\Cref{fig:dtl-kirchhoff,fig:dtl-gazdag,fig:dtl-backprop} repeat the same
+three-algorithm migration-and-differencing analysis for the diagonal
+displacement scenarios.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_009_Kirchhoff_Migration__All_6_Datasets____f_c15_GHz____aperture.png}
+    \caption{All 6 scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_010_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_011_Kirchhoff_Migration__TimeLapse_Differences_migrated__migrate.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_012_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Kirchhoff migration of the diagonal time-lapse study
+    ($f_c=\SI{15}{\GHz}$, aperture $=40$): (a,b) migrated image for all
+    scenarios and zoomed; (c,d) time-lapse difference and zoomed.}
+  \label{fig:dtl-kirchhoff}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_013_Gazdag_Phase-Shift_Migration__All_6_Datasets____f_c15_GHz.png}
+    \caption{All scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_014_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png}
+    \caption{Zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_015_Gazdag_Migration__TimeLapse_Differences_migrated__migrated_b.png}
+    \caption{Time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_016_Gazdag_Migration__TimeLapse_Differences_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Gazdag phase-shift migration of the diagonal time-lapse study
+    ($f_c=\SI{15}{\GHz}$): (a,b) migrated image and zoomed; (c,d) time-lapse
+    difference and zoomed.}
+  \label{fig:dtl-gazdag}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_017_Back-Propagation_E__All_6_Datasets____focus_at_1906_ns.png}
+    \caption{$\lVert\mathbf{E}\rVert$, all scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png}
+    \caption{$\lVert\mathbf{E}\rVert$, zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_019_Back-Propagation_Ez__All_6_Datasets____focus_at_1906_ns.png}
+    \caption{$E_z$, all scenarios}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png}
+    \caption{$E_z$, zoomed}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_021_Back-Propagation__TimeLapse_Differences_Ez_Ez__Ez_baseline.png}
+    \caption{$E_z$ time-lapse difference}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png}
+    \caption{Difference, zoomed}
+  \end{subfigure}
+  \caption{Time-reversal back-propagation migration of the diagonal
+    time-lapse study, focused at $t=\SI{1906}{\ns}$: field-magnitude (a,b)
+    and $E_z$ (c,d) images, and the $E_z$ time-lapse difference (e,f).}
+  \label{fig:dtl-backprop}
+\end{figure}
+
+\subsection*{Diagonal Detectability Summary}
+\label{sec:dtl-detectability}
+
+Because every scenario moves the scatterer along the same $2{:}1$ diagonal
+line through the baseline, the detectability analysis samples each
+time-lapse-difference image \emph{along that line} rather than along a
+single Cartesian axis: \cref{fig:dtl-summary}a overlays the signed,
+diagonally-sampled amplitude from all three algorithms, and
+\cref{fig:dtl-summary}b plots the normalised diagonal point-spread function
+(signed amplitude and Hilbert envelope) as a function of signed distance
+along the motion direction.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_023_Diagonal_TimeLapse_Migration_Comparison__Signed_Amplitude.png}
+    \caption{Signed-amplitude comparison}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{DTL_024_Normalised_Diagonal_PSF__TimeLapse_Difference_Along_Motion_D.png}
+    \caption{Normalised diagonal PSF along motion direction}
+  \end{subfigure}
+  \caption{(a) Signed time-lapse-difference amplitude for all three
+    migration algorithms, sampled along the diagonal motion direction;
+    (b) the normalised diagonal PSF of the difference image along that same
+    direction, swept across the five diagonal scenarios of
+    \cref{tab:dtl-scenarios}.}
+  \label{fig:dtl-summary}
+\end{figure}
+
+\draftnote{state the smallest diagonal displacement at which
+\cref{fig:dtl-summary}b still shows a clear, unambiguous peak above
+background, and compare it with the lateral and vertical floors of
+\cref{sec:tl-detectability,sec:vtl-detectability} --- since the diagonal
+step combines a lateral and a vertical component of different magnitude
+($\Dx=2\Dz$), state whether the effective detectability floor tracks the
+(tighter) lateral floor, the (looser) vertical floor, or some combination of
+the two.}
+
+\section{Global Phase-Plane Validation}
+\label{sec:hyp1-phaseplane}
+
+\Cref{sec:hyp1-lateral,sec:hyp1-vertical,sec:hyp1-diagonal} showed that
+simple amplitude differencing of migrated images detects sub-wavelength
+displacement only down to a finite floor, in all three directions. This
+section applies the phase-plane shift estimator derived in
+\cref{sec:th-fourier-shift,sec:th-wls,sec:th-material-change} and
+implemented as described in \cref{sec:meth-phaseplane} to the lateral and
+vertical displacement datasets, and shows that it remains accurate at
+displacement scales where the amplitude image is already featureless.
+
+Because several of the analyses below are repeated identically across seven
+(or six) wavelength scales, only one or two representative scales are shown
+in this section; the complete sweep for every analysis is given in
+\cref{app:extended-sweeps}, so that every one of the relevant figures
+produced by \texttt{TimeLapse\_Processing.ipynb} for these scenarios appears
+at least once in the thesis.
+
+\subsection*{Migrated Baseline Overview Across Scenarios}
+\label{sec:tlp-overview}
+
+\Cref{fig:tlp-overview} shows the starting point for every analysis in this
+section: the raw background-subtracted B-scans and the three migrated
+images (Kirchhoff, Gazdag, back-propagation) for every scenario used below.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_001_Raw_Background-Subtracted_B-Scans__All_Scenarios.png}
+    \caption{Raw, background-subtracted}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_002_Kirchhoff_Migration__All_Scenarios.png}
+    \caption{Kirchhoff-migrated}
+  \end{subfigure}
+
+  \vspace{0.6em}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_003_Gazdag_Migration__All_Scenarios.png}
+    \caption{Gazdag-migrated}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_004_Back-prop_Migration__All_Scenarios.png}
+    \caption{Back-propagation-migrated}
+  \end{subfigure}
+  \caption{Overview of all scenarios re-used from \cref{sec:hyp1-lateral} in
+    this section: (a) raw background-subtracted B-scans; (b--d) the same
+    data migrated with Kirchhoff, Gazdag, and back-propagation migration.}
+  \label{fig:tlp-overview}
+\end{figure}
+
+\subsection*{Phase-Plane Fit: Lateral Shift Validation}
+\label{sec:tlp-horizontal-validation}
+
+For every lateral-displacement scenario of \cref{sec:hyp1-lateral}, the
+estimator of \cref{sec:meth-phaseplane} is applied to the baseline/monitor
+pair, cropped to $\pm2.5\lambda$ around the scatterer apex (located from the
+Hilbert envelope of the baseline image). \Cref{fig:tlp-horiz-validation}
+shows the recovered $(\Dz,\Dx)$ compared with the known ground truth for all
+three migration methods.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_005_Phase-plane_shift_estimation__Kirchhoff____Baseline_vs_each.png}
+    \caption{Kirchhoff}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_006_Phase-plane_shift_estimation__Gazdag____Baseline_vs_each_sce.png}
+    \caption{Gazdag}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_007_Phase-plane_shift_estimation__Back-prop____Baseline_vs_each.png}
+    \caption{Back-propagation}
+  \end{subfigure}
+  \caption{2D phase-plane shift estimation applied to the baseline-versus-each-scenario
+    pairs of \cref{sec:hyp1-lateral}, for all three migration methods.}
+  \label{fig:tlp-horiz-validation}
+\end{figure}
+
+\draftnote{read off \cref{fig:tlp-horiz-validation} the smallest lateral
+displacement at which the estimated $\Dx$ still tracks the true value to
+within (state your accepted tolerance, e.g.\ $\pm 5\,\%$ or $\pm\SI{1}{mm}$),
+for each migration method, and contrast this explicitly with the amplitude
+floor found in \cref{sec:tl-detectability}.}
+
+\subsection*{Phase-Plane Fit: Vertical Shift Validation}
+\label{sec:tlp-vertical}
+
+\Cref{fig:tlp-vert-validation} repeats the previous analysis for the
+vertical-displacement dataset of \cref{sec:hyp1-vertical}, with the ROI
+crop and cross-spectrum fit unchanged except that the displacement being
+recovered is now $\Dz$ rather than $\Dx$.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_010_VerticalTimeLapse__Phase-plane_shift_estimation__Kirchhoff.png}
+    \caption{Kirchhoff}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_011_VerticalTimeLapse__Phase-plane_shift_estimation__Gazdag____B.png}
+    \caption{Gazdag}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_012_VerticalTimeLapse__Phase-plane_shift_estimation__Back-prop.png}
+    \caption{Back-propagation}
+  \end{subfigure}
+  \caption{2D phase-plane shift estimation applied to the baseline-versus-each-scenario
+    pairs of \cref{sec:hyp1-vertical}, for all three migration methods.}
+  \label{fig:tlp-vert-validation}
+\end{figure}
+
+\draftnote{state whether the vertical phase-plane fit remains accurate to
+the same smallest displacement found for the lateral case in
+\cref{sec:tlp-horizontal-validation}, or whether the lateral/vertical
+asymmetry predicted in \cref{sec:th-duality} (a constant vertical
+\emph{plateau} versus a lateral \emph{slope}) shows up as a difference in
+achievable precision between \cref{fig:tlp-horiz-validation,fig:tlp-vert-validation}.}
+
+\subsection*{Phase-Plane Fit: Diagonal Shift Validation}
+\label{sec:tlp-diagonal}
+
+\draftnote{\textbf{Gap:} unlike the lateral and vertical cases above, the 2D
+WLS phase-plane fit has not yet been run on the diagonal dataset of
+\cref{sec:hyp1-diagonal} --- \texttt{Diagonal\_TimeLapse\_Playground.ipynb}
+currently only produces the amplitude-based detectability result of
+\cref{sec:dtl-detectability}. Completing Hypothesis 1's diagonal claim
+requires applying \texttt{estimate\_shift\_2d} (\cref{sec:meth-phaseplane})
+to the same baseline/monitor pairs and recovering the joint $(\Dz,\Dx)$
+estimate, which should satisfy the known $\Dx=2\Dz$ ratio of
+\cref{tab:dtl-scenarios} if the fit is working correctly --- this is the
+single most important piece of evidence still missing from this chapter.}
+
+\section{Hypothesis 1.5 (Optional): Local Phase-Gradient Methods}
+\label{sec:hyp1-h15}
+
+The phase-plane fit of \cref{sec:hyp1-phaseplane} is a \emph{global}
+operation: it acts on the whole 2D spectrum at once. This section explores
+a \emph{local} alternative --- the spatial instantaneous phase, extracted
+trace-by-trace with a Riesz/Hilbert transform, and its time-frequency
+relatives --- to test Hypothesis 1.5: whether the local phase gradients
+$\partial\varphi/\partial x,\partial\varphi/\partial y$ offer an equivalent,
+simpler route to the same displacement estimate. \draftnote{this section is
+exploratory: the underlying Riesz-transform/monogenic-signal machinery is
+implemented in \texttt{CWT\_playground.ipynb}, but it has not yet been
+validated quantitatively against the global WLS fit of
+\cref{sec:hyp1-phaseplane} on the same datasets --- treat the results below
+as a qualitative complement to, not a replacement for, Hypothesis 1's
+primary evidence.}
+
+\subsection{Instantaneous Phase Imaging --- Lateral Displacement}
+\label{sec:tlp-instphase-horizontal}
+
+The 2D Riesz transform of \cref{eq:kx-inst}--\cref{eq:dphi-lateral} is
+applied directly to the Gazdag-migrated baseline and monitor images,
+producing an instantaneous-phase difference map $\Dphi(z,x)$ and, at the
+scatterer depth, a 1D phase cross-section whose slope at the zero-crossing
+encodes $\Dx$. This analysis is repeated at all seven lateral scales from
+$2\lambda$ to $\tfrac{1}{32}\lambda$; \cref{fig:tlp-instphase-horiz-example}
+shows the representative $\tfrac14\lambda$ case ($\Dx=\SI{280}{mm}$), and
+\cref{fig:tlp-instphase-horiz-summary} summarises the fitted zero-crossing
+slope across all seven scales. The full seven-scale sweep is given in
+\cref{app:sec-instphase-horizontal}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_025_Instantaneous_Phase__Gazdag____Baseline_vs_¼λ___Δx__280_mm.png}
+    \caption{Instantaneous phase}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_026_Phase_cross-section__z__676_mm____Gazdag____¼λ__Δx__280_mm.png}
+    \caption{Cross-section, $z=\SI{676}{mm}$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_027_Phase_cross-section__zoomed__½λ_around_scatterers.png}
+    \caption{Cross-section, zoomed}
+  \end{subfigure}
+  \caption{Instantaneous-phase analysis for the representative
+    $\Dx=\tfrac14\lambda=\SI{280}{mm}$ lateral displacement, Gazdag-migrated:
+    (a) the 2D wrapped phase-difference map; (b) the 1D phase cross-section
+    at the scatterer depth $z=\SI{676}{mm}$; (c) the same cross-section
+    zoomed to $\pm\tfrac12\lambda$ around the scatterer.}
+  \label{fig:tlp-instphase-horiz-example}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{TLP_037_Gazdag__Δφ_zero-crossing_slope_vs_scatterer_separation.png}
+  \caption{Fitted zero-crossing slope of the lateral instantaneous
+    phase-difference cross-section, as a function of true scatterer
+    displacement, across all seven scales from $2\lambda$ to
+    $\tfrac{1}{32}\lambda$ (Gazdag-migrated).}
+  \label{fig:tlp-instphase-horiz-summary}
+\end{figure}
+
+\subsection{Instantaneous Phase Imaging --- Vertical Displacement}
+\label{sec:tlp-instphase-vertical}
+
+The same instantaneous-phase analysis is repeated for the vertical
+displacement dataset, with the cross-section now taken along $z$ at the
+fixed lateral position $x=\SI{2.0}{m}$ of the scatterer, across six scales
+from $1\lambda$ to $\tfrac{1}{32}\lambda$. \Cref{fig:tlp-instphase-vert-example}
+shows the representative $\tfrac14\lambda$ case ($\Dz=\SI{280}{mm}$), and
+\cref{fig:tlp-instphase-vert-summary} summarises the mean phase difference
+across all six scales. The full sweep is given in
+\cref{app:sec-instphase-vertical}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_044_VerticalTimeLapse__Instantaneous_Phase__Gazdag____Baseline_v.png}
+    \caption{Instantaneous phase}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_045_Phase_cross-section__x__2000_mm____Gazdag____¼λ__Δz__280_mm.png}
+    \caption{Cross-section, $x=\SI{2000}{mm}$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\textwidth}
+    \includegraphics[width=\linewidth]{TLP_046_Phase_cross-section__zoomed__½λ_around_scatterer_depths.png}
+    \caption{Cross-section, zoomed}
+  \end{subfigure}
+  \caption{Instantaneous-phase analysis for the representative
+    $\Dz=\tfrac14\lambda=\SI{280}{mm}$ vertical displacement, Gazdag-migrated:
+    (a) the 2D wrapped phase-difference map; (b) the 1D phase cross-section
+    at $x=\SI{2000}{mm}$; (c) the same cross-section zoomed to
+    $\pm\tfrac12\lambda$ around the scatterer depths.}
+  \label{fig:tlp-instphase-vert-example}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{TLP_056_VerticalTimeLapse__Gazdag__Mean_Δφ_vs_scatterer_vertical_shi.png}
+  \caption{Mean instantaneous phase difference $\Dphi$ as a function of true
+    vertical scatterer shift, across all six scales from $1\lambda$ to
+    $\tfrac{1}{32}\lambda$ (Gazdag-migrated). Unlike the lateral case
+    (\cref{fig:tlp-instphase-horiz-summary}), this is a plateau level rather
+    than a cross-section slope, consistent with the asymmetry derived in
+    \cref{sec:th-duality}.}
+  \label{fig:tlp-instphase-vert-summary}
+\end{figure}
+
+\subsection{Spectral-Line Phase Analysis}
+\label{sec:tlp-spectral-line}
+
+The localised-Fourier-shift spectral-line equation
+\cref{eq:local-phase-line} is verified directly on individual traces using
+the CLSSA decomposition of \texttt{phase\_decomposition.py}, applied both to
+the Gazdag-migrated image and to the raw, unmigrated B-scan, at the column
+position containing each scenario's scatterer. \Cref{fig:tlp-spectral-line-example}
+compares the representative $\tfrac14\lambda$ case in both domains; the full
+seven-scale sweep for both is given in
+\cref{app:sec-spectral-line}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_060_Spectral_Line_CLSSA____Gazdag____¼λ___Δx__280_mm__02500λ.png}
+    \caption{Gazdag-migrated}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_067_Spectral_Line_CLSSA____Raw_Unmigrated____¼λ___Δx__280_mm__02.png}
+    \caption{Raw, unmigrated}
+  \end{subfigure}
+  \caption{CLSSA spectral-line decomposition (amplitude spectrum, phase
+    spectrum, and phase gather, \cref{sec:th-local}) at the representative
+    $\Dx=\tfrac14\lambda=\SI{280}{mm}$ scale: (a) Gazdag-migrated trace; (b)
+    raw, unmigrated trace at the same scenario.}
+  \label{fig:tlp-spectral-line-example}
+\end{figure}
+
+\draftnote{state whether the migrated and raw spectral lines in
+\cref{fig:tlp-spectral-line-example} give consistent $\Dt$/slope estimates
+once converted with \cref{eq:dt-dz}, which would confirm that migration is
+not required for the temporal spectral-line method to work, only for the
+2D wavenumber plane fit of \cref{sec:th-wls}.}
+
+\subsection{Cross-Phase Spectrograms}
+\label{sec:tlp-spectrogram}
+
+\Cref{fig:tlp-spectrogram-example} shows the cross-phase spectrogram
+$\Dphi(\tau,f)$ of \cref{sec:th-local} for two contrasting scales: a large,
+easily visible $\tfrac14\lambda$ displacement and the smallest,
+$\tfrac{1}{32}\lambda$, where the coherent window around the scatterer's
+two-way time becomes much harder to distinguish from the incoherent
+background. The full seven-scale sweep is given in
+\cref{app:sec-spectrogram}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_074_Cross-Phase_Spectrogram_CLSSA__ΔΦτf____Gazdag____¼λ.png}
+    \caption{$\Dx=\tfrac14\lambda$}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_077_Cross-Phase_Spectrogram_CLSSA__ΔΦτf____Gazdag____¹₃₂λ.png}
+    \caption{$\Dx=\tfrac{1}{32}\lambda$}
+  \end{subfigure}
+  \caption{Cross-phase spectrogram $\Dphi(\tau,f)$ (two-way time against
+    frequency) at two contrasting lateral displacement scales,
+    Gazdag-migrated.}
+  \label{fig:tlp-spectrogram-example}
+\end{figure}
+
+\subsection{Localised Fourier Shift via Short-Time Fourier Transform}
+\label{sec:tlp-stft}
+
+Finally, the three-panel localised-STFT decomposition of
+\cref{eq:local-shift,eq:local-phase-line} --- amplitude spectrum
+$A(\tau,f)$, phase spectrum $\Dphi(\tau,f)$, and phase-angle domain
+$A(\tau,\theta)$ --- is applied with a Gaussian analysis window.
+\Cref{fig:tlp-stft-example} shows two of the seven outputs produced by this
+sweep; the full set is given in \cref{app:sec-stft}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_078_Localized_Fourier_Shift_STFT_Gaussian_win12_smp____Gazdag.png}
+    \caption{Scale 1 of 7}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[width=\linewidth]{TLP_081_Localized_Fourier_Shift_STFT_Gaussian_win12_smp____Gazdag.png}
+    \caption{Scale 4 of 7}
+  \end{subfigure}
+  \caption{Localised-STFT phase decomposition (Gaussian window, Gazdag-migrated)
+    for two of the seven lateral displacement scales.
+    \draftnote{TLP\_078--084 all share an identical auto-generated filename
+    stem and do not encode which $\Dx$ each panel corresponds to --- confirm
+    the scale for each of the seven figures against the
+    \texttt{TimeLapse\_Processing.ipynb} cell order before finalising these
+    captions.}}
+  \label{fig:tlp-stft-example}
+\end{figure}

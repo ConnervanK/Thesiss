@@ -115,7 +115,8 @@ def gazdag_migration(data, x, t, z, vel):
 
 def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpoints,
                          t0_ns, eps_r, v_ice, stride=1, n_snap=30, snap_win=1.0,
-                         sign_bit=False):
+                         sign_bit=False, dx=0.001, domain_y=1.0, src_y=0.9,
+                         pml_cells=10):
     """
     Write gprMax excitation file and .in file for back-propagation migration.
     Files go in study_root/backprop/<slug>/.
@@ -181,19 +182,25 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
     v_half     = v_ice / 2
     in_path    = out_dir / f'backprop_{slug}.in'
 
+    # Domain geometry derived from source positions and grid parameters
+    pml_pad  = pml_cells * dx
+    x_max    = float(np.max(x_src))
+    domain_x = np.ceil((x_max + pml_pad) / dx) * dx + pml_pad
+    dz       = dx
+
     excitation_mode = 'sign-bit (sign(u), amplitude stripped)' if sign_bit else 'peak-normalised'
     in_lines = [
         f'#title: Back-Propagation -- {label}',
         f'// Excitation mode: {excitation_mode}',
-        '#domain: 4.000 1.000 0.001',
-        '#dx_dy_dz: 0.001 0.001 0.001',
+        f'#domain: {domain_x:.6f} {domain_y:.6f} {dz:.6f}',
+        f'#dx_dy_dz: {dx:.6f} {dx:.6f} {dz:.6f}',
         f'#time_window: {n_t * dt_s:.6e}',
-        '#pml_cells: 10 10 0 10 10 0',
+        f'#pml_cells: {pml_cells} {pml_cells} 0 {pml_cells} {pml_cells} 0',
         '',
         f'// Half-velocity: eps_r={eps_r_half:.2f} (=4x{eps_r}) -> v={v_half:.5f} m/ns',
         f'#material: {eps_r_half:.2f} 1e-6 1.0 0 ice',
         '',
-        f'#box: 0 0 0 4.000 0.900 0.001 ice',
+        f'#box: 0 0 0 {domain_x:.6f} {domain_y:.6f} {dz:.6f} ice',
         '',
         f'#excitation_file: {exc_path.name}',
         '',
@@ -203,7 +210,7 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
         'import numpy as np',
         f"x_sources = np.load(r'{npy_path}')",
         'for i, x in enumerate(x_sources):',
-        "    hertzian_dipole('z', float(x), 0.900, 0.0, 'bp_{}'.format(i))",
+        f"    hertzian_dipole('z', float(x), {src_y:.6f}, 0.0, 'bp_{{}}'.format(i))",
         '#end_python:',
         '',
         f'// {n_snaps} snapshots  window=[{t_start_ns:.1f}, {T_ns:.1f}] ns  focus at {t_focus_ns:.2f} ns',
@@ -215,7 +222,7 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
         f'n_snap  = {n_snaps}',
         'for k in range(n_snap):',
         '    t_snap = t_start + k * step * dt_gpr',
-        "    print('#snapshot: 0 0 0 4.000 1.000 0.001 0.001 0.001 0.001 %.8e bp_snap%04d' % (t_snap, k+1))",
+        f"    print('#snapshot: 0 0 0 {domain_x:.6f} {domain_y:.6f} {dz:.6f} {dx:.6f} {dx:.6f} {dz:.6f} %.8e bp_snap%04d' % (t_snap, k+1))",
         '#end_python:',
         '',
         '#messages: y',
