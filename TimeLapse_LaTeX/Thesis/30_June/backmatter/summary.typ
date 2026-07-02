@@ -1,0 +1,35 @@
+#import "../template.typ": *
+
+#heading(level: 1, numbering: none, outlined: true)[Summary] <ch:summary>
+
+#draftnote[this is a placeholder skeleton --- rewrite once @ch:discussion is
+filled in with concrete numbers, since the claims below should restate
+quantified results, not generic statements.]
+
+This thesis set out to test whether time-lapse ground-penetrating radar can
+decouple and accurately track subwavelength material substitutions and
+mechanical fluid-front movements using noise-robust multi-dimensional
+phase-plane regression and sign-bit time-reversal, even under heavy-tailed
+Laplace noise --- the unifying hypothesis stated in @ch:introduction.
+
+@sec:meth-resolution quantified the amplitude-based resolution floor for two
+stationary point scatterers across three independent migration algorithms.
+@ch:hyp1 tested Hypothesis 1 by showing that the same floor limits amplitude
+_differencing_ of a single displaced scatterer in the lateral, vertical, and
+diagonal directions, and that a 2D Fourier phase-plane shift estimator
+(@ch:theory) recovers the lateral and vertical displacements well below that
+floor; an optional local phase-gradient alternative (Hypothesis 1.5) was
+explored alongside it. @ch:hyp2 tested Hypothesis 2 by applying the same
+machinery to a spatially distributed fluid front, where the fit was shown to
+decouple a purely geometric displacement from a purely dielectric material
+change using a single weighted least-squares plane fit. @ch:hyp3 tested
+Hypothesis 3 by repeating all of the above under a Laplace noise model fitted
+from real field data, introducing sign-bit time-reversal as a noise-robust
+excitation scheme for back-propagation migration, and showing that different
+migration algorithms respond very differently to noise. Hypothesis 4 ---
+generalisation to complex multi-scatterer scenes and real field data --- was
+not tested and remains future work (@sec:disc-hyp4).
+
+#draftnote[close with a final conclusion sentence stating, in one sentence,
+whether the unifying hypothesis is supported, once @ch:discussion is
+complete.]

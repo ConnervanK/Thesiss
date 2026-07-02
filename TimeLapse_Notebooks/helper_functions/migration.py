@@ -10,7 +10,41 @@ def PylopsKirchoffMigration(data, t, x, vel_model, z, wav='Ricker', wavcenter='C
                              f0=0.08, recs=None, srcs=None, mode='analytic', dynamic=False,
                              aperture=None, angleaperture=None, return_op=False):
     """
-    Perform Kirchhoff migration using PyLops zero offset operator. pass ns, gHz and meter
+    Kirchhoff migration for zero-offset GPR data using the PyLops adjoint operator.
+
+    Applies the adjoint (H^T) of a zero-offset Kirchhoff demigration operator to
+    map the B-scan from (time, x) to a reflectivity image in (depth, x). Sources
+    and receivers are co-located (exploding-reflector assumption). All spatial
+    units must be metres and all time units nanoseconds; frequency in GHz.
+
+    Args:
+        data (ndarray): B-scan of shape (n_t, n_x), time axis first.
+        t (ndarray): 1-D time axis [ns], uniformly spaced.
+        x (ndarray): 1-D along-profile axis [m], uniformly spaced.
+        vel_model (ndarray or float): Velocity model [m/ns]. Can be a scalar
+            (homogeneous) or a 2-D array of shape (n_z, n_x).
+        z (ndarray): 1-D depth axis [m], uniformly spaced from 0.
+        wav (str or ndarray): Wavelet to use. 'Ricker' generates a Ricker wavelet
+            with centre frequency f0; otherwise pass the wavelet array directly.
+        wavcenter (str or int): Index of the wavelet centre sample. 'Center' uses
+            the centre returned by pylops.utils.wavelets.ricker.
+        f0 (float): Centre frequency of the Ricker wavelet [GHz]. Ignored when
+            wav is an array.
+        recs (ndarray): Receiver positions — overridden internally (zero-offset
+            forces recs = srcs = x). Retained for API compatibility.
+        srcs (ndarray): Source positions — overridden internally (see recs).
+        mode (str): Travel-time computation mode passed to the Kirchhoff operator
+            ('analytic', 'eikonal', etc.).
+        dynamic (bool): If True, apply amplitude (geometric-spreading) corrections.
+        aperture (float or None): Maximum lateral migration aperture [m]. None
+            uses the full aperture.
+        angleaperture (float or None): Maximum dip angle included in migration
+            [degrees]. None uses the full angle range.
+        return_op (bool): If True, also return the Kirchhoff operator K.
+
+    Returns:
+        m (ndarray): Migrated reflectivity image of shape (n_z, n_x).
+        K (LinearOperator): The Kirchhoff operator (only when return_op=True).
     """
     import importlib
     import helper_functions.KirchhoffPylopsZeroOffset as KirchhoffPylopsZeroOffset
@@ -60,14 +94,31 @@ def PylopsKirchoffMigration(data, t, x, vel_model, z, wav='Ricker', wavcenter='C
 
 def gazdag_migration(data, x, t, z, vel):
     """
-    Gazdag (1978) phase-shift migration for zero-offset post-stack data.
+    Gazdag (1978) phase-shift migration for zero-offset post-stack GPR data.
 
-    data : (n_t, n_x)  B-scan, time axis first, t0-shifted
-    x, t : 1-D arrays [m, ns]
-    z    : 1-D depth axis [m], uniformly spaced from 0
-    vel  : full medium velocity [m/ns]; v_mig = vel/2 used internally
+    Downward-continues the wavefield depth-by-depth in the f-kx domain and
+    extracts the t=0 imaging condition at each depth level. The half-velocity
+    convention (v_mig = vel/2) implements the exploding-reflector assumption.
 
-    Returns image (n_z, n_x), peak-normalised to ±1.
+    Pre-processing applied internally before the depth loop:
+      - 5 % spatial cosine taper + 100 % zero-pad on each side to suppress
+        spatial wrap-around and Gibbs ringing.
+      - f-kx evanescent filter: bins where |kx| > f/v_mig are zeroed to
+        prevent migration smiles caused by energy outside the propagation cone.
+
+    Args:
+        data (ndarray): B-scan of shape (n_t, n_x), time axis first. Should be
+            t0-shifted so that t=0 corresponds to the surface (z=0).
+        x (ndarray): 1-D along-profile axis [m], uniformly spaced.
+        t (ndarray): 1-D two-way travel-time axis [ns], uniformly spaced.
+        z (ndarray): 1-D depth axis [m], uniformly spaced from 0. Sets the
+            number of downward-continuation steps and the step size dz.
+        vel (float): Full (round-trip) medium velocity [m/ns]. Halved internally
+            to v_mig = vel/2 for the one-way phase-shift operator.
+
+    Returns:
+        image (ndarray): Migrated reflectivity image of shape (n_z, n_x),
+            peak-normalised to the range [-1, 1].
     """
     n_t, n_x = data.shape
     dt    = float(t[1] - t[0])
@@ -155,8 +206,9 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
         data_rev /= peak
 
     # Snapshot timing: all depths focus simultaneously at t_focus = T - t0
+    # t_start must be > 0 (gprMax rejects snapshot time = 0)
     t_focus_ns = T_ns - t0_ns
-    t_start_ns = max(0.0, t_focus_ns - snap_win)
+    t_start_ns = max(dt_ns, t_focus_ns - snap_win)
     t_start_s  = t_start_ns * 1e-9
     snap_step  = max(1, int((T_ns * 1e-9 - t_start_s) / (max(1, n_snap - 1) * dt_s)))
     n_snaps    = max(1, int((n_t * dt_s - t_start_s) / (snap_step * dt_s)))
