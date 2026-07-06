@@ -3,7 +3,7 @@
 = Methodology <ch:methodology>
 
 This chapter describes the simulation and processing pipeline shared by the
-experiments in @ch:hyp1, @ch:hyp2, and @ch:hyp3. Each experiment varies the
+experiments in @ch:hyp1, @ch:hyp2, and @ch:hyp2. Each experiment varies the
 scatterer/material configuration and the displacement or material change
 under test, but reuses the same forward model, signal-conditioning steps,
 migration implementations, and (from @ch:hyp1 onward) the same phase-plane
@@ -61,14 +61,14 @@ Every raw B-scan is processed identically before migration:
   edge of the migration aperture, and a static shift aligns the surface
   reflection to $t = 0$ (e.g. @fig:res-taper).
 
-+ *Noise injection (where stated).* @ch:hyp3 contaminates the conditioned
++ *Noise injection (where stated).* @ch:hyp2 contaminates the conditioned
   B-scan with synthetic Laplace-distributed noise at $10%$ of the signal
   standard deviation, fitted from real field data.
 
 == Migration Algorithms Implemented
 
 Every conditioned B-scan in @sec:meth-resolution, @ch:hyp1, @ch:hyp2, and
-@ch:hyp3 is migrated with all three algorithms derived in @sec:th-migration:
+@ch:hyp2 is migrated with all three algorithms derived in @sec:th-migration:
 Kirchhoff delay-and-sum (PyLops zero-offset operator), Gazdag $f$-$k$
 phase-shift migration, and gprMax-based time-reversal back-propagation. All
 three share the implementation in `helper_functions/migration.py`
@@ -126,7 +126,7 @@ the migration algorithms above can no longer tell them apart? This validation
 experiment uses two of the PEC cylinders described above, illuminated by a
 zero-offset GPR B-scan, and migrated with all three algorithms. Its result is
 the amplitude-based resolution floor against which every
-displacement-detection result in @ch:hyp1, @ch:hyp2, and @ch:hyp3 is later
+displacement-detection result in @ch:hyp1, @ch:hyp2, and @ch:hyp2 is later
 compared.
 
 @fig:res-setup shows the forward-model setup: the Ricker source wavelet, the
@@ -234,4 +234,4 @@ comment on any difference between the three algorithms.]
 
 This amplitude-based floor is the motivation for the phase-plane approach
 developed in @ch:theory and tested against Hypotheses 1--3 in @ch:hyp1,
-@ch:hyp2, and @ch:hyp3.
+@ch:hyp2, and @ch:hyp2.

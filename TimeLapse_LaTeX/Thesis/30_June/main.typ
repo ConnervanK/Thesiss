@@ -66,8 +66,8 @@
 #include "chapters/03_theory.typ"
 #include "chapters/04_methodology.typ"
 #include "chapters/05_hypothesis1_translation.typ"
-#include "chapters/06_hypothesis2_fluidflow.typ"
-#include "chapters/07_hypothesis3_noise.typ"
+#include "chapters/06_hypothesis2_migration_noise.typ"
+#include "chapters/07_hypothesis3_complex.typ"
 #include "chapters/08_discussion.typ"
 
 // Summary (unnumbered backmatter chapter)

@@ -7,14 +7,12 @@ prompts left in @ch:hyp1, @ch:hyp2, and @ch:hyp3. Resolve those prompts
 first (they ask for specific numbers read off specific figures), then rewrite
 this chapter as connected prose rather than a list.]
 
-This chapter returns to the unifying hypothesis of @ch:introduction --- that
-time-lapse GPR can decouple and accurately track subwavelength material
-substitutions and mechanical fluid-front movements using noise-robust
-multi-dimensional phase-plane regression and sign-bit time-reversal, even
-under heavy-tailed Laplace noise --- and integrates the results of Hypotheses
-1--3 to evaluate it directly.
+This chapter returns to the Research Question of @ch:introduction --- can
+time-lapse GPR accurately track subwavelength movement by analysing phase
+changes in migrated images? --- and integrates the results of Hypotheses 1--3
+to answer it.
 
-== Hypothesis 1: Translation Tracking
+== Hypothesis 1: Phase Changes Reveal Sub-Resolution Movement
 
 @sec:hyp1-lateral, @sec:hyp1-vertical, and @sec:hyp1-diagonal established an
 amplitude-based detectability floor in all three translation directions, and
@@ -53,76 +51,84 @@ were computed, and whether Hypothesis 1.5 can be considered supported,
 exploratory-but-promising, or unresolved given that no direct quantitative
 comparison between the two has yet been run.]
 
-== Hypothesis 2: Fluid-Front Tracking and Material Change
+== Hypothesis 2: Back-Propagation Is the Preferred Method
 
-@sec:ff-phaseplane is the key test of whether the geometry/material-change
-decoupling of @sec:th-material-change survives contact with a non-rigid,
-spatially distributed target.
+@sec:hyp2-fluidfront showed that the geometry/material-change decoupling of
+@sec:th-material-change survives contact with a non-rigid, spatially
+distributed target, and @sec:ff-factor2 identified a systematic factor-of-two
+error that affects Kirchhoff and Gazdag but not back-propagation.
+@sec:hyp2-noise then showed that back-propagation with sign-bit time-reversal
+is the most noise-robust of the three algorithms tested.
 
-#draftnote[state explicitly, for each migration method, whether the fitted
-slopes $(#Dz, #Dx)$ stayed near zero while the intercept $c$ tracked the
-front advance as predicted --- this is the central claim of Hypothesis 2 and
-should be stated as a number, not left implicit in a figure reference.]
+#draftnote[state explicitly, for each migration method in @fig:ff-phaseplane,
+whether the fitted slopes $(#Dz, #Dx)$ stayed near zero while the intercept
+$c$ tracked the front advance as predicted by @eq:intercept-material. State
+the factor-of-two ratio numerically (from @sec:ff-factor2). State whether the
+noise robustness conclusion is supported quantitatively (currently only the
+noisy lateral case, @fig:tlp-noise, has a phase-plane fit; the vertical,
+diagonal, and fluid-front noisy fits are amplitude-level only --- flag this
+as a limitation).]
 
-== Hypothesis 3: Noise Robustness
+=== Implications for Migration Choice in Practice
 
-@sec:hyp3-purenoise showed that Kirchhoff and Gazdag respond differently to
-pure noise (false-coherent bands versus incoherent texture), and
-@sec:hyp3-signbit introduced sign-bit time-reversal as the noise-robust
-excitation scheme for back-propagation.
+The recommendation to use back-propagation has a practical cost: it requires
+a full gprMax forward simulation for each profile pair, which is substantially
+more expensive than Kirchhoff or Gazdag. For field surveys with many profiles,
+this cost must be weighed against the benefits identified in @ch:hyp2.
 
-#draftnote[state whether the amplitude-level noisy results of
-@sec:hyp3-lateral, @sec:hyp3-vertical, @sec:hyp3-diagonal, and
-@sec:hyp3-fluidflow support the claim that "the right migration technique"
-(per Hypothesis 3) makes noisy detection possible, and be explicit that ---
-as flagged repeatedly in @ch:hyp3 --- the quantitative phase-plane-regression
-evidence for this currently exists only for the lateral case
-(@fig:tlp-noise); the vertical, diagonal, and fluid-front cases are
-amplitude-level only until the outstanding work of @sec:hyp3-gaps is
-completed. Hypothesis 3 should therefore be reported as _partially_ supported,
-not fully supported, at the current state of the thesis.]
+#draftnote[add a brief practical recommendation: under what conditions
+(target type, noise level, available compute) should a practitioner use
+Kirchhoff/Gazdag with the factor-of-two correction versus back-propagation
+with sign-bit time-reversal? State whether the correction is reliable enough
+to use Kirchhoff/Gazdag when back-propagation is too expensive.]
 
-== Hypothesis 4: Future Work <sec:disc-hyp4>
+== Hypothesis 3: Generalisation to Field Data
 
-Hypothesis 4 --- that the method generalises to complex synthetic scenes with
-multiple, independently-moving scatterers and non-uniform fluid fronts, and to
-real field data --- has not been tested in this thesis. Validating it would
-require, at minimum: (1) a synthetic model containing several scatterers at
-different depths moving in different directions and amounts simultaneously, to
-test whether the phase-plane fit (which assumes a single dominant displacement
-within its ROI) can be applied locally enough to separate multiple independent
-events; (2) a fluid-front geometry that is not a straight line, to test
-whether the front-tracking approach of @ch:hyp2 generalises beyond the
-idealised straight front used there; and (3) a real zero-offset field survey,
-ideally one with a fluid front advancing away from a borehole under at least
-partially known conditions, to test the field pre-processing assumptions
-(dewow, time-zero correction, trace re-binning) that the synthetic data in
-this thesis sidesteps by construction. None of this exists yet in this
-project; Hypothesis 4 is recorded here as the clearest direction for future
-work, not as a result.
+@sec:hyp3-fielddata applied the full pipeline to real borehole GPR data and
+obtained physically interpretable displacement estimates across four
+operational stages of a fluid-injection experiment (@tab:fielddata-stages).
+The Push stage produced a downward displacement of approximately $1.41 "m"$,
+consistent with active injection; the Wait stage produced near-zero
+displacement, as expected; and the Pull stage only partially reversed the Push,
+leaving a net residual.
+
+#draftnote[state whether the field-data estimates are consistent with any
+independent ground-truth available from the field experiment (e.g. injection
+volume, borehole depth, known fracture geometry), and whether the factor-of-two
+correction of @sec:ff-factor2 was applied to the Gazdag estimates in
+@tab:fielddata-stages. Note explicitly that the complex synthetic model
+component of @sec:hyp3-complex is still pending, so Hypothesis 3 is only
+partially supported at this stage.]
 
 == Limitations
 
-#draftnote[list concrete limitations: synthetic gprMax data only (no field
-validation, pending Hypothesis 4); back-propagation migration not run on the
-noisy lateral dataset due to computational cost (@sec:hyp3-lateral); the
-domain-size and STFT-scale-labelling uncertainties flagged in @ch:methodology
-and @sec:tlp-stft; the fluid-front model uses a single idealised thin-layer
-geometry rather than a swept range of fracture thicknesses or contrasts; the
-diagonal experiment (@sec:hyp1-diagonal) sweeps only a single fixed $2:1$
-lateral-to-vertical ratio rather than a range of diagonal angles.]
+#draftnote[list concrete limitations: (1) synthetic gprMax data only for
+Hypotheses 1--2, pending Hypothesis 3's complex synthetic results; (2)
+back-propagation not run on the noisy lateral dataset due to computational
+cost (@sec:hyp3-lateral); (3) the domain-size and STFT-scale-labelling
+uncertainties flagged in @ch:methodology and @sec:tlp-stft; (4) the
+fluid-front model uses a single idealised thin-layer geometry rather than a
+swept range of fracture thicknesses or contrasts; (5) the diagonal experiment
+(@sec:hyp1-diagonal) sweeps only a single fixed $2:1$ lateral-to-vertical
+ratio rather than a range of diagonal angles; (6) the field-data back-prop
+runs are incomplete (11/37 profiles), so the preferred method cannot yet be
+fully applied to the real data.]
 
-== Outlook for Field Application
+== Outlook
 
-#draftnote[expand with concrete next steps, building on @sec:disc-hyp4's
-Hypothesis 4 discussion: (1) validate the pipeline on a real zero-offset
-field survey with a known, controlled sub-wavelength displacement (e.g. a
-target on a calibrated micrometre stage) to test the field pre-processing
-assumptions of @sec:meth-phaseplane that the synthetic data in this thesis
-sidesteps by construction; (2) complete the outstanding quantitative
-noise-robustness work of @sec:hyp3-gaps; (3) extend the fluid-front model of
-@ch:hyp2 to a swept range of fracture thickness and fluid contrast, and to a
-front geometry that is not perfectly straight; (4) quantify the
-velocity-recalibration procedure needed when soil or ice moisture genuinely
-changes between baseline and monitor surveys, since @sec:meth-phaseplane noted
-that this is otherwise indistinguishable from a true vertical shift $#Dz$.]
+The field-data results of @sec:hyp3-fielddata demonstrate that the pipeline is
+not limited to synthetic data, but several extensions are needed before field
+deployment can be recommended without reservation:
+
+#draftnote[expand with concrete next steps: (1) complete the outstanding
+back-propagation runs for the remaining 26 field profiles and confirm that
+the factor-of-two-corrected Gazdag estimates agree with the back-prop
+estimates, validating the correction for field data; (2) complete the complex
+synthetic experiment of @sec:hyp3-complex and test whether local application
+of the phase-plane fit can separate multiple simultaneously-moving scatterers;
+(3) extend the fluid-front model of @sec:hyp2-fluidfront to a swept range of
+fracture thickness and fluid contrast, and to a front geometry that is not
+perfectly straight; (4) quantify the velocity-recalibration procedure needed
+when soil or ice moisture genuinely changes between baseline and monitor
+surveys, since this is otherwise indistinguishable from a true vertical shift
+$#Dz$ in any of the three migration algorithms.]

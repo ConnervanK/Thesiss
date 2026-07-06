@@ -1,26 +1,25 @@
 #import "../template.typ": *
 
-= Hypothesis 1: Subwavelength Translation in Lateral, Vertical, and Diagonal Directions <ch:hyp1>
+= Hypothesis 1: Can We Infer Subwavelength Movement from Phase Changes? <ch:hyp1>
 
-@sec:meth-resolution showed that two _stationary_ scatterers cannot be
-resolved as separate amplitude peaks below roughly half a wavelength of
-separation. This chapter asks the closely related time-lapse question: if a
-_single_ scatterer moves between a baseline and a monitor survey by a
-sub-wavelength amount, is that movement visible in the _difference_ of the
-two migrated amplitude images, and --- if not --- can the 2D phase-plane
-estimator of @sec:meth-phaseplane recover it instead? The displacement is
-swept from $2 lambda$ down to $1 \/ 32 lambda$, using the same three
-migration algorithms throughout, and the question is tested independently in
-three directions: lateral (@sec:hyp1-lateral), vertical (@sec:hyp1-vertical),
-and diagonal (@sec:hyp1-diagonal). @sec:hyp1-phaseplane then applies the
-global 2D weighted least-squares (WLS) phase-plane fit to all three
-directions, and @sec:hyp1-h15 explores an optional, local alternative to
-that global fit.
+@sec:meth-resolution established that amplitude-based detection of a
+_stationary_ point scatterer fails below roughly half a wavelength of
+separation. This chapter scales that finding to the time-lapse setting: if a
+single scatterer moves by a sub-wavelength amount between a baseline and a
+monitor survey, can that motion be inferred? The answer is that amplitude
+differencing fails below the same resolution floor --- but examining the
+_phase change_ in the two-dimensional Fourier domain (@ch:theory) reveals
+displacements as small as $1 \/ 32 lambda$. The displacement is swept from
+$2 lambda$ down to $1 \/ 32 lambda$, tested independently in three
+directions: lateral (@sec:hyp1-lateral), vertical (@sec:hyp1-vertical), and
+diagonal (@sec:hyp1-diagonal). @sec:hyp1-phaseplane then applies the global
+2D weighted least-squares (WLS) phase-plane fit, and @sec:hyp1-h15 explores
+an optional, local alternative.
 
-#para-head[Hypothesis 1.] Multi-dimensional phase-plane regression allows
-tracking the subwavelength translation of a scatterer in the lateral,
-vertical, and diagonal directions, using both amplitude- and phase-based
-inference.
+#para-head[Hypothesis 1.] Can multi-dimensional phase-plane regression infer
+lateral, vertical, and diagonal subwavelength displacements from time-lapse
+migrated GPR images, at scales where amplitude differencing has already
+failed?
 
 #para-head[Hypothesis 1.5 (Optional).] Tracking the local phase gradients
 $partial phi \/ partial x$ and $partial phi \/ partial y$ gives an
@@ -45,7 +44,7 @@ using the same gprMax domain and grid as @sec:meth-resolution.
 ) <fig:tl-setup>
 
 @fig:tl-bscans shows the background-baseline and time-lapsed raw B-scans,
-the background-subtracted result, and (for later use in @ch:hyp3) the effect
+the background-subtracted result, and (for later use in @ch:hyp2) the effect
 of adding synthetic Laplace-distributed noise at $10%$ of the signal
 standard deviation.
 
@@ -58,7 +57,7 @@ standard deviation.
   caption: [Raw B-scans for the lateral time-lapse study: (a) background and
     time-lapsed models; (b) background-subtracted; (c) with synthetic
     Laplace-distributed noise at $10%$ of the signal standard deviation
-    (used in @ch:hyp3).],
+    (used in @ch:hyp2).],
 ) <fig:tl-bscans>
 
 The same tapering and $t_0$-shift conditioning as @sec:meth-resolution
@@ -138,7 +137,7 @@ that difference at the true scatterer depth, as a function of displacement.
 background, and compare it with the amplitude resolution floor found for
 stationary scatterers in @sec:meth-resolution. The noisy version of this
 sweep, and the noise-mitigation strategies tested against it, are presented
-in @ch:hyp3 rather than here.]
+in @ch:hyp2 rather than here.]
 
 == Vertical Movement <sec:hyp1-vertical>
 
@@ -299,7 +298,7 @@ five scenarios (@tab:dtl-scenarios), using the same domain and grid as
 
 @fig:dtl-bscans shows the background-baseline and diagonally time-lapsed raw
 B-scans, the background-subtracted result, and the effect of the synthetic
-Laplace noise used later in @ch:hyp3; @fig:dtl-taper shows the standard
+Laplace noise used later in @ch:hyp2; @fig:dtl-taper shows the standard
 tapering and $t_0$-shift conditioning on the scenario-1 dataset.
 
 #figure(
@@ -311,7 +310,7 @@ tapering and $t_0$-shift conditioning on the scenario-1 dataset.
   caption: [Raw B-scans for the diagonal time-lapse study: (a) background and
     time-lapsed models; (b) background-subtracted, with expected arrival times
     marked; (c) with synthetic Laplace-distributed noise at $10%$ of the
-    signal standard deviation (used in @ch:hyp3).],
+    signal standard deviation (used in @ch:hyp2).],
 ) <fig:dtl-bscans>
 
 #figure(
