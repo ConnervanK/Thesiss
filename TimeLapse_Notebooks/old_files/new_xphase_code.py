@@ -20,7 +20,7 @@
 
 import sys as _sys
 _sys.path.insert(0, r'C:\Users\Administrator\OneDrive\Thesis\TimeLapse_Notebooks')
-from phase_decomposition import clssa_phase_decomposition
+from TimeLapse_Notebooks.helper_functions.phase_decomposition import clssa_phase_decomposition
 
 dt_twt = float(2 * dz_mig / v_ice)
 twt_sc = float(2 * z_scatterer / v_ice)

@@ -15,3 +15,5 @@
 *.rad
 *.rd3
 *.npy
+*.md
+*.pkl
