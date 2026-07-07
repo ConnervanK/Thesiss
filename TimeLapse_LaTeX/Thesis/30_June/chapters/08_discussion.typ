@@ -53,34 +53,34 @@ comparison between the two has yet been run.]
 
 == Hypothesis 2: Back-Propagation Is the Preferred Method
 
-@sec:hyp2-fluidfront showed that the geometry/material-change decoupling of
-@sec:th-material-change survives contact with a non-rigid, spatially
-distributed target, and @sec:ff-factor2 identified a systematic factor-of-two
-error that affects Kirchhoff and Gazdag but not back-propagation.
-@sec:hyp2-noise then showed that back-propagation with sign-bit time-reversal
-is the most noise-robust of the three algorithms tested.
+@ch:hyp2 showed that the choice of migration algorithm matters substantially
+under heavy-tailed Laplace noise: Kirchhoff creates false-coherent bands from
+pure noise (raising false-positive risk), Gazdag stays incoherent but adds
+significant speckle, and back-propagation with sign-bit time-reversal
+suppresses impulsive noise by clamping spike amplitudes to $plus.minus 1$
+while preserving all phase information. The phase-plane estimator's noise
+resilience is currently demonstrated quantitatively for the lateral case
+(@fig:tlp-noise); the vertical and diagonal cases are amplitude-level only
+(see @sec:hyp3-gaps).
 
-#draftnote[state explicitly, for each migration method in @fig:ff-phaseplane,
-whether the fitted slopes $(#Dz, #Dx)$ stayed near zero while the intercept
-$c$ tracked the front advance as predicted by @eq:intercept-material. State
-the factor-of-two ratio numerically (from @sec:ff-factor2). State whether the
-noise robustness conclusion is supported quantitatively (currently only the
-noisy lateral case, @fig:tlp-noise, has a phase-plane fit; the vertical,
-diagonal, and fluid-front noisy fits are amplitude-level only --- flag this
-as a limitation).]
+#draftnote[state the quantitative degradation in estimated $#Dx$ between the
+clean result of @fig:tlp-horiz-validation and the noisy result of
+@fig:tlp-noise, for both Kirchhoff and Gazdag. State whether back-propagation
+with sign-bit time-reversal gives a better phase-plane estimate than the
+analytic methods under noise, once the pure-noise back-prop comparison
+(@sec:hyp3-purenoise) is completed.]
 
 === Implications for Migration Choice in Practice
 
 The recommendation to use back-propagation has a practical cost: it requires
 a full gprMax forward simulation for each profile pair, which is substantially
 more expensive than Kirchhoff or Gazdag. For field surveys with many profiles,
-this cost must be weighed against the benefits identified in @ch:hyp2.
+this cost must be weighed against the noise-robustness benefit.
 
-#draftnote[add a brief practical recommendation: under what conditions
-(target type, noise level, available compute) should a practitioner use
-Kirchhoff/Gazdag with the factor-of-two correction versus back-propagation
-with sign-bit time-reversal? State whether the correction is reliable enough
-to use Kirchhoff/Gazdag when back-propagation is too expensive.]
+#draftnote[add a brief practical recommendation: under what noise level and
+target complexity should a practitioner prefer back-propagation with sign-bit
+time-reversal versus one of the analytic methods? Use the SNR sweep proposed
+in @sec:hyp3-gaps as the basis for this recommendation once it is run.]
 
 == Hypothesis 3: Generalisation to Field Data
 
@@ -94,11 +94,9 @@ leaving a net residual.
 
 #draftnote[state whether the field-data estimates are consistent with any
 independent ground-truth available from the field experiment (e.g. injection
-volume, borehole depth, known fracture geometry), and whether the factor-of-two
-correction of @sec:ff-factor2 was applied to the Gazdag estimates in
-@tab:fielddata-stages. Note explicitly that the complex synthetic model
-component of @sec:hyp3-complex is still pending, so Hypothesis 3 is only
-partially supported at this stage.]
+volume, borehole depth, known fracture geometry). Note explicitly that the
+complex synthetic model component of @sec:hyp3-complex is still pending, so
+Hypothesis 3 is only partially supported at this stage.]
 
 == Limitations
 
@@ -121,14 +119,11 @@ not limited to synthetic data, but several extensions are needed before field
 deployment can be recommended without reservation:
 
 #draftnote[expand with concrete next steps: (1) complete the outstanding
-back-propagation runs for the remaining 26 field profiles and confirm that
-the factor-of-two-corrected Gazdag estimates agree with the back-prop
-estimates, validating the correction for field data; (2) complete the complex
-synthetic experiment of @sec:hyp3-complex and test whether local application
-of the phase-plane fit can separate multiple simultaneously-moving scatterers;
-(3) extend the fluid-front model of @sec:hyp2-fluidfront to a swept range of
-fracture thickness and fluid contrast, and to a front geometry that is not
-perfectly straight; (4) quantify the velocity-recalibration procedure needed
+back-propagation runs for the remaining 26 field profiles and confirm whether
+the back-prop phase-plane estimates agree with the Gazdag estimates; (2) complete
+the complex synthetic experiment of @sec:hyp3-complex and test whether local
+application of the phase-plane fit can separate multiple simultaneously-moving
+scatterers; (3) quantify the velocity-recalibration procedure needed
 when soil or ice moisture genuinely changes between baseline and monitor
 surveys, since this is otherwise indistinguishable from a true vertical shift
 $#Dz$ in any of the three migration algorithms.]

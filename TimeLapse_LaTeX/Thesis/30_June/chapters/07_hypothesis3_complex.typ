@@ -130,9 +130,8 @@ $#Dx approx -0.18 "m"$ at profile 38 relative to profile 1.
 injection depth, and fluid-injection parameters are confirmed from the field
 survey metadata. Key questions to address: (1) do the inferred $#Dz$ and $#Dx$
 values agree with the known injection depth and the expected lateral spread for
-the given fracture geometry? (2) is the factor-of-two correction from
-@sec:ff-factor2 already applied to the Gazdag-based estimates in
-@tab:fielddata-stages, or does it need to be applied? (3) does the back-prop
-phase-plane result (available for 11 profiles) agree with the Gazdag result
-after the factor-of-two correction, as it did for the synthetic fluid-front
+the given fracture geometry? (2) does the back-prop phase-plane result
+(available for 11 profiles) agree with the Gazdag result, as expected from the
+noise-robustness comparison of @ch:hyp2, and which estimate is more reliable
+given the field noise level? (3) does the synthetic fluid-front
 experiment? State these explicitly once the field context is available.]

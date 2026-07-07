@@ -50,13 +50,10 @@ testable hypotheses, each the subject of one experimental chapter:
   $partial phi \/ partial x, thin partial phi \/ partial y$ give an
   equivalent, simpler alternative.
 
-/ Hypothesis 2 (@ch:hyp2): Back-propagation migration is the most suitable
-  technique for time-lapse phase-plane tracking: it preserves the correct
-  physics for material-change targets (no correction factor required, unlike
-  Kirchhoff and Gazdag) and is most robust to heavy-tailed Laplace noise via
-  sign-bit time-reversal. This chapter therefore combines the fluid-front
-  application and the noise-robustness study into a single migration-technique
-  comparison.
+/ Hypothesis 2 (@ch:hyp2): Back-propagation migration with sign-bit
+  time-reversal is the most noise-robust technique for time-lapse phase-plane
+  tracking: it suppresses impulsive Laplace noise while Kirchhoff creates
+  false-coherent artefacts and Gazdag adds incoherent speckle.
 
 / Hypothesis 3 (@ch:hyp3): The time-lapse phase-plane approach generalises
   beyond idealised single-scatterer synthetic models to complex scenes with
@@ -65,15 +62,15 @@ testable hypotheses, each the subject of one experimental chapter:
 == Outline
 
 @ch:litreview reviews the literature this thesis builds on.
-@ch:theory derives the migration and phase-plane theory used throughout.
-@ch:methodology describes the shared simulation and processing pipeline,
-including a validation of the amplitude resolution floor of the migration
-algorithms used. @ch:hyp1 tests Hypothesis 1 (and the optional
-Hypothesis 1.5) on lateral, vertical, and diagonal sub-wavelength
-translation of a point scatterer. @ch:hyp2 tests Hypothesis 2 by applying
-the fluid-front and noise experiments together as a migration-technique
-comparison, concluding that back-propagation is the preferred method.
-@ch:hyp3 tests Hypothesis 3 by applying the full pipeline to complex
-synthetic scenes and to real borehole GPR field data. @ch:discussion
-integrates the results of all three hypotheses into a final answer to the
-Research Question, and the Summary restates the main conclusions.
+@ch:theory covers the theoretical background (migration algorithms,
+phase-plane shift estimation) and the shared simulation and processing
+methodology, including a validation of the amplitude resolution floor.
+@ch:hyp1 tests Hypothesis 1 (and the optional Hypothesis 1.5) on lateral,
+vertical, and diagonal sub-wavelength translation of a point scatterer.
+@ch:hyp2 tests Hypothesis 2: which migration technique is most robust to
+heavy-tailed Laplace noise, concluding that back-propagation with sign-bit
+time-reversal is the preferred method. @ch:hyp3 tests Hypothesis 3 by
+applying the full pipeline to complex synthetic scenes and to real borehole
+GPR field data. @ch:discussion integrates the results of all three
+hypotheses into a final answer to the Research Question, and the Summary
+restates the main conclusions.

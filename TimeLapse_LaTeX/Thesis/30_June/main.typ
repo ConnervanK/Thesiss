@@ -64,7 +64,6 @@
 #include "chapters/01_introduction.typ"
 #include "chapters/02_literature_review.typ"
 #include "chapters/03_theory.typ"
-#include "chapters/04_methodology.typ"
 #include "chapters/05_hypothesis1_translation.typ"
 #include "chapters/06_hypothesis2_migration_noise.typ"
 #include "chapters/07_hypothesis3_complex.typ"

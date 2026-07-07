@@ -25,18 +25,14 @@ cross-phase spectrograms, and short-time Fourier transforms as complementary
 inference routes; these are consistent with the global WLS result wherever both
 were computed, but remain exploratory rather than fully validated.
 
-*Hypothesis 2* (@ch:hyp2) combined the fluid-front application with the
-noise-robustness study to identify back-propagation as the preferred migration
-technique. From the fluid-front experiment: Kirchhoff and Gazdag both require
-a factor-of-two correction when inferring displacement from a material-change
-target (because of the exploding-reflector model's half-velocity assumption),
-while back-propagation produces geometrically correct results without any
-correction. From the noise experiments: Kirchhoff's coherence-manufacturing
-behaviour creates scatterer-like artefacts from pure noise (false-positive
-risk), Gazdag stays incoherent but adds significant speckle, and
-back-propagation with sign-bit time-reversal --- which reduces every noise
-spike to $plus.minus 1$ while preserving all phase information --- is the most
-robust of the three.
+*Hypothesis 2* (@ch:hyp2) identified back-propagation with sign-bit
+time-reversal as the most noise-robust migration technique. Kirchhoff's
+delay-and-sum stacking manufactures false-coherent bands from pure Laplace
+noise (raising false-positive risk); Gazdag stays incoherent but adds
+significant speckle; back-propagation with sign-bit time-reversal suppresses
+impulsive noise by clamping every spike amplitude to $plus.minus 1$ while
+preserving all phase information --- stripping noise of the outsized amplitude
+that would otherwise let it dominate the back-propagated wavefield.
 
 *Hypothesis 3* (@ch:hyp3) tested generalisation beyond idealised synthetic
 data. The phase-plane pipeline was applied to real borehole GPR field data from
@@ -49,6 +45,6 @@ scenes is ongoing and not yet included.
 
 #draftnote[close with a final conclusion sentence stating, in one sentence,
 whether the Research Question is answered affirmatively by the totality of
-the three hypotheses, and noting the main caveat (the factor-of-two correction
-for field surveys that use Kirchhoff or Gazdag, and the incomplete back-prop
-coverage of the field dataset).]
+the three hypotheses, and noting the main caveat (the phase-plane fit is
+currently demonstrated quantitatively under noise for the lateral case only,
+and the complex synthetic model experiment is still pending).]
