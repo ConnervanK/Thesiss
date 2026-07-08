@@ -79,13 +79,20 @@
 #let eps    = $epsilon.alt$
 #let XS     = $italic("XS")$
 
-// ---- Two-column subfigure grid ----------------------------
+// ---- Lettered subfigure grid ------------------------------
 // Usage: #subfigs(cols: 2, img("A.png"), img("B.png"))
-#let subfigs(cols: 2, ..images) = grid(
-  columns: (1fr,) * cols,
-  gutter: 0.8em,
-  ..images.pos()
-)
+// Each panel is centred and stacked over a small "(a)", "(b)", …
+// label matching the letters used in the figure caption.
+// cols: 1 stacks wide/panoramic panels full-width (the common case
+// for this project's 8-scenario montages and B-scan strips).
+#let subfigs(cols: 2, ..images) = {
+  let items = images.pos().enumerate().map(((i, im)) => stack(
+    spacing: 0.35em,
+    align(center, im),
+    align(center, text(size: 9pt)[(#numbering("a", i + 1))]),
+  ))
+  grid(columns: (1fr,) * cols, gutter: 0.9em, row-gutter: 1.1em, ..items)
+}
 
 // ---- Three-column subfigure grid --------------------------
 #let subfigs3(..images) = grid(

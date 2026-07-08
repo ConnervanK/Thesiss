@@ -139,7 +139,7 @@ migration and differencing analysis of @sec:hyp1-lateral on this noisy data.
     img("TL_027_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_zoomed.png"),
   ),
   caption: [Kirchhoff migration of the _noisy_ lateral time-lapse data
-    ($f_c = 15 "GHz"$, aperture $= 40$): (a, b) migrated image for all
+    ($f_c = 1.5 "GHz"$, aperture $= 40$): (a, b) migrated image for all
     scenarios and zoomed; (c, d) time-lapse difference and zoomed.],
 ) <fig:tl-noisy-kirchhoff>
 
@@ -151,7 +151,7 @@ migration and differencing analysis of @sec:hyp1-lateral on this noisy data.
     img("TL_031_Gazdag_Migration_-_Noisy_TimeLapse_Differences_zoomed.png"),
   ),
   caption: [Gazdag phase-shift migration of the _noisy_ lateral time-lapse
-    data ($f_c = 15 "GHz"$): (a, b) migrated image and zoomed; (c, d)
+    data ($f_c = 1.5 "GHz"$): (a, b) migrated image and zoomed; (c, d)
     time-lapse difference and zoomed.],
 ) <fig:tl-noisy-gazdag>
 
@@ -210,7 +210,7 @@ case, back-propagation _is_ re-run here, using sign-bit time-reversal
     img("VTL_038_Back-Propagation_Noisy_--_TimeLapse_Differences_Ez____focus.png"),
   ),
   caption: [Gazdag (a) and sign-bit back-propagation (b--d) migration of the
-    _noisy_ vertical time-lapse data, focused at $t = 1906 "ns"$: (a) Gazdag
+    _noisy_ vertical time-lapse data, focused at $t = 19.06 "ns"$: (a) Gazdag
     zoomed; (b) back-prop $||bold(E)||$ all scenarios; (c) back-prop $E_z$ all
     scenarios; (d) back-prop $E_z$ time-lapse difference.],
 ) <fig:vtl-noisy-gazdag>

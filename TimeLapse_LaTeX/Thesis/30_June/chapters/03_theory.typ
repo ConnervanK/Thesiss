@@ -415,7 +415,7 @@ used to test any of the hypotheses.
 
 All B-scans are simulated with the open-source finite-difference time-domain
 solver gprMax @gprmax. The source is a Ricker wavelet with centre frequency
-$f_c = 15 "GHz"$ and time-zero offset $t_0 = 0.0943 "ns"$ (@fig:res-setup
+$f_c = 1.5 "GHz"$ and time-zero offset $t_0 = 0.943 "ns"$ (@fig:res-setup
 (a)), chosen so that its usable bandwidth defines the dominant wavelength
 $lambda$ used to express every displacement scale in this thesis ($2 lambda$
 down to $1 \/ 32 lambda$). The computational domain is discretised on a
@@ -528,7 +528,7 @@ $1 \/ 16 lambda$.
     img("RES_003_Scatterer_Positions__PEC_Cylinders__r__28_mm_depth__0676_m.png"),
   ),
   caption: [Forward-model setup for the resolution validation: (a) the Ricker
-    source wavelet ($f_c = 15 "GHz"$, $t_0 = 0.0943 "ns"$); (b) the gprMax
+    source wavelet ($f_c = 1.5 "GHz"$, $t_0 = 0.943 "ns"$); (b) the gprMax
     domain and grid; (c) the swept separation between the two PEC cylinder
     scatterers, $r = 28 "mm"$, depth $0.676 "m"$.],
 ) <fig:res-setup>
@@ -566,7 +566,7 @@ true scatterer depth.
     img("RES_008_Kirchhoff_Migration__All_Datasets____f_c15_GHz____aperture40.png"),
     img("RES_009_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png"),
   ),
-  caption: [Kirchhoff migration of the resolution validation ($f_c = 15 "GHz"$,
+  caption: [Kirchhoff migration of the resolution validation ($f_c = 1.5 "GHz"$,
     aperture $= 40$ traces): (a) all separation scenarios; (b) zoomed view.],
 ) <fig:res-kirchhoff>
 
@@ -576,7 +576,7 @@ true scatterer depth.
     img("RES_011_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png"),
   ),
   caption: [Gazdag phase-shift migration of the resolution validation
-    ($f_c = 15 "GHz"$): (a) all separation scenarios; (b) zoomed view.],
+    ($f_c = 1.5 "GHz"$): (a) all separation scenarios; (b) zoomed view.],
 ) <fig:res-gazdag>
 
 #figure(
@@ -587,13 +587,13 @@ true scatterer depth.
     img("RES_015_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png"),
   ),
   caption: [Time-reversal back-propagation migration of the resolution
-    validation, focused at $t = 1906 "ns"$: field-magnitude image (a, b) and
+    validation, focused at $t = 19.06 "ns"$: field-magnitude image (a, b) and
     the $E_z$ component (c, d), each with a zoomed view around the scatterer
     depth.],
 ) <fig:res-backprop>
 
 @fig:res-psf (a) overlays the signed migrated amplitude from all three
-algorithms at $f_c = 15 "GHz"$, and @fig:res-psf (b) plots the normalised
+algorithms at $f_c = 1.5 "GHz"$, and @fig:res-psf (b) plots the normalised
 lateral point-spread function (PSF) extracted at the true scatterer depth as
 a function of separation.
 
@@ -603,7 +603,7 @@ a function of separation.
     img("RES_017_Normalised_Lateral_PSF_at_True_Scatterer_Depth.png"),
   ),
   caption: [(a) Signed migrated amplitude for Kirchhoff, Gazdag, and
-    back-propagation migration overlaid at $f_c = 15 "GHz"$; (b) the
+    back-propagation migration overlaid at $f_c = 1.5 "GHz"$; (b) the
     normalised lateral point-spread function at the true scatterer depth,
     swept across separations from $2 lambda$ to $1 \/ 16 lambda$.],
 ) <fig:res-psf>
