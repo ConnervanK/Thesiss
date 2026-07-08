@@ -6,22 +6,48 @@
 // ============================================================
 
 // ---- Figure-path resolver ---------------------------------
-// Figures live in TimeLapse_Figures/<study>/ at the repo root.
-// 30_June/ is at TimeLapse_LaTeX/Thesis/30_June/, so three
-// levels up reaches the repo root.
+// Figures live in TimeLapse_Figures/<study>/<category>/ at the repo
+// root, where <study> comes from the filename prefix and <category>
+// (Kirchhoff / Gazdag / Back-Propagation / Noisy/<technique> / General)
+// is derived from keywords in the filename. This mirrors classify() in
+// TimeLapse_Notebooks/helper_functions/figures.py — keep both in sync
+// (protocol: .wiki/FIGURES_PROTOCOL.md).
+// 30_June/ is at TimeLapse_LaTeX/Thesis/30_June/, so three levels up
+// reaches the repo root.
 #let _fig_base = "../../../TimeLapse_Figures/"
 
+// study folder from the filename prefix
+#let _fig_study(name) = {
+  if name.starts-with("VTL_") { "Vertical_TimeLapse_Study/" }
+  else if name.starts-with("DTL_") { "Diagonal_TimeLapse_Study/" }
+  else if name.starts-with("FF_")  { "FluidFlow_Study/" }
+  else if name.starts-with("TLP_") { "TimeLapse_Processing/" }
+  else if name.starts-with("TL_")  { "TimeLapse_Study/" }
+  else if name.starts-with("RES_") { "Resolution_Study/" }
+  else if name.starts-with("TLC_") { "TimeLapse_Cleaning/" }
+  else if name.starts-with("FD_")  { "FieldData_Study/" }
+  else                              { "" }
+}
+
+// technique category from filename keywords
+#let _fig_category(name) = {
+  if name.starts-with("TLC_") { "Noisy/Kirchhoff/" }      // cleaning = noisy Kirchhoff only
+  else if name.starts-with("FD_") { "Gazdag/" }           // field strategies are Gazdag-based
+  else {
+    let n = lower(name)
+    let tech = if n.contains("kirchhoff") or n.contains("kirchoff") or n.contains("lsm") { "Kirchhoff" }
+      else if n.contains("gazdag") { "Gazdag" }
+      else if n.contains("back-prop") or n.contains("backprop") or n.contains("sign-bit") or n.contains("signbit") or n.contains("time-reversal") or n.contains("timereversal") { "Back-Propagation" }
+      else { none }
+    let noisy = n.contains("noisy") or n.contains("noise") or n.contains("laplace")
+    if tech == none { "General/" }
+    else if noisy { "Noisy/" + tech + "/" }
+    else { tech + "/" }
+  }
+}
+
 #let img(name, width: 100%) = {
-  let dir = if name.starts-with("VTL_") { "Vertical_TimeLapse_Study/" }
-    else if name.starts-with("DTL_") { "Diagonal_TimeLapse_Study/" }
-    else if name.starts-with("FF_")  { "FluidFlow_Study/" }
-    else if name.starts-with("TLP_") { "TimeLapse_Processing/" }
-    else if name.starts-with("TL_")  { "TimeLapse_Study/" }
-    else if name.starts-with("RES_") { "Resolution_Study/" }
-    else if name.starts-with("TLC_") { "TimeLapse_Cleaning/" }
-    else if name.starts-with("FD_")  { "FieldData_Study/" }
-    else                              { "" }
-  image(_fig_base + dir + name, width: width)
+  image(_fig_base + _fig_study(name) + _fig_category(name) + name, width: width)
 }
 
 // ---- Draft-note marker ------------------------------------

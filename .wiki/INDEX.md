@@ -28,4 +28,4 @@ Master directory for the Jupyter-notebook wiki. Each page below documents one no
 
 ## Protocols & Standards
 
-- [FIGURES_PROTOCOL.md](FIGURES_PROTOCOL.md) — The standardized figure pipeline: how notebooks auto-save 300 dpi PNGs into `TimeLapse_Figures/<Study>/` via `helper_functions/figures.py`, and how the Typst thesis imports them through the prefix-routed `img()` helper.
+- [FIGURES_PROTOCOL.md](FIGURES_PROTOCOL.md) — The standardized figure pipeline: how notebooks auto-save 300 dpi PNGs into `TimeLapse_Figures/<Study>/<Technique>/` (Kirchhoff / Gazdag / Back-Propagation / Noisy / General, auto-classified from the figure title) via `helper_functions/figures.py`, and how the Typst thesis imports them through the two-stage `img()` router.
