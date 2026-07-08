@@ -25,3 +25,7 @@ Master directory for the Jupyter-notebook wiki. Each page below documents one no
 ## Literature
 
 - [LITERATURE.md](LITERATURE.md) — Categorized index of all research papers in `TimeLapse_LaTeX/Literature/`, organized by thesis-chapter topic folders, with a title, filename, and short description for each PDF (audited and reorganized 2026-07-08; confirmed duplicate downloads are quarantined in `_Duplicates_Review/`).
+
+## Protocols & Standards
+
+- [FIGURES_PROTOCOL.md](FIGURES_PROTOCOL.md) — The standardized figure pipeline: how notebooks auto-save 300 dpi PNGs into `TimeLapse_Figures/<Study>/` via `helper_functions/figures.py`, and how the Typst thesis imports them through the prefix-routed `img()` helper.

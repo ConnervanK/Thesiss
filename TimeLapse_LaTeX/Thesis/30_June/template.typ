@@ -18,6 +18,8 @@
     else if name.starts-with("TLP_") { "TimeLapse_Processing/" }
     else if name.starts-with("TL_")  { "TimeLapse_Study/" }
     else if name.starts-with("RES_") { "Resolution_Study/" }
+    else if name.starts-with("TLC_") { "TimeLapse_Cleaning/" }
+    else if name.starts-with("FD_")  { "FieldData_Study/" }
     else                              { "" }
   image(_fig_base + dir + name, width: width)
 }
