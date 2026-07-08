@@ -21,3 +21,7 @@ Master directory for the Jupyter-notebook wiki. Each page below documents one no
 - [FluidFlow_Playground](FluidFlow_Playground.md) — Simulates a fluid front with a graded permittivity wetting zone (εr 80→1) advancing through a subwavelength fracture by 2λ→¹⁄₃₂λ, clean and noisy, across all three migrations. Realises the Abstract's "distributed fluid-front scenario" and Chapter 3 §3.6's material-change physics, and feeds the fluid-flow columns of Chapter 6's migration comparison as the synthetic bridge to Chapter 7's field experiment.
 
 - [FieldData_Playground](FieldData_Playground.md) — Applies the full pipeline to 38 real borehole GPR profiles from the 2016 Ploemeur fluid-injection experiment: 11-step pre-processing, three migrations, time-lapse differencing, and cubed-weight WLS phase fitting under three tracking strategies. Provides everything in Chapter 7 §7.2 (Hypothesis 3's field-data evidence), including the stage-anchored displacement table (Push +1.41 m down, net +0.94 m), and sources the noise samples behind Chapter 6's Laplace model.
+
+## Literature
+
+- [LITERATURE.md](LITERATURE.md) — Categorized index of all research papers in `TimeLapse_LaTeX/Literature/`, organized by thesis-chapter topic folders, with a title, filename, and short description for each PDF (audited and reorganized 2026-07-08; confirmed duplicate downloads are quarantined in `_Duplicates_Review/`).
