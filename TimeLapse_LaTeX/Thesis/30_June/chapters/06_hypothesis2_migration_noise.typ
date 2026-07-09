@@ -132,27 +132,23 @@ where it was). @fig:tl-noisy-kirchhoff and @fig:tl-noisy-gazdag repeat the
 migration and differencing analysis of @sec:hyp1-lateral on this noisy data.
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
-    img("TL_024_Kirchhoff_Migration_-_All_8_Noisy_Datasets____f_c15_GHz____a.png"),
+  subfigs(cols: 1,
     img("TL_025_Kirchhoff_Migration_-_Noisy_zoomed____f_c15_GHz____aperture4.png"),
-    img("TL_026_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_migrated_-.png"),
     img("TL_027_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_zoomed.png"),
   ),
   caption: [Kirchhoff migration of the _noisy_ lateral time-lapse data
-    ($f_c = 1.5 "GHz"$, aperture $= 40$): (a, b) migrated image for all
-    scenarios and zoomed; (c, d) time-lapse difference and zoomed.],
+    ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterers:
+    (a) migrated image for all scenarios; (b) time-lapse difference.],
 ) <fig:tl-noisy-kirchhoff>
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
-    img("TL_028_Gazdag_Phase-Shift_Migration_-_All_8_Noisy_Datasets____f_c15.png"),
+  subfigs(cols: 1,
     img("TL_029_Gazdag_Phase-Shift_Migration_-_Noisy_zoomed____f_c15_GHz.png"),
-    img("TL_030_Gazdag_Migration_-_Noisy_TimeLapse_Differences_migrated_-_mi.png"),
     img("TL_031_Gazdag_Migration_-_Noisy_TimeLapse_Differences_zoomed.png"),
   ),
   caption: [Gazdag phase-shift migration of the _noisy_ lateral time-lapse
-    data ($f_c = 1.5 "GHz"$): (a, b) migrated image and zoomed; (c, d)
-    time-lapse difference and zoomed.],
+    data ($f_c = 1.5 "GHz"$), zoomed around the scatterers: (a) migrated
+    image; (b) time-lapse difference.],
 ) <fig:tl-noisy-gazdag>
 
 #draftnote[compare @fig:tl-noisy-kirchhoff and @fig:tl-noisy-gazdag against
@@ -165,7 +161,7 @@ estimator of @sec:meth-phaseplane (@fig:tlp-noise), for the two migration
 methods available on this noisy dataset.
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
+  subfigs(cols: 2,
     img("TLP_008_NoisyTimeLapse__Phase-plane_shift_estimation__Kirchhoff____B.png"),
     img("TLP_009_NoisyTimeLapse__Phase-plane_shift_estimation__Gazdag____Base.png"),
   ),
@@ -189,36 +185,40 @@ same Laplace noise, for all three migration algorithms --- unlike the lateral
 case, back-propagation _is_ re-run here, using sign-bit time-reversal
 (@sec:hyp3-signbit) on the noisy traces. @fig:vtl-noisy-kirchhoff and
 @fig:vtl-noisy-gazdag repeat the migration and differencing analysis of
-@sec:hyp1-vertical on this noisy data.
+@sec:hyp1-vertical on this noisy data, and @fig:vtl-noisy-backprop shows the
+sign-bit back-propagation result.
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
-    img("VTL_006_B-scan_Frequency_Spectra_--_Clean_vs_Noisy____f_c15_GHz.png"),
-    img("VTL_021_Kirchhoff_Migration_-_All_7_Noisy_Datasets____f_c15_GHz____a.png"),
-    img("VTL_026_Kirchhoff_Migration_Noisy_zoomed____f_c15_GHz____aperture40.png"),
-    img("VTL_029_Gazdag_Phase-Shift_Migration_-_All_7_Noisy_Datasets____f_c15.png"),
+  subfigs(cols: 1,
+    img("VTL_006_B-scan_Frequency_Spectra_--_Clean_vs_Noisy____f_c15_GHz.png", width: 90%),
+    img("VTL_026_Kirchhoff_Migration_Noisy_zoomed____f_c15_GHz____aperture40.png", width: 90%),
+    img("VTL_028_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_zoomed.png", width: 90%),
   ),
-  caption: [Noisy vertical time-lapse data: (a) clean-vs-noisy frequency
-    spectra; (b, c) Kirchhoff migration; (d) Gazdag migration.],
+  caption: [Noisy vertical time-lapse data ($f_c = 1.5 "GHz"$), zoomed around
+    the scatterer: (a) clean-vs-noisy frequency spectra; (b) Kirchhoff
+    migration for all scenarios; (c) Kirchhoff time-lapse difference.],
 ) <fig:vtl-noisy-kirchhoff>
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
+  subfigs(cols: 1,
     img("VTL_030_Gazdag_Phase-Shift_Migration_Noisy_zoomed____f_c15_GHz.png"),
-    img("VTL_034_Back-Propagation_E_Noisy_--_All_7_Datasets____focus_at_1906.png"),
-    img("VTL_036_Back-Propagation_Ez_Noisy_--_All_7_Datasets____focus_at_1906.png"),
-    img("VTL_038_Back-Propagation_Noisy_--_TimeLapse_Differences_Ez____focus.png"),
+    img("VTL_032_Gazdag_Migration_-_Noisy_TimeLapse_Differences_zoomed.png"),
   ),
-  caption: [Gazdag (a) and sign-bit back-propagation (b--d) migration of the
-    _noisy_ vertical time-lapse data, focused at $t = 19.06 "ns"$: (a) Gazdag
-    zoomed; (b) back-prop $||bold(E)||$ all scenarios; (c) back-prop $E_z$ all
-    scenarios; (d) back-prop $E_z$ time-lapse difference.],
+  caption: [Gazdag phase-shift migration of the _noisy_ vertical time-lapse
+    data ($f_c = 1.5 "GHz"$), zoomed around the scatterer: (a) migrated image;
+    (b) time-lapse difference.],
 ) <fig:vtl-noisy-gazdag>
 
 #figure(
-  img("VTL_039_Back-Propagation_Noisy_--_TimeLapse_Differences_Ez_zoomed.png", width: 60%),
-  caption: [Sign-bit back-propagation $E_z$ time-lapse difference for the
-    noisy vertical dataset, zoomed around the scatterer depth.],
+  subfigs(cols: 1,
+    img("VTL_035_Back-Propagation_E_Noisy_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("VTL_037_Back-Propagation_Ez_Noisy_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("VTL_039_Back-Propagation_Noisy_--_TimeLapse_Differences_Ez_zoomed.png", width: 90%),
+  ),
+  caption: [Sign-bit back-propagation migration of the _noisy_ vertical
+    time-lapse data, focused at $t = 19.06 "ns"$ and zoomed around the
+    scatterer: (a) field magnitude $||bold(E)||$; (b) $E_z$; (c) $E_z$
+    time-lapse difference.],
 ) <fig:vtl-noisy-backprop>
 
 #draftnote[*Gap:* this section currently only carries the analysis to the
@@ -233,25 +233,44 @@ vertical direction specifically.]
 
 The diagonal displacement sweep of @sec:hyp1-diagonal is likewise repeated
 under Laplace noise, for all three migration algorithms, again using sign-bit
-time-reversal for the noisy back-propagation run. @fig:dtl-noisy shows the
-noisy Kirchhoff and Gazdag migrations and time-lapse differences, the sign-bit
-time-reversed excitation itself, and the noisy sign-bit back-propagation
+time-reversal for the noisy back-propagation run. @fig:dtl-noisy-kirchhoff
+and @fig:dtl-noisy-gazdag show the noisy Kirchhoff and Gazdag migrations and
+their time-lapse differences; @fig:dtl-noisy-backprop shows the sign-bit
+time-reversed excitation itself and the noisy sign-bit back-propagation
 result.
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
-    img("DTL_025_Kirchhoff_Migration_-_All_6_Noisy_Datasets____f_c15_GHz____a.png"),
-    img("DTL_027_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_migrated_-.png"),
-    img("DTL_029_Gazdag_Phase-Shift_Migration_-_All_6_Noisy_Datasets____f_c15.png"),
-    img("DTL_031_Gazdag_Migration_-_Noisy_TimeLapse_Differences_migrated_-_mi.png"),
-    img("DTL_033_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Noi.png"),
-    img("DTL_038_Back-Propagation_Noisy_--_TimeLapse_Differences_Ez____focus.png"),
+  subfigs(cols: 1,
+    img("DTL_026_Kirchhoff_Migration__Noisy_zoomed____f_c15_GHz____aperture40.png"),
+    img("DTL_028_Kirchhoff_Migration__Noisy_TimeLapse_Differences_zoomed.png"),
   ),
-  caption: [Noisy diagonal time-lapse data: Kirchhoff (a, b) and Gazdag (c, d)
-    migration and differencing; (e) the sign-bit time-reversed back-propagation
-    excitation B-scans and spectra; (f) the resulting noisy back-propagation
-    time-lapse difference.],
-) <fig:dtl-noisy>
+  caption: [Kirchhoff migration of the _noisy_ diagonal time-lapse data
+    ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterer:
+    (a) migrated image for all scenarios; (b) time-lapse difference.],
+) <fig:dtl-noisy-kirchhoff>
+
+#figure(
+  subfigs(cols: 1,
+    img("DTL_030_Gazdag_Phase-Shift_Migration__Noisy_zoomed____f_c15_GHz.png"),
+    img("DTL_032_Gazdag_Migration__Noisy_TimeLapse_Differences_zoomed.png"),
+  ),
+  caption: [Gazdag phase-shift migration of the _noisy_ diagonal time-lapse
+    data ($f_c = 1.5 "GHz"$), zoomed around the scatterer: (a) migrated image;
+    (b) time-lapse difference.],
+) <fig:dtl-noisy-gazdag>
+
+#figure(
+  subfigs(cols: 1,
+    img("DTL_033_Sign-Bit_Time-Reversed_Excitation__B-scans_and_Spectra_Noisy.png", width: 90%),
+    img("DTL_037_Back-Propagation_Ez_Noisy_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("DTL_039_Back-Propagation_Noisy__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
+  ),
+  caption: [Sign-bit back-propagation of the _noisy_ diagonal time-lapse
+    data, focused at $t = 19.06 "ns"$: (a) the sign-bit time-reversed
+    excitation B-scans and their spectra; (b) the back-propagated $E_z$,
+    zoomed around the scatterer; (c) the $E_z$ time-lapse difference,
+    zoomed.],
+) <fig:dtl-noisy-backprop>
 
 #draftnote[as for the vertical case, the diagonal WLS phase-plane fit has not
 yet been run on this noisy dataset --- this section is amplitude-level only.

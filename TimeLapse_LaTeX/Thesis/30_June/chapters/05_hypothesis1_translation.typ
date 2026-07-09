@@ -99,9 +99,9 @@ migrated baseline) that isolates the moved scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("TL_017_Back-Propagation_E_zoomed____focus_at_1906_ns.png"),
-    img("TL_019_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png"),
-    img("TL_021_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png"),
+    img("TL_017_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("TL_019_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("TL_021_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
   ),
   caption: [Time-reversal back-propagation migration of the lateral time-lapse
     study, focused at $t = 19.06 "ns"$ and zoomed around the scatterers:
@@ -208,9 +208,9 @@ displacement scenarios.
 
 #figure(
   subfigs(cols: 1,
-    img("VTL_016_Back-Propagation_E_zoomed____focus_at_1906_ns.png"),
-    img("VTL_018_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png"),
-    img("VTL_020_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png"),
+    img("VTL_016_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("VTL_018_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("VTL_020_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
   ),
   caption: [Time-reversal back-propagation migration of the vertical time-lapse
     study, focused at $t = 19.06 "ns"$ and zoomed around the scatterer:
@@ -337,9 +337,9 @@ displacement scenarios.
 
 #figure(
   subfigs(cols: 1,
-    img("DTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png"),
-    img("DTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png"),
-    img("DTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png"),
+    img("DTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("DTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 90%),
+    img("DTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
   ),
   caption: [Time-reversal back-propagation migration of the diagonal time-lapse
     study, focused at $t = 19.06 "ns"$ and zoomed around the scatterer:
@@ -401,7 +401,7 @@ the raw background-subtracted B-scans and the three migrated images
 (Kirchhoff, Gazdag, back-propagation) for every scenario used below.
 
 #figure(
-  subfigs(cols: 1,
+  subfigs(cols: 2,
     img("TLP_001_Raw_Background-Subtracted_B-Scans__All_Scenarios.png"),
     img("TLP_002_Kirchhoff_Migration__All_Scenarios.png"),
     img("TLP_003_Gazdag_Migration__All_Scenarios.png"),
