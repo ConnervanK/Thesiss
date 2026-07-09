@@ -265,69 +265,12 @@ and solves the pre-weighted system with `numpy.linalg.lstsq` via
 singular value decomposition, which is equivalent to @eq:wls-solution
 but numerically far more stable.
 
-== Decoupling Geometric Movement from Material Change <sec:th-material-change>
-
-The third column of the design matrix in @eq:design-matrix is the
-constant vector $bold(1)$, deliberately included alongside the two
-wavenumber columns. This section shows, for theoretical completeness, why that
-design choice lets the same fit simultaneously measure displacement _and_
-detect a change in the dielectric material at the target, and why the two
-never contaminate each other.
-
-=== Why a sub-wavelength fracture produces a frequency-independent phase shift
-
-Consider a fracture of thickness $d$ much smaller than the wavelength,
-$d lt.double lambda$, embedded in a host matrix of permittivity $epsilon.alt_m$ and filled
-with a material of permittivity $epsilon.alt_f$. The wave reflects once at the top
-and once at the bottom of the fracture; for $d lt.double lambda$ these two
-reflections overlap into a single composite wavelet, and the total
-reflection coefficient can be approximated as
-$ R_"total" approx R_"top" + R_"bottom" e^(-j 2 k d) . $ <eq:thinlayer-1>
-A first-order expansion of the exponential for $k d lt.double 1$ gives
-$
-  R_"total" approx -j omega thin (d sqrt(epsilon.alt_m)) / (2 c_0)
-    ((epsilon.alt_m - epsilon.alt_f) / epsilon.alt_f) ,
-$ <eq:thinlayer-2>
-where $c_0$ is the speed of light in vacuum. The leading $-j omega$ factor
-means a thin layer reflects the time-derivative of the incident pulse.
-
-When the fracture fluid changes between the baseline and monitor survey
-(e.g. air, $epsilon.alt_"air" = 1$, displaced by water, $epsilon.alt_"water" = 81$)
-while the thickness $d$ stays fixed, the ratio of the two reflection
-coefficients is
-$
-  Delta R = R_"mon" / R_"base"
-  = (epsilon.alt_"air" (epsilon.alt_m - epsilon.alt_"water")) / (epsilon.alt_"water" (epsilon.alt_m - epsilon.alt_"air")) .
-$ <eq:thinlayer-ratio>
-Both the geometric factor $d$ and the derivative factor $-j omega$ cancel
-exactly in this ratio, leaving a complex constant, independent of $omega$
-and therefore independent of $#kz$ and $#kx$. In the phase domain this is a
-uniform rotation
-$ Delta R approx alpha e^(-j #Dtheta) , $ <eq:thinlayer-phase>
-applied equally to every frequency in the pulse bandwidth: a flat,
-frequency-independent phase offset $#Dtheta$, with an amplitude attenuation
-$alpha$.
-
-=== Why the WLS fit puts material change exactly into the intercept
-
-For a fluid-substitution event with no mechanical movement
-($#Dz = #Dx = 0$), @eq:thinlayer-phase means every observation in
-@eq:phase-plane-discrete is the same constant, $Phi_i = #Dtheta$ for
-all $i$. Looking at the three columns of $A$ in @eq:design-matrix:
-
-- the $#kz$ column spans negative to positive wavenumbers --- any
-  non-zero $#Dz$ tilts the predicted plane, which can only _increase_
-  the residual against a perfectly flat target, so the optimum is $#Dz = 0$;
-- the $#kx$ column behaves identically, forcing $#Dx = 0$;
-- the constant column is exactly $bold(1)$, so setting $c = #Dtheta$
-  matches the flat target with zero residual.
-
-This is possible because the wavenumber columns and the constant column are
-linearly independent: the matrix inversion in @eq:wls-solution decouples them
-exactly. If a target both moves _and_ changes material at once, the fitted
-plane both tilts (giving $#Dz, #Dx$) and shifts vertically (giving
-$c = #Dtheta$), and the two effects remain perfectly separable in the same
-single fit.
+Beyond absorbing calibration bias, the constant column of
+@eq:design-matrix also lets the same fit isolate a frequency-independent
+phase offset caused by a _material_ change at the target (e.g. a
+sub-wavelength fracture filling with fluid) in the intercept $c$, cleanly
+separated from the geometric shift $(#Dz, #Dx)$ --- the derivation of this
+decoupling is given in @sec:th-material-change.
 
 == Time-Frequency Perspective: Local Phase and Spectral-Line Analysis <sec:th-local>
 
@@ -522,10 +465,10 @@ scatterers ($r = 28 "mm"$, depth $0.676 "m"$), from $2 lambda$ down to
 $1 \/ 16 lambda$.
 
 #figure(
-  grid(columns: (1fr, 1fr, 1fr), gutter: 0.8em,
+  subfigs(cols: 1,
     img("RES_001_Ricker_Wavelet_f_c__15_GHz_t0__0943_ns.png"),
     img("RES_002_Resolution_Study__Model_Geometry__domain_4010_m_Δx__1_mm_PML.png"),
-    img("RES_003_Scatterer_Positions__PEC_Cylinders__r__28_mm_depth__0676_m.png"),
+    img("RES_003_Scatterer_Positions__PEC_Cylinders__r__28_mm_depth__0676_m.png", width: 70%),
   ),
   caption: [Forward-model setup for the resolution validation: (a) the Ricker
     source wavelet ($f_c = 1.5 "GHz"$, $t_0 = 0.943 "ns"$); (b) the gprMax
@@ -539,7 +482,7 @@ tapering and $t_0$-shift conditioning of @sec:meth-conditioning on the
 $2 lambda$ separation scenario.
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
+  subfigs(cols: 1,
     img("RES_004_GPR_B-Scans__Background_and_Separation_Models.png"),
     img("RES_005_GPR_B-Scans__Background_Subtracted.png"),
   ),
@@ -548,7 +491,7 @@ $2 lambda$ separation scenario.
 ) <fig:res-bscans>
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
+  subfigs(cols: 1,
     img("RES_006_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png"),
     img("RES_007_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png"),
   ),
@@ -558,38 +501,31 @@ $2 lambda$ separation scenario.
 
 @fig:res-kirchhoff, @fig:res-gazdag, and @fig:res-backprop show the migrated
 image for every separation scenario, for Kirchhoff, Gazdag, and
-back-propagation migration respectively, each with a zoomed view around the
-true scatterer depth.
+back-propagation migration respectively, zoomed around the true scatterer
+depth.
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
-    img("RES_008_Kirchhoff_Migration__All_Datasets____f_c15_GHz____aperture40.png"),
-    img("RES_009_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png"),
-  ),
+  img("RES_009_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png", width: 90%),
   caption: [Kirchhoff migration of the resolution validation ($f_c = 1.5 "GHz"$,
-    aperture $= 40$ traces): (a) all separation scenarios; (b) zoomed view.],
+    aperture $= 40$ traces), all separation scenarios, zoomed around the
+    scatterer depth.],
 ) <fig:res-kirchhoff>
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
-    img("RES_010_Gazdag_Phase-Shift_Migration__All_Datasets____f_c15_GHz____z.png"),
-    img("RES_011_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png"),
-  ),
+  img("RES_011_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png", width: 90%),
   caption: [Gazdag phase-shift migration of the resolution validation
-    ($f_c = 1.5 "GHz"$): (a) all separation scenarios; (b) zoomed view.],
+    ($f_c = 1.5 "GHz"$), all separation scenarios, zoomed around the
+    scatterer depth.],
 ) <fig:res-gazdag>
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
-    img("RES_012_Back-Propagation_E__All_Datasets____focus_at_1906_ns.png"),
+  subfigs(cols: 1,
     img("RES_013_Back-Propagation_E_zoomed____focus_at_1906_ns.png"),
-    img("RES_014_Back-Propagation_Ez__All_Datasets____focus_at_1906_ns.png"),
     img("RES_015_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png"),
   ),
   caption: [Time-reversal back-propagation migration of the resolution
-    validation, focused at $t = 19.06 "ns"$: field-magnitude image (a, b) and
-    the $E_z$ component (c, d), each with a zoomed view around the scatterer
-    depth.],
+    validation, focused at $t = 19.06 "ns"$ and zoomed around the scatterer
+    depth: (a) field magnitude $||bold(E)||$; (b) the $E_z$ component.],
 ) <fig:res-backprop>
 
 @fig:res-psf (a) overlays the signed migrated amplitude from all three
@@ -598,7 +534,7 @@ lateral point-spread function (PSF) extracted at the true scatterer depth as
 a function of separation.
 
 #figure(
-  grid(columns: (1fr, 1fr), gutter: 0.8em,
+  subfigs(cols: 2,
     img("RES_016_Migration_Comparison__Signed_Amplitude____f_c15_GHz____apert.png"),
     img("RES_017_Normalised_Lateral_PSF_at_True_Scatterer_Depth.png"),
   ),

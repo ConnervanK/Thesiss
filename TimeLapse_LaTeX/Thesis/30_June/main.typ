@@ -95,3 +95,4 @@
 #show heading.where(level: 3): set heading(supplement: "Section")
 
 #include "appendix/A_extended_sweeps.typ"
+#include "appendix/B_material_change.typ"
