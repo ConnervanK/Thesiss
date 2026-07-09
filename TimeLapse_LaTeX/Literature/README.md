@@ -26,11 +26,27 @@ where the PDF physically sits.
   chapters rather than needing new sources.
 - `Thesis_Writing_Resources/` — writing/stats guides, not thesis content.
 
+## `Migration_Algorithms/` split
+
+`2_Review_of_Literature/2-3_GPR_Processing/Migration_Algorithms/` is split
+into two groups, since only three migration methods are actually implemented
+in this thesis (see `Thesis/30_June/chapters/03_theory.typ`):
+
+- `Used_in_Thesis/` — `Kirchhoff`, `Gazdag_Phase-Shift`,
+  `Back-Propagation_Time-Reversal` (the three implemented methods), plus
+  `Time-Lapse_Imaging_Applications` and `General_Migration_Reviews`, which
+  motivate and justify that choice.
+- `Advanced_Alternative_Techniques/` — `Reverse-Time_Migration`,
+  `Least-Squares_Migration`, `Full_Waveform_Inversion`,
+  `Bayesian_Inversion`, `Super-Resolution_and_MUSIC`: more sophisticated
+  methods that are discussed as context/future work but not implemented in
+  the pipeline. Useful for the Ch. 8 Discussion / future-work framing.
+
 ## Cross-references (same folder serves multiple sections)
 
 - **Section 3-1** (Kirchhoff / Gazdag / Back-Propagation fundamentals) →
   papers are filed under
-  `2_Review_of_Literature/2-3_GPR_Processing/Migration_Algorithms/{Kirchhoff, Gazdag_Phase-Shift, Back-Propagation_Time-Reversal}`.
+  `2_Review_of_Literature/2-3_GPR_Processing/Migration_Algorithms/Used_in_Thesis/{Kirchhoff, Gazdag_Phase-Shift, Back-Propagation_Time-Reversal}`.
 - **Section 3-4** (WLS Plane Fitting) and **3-5** (Geometric vs Material
   Decoupling) → foundational math is in
   `2_Review_of_Literature/2-4_Phase-Based_Interpretation/WLS_Phase-Difference_Fitting`.
