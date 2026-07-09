@@ -29,9 +29,34 @@ inferring horizontal and vertical translation.
 == Lateral Movement <sec:hyp1-lateral>
 
 A single PEC cylinder ($r = 28 "mm"$, depth $0.676 "m"$) is held fixed in
-the baseline survey and displaced laterally by each of eight scenarios in the
-monitor survey, from $2 lambda$ down to $1 \/ 32 lambda$ (@fig:tl-setup),
-using the same gprMax domain and grid as @sec:meth-resolution.
+the baseline survey and displaced laterally by each of eight scenarios
+(@tab:tl-scenarios) in the monitor survey, from $2 lambda$ down to
+$1 \/ 32 lambda$ (@fig:tl-setup), using the same gprMax domain and grid as
+@sec:meth-resolution.
+
+#figure(
+  table(
+    columns: (auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*$#Dx$*], [*$#Dz$*],
+    table.hline(stroke: 0.4pt),
+    [Baseline], [$0$], [$0$],
+    [$2 lambda$], [$2 lambda$], [$0$],
+    [$1 lambda$], [$1 lambda$], [$0$],
+    [$1\/2 lambda$], [$1\/2 lambda$], [$0$],
+    [$1\/4 lambda$], [$1\/4 lambda$], [$0$],
+    [$1\/8 lambda$], [$1\/8 lambda$], [$0$],
+    [$1\/16 lambda$], [$1\/16 lambda$], [$0$],
+    [$1\/32 lambda$], [$1\/32 lambda$], [$0$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Lateral displacement scenarios: the scatterer moves laterally
+    ($#Dx$) while depth is fixed ($#Dz = 0$), swept from $2 lambda$ down to
+    $1\/32 lambda$.],
+  kind: table,
+) <tab:tl-scenarios>
 
 #figure(
   subfigs(cols: 1,
@@ -72,62 +97,34 @@ The same tapering and $t_0$-shift conditioning as @sec:meth-resolution
     displacement dataset: (a) a single trace; (b) the full B-scan.],
 ) <fig:tl-taper>
 
-@fig:tl-kirchhoff, @fig:tl-gazdag, and @fig:tl-backprop show, respectively,
-the Kirchhoff-, Gazdag-, and back-propagation-migrated images for all
-displacement scenarios, and the time-lapse difference (migrated monitor minus
-migrated baseline) that isolates the moved scatterer.
-
-#figure(
-  subfigs(cols: 1,
-    img("TL_009_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png"),
-    img("TL_011_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Kirchhoff migration of the lateral time-lapse study ($f_c = 1.5 "GHz"$,
-    aperture $= 40$), zoomed around the scatterers: (a) migrated image for all
-    scenarios; (b) migrated-monitor-minus-migrated-baseline difference.],
-) <fig:tl-kirchhoff>
-
-#figure(
-  subfigs(cols: 1,
-    img("TL_013_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png"),
-    img("TL_015_Gazdag_Migration__TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Gazdag phase-shift migration of the lateral time-lapse study
-    ($f_c = 1.5 "GHz"$), zoomed around the scatterers: (a) migrated image;
-    (b) time-lapse difference.],
-) <fig:tl-gazdag>
-
-#figure(
-  subfigs(cols: 1,
-    img("TL_017_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("TL_019_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("TL_021_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
-  ),
-  caption: [Time-reversal back-propagation migration of the lateral time-lapse
-    study, focused at $t = 19.06 "ns"$ and zoomed around the scatterers:
-    (a) field magnitude $||bold(E)||$; (b) $E_z$; (c) $E_z$ time-lapse
-    difference.],
-) <fig:tl-backprop>
+Per-method migrated images and time-lapse differences for Kirchhoff, Gazdag,
+and back-propagation migration are given in @app:hyp1-methods
+(@fig:tl-kirchhoff, @fig:tl-gazdag, @fig:tl-backprop). @fig:tl-summary-amp
+below instead overlays the signed difference from all three algorithms
+directly.
 
 === Amplitude-Based Detectability Summary <sec:tl-detectability>
 
-@fig:tl-summary overlays the signed time-lapse-difference amplitude from all
-three algorithms and plots the normalised lateral point-spread function of
-that difference at the true scatterer depth, as a function of displacement.
+@fig:tl-summary-amp overlays the signed time-lapse-difference amplitude from
+all three algorithms, and @fig:tl-summary-psf plots the normalised lateral
+point-spread function of that difference at the true scatterer depth, as a
+function of displacement.
 
 #figure(
-  subfigs(cols: 2,
-    img("TL_022_TimeLapse_Migration_Comparison__Signed_Amplitude____f_c15_GH.png"),
-    img("TL_023_Normalised_Lateral_PSF__TimeLapse_Difference_at_True_Scatter.png"),
-  ),
-  caption: [(a) Signed time-lapse-difference amplitude for all three migration
-    algorithms at $f_c = 1.5 "GHz"$; (b) the normalised lateral PSF of the
-    difference image at the true scatterer depth, swept across lateral
-    displacements from $2 lambda$ to $1 \/ 32 lambda$.],
-) <fig:tl-summary>
+  img("TL_022_TimeLapse_Migration_Comparison__Signed_Amplitude____f_c15_GH.png"),
+  caption: [Signed time-lapse-difference amplitude for all three migration
+    algorithms at $f_c = 1.5 "GHz"$.],
+) <fig:tl-summary-amp>
+
+#figure(
+  img("TL_023_Normalised_Lateral_PSF__TimeLapse_Difference_at_True_Scatter.png"),
+  caption: [Normalised lateral PSF of the time-lapse-difference image at the
+    true scatterer depth, swept across lateral displacements from $2 lambda$
+    to $1 \/ 32 lambda$.],
+) <fig:tl-summary-psf>
 
 #draftnote[state the smallest displacement at which the difference image in
-@fig:tl-summary (b) still shows a clear, unambiguous peak above the numerical
+@fig:tl-summary-psf still shows a clear, unambiguous peak above the numerical
 background, and compare it with the amplitude resolution floor found for
 stationary scatterers in @sec:meth-resolution. The noisy version of this
 sweep, and the noise-mitigation strategies tested against it, are presented
@@ -144,9 +141,33 @@ important point of comparison for the phase-based vertical results of
 @sec:hyp1-phaseplane.
 
 A single PEC cylinder ($r = 28 "mm"$) sits at lateral position $x = 2.0 "m"$
-and is displaced _downward_ from its baseline depth across seven scenarios,
-from $1 lambda$ down to $1 \/ 32 lambda$ (@fig:vtl-setup), using the same
-domain and grid as @sec:meth-resolution and @sec:hyp1-lateral.
+and is displaced _downward_ from its baseline depth across seven scenarios
+(@tab:vtl-scenarios), from $1 lambda$ down to $1 \/ 32 lambda$
+(@fig:vtl-setup), using the same domain and grid as @sec:meth-resolution and
+@sec:hyp1-lateral.
+
+#figure(
+  table(
+    columns: (auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*$#Dx$*], [*$#Dz$*],
+    table.hline(stroke: 0.4pt),
+    [Baseline], [$0$], [$0$],
+    [$1 lambda$], [$0$], [$1 lambda$],
+    [$1\/2 lambda$], [$0$], [$1\/2 lambda$],
+    [$1\/4 lambda$], [$0$], [$1\/4 lambda$],
+    [$1\/8 lambda$], [$0$], [$1\/8 lambda$],
+    [$1\/16 lambda$], [$0$], [$1\/16 lambda$],
+    [$1\/32 lambda$], [$0$], [$1\/32 lambda$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Vertical displacement scenarios: the scatterer moves downward in
+    depth ($#Dz$) while its lateral position is fixed ($#Dx = 0$), swept from
+    $1 lambda$ down to $1\/32 lambda$.],
+  kind: table,
+) <tab:vtl-scenarios>
 
 #figure(
   subfigs(cols: 1,
@@ -182,61 +203,34 @@ tapering and $t_0$-shift conditioning on the $1 lambda$ dataset.
     displacement dataset: (a) a single trace; (b) the full B-scan.],
 ) <fig:vtl-taper>
 
-@fig:vtl-kirchhoff, @fig:vtl-gazdag, and @fig:vtl-backprop repeat the same
-three-algorithm migration-and-differencing analysis for the vertical
-displacement scenarios.
-
-#figure(
-  subfigs(cols: 1,
-    img("VTL_008_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png"),
-    img("VTL_010_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Kirchhoff migration of the vertical time-lapse study
-    ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterer:
-    (a) migrated image for all scenarios; (b) time-lapse difference.],
-) <fig:vtl-kirchhoff>
-
-#figure(
-  subfigs(cols: 1,
-    img("VTL_012_Gazdag_Phase-Shift_Migration_zoomed____f_cf_c_GHz_GHz.png"),
-    img("VTL_014_Gazdag_Migration__TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Gazdag phase-shift migration of the vertical time-lapse study
-    ($f_c = 1.5 "GHz"$), zoomed around the scatterer: (a) migrated image;
-    (b) time-lapse difference.],
-) <fig:vtl-gazdag>
-
-#figure(
-  subfigs(cols: 1,
-    img("VTL_016_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("VTL_018_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("VTL_020_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
-  ),
-  caption: [Time-reversal back-propagation migration of the vertical time-lapse
-    study, focused at $t = 19.06 "ns"$ and zoomed around the scatterer:
-    (a) field magnitude $||bold(E)||$; (b) $E_z$; (c) $E_z$ time-lapse
-    difference.],
-) <fig:vtl-backprop>
+Per-method migrated images and time-lapse differences for Kirchhoff, Gazdag,
+and back-propagation migration are given in @app:hyp1-methods
+(@fig:vtl-kirchhoff, @fig:vtl-gazdag, @fig:vtl-backprop). @fig:vtl-summary-amp
+below instead overlays the signed difference from all three algorithms
+directly.
 
 === Vertical Detectability Summary <sec:vtl-detectability>
 
-@fig:vtl-summary overlays the signed time-lapse-difference amplitude from all
-three algorithms and plots the normalised _vertical_ point-spread function of
-that difference at $x = 2.0 "m"$, as a function of vertical displacement.
+@fig:vtl-summary-amp overlays the signed time-lapse-difference amplitude from
+all three algorithms, and @fig:vtl-summary-psf plots the normalised
+_vertical_ point-spread function of that difference at $x = 2.0 "m"$, as a
+function of vertical displacement.
 
 #figure(
-  subfigs(cols: 2,
-    img("VTL_021_Vertical_TimeLapse_Migration_Comparison__Signed_Amplitude.png"),
-    img("VTL_022_Normalised_Vertical_PSF__TimeLapse_Difference_at_x__20_m.png"),
-  ),
-  caption: [(a) Signed time-lapse-difference amplitude for all three migration
-    algorithms; (b) the normalised vertical PSF of the difference image at
+  img("VTL_021_Vertical_TimeLapse_Migration_Comparison__Signed_Amplitude.png"),
+  caption: [Signed time-lapse-difference amplitude for all three migration
+    algorithms.],
+) <fig:vtl-summary-amp>
+
+#figure(
+  img("VTL_022_Normalised_Vertical_PSF__TimeLapse_Difference_at_x__20_m.png", width: 55%),
+  caption: [Normalised vertical PSF of the time-lapse-difference image at
     $x = 2.0 "m"$, swept across vertical displacements from $1 lambda$ to
     $1 \/ 32 lambda$.],
-) <fig:vtl-summary>
+) <fig:vtl-summary-psf>
 
 #draftnote[compare the smallest reliably-detected vertical displacement in
-@fig:vtl-summary (b) against the lateral result of @fig:tl-summary (b)
+@fig:vtl-summary-psf against the lateral result of @fig:tl-summary-psf
 (@sec:tl-detectability) and discuss whether the lateral/vertical asymmetry
 predicted by the instantaneous-phase theory of @sec:th-duality is also visible
 at the amplitude level, or only emerges once the phase-plane estimator of
@@ -311,68 +305,40 @@ tapering and $t_0$-shift conditioning on the scenario-1 dataset.
     trace; (b) the full B-scan.],
 ) <fig:dtl-taper>
 
-@fig:dtl-kirchhoff, @fig:dtl-gazdag, and @fig:dtl-backprop repeat the same
-three-algorithm migration-and-differencing analysis for the diagonal
-displacement scenarios.
-
-#figure(
-  subfigs(cols: 1,
-    img("DTL_010_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png"),
-    img("DTL_012_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Kirchhoff migration of the diagonal time-lapse study
-    ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterer:
-    (a) migrated image for all scenarios; (b) time-lapse difference.],
-) <fig:dtl-kirchhoff>
-
-#figure(
-  subfigs(cols: 1,
-    img("DTL_014_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png"),
-    img("DTL_016_Gazdag_Migration__TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Gazdag phase-shift migration of the diagonal time-lapse study
-    ($f_c = 1.5 "GHz"$), zoomed around the scatterer: (a) migrated image;
-    (b) time-lapse difference.],
-) <fig:dtl-gazdag>
-
-#figure(
-  subfigs(cols: 1,
-    img("DTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("DTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("DTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
-  ),
-  caption: [Time-reversal back-propagation migration of the diagonal time-lapse
-    study, focused at $t = 19.06 "ns"$ and zoomed around the scatterer:
-    (a) field magnitude $||bold(E)||$; (b) $E_z$; (c) $E_z$ time-lapse
-    difference.],
-) <fig:dtl-backprop>
+Per-method migrated images and time-lapse differences for Kirchhoff, Gazdag,
+and back-propagation migration are given in @app:hyp1-methods
+(@fig:dtl-kirchhoff, @fig:dtl-gazdag, @fig:dtl-backprop). @fig:dtl-summary-amp
+below instead overlays the signed difference from all three algorithms
+directly.
 
 === Diagonal Detectability Summary <sec:dtl-detectability>
 
 Because every scenario moves the scatterer along the same $2:1$ diagonal line
 through the baseline, the detectability analysis samples each
 time-lapse-difference image _along that line_ rather than along a single
-Cartesian axis: @fig:dtl-summary (a) overlays the signed, diagonally-sampled
-amplitude from all three algorithms, and @fig:dtl-summary (b) plots the
+Cartesian axis: @fig:dtl-summary-amp overlays the signed, diagonally-sampled
+amplitude from all three algorithms, and @fig:dtl-summary-psf plots the
 normalised diagonal point-spread function (signed amplitude and Hilbert
 envelope) as a function of signed distance along the motion direction.
 
 #figure(
-  subfigs(cols: 2,
-    img("DTL_023_Diagonal_TimeLapse_Migration_Comparison__Signed_Amplitude.png"),
-    img("DTL_024_Normalised_Diagonal_PSF__TimeLapse_Difference_Along_Motion_D.png"),
-  ),
-  caption: [(a) Signed time-lapse-difference amplitude for all three migration
-    algorithms, sampled along the diagonal motion direction; (b) the normalised
-    diagonal PSF of the difference image along that same direction, swept across
-    the five diagonal scenarios of @tab:dtl-scenarios.],
-) <fig:dtl-summary>
+  img("DTL_023_Diagonal_TimeLapse_Migration_Comparison__Signed_Amplitude.png"),
+  caption: [Signed time-lapse-difference amplitude for all three migration
+    algorithms, sampled along the diagonal motion direction.],
+) <fig:dtl-summary-amp>
 
-#draftnote[state the smallest diagonal displacement at which @fig:dtl-summary
-(b) still shows a clear, unambiguous peak above background, and compare it
-with the lateral and vertical floors of @sec:tl-detectability and
-@sec:vtl-detectability --- since the diagonal step combines a lateral and a
-vertical component of different magnitude ($#Dx = 2 #Dz$), state whether
+#figure(
+  img("DTL_024_Normalised_Diagonal_PSF__TimeLapse_Difference_Along_Motion_D.png", width: 80%),
+  caption: [Normalised diagonal PSF of the time-lapse-difference image along
+    the motion direction, swept across the five diagonal scenarios of
+    @tab:dtl-scenarios.],
+) <fig:dtl-summary-psf>
+
+#draftnote[state the smallest diagonal displacement at which
+@fig:dtl-summary-psf still shows a clear, unambiguous peak above background,
+and compare it with the lateral and vertical floors of @sec:tl-detectability
+and @sec:vtl-detectability --- since the diagonal step combines a lateral and
+a vertical component of different magnitude ($#Dx = 2 #Dz$), state whether
 the effective detectability floor tracks the (tighter) lateral floor, the
 (looser) vertical floor, or some combination of the two.]
 
@@ -475,155 +441,5 @@ joint $(#Dz, #Dx)$ estimate, which should satisfy the known $#Dx = 2 #Dz$
 ratio of @tab:dtl-scenarios if the fit is working correctly --- this is the
 single most important piece of evidence still missing from this chapter.]
 
-== Hypothesis 1.5 (Optional): Local Phase-Gradient Methods <sec:hyp1-h15>
-
-The phase-plane fit of @sec:hyp1-phaseplane is a _global_ operation: it acts
-on the whole 2D spectrum at once. This section explores a _local_ alternative
---- the spatial instantaneous phase, extracted trace-by-trace with a
-Riesz/Hilbert transform, and its time-frequency relatives --- to test
-Hypothesis 1.5: whether the local phase gradients $partial phi \/ partial x$,
-$partial phi \/ partial y$ offer an equivalent, simpler route to the same
-displacement estimate.
-
-#draftnote[this section is exploratory: the underlying
-Riesz-transform/monogenic-signal machinery is implemented in
-`CWT_playground.ipynb`, but it has not yet been validated quantitatively
-against the global WLS fit of @sec:hyp1-phaseplane on the same datasets ---
-treat the results below as a qualitative complement to, not a replacement for,
-Hypothesis 1's primary evidence.]
-
-=== Instantaneous Phase Imaging --- Lateral Displacement <sec:tlp-instphase-horizontal>
-
-The 2D Riesz transform of @eq:kx-inst and @eq:dphi-lateral is applied
-directly to the Gazdag-migrated baseline and monitor images, producing an
-instantaneous-phase difference map $#Dphi (z,x)$ and, at the scatterer depth,
-a 1D phase cross-section whose slope at the zero-crossing encodes $#Dx$. This
-analysis is repeated at all seven lateral scales from $2 lambda$ to
-$1 \/ 32 lambda$; @fig:tlp-instphase-horiz-example shows the representative
-$1\/4 lambda$ case ($#Dx = 28.0 "mm"$), and
-@fig:tlp-instphase-horiz-summary summarises the fitted zero-crossing slope
-across all seven scales. The full seven-scale sweep is given in
-@app:sec-instphase-horizontal.
-
-#figure(
-  subfigs(cols: 2,
-    img("TLP_025_Instantaneous_Phase__Gazdag____Baseline_vs_¼λ___Δx__280_mm.png"),
-    img("TLP_026_Phase_cross-section__z__676_mm____Gazdag____¼λ__Δx__280_mm.png"),
-    img("TLP_027_Phase_cross-section__zoomed__½λ_around_scatterers.png"),
-  ),
-  caption: [Instantaneous-phase analysis for the representative
-    $#Dx = 1\/4 lambda = 28.0 "mm"$ lateral displacement, Gazdag-migrated:
-    (a) the 2D wrapped phase-difference map; (b) the 1D phase cross-section
-    at the scatterer depth $z = 676 "mm"$; (c) the same cross-section zoomed
-    to $plus.minus 1\/2 lambda$ around the scatterer.],
-) <fig:tlp-instphase-horiz-example>
-
-#figure(
-  img("TLP_037_Gazdag__Δφ_zero-crossing_slope_vs_scatterer_separation.png", width: 70%),
-  caption: [Fitted zero-crossing slope of the lateral instantaneous
-    phase-difference cross-section, as a function of true scatterer
-    displacement, across all seven scales from $2 lambda$ to $1\/32 lambda$
-    (Gazdag-migrated).],
-) <fig:tlp-instphase-horiz-summary>
-
-=== Instantaneous Phase Imaging --- Vertical Displacement <sec:tlp-instphase-vertical>
-
-The same instantaneous-phase analysis is repeated for the vertical
-displacement dataset, with the cross-section now taken along $z$ at the
-fixed lateral position $x = 2.0 "m"$ of the scatterer, across six scales
-from $1 lambda$ to $1 \/ 32 lambda$. @fig:tlp-instphase-vert-example shows
-the representative $1\/4 lambda$ case ($#Dz = 28.0 "mm"$), and
-@fig:tlp-instphase-vert-summary summarises the mean phase difference across
-all six scales. The full sweep is given in @app:sec-instphase-vertical.
-
-#figure(
-  subfigs(cols: 2,
-    img("TLP_044_VerticalTimeLapse__Instantaneous_Phase__Gazdag____Baseline_v.png"),
-    img("TLP_045_Phase_cross-section__x__2000_mm____Gazdag____¼λ__Δz__280_mm.png"),
-    img("TLP_046_Phase_cross-section__zoomed__½λ_around_scatterer_depths.png"),
-  ),
-  caption: [Instantaneous-phase analysis for the representative
-    $#Dz = 1\/4 lambda = 28.0 "mm"$ vertical displacement, Gazdag-migrated:
-    (a) the 2D wrapped phase-difference map; (b) the 1D phase cross-section
-    at $x = 2000 "mm"$; (c) the same cross-section zoomed to
-    $plus.minus 1\/2 lambda$ around the scatterer depths.],
-) <fig:tlp-instphase-vert-example>
-
-#figure(
-  img("TLP_056_VerticalTimeLapse__Gazdag__Mean_Δφ_vs_scatterer_vertical_shi.png", width: 70%),
-  caption: [Mean instantaneous phase difference $#Dphi$ as a function of true
-    vertical scatterer shift, across all six scales from $1 lambda$ to
-    $1\/32 lambda$ (Gazdag-migrated). Unlike the lateral case
-    (@fig:tlp-instphase-horiz-summary), this is a plateau level rather than a
-    cross-section slope, consistent with the asymmetry derived in
-    @sec:th-duality.],
-) <fig:tlp-instphase-vert-summary>
-
-=== Spectral-Line Phase Analysis <sec:tlp-spectral-line>
-
-The localised-Fourier-shift spectral-line equation @eq:local-phase-line is
-verified directly on individual traces using the CLSSA decomposition of
-`phase_decomposition.py`, applied both to the Gazdag-migrated image and to
-the raw, unmigrated B-scan, at the column position containing each scenario's
-scatterer. @fig:tlp-spectral-line-example compares the representative
-$1\/4 lambda$ case in both domains; the full seven-scale sweep for both is
-given in @app:sec-spectral-line.
-
-#figure(
-  subfigs(cols: 1,
-    img("TLP_060_Spectral_Line_CLSSA____Gazdag____¼λ___Δx__280_mm__02500λ.png"),
-    img("TLP_067_Spectral_Line_CLSSA____Raw_Unmigrated____¼λ___Δx__280_mm__02.png"),
-  ),
-  caption: [CLSSA spectral-line decomposition (amplitude spectrum, phase
-    spectrum, and phase gather, @sec:th-local) at the representative
-    $#Dx = 1\/4 lambda = 28.0 "mm"$ scale: (a) Gazdag-migrated trace; (b) raw,
-    unmigrated trace at the same scenario.],
-) <fig:tlp-spectral-line-example>
-
-#draftnote[state whether the migrated and raw spectral lines in
-@fig:tlp-spectral-line-example give consistent $#Dt$/slope estimates once
-converted with @eq:dt-dz, which would confirm that migration is not required
-for the temporal spectral-line method to work, only for the 2D wavenumber
-plane fit of @sec:th-wls.]
-
-=== Cross-Phase Spectrograms <sec:tlp-spectrogram>
-
-@fig:tlp-spectrogram-example shows the cross-phase spectrogram
-$#DPhi (tau, f)$ of @sec:th-local for two contrasting scales: a large, easily
-visible $1\/4 lambda$ displacement and the smallest, $1\/32 lambda$, where the
-coherent window around the scatterer's two-way time becomes much harder to
-distinguish from the incoherent background. The full seven-scale sweep is
-given in @app:sec-spectrogram.
-
-#figure(
-  subfigs(cols: 2,
-    img("TLP_074_Cross-Phase_Spectrogram_CLSSA__ΔΦτf____Gazdag____¼λ.png"),
-    img("TLP_077_Cross-Phase_Spectrogram_CLSSA__ΔΦτf____Gazdag____¹₃₂λ.png"),
-  ),
-  caption: [Cross-phase spectrogram $#DPhi (tau, f)$ (two-way time against
-    frequency) at two contrasting lateral displacement scales,
-    Gazdag-migrated: (a) $#Dx = 1\/4 lambda$; (b) $#Dx = 1\/32 lambda$.],
-) <fig:tlp-spectrogram-example>
-
-=== Localised Fourier Shift via Short-Time Fourier Transform <sec:tlp-stft>
-
-Finally, the three-panel localised-STFT decomposition of @eq:local-shift and
-@eq:local-phase-line --- amplitude spectrum $A(tau,f)$, phase spectrum
-$#DPhi (tau,f)$, and phase-angle domain $A(tau, theta)$ --- is applied with a
-Gaussian analysis window. @fig:tlp-stft-example shows two of the seven outputs
-produced by this sweep; the full set is given in @app:sec-stft.
-
-#figure(
-  subfigs(cols: 1,
-    img("TLP_078_Localized_Fourier_Shift_STFT_Gaussian_win12_smp____Gazdag.png"),
-    img("TLP_081_Localized_Fourier_Shift_STFT_Gaussian_win12_smp____Gazdag.png"),
-  ),
-  caption: [Localised-STFT phase decomposition (Gaussian window,
-    Gazdag-migrated) for two of the seven lateral displacement scales:
-    (a) scale 1 of 7; (b) scale 4 of 7.
-    #draftnote[TLP\_078--084 all share an identical auto-generated filename
-    stem and do not encode which $#Dx$ each panel corresponds to --- confirm
-    the scale for each of the seven figures against the
-    `TimeLapse_Processing.ipynb` cell order before finalising these
-    captions.]],
-) <fig:tlp-stft-example>
+Hypothesis 1.5, exploring a local, trace-based alternative to the global
+phase-plane fit, is developed separately in @sec:hyp1-h15.

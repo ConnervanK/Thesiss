@@ -36,7 +36,7 @@ separates lateral spatial frequency like a prism but not vertical frequency.
 #draftnote[state whether this asymmetry was visible only in the
 instantaneous-phase analysis (@fig:tlp-instphase-horiz-summary vs.
 @fig:tlp-instphase-vert-summary) or also at the amplitude level
-(@fig:tl-summary vs. @fig:vtl-summary), and what that implies for a field
+(@fig:tl-summary-psf vs. @fig:vtl-summary-psf), and what that implies for a field
 deployment that cares more about one direction than the other. Discuss whether
 the diagonal detectability floor of @sec:dtl-detectability sits closer to the
 (tighter) lateral floor or the (looser) vertical one, as a further test of

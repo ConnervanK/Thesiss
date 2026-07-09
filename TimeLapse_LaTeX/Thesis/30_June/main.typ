@@ -96,3 +96,5 @@
 
 #include "appendix/A_extended_sweeps.typ"
 #include "appendix/B_material_change.typ"
+#include "appendix/C_hypothesis1_extended_migration_figures.typ"
+#include "appendix/D_hypothesis1-5_local_phase.typ"
