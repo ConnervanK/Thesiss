@@ -50,6 +50,16 @@
   image(_fig_base + _fig_study(name) + _fig_category(name) + name, width: width)
 }
 
+// Cross-technique compilation figures (e.g. Kirchhoff-BP + Gazdag +
+// back-propagation shown together in one PNG) don't fit the single-technique
+// classification _fig_category() assumes, so they live in their own
+// Compilations/ subfolder per study and are loaded directly, bypassing
+// _fig_category(). study defaults to the field-data compilations (currently
+// the only user); pass study: to point at a different <Study>/Compilations/.
+#let cimg(name, width: 100%, study: "FieldData_Study") = {
+  image(_fig_base + study + "/Compilations/" + name, width: width)
+}
+
 // ---- Draft-note marker ------------------------------------
 #let draftnote(note) = block(
   fill: rgb("#FFF0F0"),

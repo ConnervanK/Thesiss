@@ -32,9 +32,9 @@ across all seven scales. The full seven-scale sweep is given in
 
 #figure(
   subfigs(cols: 2,
-    img("TLP_025_Instantaneous_Phase__Gazdag____Baseline_vs_¼λ___Δx__280_mm.png"),
-    img("TLP_026_Phase_cross-section__z__676_mm____Gazdag____¼λ__Δx__280_mm.png"),
-    img("TLP_027_Phase_cross-section__zoomed__½λ_around_scatterers.png"),
+    img("TLP_059_Instantaneous_Phase__Gazdag____Baseline_vs_¼λ___Δx__280_mm.png"),
+    img("TLP_060_Phase_cross-section__z__676_mm____Gazdag____¼λ__Δx__280_mm.png"),
+    img("TLP_061_Phase_cross-section__zoomed__½λ_around_scatterers.png"),
   ),
   caption: [Instantaneous-phase analysis for the representative
     $#Dx = 1\/4 lambda = 28.0 "mm"$ lateral displacement, Gazdag-migrated:
@@ -44,7 +44,7 @@ across all seven scales. The full seven-scale sweep is given in
 ) <fig:tlp-instphase-horiz-example>
 
 #figure(
-  img("TLP_037_Gazdag__Δφ_zero-crossing_slope_vs_scatterer_separation.png", width: 70%),
+  img("TLP_071_Gazdag__Δφ_zero-crossing_slope_vs_scatterer_separation.png", width: 70%),
   caption: [Fitted zero-crossing slope of the lateral instantaneous
     phase-difference cross-section, as a function of true scatterer
     displacement, across all seven scales from $2 lambda$ to $1\/32 lambda$
@@ -63,9 +63,9 @@ all six scales. The full sweep is given in @app:sec-instphase-vertical.
 
 #figure(
   subfigs(cols: 2,
-    img("TLP_044_VerticalTimeLapse__Instantaneous_Phase__Gazdag____Baseline_v.png"),
-    img("TLP_045_Phase_cross-section__x__2000_mm____Gazdag____¼λ__Δz__280_mm.png"),
-    img("TLP_046_Phase_cross-section__zoomed__½λ_around_scatterer_depths.png"),
+    img("TLP_078_VerticalTimeLapse__Instantaneous_Phase__Gazdag____Baseline_v.png"),
+    img("TLP_079_Phase_cross-section__x__2000_mm____Gazdag____¼λ__Δz__280_mm.png"),
+    img("TLP_080_Phase_cross-section__zoomed__½λ_around_scatterer_depths.png"),
   ),
   caption: [Instantaneous-phase analysis for the representative
     $#Dz = 1\/4 lambda = 28.0 "mm"$ vertical displacement, Gazdag-migrated:
@@ -75,7 +75,7 @@ all six scales. The full sweep is given in @app:sec-instphase-vertical.
 ) <fig:tlp-instphase-vert-example>
 
 #figure(
-  img("TLP_056_VerticalTimeLapse__Gazdag__Mean_Δφ_vs_scatterer_vertical_shi.png", width: 70%),
+  img("TLP_090_VerticalTimeLapse__Gazdag__Mean_Δφ_vs_scatterer_vertical_shi.png", width: 70%),
   caption: [Mean instantaneous phase difference $#Dphi$ as a function of true
     vertical scatterer shift, across all six scales from $1 lambda$ to
     $1\/32 lambda$ (Gazdag-migrated). Unlike the lateral case
@@ -90,65 +90,47 @@ The localised-Fourier-shift spectral-line equation @eq:local-phase-line is
 verified directly on individual traces using the CLSSA decomposition of
 `phase_decomposition.py`, applied both to the Gazdag-migrated image and to
 the raw, unmigrated B-scan, at the column position containing each scenario's
-scatterer. @fig:tlp-spectral-line-example compares the representative
-$1\/4 lambda$ case in both domains; the full seven-scale sweep for both is
-given in @app:sec-spectral-line.
+scatterer.
 
-#figure(
-  subfigs(cols: 1,
-    img("TLP_060_Spectral_Line_CLSSA____Gazdag____¼λ___Δx__280_mm__02500λ.png"),
-    img("TLP_067_Spectral_Line_CLSSA____Raw_Unmigrated____¼λ___Δx__280_mm__02.png"),
-  ),
-  caption: [CLSSA spectral-line decomposition (amplitude spectrum, phase
-    spectrum, and phase gather, @sec:th-local) at the representative
-    $#Dx = 1\/4 lambda = 28.0 "mm"$ scale: (a) Gazdag-migrated trace; (b) raw,
-    unmigrated trace at the same scenario.],
-) <fig:tlp-spectral-line-example>
-
-#draftnote[state whether the migrated and raw spectral lines in
-@fig:tlp-spectral-line-example give consistent $#Dt$/slope estimates once
-converted with @eq:dt-dz, which would confirm that migration is not required
-for the temporal spectral-line method to work, only for the 2D wavenumber
-plane fit of @sec:th-wls.]
+#draftnote[*Gap:* the representative $1\/4 lambda$ CLSSA comparison
+(Gazdag-migrated vs. raw unmigrated trace) that belongs here, and the full
+seven-scale sweep in @app:sec-spectral-line, no longer exist in
+`TimeLapse_Figures/` under any filename --- `TimeLapse_Processing.ipynb`
+Section 7 and 7b are currently commented out in their entirety. See the gap
+note in @app:sec-spectral-line for the recovery path (re-enable and re-run
+those cells). Once restored, state whether the migrated and raw spectral
+lines give consistent $#Dt$/slope estimates once converted with @eq:dt-dz,
+which would confirm that migration is not required for the temporal
+spectral-line method to work, only for the 2D wavenumber plane fit of
+@sec:th-wls.]
 
 == Cross-Phase Spectrograms <sec:tlp-spectrogram>
 
-@fig:tlp-spectrogram-example shows the cross-phase spectrogram
-$#DPhi (tau, f)$ of @sec:th-local for two contrasting scales: a large, easily
-visible $1\/4 lambda$ displacement and the smallest, $1\/32 lambda$, where the
-coherent window around the scatterer's two-way time becomes much harder to
-distinguish from the incoherent background. The full seven-scale sweep is
-given in @app:sec-spectrogram.
+The cross-phase spectrogram $#DPhi (tau, f)$ of @sec:th-local is examined for
+two contrasting scales: a large, easily visible $1\/4 lambda$ displacement and
+the smallest, $1\/32 lambda$, where the coherent window around the
+scatterer's two-way time becomes much harder to distinguish from the
+incoherent background.
 
-#figure(
-  subfigs(cols: 2,
-    img("TLP_074_Cross-Phase_Spectrogram_CLSSA__ΔΦτf____Gazdag____¼λ.png"),
-    img("TLP_077_Cross-Phase_Spectrogram_CLSSA__ΔΦτf____Gazdag____¹₃₂λ.png"),
-  ),
-  caption: [Cross-phase spectrogram $#DPhi (tau, f)$ (two-way time against
-    frequency) at two contrasting lateral displacement scales,
-    Gazdag-migrated: (a) $#Dx = 1\/4 lambda$; (b) $#Dx = 1\/32 lambda$.],
-) <fig:tlp-spectrogram-example>
+#draftnote[*Gap:* same issue as @sec:tlp-spectral-line above --- this
+comparison, and the full seven-scale sweep in @app:sec-spectrogram, no
+longer exist in `TimeLapse_Figures/` under any filename, because
+`TimeLapse_Processing.ipynb` Section 8 is currently commented out. See the
+gap note in @app:sec-spectrogram for the recovery path.]
 
 == Localised Fourier Shift via Short-Time Fourier Transform <sec:tlp-stft>
 
 Finally, the three-panel localised-STFT decomposition of @eq:local-shift and
 @eq:local-phase-line --- amplitude spectrum $A(tau,f)$, phase spectrum
 $#DPhi (tau,f)$, and phase-angle domain $A(tau, theta)$ --- is applied with a
-Gaussian analysis window. @fig:tlp-stft-example shows two of the seven outputs
-produced by this sweep; the full set is given in @app:sec-stft.
+Gaussian analysis window.
 
-#figure(
-  subfigs(cols: 1,
-    img("TLP_078_Localized_Fourier_Shift_STFT_Gaussian_win12_smp____Gazdag.png"),
-    img("TLP_081_Localized_Fourier_Shift_STFT_Gaussian_win12_smp____Gazdag.png"),
-  ),
-  caption: [Localised-STFT phase decomposition (Gaussian window,
-    Gazdag-migrated) for two of the seven lateral displacement scales:
-    (a) scale 1 of 7; (b) scale 4 of 7.
-    #draftnote[TLP\_078--084 all share an identical auto-generated filename
-    stem and do not encode which $#Dx$ each panel corresponds to --- confirm
-    the scale for each of the seven figures against the
-    `TimeLapse_Processing.ipynb` cell order before finalising these
-    captions.]],
-) <fig:tlp-stft-example>
+#draftnote[*Gap:* same issue again --- the two representative outputs that
+belong here, and the full seven-output sweep in @app:sec-stft, no longer
+exist in `TimeLapse_Figures/` under any filename, because
+`TimeLapse_Processing.ipynb` Section 9 is currently commented out. See the
+gap note in @app:sec-stft for the recovery path -- that note also flags that
+this was already the most uncertain sweep in the appendix even before the
+figures disappeared, since its seven outputs shared an identical
+auto-generated filename stem that did not encode which displacement scale
+each panel corresponded to.]

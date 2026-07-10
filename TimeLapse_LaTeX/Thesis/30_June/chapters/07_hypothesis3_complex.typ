@@ -56,22 +56,71 @@ tapering, f-k_z dip filter, excitation low-pass filter, and edge zeroing.
 
 Kirchhoff and Gazdag migrations are available for all 37 processed profiles
 (profiles 2--38 differenced against profile 1 as the fixed baseline);
-back-propagation is available for 11 profiles (profiles 1--5, 7--10, 13, 16),
-the remainder still pending gprMax forward runs.
+back-propagation is available for 14 profiles (profiles 1--5, 7--10, 13, 16,
+20, 21, 38), the remainder still pending gprMax forward runs.
 
-#draftnote[insert the Kirchhoff and Gazdag migrated images for representative
-profiles here (e.g. one per stage: profs 3, 7, 15, 30), using the saved
-`.npy` files in `TimeLapse_Notebooks/fielddata/output/migrated/` and the
-corresponding difference PNGs in `.../difference_from_ref/`. Add back-prop
-Ez focus-frame images from `.../backprop_snapshots/` for the available 11
-profiles. Check whether the images are already in a `TimeLapse_Figures/`
-subdirectory accessible via `img()`; if not, export them there first.]
+@fig:fd-profile-grid compares five representative profiles (1, 3, 8, 20 and
+38, spanning the four operational stages) across all four representations:
+the processed B-scan, the Kirchhoff-BP migration, the Gazdag migration, and
+the back-propagation $E_z$ focus frame. All three migration techniques agree
+on a single dominant reflector at approximately $70$--$80 "m"$ depth and
+$4$--$8 "m"$ radial distance, which sharpens progressively from profile 1 to
+profile 8 and then remains essentially stationary through profiles 20 and 38
+-- a first visual indication of the push/chase/wait/pull kinematics discussed
+below. The back-propagation column reproduces the same reflector but retains more
+residual energy near the borehole (small radial distance) -- a structural
+injection-halo artefact of single-sided time-reversal from a borehole source
+array, not a pre-processing shortcoming.
+
+#figure(
+  cimg("FD_profile_migration_grid.png"),
+  caption: [Processed B-scans and their migrated / back-propagated
+    counterparts for profiles 1, 3, 8, 20 and 38. Columns: processed B-scan,
+    Kirchhoff-BP migration, Gazdag migration, back-propagation $E_z$ focus
+    frame (offset 28 snapshots from the nominal focus time).],
+) <fig:fd-profile-grid>
 
 === Phase-Plane Displacement Tracking <sec:hyp3-fd-phaseplane>
 
 The cross-spectrum phase-plane estimator of @sec:meth-phaseplane is applied
 to the Gazdag-migrated images, using a fixed ROI of depth $70$--$79 "m"$ and
-radial distance $4.5$--$7.5 "m"$. Three tracking strategies are compared:
+radial distance $4.5$--$7.5 "m"$. @fig:fd-stage-push to @fig:fd-stage-pull show,
+for each of the four operational stages, the raw ingredients that feed this
+estimator -- the time-lapse difference image and its monogenic envelope,
+with the ROI overlaid -- computed independently for all three migration
+techniques (Kirchhoff-BP, Gazdag, back-propagation). The envelope highlights
+a single coherent patch inside the ROI in every stage and every technique,
+confirming that the ROI is well-placed and that the "single dominant
+displacement" assumption behind the phase-plane fit (@sec:meth-phaseplane)
+holds throughout the experiment; the patch is largest and best-defined during
+Push and shrinks progressively through Chase, Wait and Pull, mirroring the
+weakening signal expected as the fluid front decelerates.
+
+#figure(
+  cimg("FD_stage_diff_envelope_pushing.png"),
+  caption: [Push stage (profiles 1→4): time-lapse difference and monogenic
+    envelope, ROI overlaid, for Kirchhoff-BP, Gazdag and back-propagation.],
+) <fig:fd-stage-push>
+
+#figure(
+  cimg("FD_stage_diff_envelope_chasing.png"),
+  caption: [Chase stage (profiles 5→9): time-lapse difference and monogenic
+    envelope, ROI overlaid, for Kirchhoff-BP, Gazdag and back-propagation.],
+) <fig:fd-stage-chase>
+
+#figure(
+  cimg("FD_stage_diff_envelope_waiting.png"),
+  caption: [Wait stage (profiles 10→20): time-lapse difference and monogenic
+    envelope, ROI overlaid, for Kirchhoff-BP, Gazdag and back-propagation.],
+) <fig:fd-stage-wait>
+
+#figure(
+  cimg("FD_stage_diff_envelope_pulling.png"),
+  caption: [Pull stage (profiles 21→38): time-lapse difference and monogenic
+    envelope, ROI overlaid, for Kirchhoff-BP, Gazdag and back-propagation.],
+) <fig:fd-stage-pull>
+
+Three tracking strategies are then compared:
 
 / Strategy 1 (consecutive): each profile pair $(n, n+1)$ is fit independently;
   the cumulative trajectory is the running sum of the incremental estimates.
@@ -124,14 +173,61 @@ is near-zero (as expected for paused injection), and the Pull stage partially
 reverses the Push but leaves a net residual of $#Dz approx +0.94 "m"$,
 $#Dx approx -0.18 "m"$ at profile 38 relative to profile 1.
 
+@fig:fd-disp-kirchhoff to @fig:fd-disp-backprop cross-check this result across
+migration techniques: the same WLS cross-spectrum phase-plane fit
+(@sec:meth-phaseplane), applied to the *same* four direct stage-boundary
+pairs (1→4, 5→9, 10→20, 21→38) and the *same* ROI, is shown for Kirchhoff-BP,
+Gazdag and back-propagation side by side, with the full five-panel
+diagnostic (cross-spectrum phase, cross-spectrum energy with the WLS
+amplitude-threshold contour, the fitted plane, and the 1-D $#kz$ and $#kx$
+slices with their fits) for every stage. Unlike @tab:fielddata-stages --
+which uses Strategy 3's intra-stage chaining with a stage-local reference --
+these figures fit each stage-boundary pair directly, so the two sets of
+numbers are not directly comparable; they are a consistency check on
+*direction and relative magnitude*, not a replacement for the table.
+Kirchhoff-BP and Gazdag agree closely on both the sign and the relative size
+of the estimate in every stage (largest during Push, near-zero during Wait),
+which is expected since both operate on the same underlying B-scan data.
+Back-propagation's estimates are noticeably noisier -- visible in the more
+scattered 1-D slices -- and disagree with Kirchhoff/Gazdag on the sign of
+$#Dz$; this is addressed as an open question in @sec:hyp3-fd-interpretation.
+
+#figure(
+  cimg("FD_displacement_diagnostics_kirchhoff_bp.png"),
+  caption: [Kirchhoff-BP: WLS cross-spectrum phase-plane diagnostics for the
+    four stage-boundary pairs (rows) -- cross-spectrum phase, cross-spectrum
+    energy with WLS threshold contour, fitted plane, 1-D $#kz$ slice, 1-D
+    $#kx$ slice (columns).],
+) <fig:fd-disp-kirchhoff>
+
+#figure(
+  cimg("FD_displacement_diagnostics_gazdag.png"),
+  caption: [Gazdag: WLS cross-spectrum phase-plane diagnostics for the four
+    stage-boundary pairs (rows), same panel layout as @fig:fd-disp-kirchhoff.],
+) <fig:fd-disp-gazdag>
+
+#figure(
+  cimg("FD_displacement_diagnostics_backprop.png"),
+  caption: [Back-propagation: WLS cross-spectrum phase-plane diagnostics for
+    the four stage-boundary pairs (rows), same panel layout as
+    @fig:fd-disp-kirchhoff.],
+) <fig:fd-disp-backprop>
+
 === Interpretation <sec:hyp3-fd-interpretation>
 
 #draftnote[fill in the physical interpretation once the borehole geometry,
 injection depth, and fluid-injection parameters are confirmed from the field
 survey metadata. Key questions to address: (1) do the inferred $#Dz$ and $#Dx$
 values agree with the known injection depth and the expected lateral spread for
-the given fracture geometry? (2) does the back-prop phase-plane result
-(available for 11 profiles) agree with the Gazdag result, as expected from the
-noise-robustness comparison of @ch:hyp2, and which estimate is more reliable
-given the field noise level? (3) does the synthetic fluid-front
-experiment? State these explicitly once the field context is available.]
+the given fracture geometry? (2) @fig:fd-disp-backprop shows back-propagation
+disagreeing with Kirchhoff/Gazdag (@fig:fd-disp-kirchhoff, @fig:fd-disp-gazdag)
+on the sign of $#Dz$, despite all three sharing the same ROI and stage pairs
+-- is this a genuine sign-convention difference between the two coordinate
+systems (the back-propagation depth axis runs in the opposite direction to
+the Kirchhoff/Gazdag depth array; @fig:fd-stage-push to @fig:fd-stage-pull show
+the same reflector location in both, so the ROI itself is not the issue), a
+consequence of back-propagation's lower SNR (14 profiles vs. 37, and visibly
+noisier 1-D slices), or evidence that the phase-plane fit is less reliable on
+this technique in the field, consistent with @ch:hyp2? (3) does the field
+result agree with the synthetic fluid-front experiment? State these
+explicitly once the field context is available.]

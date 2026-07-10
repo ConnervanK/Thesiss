@@ -90,8 +90,8 @@ The same tapering and $t_0$-shift conditioning as @sec:meth-resolution
 
 #figure(
   subfigs(cols: 1,
-    img("TL_006_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png"),
-    img("TL_007_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png"),
+    img("TL_008_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png"),
+    img("TL_009_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png"),
   ),
   caption: [Effect of tapering and the $t_0$ shift on the $2 lambda$ lateral
     displacement dataset: (a) a single trace; (b) the full B-scan.],
@@ -111,13 +111,13 @@ point-spread function of that difference at the true scatterer depth, as a
 function of displacement.
 
 #figure(
-  img("TL_022_TimeLapse_Migration_Comparison__Signed_Amplitude____f_c15_GH.png"),
+  img("TL_024_TimeLapse_Migration_Comparison__Signed_Amplitude____f_c15_GH.png"),
   caption: [Signed time-lapse-difference amplitude for all three migration
     algorithms at $f_c = 1.5 "GHz"$.],
 ) <fig:tl-summary-amp>
 
 #figure(
-  img("TL_023_Normalised_Lateral_PSF__TimeLapse_Difference_at_True_Scatter.png"),
+  img("TL_025_Normalised_Lateral_PSF__TimeLapse_Difference_at_True_Scatter.png"),
   caption: [Normalised lateral PSF of the time-lapse-difference image at the
     true scatterer depth, swept across lateral displacements from $2 lambda$
     to $1 \/ 32 lambda$.],
@@ -196,8 +196,8 @@ tapering and $t_0$-shift conditioning on the $1 lambda$ dataset.
 
 #figure(
   subfigs(cols: 1,
-    img("VTL_005_Effect_of_Tapering_and_t0_Shift__1λ_dataset_single_trace.png"),
-    img("VTL_006_B-scan_effect_of_tapering_and_t0_shift__1λ_dataset.png"),
+    img("VTL_007_Effect_of_Tapering_and_t0_Shift__1λ_dataset_single_trace.png"),
+    img("VTL_008_B-scan_effect_of_tapering_and_t0_shift__1λ_dataset.png"),
   ),
   caption: [Effect of tapering and the $t_0$ shift on the $1 lambda$ vertical
     displacement dataset: (a) a single trace; (b) the full B-scan.],
@@ -217,13 +217,13 @@ _vertical_ point-spread function of that difference at $x = 2.0 "m"$, as a
 function of vertical displacement.
 
 #figure(
-  img("VTL_021_Vertical_TimeLapse_Migration_Comparison__Signed_Amplitude.png"),
+  img("VTL_023_Vertical_TimeLapse_Migration_Comparison__Signed_Amplitude.png"),
   caption: [Signed time-lapse-difference amplitude for all three migration
     algorithms.],
 ) <fig:vtl-summary-amp>
 
 #figure(
-  img("VTL_022_Normalised_Vertical_PSF__TimeLapse_Difference_at_x__20_m.png", width: 55%),
+  img("VTL_024_Normalised_Vertical_PSF__TimeLapse_Difference_at_x__20_m.png", width: 55%),
   caption: [Normalised vertical PSF of the time-lapse-difference image at
     $x = 2.0 "m"$, swept across vertical displacements from $1 lambda$ to
     $1 \/ 32 lambda$.],
@@ -413,9 +413,9 @@ now $#Dz$ rather than $#Dx$.
 
 #figure(
   subfigs(cols: 2,
-    img("TLP_010_VerticalTimeLapse__Phase-plane_shift_estimation__Kirchhoff.png"),
-    img("TLP_011_VerticalTimeLapse__Phase-plane_shift_estimation__Gazdag____B.png"),
-    img("TLP_012_VerticalTimeLapse__Phase-plane_shift_estimation__Back-prop.png"),
+    img("TLP_011_VerticalTimeLapse__Phase-plane_shift_estimation__Kirchhoff.png"),
+    img("TLP_012_VerticalTimeLapse__Phase-plane_shift_estimation__Gazdag____B.png"),
+    img("TLP_013_VerticalTimeLapse__Phase-plane_shift_estimation__Back-prop.png"),
   ),
   caption: [2D phase-plane shift estimation applied to the
     baseline-versus-each-scenario pairs of @sec:hyp1-vertical, for all three

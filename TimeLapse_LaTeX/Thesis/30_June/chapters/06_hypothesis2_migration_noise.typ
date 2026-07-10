@@ -133,8 +133,8 @@ migration and differencing analysis of @sec:hyp1-lateral on this noisy data.
 
 #figure(
   subfigs(cols: 1,
-    img("TL_025_Kirchhoff_Migration_-_Noisy_zoomed____f_c15_GHz____aperture4.png"),
-    img("TL_027_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_zoomed.png"),
+    img("TL_027_Kirchhoff_Migration__All_8_Noisy_Datasets____f_c15_GHz____ap.png"),
+    img("TL_029_Kirchhoff_Migration__Noisy_TimeLapse_Differences_migrated__m.png"),
   ),
   caption: [Kirchhoff migration of the _noisy_ lateral time-lapse data
     ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterers:
@@ -143,8 +143,8 @@ migration and differencing analysis of @sec:hyp1-lateral on this noisy data.
 
 #figure(
   subfigs(cols: 1,
-    img("TL_029_Gazdag_Phase-Shift_Migration_-_Noisy_zoomed____f_c15_GHz.png"),
-    img("TL_031_Gazdag_Migration_-_Noisy_TimeLapse_Differences_zoomed.png"),
+    img("TL_031_Gazdag_Phase-Shift_Migration__Noisy_zoomed____f_c15_GHz.png"),
+    img("TL_033_Gazdag_Migration__Noisy_TimeLapse_Differences_zoomed.png"),
   ),
   caption: [Gazdag phase-shift migration of the _noisy_ lateral time-lapse
     data ($f_c = 1.5 "GHz"$), zoomed around the scatterers: (a) migrated
@@ -156,27 +156,35 @@ the clean-data results of @fig:tl-kirchhoff and @fig:tl-gazdag and state at
 which displacement scale the additive noise first prevents the time-lapse
 difference from being distinguished from background clutter.]
 
-The same noisy lateral dataset is also carried through the phase-plane
-estimator of @sec:meth-phaseplane (@fig:tlp-noise), for the two migration
-methods available on this noisy dataset.
+The same noisy lateral dataset is also carried through a shift estimator in
+`TimeLapse_Processing.ipynb`, for Kirchhoff only (@fig:tlp-noise); Gazdag is
+excluded from this particular test because Gazdag phase-shift migration of
+this noisy dataset produces a structural migration artefact that defeats
+shift estimation (see the notebook's Section 2b/2c notes), not because it was
+skipped for convenience.
 
 #figure(
-  subfigs(cols: 2,
-    img("TLP_008_NoisyTimeLapse__Phase-plane_shift_estimation__Kirchhoff____B.png"),
-    img("TLP_009_NoisyTimeLapse__Phase-plane_shift_estimation__Gazdag____Base.png"),
-  ),
-  caption: [2D phase-plane shift estimation applied to the _noisy_
-    lateral-displacement dataset: (a) Kirchhoff; (b) Gazdag.],
+  img("TLP_010_NoisyTimeLapse__Robust_shift_estimation_GCC__lstsq_fallback.png", width: 90%),
+  caption: [Robust shift estimation (GCC peak search with a phase-plane
+    least-squares fallback) applied to the _noisy_ lateral-displacement
+    dataset, Kirchhoff-migrated: baseline vs. each scenario, with the
+    per-scenario difference image, cross-spectrum phase and energy, and the
+    recovered vs. true $(#Dz, #Dx)$.],
 ) <fig:tlp-noise>
 
-#draftnote[quantify, for both methods, how much the additive Laplace noise
-degrades the estimated $#Dx$ relative to the clean result of
+#draftnote[quantify how much the additive Laplace noise degrades the
+estimated $#Dx$ relative to the clean Kirchhoff result of
 @fig:tlp-horiz-validation, and relate this to the amplitude-weighting
-argument of @sec:th-mask-weight --- this figure pair is currently the _only_
-direct evidence available anywhere in this thesis for the phase-plane
-estimator's noise resilience; everything in @sec:hyp3-vertical and
-@sec:hyp3-diagonal below is, for now, amplitude-level only (see
-@sec:hyp3-gaps).]
+argument of @sec:th-mask-weight. Note this is a GCC-peak-search-with-lstsq-fallback
+estimator (`estimate_shift_2d_cleaning`), not the plain WLS phase-plane fit
+used elsewhere in this thesis --- state explicitly why the plain fit needed
+this more robust replacement for the noisy case, or re-run the plain fit here
+if that is a fairer comparison to @fig:tlp-horiz-validation. This figure is
+currently the _only_ direct evidence available anywhere in this thesis for
+Kirchhoff's noisy-lateral shift-estimation performance, and there is no
+Gazdag or back-propagation counterpart for the lateral case specifically;
+everything in @sec:hyp3-vertical and @sec:hyp3-diagonal below is, for now,
+amplitude-level only (see @sec:hyp3-gaps).]
 
 == Noisy Vertical Movement <sec:hyp3-vertical>
 
