@@ -381,52 +381,56 @@ interpretation questions raised in @sec:hyp3-fd-interpretation?]
 
 == Outstanding Quantitative Work <sec:hyp3-gaps>
 
-This chapter now demonstrates noise robustness at the level of migrated
-_images_ and the phase-plane estimator for all three point-scatterer
-translation directions (lateral, vertical, diagonal) and, at the
-cross-spectrum level, for the fluid-flow study. To fully support Hypothesis
-2, the following quantitative work remains:
+#draftnote[Placeholder]
 
-+ Run the plain 2D WLS phase-plane fit (rather than the GCC-peak-search
-  fallback of @fig:tlp-noise) on the noisy lateral dataset, and extend it to
-  Gazdag and back-propagation, so that the lateral case has the same
-  three-method phase-plane coverage now available for vertical and diagonal
-  (@fig:vtl-noisy-phaseplane, @fig:dtl-noisy-phaseplane).
+// This chapter now demonstrates noise robustness at the level of migrated
+// _images_ and the phase-plane estimator for all three point-scatterer
+// translation directions (lateral, vertical, diagonal) and, at the
+// cross-spectrum level, for the fluid-flow study. To fully support Hypothesis
+// 2, the following quantitative work remains:
 
-+ Run a proper 2D WLS phase-plane fit for the fluid-flow front (rather than
-  the cross-spectrum displacement estimate of @fig:ff-noisy-phaseplane), and
-  add the clean-data fluid-flow subsection flagged in @sec:hyp3-fluidflow.
+// + Run the plain 2D WLS phase-plane fit (rather than the GCC-peak-search
+//   fallback of @fig:tlp-noise) on the noisy lateral dataset, and extend it to
+//   Gazdag and back-propagation, so that the lateral case has the same
+//   three-method phase-plane coverage now available for vertical and diagonal
+//   (@fig:vtl-noisy-phaseplane, @fig:dtl-noisy-phaseplane).
 
-+ Quantitatively compare sign-bit versus peak-normalised back-propagation on
-  pure noise (@sec:hyp3-purenoise), using the completed gprMax output already
-  sitting in `noise_study/backprop/`.
+// + Run a proper 2D WLS phase-plane fit for the fluid-flow front (rather than
+//   the cross-spectrum displacement estimate of @fig:ff-noisy-phaseplane), and
+//   add the clean-data fluid-flow subsection flagged in @sec:hyp3-fluidflow.
 
-+ A controlled SNR sweep from $+30 "dB"$ to $-10 "dB"$ comparing ordinary
-  least squares against the WLS estimator.
+// + Quantitatively compare sign-bit versus peak-normalised back-propagation on
+//   pure noise (@sec:hyp3-purenoise), using the completed gprMax output already
+//   sitting in `noise_study/backprop/`.
 
-+ A $20 times 20$ grid sweep of true $(#Dt, #Dtheta)$ pairs, reported as a
-  2D inversion-error heatmap.
+// + A controlled SNR sweep from $+30 "dB"$ to $-10 "dB"$ comparing ordinary
+//   least squares against the WLS estimator.
 
-+ Resolve the colour-scale and "N/A"-column anomalies flagged in
-  @sec:hyp3-lateral for the migration-comparison figures.
+// + A $20 times 20$ grid sweep of true $(#Dt, #Dtheta)$ pairs, reported as a
+//   2D inversion-error heatmap.
+
+// + Resolve the colour-scale and "N/A"-column anomalies flagged in
+//   @sec:hyp3-lateral for the migration-comparison figures.
 
 == Conclusion: Back-Propagation as the Preferred Method <sec:hyp2-conclusion>
 
-The experiments in this chapter support Hypothesis 2: back-propagation with
-sign-bit time-reversal is the most suitable migration technique for
-noise-robust time-lapse phase-plane tracking.
+#draftnote[Placeholder]
 
-Kirchhoff's coherence-manufacturing behaviour (@sec:hyp3-purenoise) creates
-scatterer-like artefacts from pure noise, raising false-positive risk.
-Gazdag stays incoherent but adds significant speckle. Back-propagation with
-sign-bit time-reversal suppresses impulsive noise by reducing every noise
-spike to the same $plus.minus 1$ amplitude as the coherent signal, preserving
-phase information while stripping the amplitude-based false-positive risk
-that would otherwise allow noise spikes to act as competing point sources
-during back-propagation. The fluid-flow study of @sec:hyp3-fluidflow further
-suggests this recommendation is not specific to discrete point scatterers:
-the same three-way pattern (Kirchhoff/Gazdag amplitude collapse versus
-back-propagation's noisier but present focus) reappears for a graded,
-spatially-extended wetting-zone target, directly relevant to the borehole
-fluid-injection geometry of @ch:hyp3. This recommendation is used for the
-real field data in @ch:hyp3.
+// The experiments in this chapter support Hypothesis 2: back-propagation with
+// sign-bit time-reversal is the most suitable migration technique for
+// noise-robust time-lapse phase-plane tracking.
+
+// Kirchhoff's coherence-manufacturing behaviour (@sec:hyp3-purenoise) creates
+// scatterer-like artefacts from pure noise, raising false-positive risk.
+// Gazdag stays incoherent but adds significant speckle. Back-propagation with
+// sign-bit time-reversal suppresses impulsive noise by reducing every noise
+// spike to the same $plus.minus 1$ amplitude as the coherent signal, preserving
+// phase information while stripping the amplitude-based false-positive risk
+// that would otherwise allow noise spikes to act as competing point sources
+// during back-propagation. The fluid-flow study of @sec:hyp3-fluidflow further
+// suggests this recommendation is not specific to discrete point scatterers:
+// the same three-way pattern (Kirchhoff/Gazdag amplitude collapse versus
+// back-propagation's noisier but present focus) reappears for a graded,
+// spatially-extended wetting-zone target, directly relevant to the borehole
+// fluid-injection geometry of @ch:hyp3. This recommendation is used for the
+// real field data in @ch:hyp3.

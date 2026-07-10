@@ -5,32 +5,34 @@
 #draftnote[this chapter is a placeholder skeleton. Expand with a precise
 statement of the research questions before submission.]
 
-Ground-penetrating radar (GPR) images subsurface structure by emitting a
-short electromagnetic pulse and recording its reflections from dielectric
-contrasts in the ground. The achievable image resolution is fundamentally
-limited by the wavelength of the probing pulse: two reflectors closer than
-roughly half a wavelength apart, or a single reflector that moves by a small
-fraction of a wavelength between two surveys, cannot be distinguished from
-the migrated _amplitude_ image alone (@sec:meth-resolution). This
-is a practical obstacle for time-lapse monitoring applications --- tracking
-millimetre-scale ground movement, or the advance of a fluid front through a
-sub-wavelength fracture --- where the displacement or material change of
-interest is, by construction, far smaller than the wavelength of the radar
-pulse used to image it.
+#draftnote[Placeholder]
 
-This thesis develops and validates a _phase_-based alternative: rather
-than reading displacement off the migrated amplitude image, a baseline and a
-monitor survey are migrated and compared in the two-dimensional Fourier
-domain, where the Fourier shift theorem turns any sub-wavelength translation
-into a fully resolvable linear phase ramp (@ch:theory). A weighted
-least-squares fit of this phase plane recovers the displacement with
-sub-millimetre precision, and --- critically --- separates a purely
-geometric shift from a phase rotation caused by a change in the dielectric
-properties of the target itself, which is the signature of, for example, a
-fracture filling with water. Where the back-propagation migration algorithm
-is used, the method is further combined with _sign-bit time-reversal_,
-a noise-robust excitation scheme that keeps the algorithm usable even when
-the data are heavily corrupted by noise.
+// Ground-penetrating radar (GPR) images subsurface structure by emitting a
+// short electromagnetic pulse and recording its reflections from dielectric
+// contrasts in the ground. The achievable image resolution is fundamentally
+// limited by the wavelength of the probing pulse: two reflectors closer than
+// roughly half a wavelength apart, or a single reflector that moves by a small
+// fraction of a wavelength between two surveys, cannot be distinguished from
+// the migrated _amplitude_ image alone (@sec:meth-resolution). This
+// is a practical obstacle for time-lapse monitoring applications --- tracking
+// millimetre-scale ground movement, or the advance of a fluid front through a
+// sub-wavelength fracture --- where the displacement or material change of
+// interest is, by construction, far smaller than the wavelength of the radar
+// pulse used to image it.
+
+// This thesis develops and validates a _phase_-based alternative: rather
+// than reading displacement off the migrated amplitude image, a baseline and a
+// monitor survey are migrated and compared in the two-dimensional Fourier
+// domain, where the Fourier shift theorem turns any sub-wavelength translation
+// into a fully resolvable linear phase ramp (@ch:theory). A weighted
+// least-squares fit of this phase plane recovers the displacement with
+// sub-millimetre precision, and --- critically --- separates a purely
+// geometric shift from a phase rotation caused by a change in the dielectric
+// properties of the target itself, which is the signature of, for example, a
+// fracture filling with water. Where the back-propagation migration algorithm
+// is used, the method is further combined with _sign-bit time-reversal_,
+// a noise-robust excitation scheme that keeps the algorithm usable even when
+// the data are heavily corrupted by noise.
 
 == Research Question
 

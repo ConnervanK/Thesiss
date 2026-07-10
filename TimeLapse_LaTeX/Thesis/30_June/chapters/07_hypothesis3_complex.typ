@@ -215,19 +215,21 @@ $#Dz$; this is addressed as an open question in @sec:hyp3-fd-interpretation.
 
 === Interpretation <sec:hyp3-fd-interpretation>
 
-#draftnote[fill in the physical interpretation once the borehole geometry,
-injection depth, and fluid-injection parameters are confirmed from the field
-survey metadata. Key questions to address: (1) do the inferred $#Dz$ and $#Dx$
-values agree with the known injection depth and the expected lateral spread for
-the given fracture geometry? (2) @fig:fd-disp-backprop shows back-propagation
-disagreeing with Kirchhoff/Gazdag (@fig:fd-disp-kirchhoff, @fig:fd-disp-gazdag)
-on the sign of $#Dz$, despite all three sharing the same ROI and stage pairs
--- is this a genuine sign-convention difference between the two coordinate
-systems (the back-propagation depth axis runs in the opposite direction to
-the Kirchhoff/Gazdag depth array; @fig:fd-stage-push to @fig:fd-stage-pull show
-the same reflector location in both, so the ROI itself is not the issue), a
-consequence of back-propagation's lower SNR (14 profiles vs. 37, and visibly
-noisier 1-D slices), or evidence that the phase-plane fit is less reliable on
-this technique in the field, consistent with @ch:hyp2? (3) does the field
-result agree with the synthetic fluid-front experiment? State these
-explicitly once the field context is available.]
+#draftnote[Placeholder]
+
+// #draftnote[fill in the physical interpretation once the borehole geometry,
+// injection depth, and fluid-injection parameters are confirmed from the field
+// survey metadata. Key questions to address: (1) do the inferred $#Dz$ and $#Dx$
+// values agree with the known injection depth and the expected lateral spread for
+// the given fracture geometry? (2) @fig:fd-disp-backprop shows back-propagation
+// disagreeing with Kirchhoff/Gazdag (@fig:fd-disp-kirchhoff, @fig:fd-disp-gazdag)
+// on the sign of $#Dz$, despite all three sharing the same ROI and stage pairs
+// -- is this a genuine sign-convention difference between the two coordinate
+// systems (the back-propagation depth axis runs in the opposite direction to
+// the Kirchhoff/Gazdag depth array; @fig:fd-stage-push to @fig:fd-stage-pull show
+// the same reflector location in both, so the ROI itself is not the issue), a
+// consequence of back-propagation's lower SNR (14 profiles vs. 37, and visibly
+// noisier 1-D slices), or evidence that the phase-plane fit is less reliable on
+// this technique in the field, consistent with @ch:hyp2? (3) does the field
+// result agree with the synthetic fluid-front experiment? State these
+// explicitly once the field context is available.]

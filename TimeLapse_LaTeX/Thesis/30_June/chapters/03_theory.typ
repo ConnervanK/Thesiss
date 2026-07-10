@@ -12,70 +12,78 @@ pipeline and closes with a validation of the amplitude-based resolution floor
 
 == GPR Migration Fundamentals <sec:th-migration>
 
-All data in this thesis are zero-offset (collocated transmitter/receiver)
-B-scans, which makes the _exploding-reflector model_ applicable
-@claerbout1985: every reflector in the subsurface is treated as if it
-were an active source that radiates a pulse upward at $t=0$, recorded by
-receivers at the surface. Because the real two-way travel time corresponds to
-a wave travelling down and back up once, this fictitious one-way exploding
-source must propagate at half the true medium velocity,
-$ #vmig = v / 2 , $ <eq:vmig>
-so that the one-way travel time in the exploding-reflector model exactly
-matches the two-way travel time of the real survey. Every migration algorithm
-used in this thesis operates under this convention.
+#draftnote[Placeholder]
+
+// All data in this thesis are zero-offset (collocated transmitter/receiver)
+// B-scans, which makes the _exploding-reflector model_ applicable
+// @claerbout1985: every reflector in the subsurface is treated as if it
+// were an active source that radiates a pulse upward at $t=0$, recorded by
+// receivers at the surface. Because the real two-way travel time corresponds to
+// a wave travelling down and back up once, this fictitious one-way exploding
+// source must propagate at half the true medium velocity,
+// $ #vmig = v / 2 , $ <eq:vmig>
+// so that the one-way travel time in the exploding-reflector model exactly
+// matches the two-way travel time of the real survey. Every migration algorithm
+// used in this thesis operates under this convention.
 
 === Kirchhoff (Delay-and-Sum) Migration
 
-Kirchhoff migration is formulated as a linear forward operator $K$ mapping a
-reflectivity model $m(z,x)$ to recorded data $d(t,x)$ by summing the
-reflectivity along the travel-time hyperbola of every trace,
-$
-  t(x, x_s, z) = r / #vmig + t_0 , quad r = sqrt(z^2 + (x - x_s)^2) ,
-$ <eq:kirchhoff-traveltime>
-where $x_s$ is the source/receiver position and $t_0$ a static time-zero
-correction. Migration is the adjoint operation: every recorded sample is
-smeared back (_delay-and-sum_) along its hyperbola of possible
-origins, and the image is the sum over all traces,
-$ m_"mig" = K^upright(T) d . $ <eq:kirchhoff-adjoint>
-This thesis uses the PyLops zero-offset Kirchhoff operator with an
-analytic-signal Ricker wavelet matched to the source, evaluated with a finite
-migration aperture @schneider1978.
+#draftnote[Placeholder]
+
+// Kirchhoff migration is formulated as a linear forward operator $K$ mapping a
+// reflectivity model $m(z,x)$ to recorded data $d(t,x)$ by summing the
+// reflectivity along the travel-time hyperbola of every trace,
+// $
+//   t(x, x_s, z) = r / #vmig + t_0 , quad r = sqrt(z^2 + (x - x_s)^2) ,
+// $ <eq:kirchhoff-traveltime>
+// where $x_s$ is the source/receiver position and $t_0$ a static time-zero
+// correction. Migration is the adjoint operation: every recorded sample is
+// smeared back (_delay-and-sum_) along its hyperbola of possible
+// origins, and the image is the sum over all traces,
+// $ m_"mig" = K^upright(T) d . $ <eq:kirchhoff-adjoint>
+// This thesis uses the PyLops zero-offset Kirchhoff operator with an
+// analytic-signal Ricker wavelet matched to the source, evaluated with a finite
+// migration aperture @schneider1978.
 
 === Gazdag Phase-Shift Migration
 
-Gazdag migration works entirely in the frequency--wavenumber ($f$-$#kx$)
-domain @gazdag1978. The recorded wavefield is downward-continued one
-depth step $delta z$ at a time by multiplying its 2D temporal-frequency /
-horizontal-wavenumber spectrum by a phase-shift operator,
-$
-  U(z + delta z, #kx, omega) = U(z, #kx, omega) e^(j #kz delta z) , quad
-  #kz = sqrt((omega / #vmig)^2 - #kx^2) ,
-$ <eq:gazdag>
-and the image is built by applying the imaging condition --- extracting the
-$t=0$ component of the continued field --- at every depth step. Bins for
-which the argument of the square root in @eq:gazdag is negative
-correspond to evanescent energy and are set to zero before continuation;
-otherwise the unstable exponential growth of an imaginary $#kz$ produces
-migration "smile" artefacts. This thesis pads each B-scan with a $5\%$
-cosine taper and $100\%$ zero-padding in $x$ before transforming, to
-suppress wrap-around.
+#draftnote[Placeholder]
+
+// Gazdag migration works entirely in the frequency--wavenumber ($f$-$#kx$)
+// domain @gazdag1978. The recorded wavefield is downward-continued one
+// depth step $delta z$ at a time by multiplying its 2D temporal-frequency /
+// horizontal-wavenumber spectrum by a phase-shift operator,
+// $
+//   U(z + delta z, #kx, omega) = U(z, #kx, omega) e^(j #kz delta z) , quad
+//   #kz = sqrt((omega / #vmig)^2 - #kx^2) ,
+// $ <eq:gazdag>
+// and the image is built by applying the imaging condition --- extracting the
+// $t=0$ component of the continued field --- at every depth step. Bins for
+// which the argument of the square root in @eq:gazdag is negative
+// correspond to evanescent energy and are set to zero before continuation;
+// otherwise the unstable exponential growth of an imaginary $#kz$ produces
+// migration "smile" artefacts. This thesis pads each B-scan with a $5\%$
+// cosine taper and $100\%$ zero-padding in $x$ before transforming, to
+// suppress wrap-around.
 
 === Back-Propagation (Time-Reversal) Migration
 
-As an independent, purely numerical cross-check of the two analytic methods
-above, every B-scan is also migrated by literal time-reversal: each trace is
-reversed in time, normalised, and re-injected as a source at its original
-receiver position into a finite-difference time-domain (gprMax) model of a
-homogeneous medium at $#vmig$. By the time-reversal symmetry of the wave
-equation, the back-propagated field refocuses at the true scatterer location
-at the focusing time
-$ t_"focus" = T - t_0 , $ <eq:backprop-focus>
-where $T$ is the trace length. The migrated image is read off as the field
-snapshot at $t_"focus"$, either as the full electric-field magnitude
-$||bold(E)||$ or as the single polarised component $E_z$. Unlike
-Kirchhoff and Gazdag migration, this method makes no high-frequency or
-zero-offset approximation beyond the exploding-reflector velocity halving
-itself, which makes it a useful independent check on the other two.
+#draftnote[Placeholder]
+
+// As an independent, purely numerical cross-check of the two analytic methods
+// above, every B-scan is also migrated by literal time-reversal: each trace is
+// reversed in time, normalised, and re-injected as a source at its original
+// receiver position into a finite-difference time-domain (gprMax) model of a
+// homogeneous medium at $#vmig$. By the time-reversal symmetry of the wave
+// equation, the back-propagated field refocuses at the true scatterer location
+// at the focusing time
+// $ t_"focus" = T - t_0 , $ <eq:backprop-focus>
+// where $T$ is the trace length. The migrated image is read off as the field
+// snapshot at $t_"focus"$, either as the full electric-field magnitude
+// $||bold(E)||$ or as the single polarised component $E_z$. Unlike
+// Kirchhoff and Gazdag migration, this method makes no high-frequency or
+// zero-offset approximation beyond the exploding-reflector velocity halving
+// itself, which makes it a useful independent check on the other two.
 
 == Space-Wavenumber Duality: Lateral versus Vertical Asymmetry <sec:th-duality>
 
@@ -356,14 +364,16 @@ used to test any of the hypotheses.
 
 === Forward Modelling with gprMax
 
-All B-scans are simulated with the open-source finite-difference time-domain
-solver gprMax @gprmax. The source is a Ricker wavelet with centre frequency
-$f_c = 1.5 "GHz"$ and time-zero offset $t_0 = 0.943 "ns"$ (@fig:res-setup
-(a)), chosen so that its usable bandwidth defines the dominant wavelength
-$lambda$ used to express every displacement scale in this thesis ($2 lambda$
-down to $1 \/ 32 lambda$). The computational domain is discretised on a
-uniform $1 "mm"$ grid with perfectly-matched-layer (PML) absorbing
-boundaries.
+// All B-scans are simulated with the open-source finite-difference time-domain
+// solver gprMax @gprmax. The source is a Ricker wavelet with centre frequency
+// $f_c = 1.5 "GHz"$ and time-zero offset $t_0 = 0.943 "ns"$ (@fig:res-setup
+// (a)), chosen so that its usable bandwidth defines the dominant wavelength
+// $lambda$ used to express every displacement scale in this thesis ($2 lambda$
+// down to $1 \/ 32 lambda$). The computational domain is discretised on a
+// uniform $1 "mm"$ grid with perfectly-matched-layer (PML) absorbing
+// boundaries.
+
+#draftnote[Placeholder]
 
 #draftnote[the figure titles encode the domain extent as "4010 m"; the same
 auto-titling code elsewhere strips decimal points from floats (e.g. a depth of
@@ -371,49 +381,55 @@ auto-titling code elsewhere strips decimal points from floats (e.g. a depth of
 this almost certainly reads as a domain of ≈4.01 m rather than 4010 m ---
 confirm against the notebook before quoting a final value.]
 
-A zero-offset (collocated transmitter and receiver) survey is simulated by
-sweeping a single transmitter--receiver pair across the surface.
+// A zero-offset (collocated transmitter and receiver) survey is simulated by
+// sweeping a single transmitter--receiver pair across the surface.
 
 === Scatterer and Medium Models
 
-One target geometry is used across the synthetic experiments:
+#draftnote[Placeholder]
 
-- *Point scatterers* (@sec:meth-resolution, @ch:hyp1): perfect-electric-conductor
-  (PEC) cylinders of radius $r = 28 "mm"$, buried at a depth of $0.676 "m"$
-  in ice. @sec:meth-resolution places two such cylinders at a swept
-  separation; @ch:hyp1 instead holds one cylinder fixed as a baseline and
-  displaces a second, in the lateral, vertical, or diagonal direction, by
-  the same family of sub-wavelength steps.
+// One target geometry is used across the synthetic experiments:
+
+// - *Point scatterers* (@sec:meth-resolution, @ch:hyp1): perfect-electric-conductor
+//   (PEC) cylinders of radius $r = 28 "mm"$, buried at a depth of $0.676 "m"$
+//   in ice. @sec:meth-resolution places two such cylinders at a swept
+//   separation; @ch:hyp1 instead holds one cylinder fixed as a baseline and
+//   displaces a second, in the lateral, vertical, or diagonal direction, by
+//   the same family of sub-wavelength steps.
 
 === Signal Conditioning Pipeline <sec:meth-conditioning>
 
-Every raw B-scan is processed identically before migration:
+#draftnote[Placeholder]
 
-+ *Background subtraction.* A background-only simulation (no scatterer) is
-  subtracted trace-by-trace to suppress the direct air/ground wave and
-  isolate the scatterer reflection (e.g. @fig:res-bscans).
+// Every raw B-scan is processed identically before migration:
 
-+ *Tapering and $t_0$ alignment.* An exponential decay taper suppresses
-  late-arriving energy, a cosine end-taper removes hyperbola tails at the
-  edge of the migration aperture, and a static shift aligns the surface
-  reflection to $t = 0$ (e.g. @fig:res-taper).
+// + *Background subtraction.* A background-only simulation (no scatterer) is
+//   subtracted trace-by-trace to suppress the direct air/ground wave and
+//   isolate the scatterer reflection (e.g. @fig:res-bscans).
 
-+ *Noise injection (where stated).* @ch:hyp2 contaminates the conditioned
-  B-scan with synthetic Laplace-distributed noise at $10%$ of the signal
-  standard deviation, fitted from real field data.
+// + *Tapering and $t_0$ alignment.* An exponential decay taper suppresses
+//   late-arriving energy, a cosine end-taper removes hyperbola tails at the
+//   edge of the migration aperture, and a static shift aligns the surface
+//   reflection to $t = 0$ (e.g. @fig:res-taper).
+
+// + *Noise injection (where stated).* @ch:hyp2 contaminates the conditioned
+//   B-scan with synthetic Laplace-distributed noise at $10%$ of the signal
+//   standard deviation, fitted from real field data.
 
 === Migration Algorithms Implemented
 
-Every conditioned B-scan in @sec:meth-resolution, @ch:hyp1, and @ch:hyp2
-is migrated with all three algorithms derived in @sec:th-migration:
-Kirchhoff delay-and-sum (PyLops zero-offset operator), Gazdag $f$-$k$
-phase-shift migration, and gprMax-based time-reversal back-propagation. All
-three share the implementation in `helper_functions/migration.py`
-(`PylopsKirchoffMigration`, `gazdag_migration`, and `write_backprop_files`)
-and the exploding-reflector convention $#vmig = v \/ 2$ of @eq:vmig, so that
-the same velocity model and the same migration aperture are used for a
-baseline/monitor pair, which is required for the displacement estimate of
-@sec:meth-phaseplane to be valid.
+#draftnote[Placeholder]
+
+// Every conditioned B-scan in @sec:meth-resolution, @ch:hyp1, and @ch:hyp2
+// is migrated with all three algorithms derived in @sec:th-migration:
+// Kirchhoff delay-and-sum (PyLops zero-offset operator), Gazdag $f$-$k$
+// phase-shift migration, and gprMax-based time-reversal back-propagation. All
+// three share the implementation in `helper_functions/migration.py`
+// (`PylopsKirchoffMigration`, `gazdag_migration`, and `write_backprop_files`)
+// and the exploding-reflector convention $#vmig = v \/ 2$ of @eq:vmig, so that
+// the same velocity model and the same migration aperture are used for a
+// baseline/monitor pair, which is required for the displacement estimate of
+// @sec:meth-phaseplane to be valid.
 
 === The 2D Phase-Plane Shift-Estimation Pipeline <sec:meth-phaseplane>
 
