@@ -305,15 +305,20 @@ def plot_bscan_grid(data, x_traces, time_ns, *, ncols=None, title=None,
 
     _hide_unused_axes(axes, n)
 
-    if shared_colorbar and im is not None:
-        fig_for_cbar = fig if fig is not None else axes[0].figure
-        fig_for_cbar.colorbar(im, ax=list(axes[:n]), fraction=0.02, pad=0.02,
-                               label=colorbar_label)
-
     if title and fig is not None:
         fig.suptitle(title, fontsize=SUPTITLE_FONTSIZE, fontweight='bold', y=1.02)
     if fig is not None:
         fig.tight_layout()
+
+    # Added after tight_layout (not before): fig.colorbar(ax=...) shrinks the
+    # panel axes' gridspec to carve out its own space, but a later
+    # tight_layout() call doesn't know about that reserved space and expands
+    # the panels back into it, overlapping the last one. Adding the colorbar
+    # last keeps its reserved space intact.
+    if shared_colorbar and im is not None:
+        fig_for_cbar = fig if fig is not None else axes[0].figure
+        fig_for_cbar.colorbar(im, ax=list(axes[:n]), fraction=0.02, pad=0.02,
+                               label=colorbar_label)
 
     return fig, axes
 
@@ -527,7 +532,7 @@ def plot_wavefield_grid(frames, extent, *, field, title, ncols, y_surface=None,
 
 def plot_method_comparison_grid(images, extent, methods, row_labels, *, title,
                                  envelope=False, marker_x=None, marker_z=None,
-                                 xlim=None, ylim=None, vmax_percentile=99, figsize=None):
+                                 xlim=None, ylim=None, vmax_percentile=100, figsize=None):
     """n_scenarios x n_methods grid; each cell is an image, None (rendered as
     an N/A placeholder), signed-amplitude, or Hilbert-envelope display.
 
@@ -558,9 +563,12 @@ def plot_method_comparison_grid(images, extent, methods, row_labels, *, title,
             migration columns use different z references).
         xlim, ylim (tuple, optional): Shared axis window for every panel.
         vmax_percentile (float): Percentile passed to _compute_symmetric_vmax
-            (headroom=1.0), computed once per scenario row from all
-            available (non-None) images in that row so every method in a row
-            shares one color scale.
+            (headroom=1.0), computed once per method column from all
+            available (non-None) images in that column so every scenario for
+            a given method shares one color scale. Colorscales are not
+            shared across columns/methods, since different methods can
+            produce genuinely different amplitude scales and sharing across
+            columns lets the largest method dominate the others.
         figsize (tuple, optional): Defaults from grid shape.
 
     Returns:
@@ -576,27 +584,30 @@ def plot_method_comparison_grid(images, extent, methods, row_labels, *, title,
             return spec(i, j)
         return spec
 
-    for i, row_imgs in enumerate(images):
-        available = [img for img in row_imgs if img is not None]
-        if envelope:
-            display_imgs = [np.abs(hilbert(img, axis=0)) if img is not None else None
-                             for img in row_imgs]
-            row_vmax = _compute_symmetric_vmax(
-                [np.abs(hilbert(img, axis=0)) for img in available],
-                percentile=vmax_percentile, headroom=1.0) if available else 1.0
-            cmap, vmin, vmax_row = CMAP_ENVELOPE, 0, row_vmax
-        else:
-            display_imgs = row_imgs
-            row_vmax = _compute_symmetric_vmax(
-                available, percentile=vmax_percentile, headroom=1.0) if available else 1.0
-            cmap, vmin, vmax_row = CMAP_SIGNED, -row_vmax, row_vmax
+    if envelope:
+        display_images = [[np.abs(hilbert(img, axis=0)) if img is not None else None
+                            for img in row_imgs] for row_imgs in images]
+        cmap, vmin = CMAP_ENVELOPE, 0
+    else:
+        display_images = images
+        cmap, vmin = CMAP_SIGNED, None
 
-        for j, img in enumerate(display_imgs):
+    col_vmax = []
+    for j in range(n_cols):
+        available = [display_images[i][j] for i in range(n_rows)
+                     if display_images[i][j] is not None]
+        col_vmax.append(_compute_symmetric_vmax(
+            available, percentile=vmax_percentile, headroom=1.0) if available else 1.0)
+
+    for i, row_imgs in enumerate(display_images):
+        for j, img in enumerate(row_imgs):
             ax = axes[i, j]
             if img is None:
                 _placeholder_panel(ax)
                 continue
-            ax.imshow(img, aspect='auto', cmap=cmap, vmin=vmin, vmax=vmax_row,
+            vmax_col = col_vmax[j]
+            panel_vmin = -vmax_col if vmin is None else vmin
+            ax.imshow(img, aspect='auto', cmap=cmap, vmin=panel_vmin, vmax=vmax_col,
                       extent=extent, origin='upper')
 
             mx = _marker_value(marker_x, i, j) if marker_x is not None else None

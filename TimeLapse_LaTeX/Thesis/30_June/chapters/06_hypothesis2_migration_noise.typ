@@ -50,8 +50,8 @@ In both cases the fitted distribution is heavier-tailed than a Gaussian of
 matched variance, consistent with field GPR noise being dominated by
 occasional large-amplitude clutter and interference rather than purely thermal
 noise. The pre-gain fit is the one actually used to generate synthetic noise
-for the experiments in @sec:hyp3-lateral, @sec:hyp3-vertical, and
-@sec:hyp3-diagonal: its Laplace _shape_ (loc $= 0$, heavier tails than
+for the experiments in @sec:hyp3-lateral, @sec:hyp3-vertical,
+@sec:hyp3-diagonal, and @sec:hyp3-fluidflow: its Laplace _shape_ (loc $= 0$, heavier tails than
 Gaussian) is kept, but its scale is rescaled so that the resulting noise
 standard deviation is exactly $10%$ of each synthetic B-scan's own signal
 standard deviation --- a light, realistic noise level rather than the raw
@@ -124,44 +124,55 @@ instead.
 == Noisy Lateral Movement <sec:hyp3-lateral>
 
 The lateral displacement sweep of @sec:hyp1-lateral is repeated on B-scans
-contaminated with the synthetic Laplace noise of @fig:tl-bscans (c), for the
-two analytically-defined migration algorithms (Kirchhoff and Gazdag;
-back-propagation was not re-run on this particular noisy dataset due to its
-computational cost --- contrast with the vertical and diagonal cases below,
-where it was). @fig:tl-noisy-kirchhoff and @fig:tl-noisy-gazdag repeat the
-migration and differencing analysis of @sec:hyp1-lateral on this noisy data.
+contaminated with the synthetic Laplace noise of @fig:tl-bscans (c), for all
+three migration algorithms, including back-propagation with sign-bit
+time-reversal (@sec:hyp3-signbit). @fig:tl-noisy-summary-amp overlays the
+signed time-lapse-difference amplitude from all three algorithms, directly
+comparable to the clean-data summary of @sec:tl-detectability, and
+@fig:tl-noisy-summary-psf plots the corresponding normalised lateral PSF.
+@fig:tl-noisy-signbit shows the sign-bit time-reversed excitation itself,
+across all eight scenarios.
 
 #figure(
-  subfigs(cols: 1,
-    img("TL_027_Kirchhoff_Migration__All_8_Noisy_Datasets____f_c15_GHz____ap.png"),
-    img("TL_029_Kirchhoff_Migration__Noisy_TimeLapse_Differences_migrated__m.png"),
-  ),
-  caption: [Kirchhoff migration of the _noisy_ lateral time-lapse data
-    ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterers:
-    (a) migrated image for all scenarios; (b) time-lapse difference.],
-) <fig:tl-noisy-kirchhoff>
+  img("TL_041_TimeLapse_Migration_Comparison_Noisy__Signed_Amplitude____f_.png"),
+  caption: [Signed time-lapse-difference amplitude for all three migration
+    algorithms on the _noisy_ lateral dataset ($f_c = 1.5 "GHz"$,
+    aperture $= 40$).],
+) <fig:tl-noisy-summary-amp>
 
 #figure(
-  subfigs(cols: 1,
-    img("TL_031_Gazdag_Phase-Shift_Migration__Noisy_zoomed____f_c15_GHz.png"),
-    img("TL_033_Gazdag_Migration__Noisy_TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Gazdag phase-shift migration of the _noisy_ lateral time-lapse
-    data ($f_c = 1.5 "GHz"$), zoomed around the scatterers: (a) migrated
-    image; (b) time-lapse difference.],
-) <fig:tl-noisy-gazdag>
+  img("TL_042_Normalised_Lateral_PSF_Noisy__TimeLapse_Difference_at_True_S.png"),
+  caption: [Normalised lateral PSF of the _noisy_ time-lapse-difference image
+    at the true scatterer depth, swept across lateral displacements from
+    $2 lambda$ to $1 \/ 32 lambda$.],
+) <fig:tl-noisy-summary-psf>
 
-#draftnote[compare @fig:tl-noisy-kirchhoff and @fig:tl-noisy-gazdag against
-the clean-data results of @fig:tl-kirchhoff and @fig:tl-gazdag and state at
-which displacement scale the additive noise first prevents the time-lapse
-difference from being distinguished from background clutter.]
+#figure(
+  img("TL_034_Sign-Bit_Time-Reversed_Excitation__B-scans_and_Spectra_Noisy.png", width: 90%),
+  caption: [Sign-bit time-reversed excitation B-scans and their frequency
+    spectra for the _noisy_ lateral dataset, all eight displacement
+    scenarios.],
+) <fig:tl-noisy-signbit>
+
+#draftnote[in @fig:tl-noisy-summary-amp the Kirchhoff and Gazdag columns
+appear visually blank against the shared colour scale, which is dominated by
+back-propagation's much larger raw amplitude range (the same pattern recurs
+in @fig:vtl-noisy-summary-amp and @fig:dtl-noisy-summary-amp below) ---
+confirm this is a colour-scale/normalisation artefact rather than a
+data-loading issue, and consider giving each algorithm its own colour scale
+as in the clean-data version (@fig:tl-summary-amp) if so. The unexplained
+fourth ("N/A") column present in this figure and @fig:tl-noisy-summary-psf,
+absent from the vertical and diagonal equivalents, should also be resolved
+or removed.]
 
 The same noisy lateral dataset is also carried through a shift estimator in
 `TimeLapse_Processing.ipynb`, for Kirchhoff only (@fig:tlp-noise); Gazdag is
 excluded from this particular test because Gazdag phase-shift migration of
 this noisy dataset produces a structural migration artefact that defeats
 shift estimation (see the notebook's Section 2b/2c notes), not because it was
-skipped for convenience.
+skipped for convenience, and back-propagation's phase-plane fit for the
+lateral case specifically has not yet been run (unlike the vertical and
+diagonal cases below, @fig:vtl-noisy-phaseplane and @fig:dtl-noisy-phaseplane).
 
 #figure(
   img("TLP_010_NoisyTimeLapse__Robust_shift_estimation_GCC__lstsq_fallback.png", width: 90%),
@@ -177,126 +188,214 @@ estimated $#Dx$ relative to the clean Kirchhoff result of
 @fig:tlp-horiz-validation, and relate this to the amplitude-weighting
 argument of @sec:th-mask-weight. Note this is a GCC-peak-search-with-lstsq-fallback
 estimator (`estimate_shift_2d_cleaning`), not the plain WLS phase-plane fit
-used elsewhere in this thesis --- state explicitly why the plain fit needed
-this more robust replacement for the noisy case, or re-run the plain fit here
-if that is a fairer comparison to @fig:tlp-horiz-validation. This figure is
-currently the _only_ direct evidence available anywhere in this thesis for
-Kirchhoff's noisy-lateral shift-estimation performance, and there is no
-Gazdag or back-propagation counterpart for the lateral case specifically;
-everything in @sec:hyp3-vertical and @sec:hyp3-diagonal below is, for now,
-amplitude-level only (see @sec:hyp3-gaps).]
+used elsewhere in this thesis and for the vertical/diagonal cases below ---
+state explicitly why the plain fit needed this more robust replacement for
+the noisy lateral case, or re-run the plain fit here if that is a fairer
+comparison to @fig:tlp-horiz-validation. Completing a Gazdag- and
+back-propagation-equivalent phase-plane fit for the lateral case is tracked
+in @sec:hyp3-gaps.]
 
 == Noisy Vertical Movement <sec:hyp3-vertical>
 
 The vertical displacement sweep of @sec:hyp1-vertical is repeated under the
-same Laplace noise, for all three migration algorithms --- unlike the lateral
-case, back-propagation _is_ re-run here, using sign-bit time-reversal
-(@sec:hyp3-signbit) on the noisy traces. @fig:vtl-noisy-kirchhoff and
-@fig:vtl-noisy-gazdag repeat the migration and differencing analysis of
-@sec:hyp1-vertical on this noisy data, and @fig:vtl-noisy-backprop shows the
-sign-bit back-propagation result.
+same Laplace noise, for all three migration algorithms, using sign-bit
+time-reversal (@sec:hyp3-signbit) for the noisy back-propagation run.
+@fig:vtl-noisy-summary-amp overlays the signed time-lapse-difference
+amplitude from all three algorithms, directly comparable to the clean-data
+summary of @sec:vtl-detectability, and @fig:vtl-noisy-summary-psf plots the
+corresponding normalised vertical PSF. @fig:vtl-noisy-signbit shows the
+sign-bit time-reversed excitation itself.
 
 #figure(
-  subfigs(cols: 1,
-    img("VTL_006_B-scan_Frequency_Spectra_--_Clean_vs_Noisy____f_c15_GHz.png", width: 90%),
-    img("VTL_026_Kirchhoff_Migration_Noisy_zoomed____f_c15_GHz____aperture40.png", width: 90%),
-    img("VTL_028_Kirchhoff_Migration_-_Noisy_TimeLapse_Differences_zoomed.png", width: 90%),
-  ),
-  caption: [Noisy vertical time-lapse data ($f_c = 1.5 "GHz"$), zoomed around
-    the scatterer: (a) clean-vs-noisy frequency spectra; (b) Kirchhoff
-    migration for all scenarios; (c) Kirchhoff time-lapse difference.],
-) <fig:vtl-noisy-kirchhoff>
+  img("VTL_040_Vertical_TimeLapse_Migration_Comparison_Noisy__Signed_Amplit.png"),
+  caption: [Signed time-lapse-difference amplitude for all three migration
+    algorithms on the _noisy_ vertical dataset.],
+) <fig:vtl-noisy-summary-amp>
 
 #figure(
-  subfigs(cols: 1,
-    img("VTL_030_Gazdag_Phase-Shift_Migration_Noisy_zoomed____f_c15_GHz.png"),
-    img("VTL_032_Gazdag_Migration_-_Noisy_TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Gazdag phase-shift migration of the _noisy_ vertical time-lapse
-    data ($f_c = 1.5 "GHz"$), zoomed around the scatterer: (a) migrated image;
-    (b) time-lapse difference.],
-) <fig:vtl-noisy-gazdag>
+  img("VTL_041_Normalised_Vertical_PSF_Noisy__TimeLapse_Difference_at_x__20.png", width: 55%),
+  caption: [Normalised vertical PSF of the _noisy_ time-lapse-difference
+    image at $x = 2.0 "m"$, swept across vertical displacements from
+    $1 lambda$ to $1 \/ 32 lambda$.],
+) <fig:vtl-noisy-summary-psf>
 
 #figure(
-  subfigs(cols: 1,
-    img("VTL_035_Back-Propagation_E_Noisy_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("VTL_037_Back-Propagation_Ez_Noisy_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("VTL_039_Back-Propagation_Noisy_--_TimeLapse_Differences_Ez_zoomed.png", width: 90%),
-  ),
-  caption: [Sign-bit back-propagation migration of the _noisy_ vertical
-    time-lapse data, focused at $t = 19.06 "ns"$ and zoomed around the
-    scatterer: (a) field magnitude $||bold(E)||$; (b) $E_z$; (c) $E_z$
-    time-lapse difference.],
-) <fig:vtl-noisy-backprop>
+  img("VTL_033_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Noi.png", width: 90%),
+  caption: [Sign-bit time-reversed excitation B-scans and their frequency
+    spectra for the _noisy_ vertical dataset, all seven displacement
+    scenarios.],
+) <fig:vtl-noisy-signbit>
 
-#draftnote[*Gap:* this section currently only carries the analysis to the
-amplitude/migrated-image level, exactly mirroring @sec:hyp1-vertical's
-clean-data detectability summary --- the 2D WLS phase-plane fit has not yet
-been applied to this noisy vertical dataset. Doing so, and comparing the
-result against both the clean vertical fit of @sec:tlp-vertical and the noisy
-lateral fit of @fig:tlp-noise, is necessary to claim Hypothesis 2 for the
-vertical direction specifically.]
+@fig:vtl-noisy-phaseplane applies the 2D WLS phase-plane fit of
+@sec:meth-phaseplane to the noisy vertical dataset for all three migration
+methods, closing the gap left open in earlier drafts of this chapter.
+
+#figure(
+  subfigs(cols: 2,
+    img("TLP_020_VerticalTimeLapse_Noisy__Phase-plane_shift_estimation__Kirch.png"),
+    img("TLP_021_VerticalTimeLapse_Noisy__Phase-plane_shift_estimation__Gazda.png"),
+    img("TLP_022_VerticalTimeLapse_Noisy__Phase-plane_shift_estimation__Back-.png"),
+  ),
+  caption: [2D phase-plane shift estimation applied to the _noisy_ vertical
+    time-lapse dataset of @sec:hyp1-vertical, for all three migration
+    methods: (a) Kirchhoff; (b) Gazdag; (c) back-propagation.],
+) <fig:vtl-noisy-phaseplane>
+
+#draftnote[state whether the noisy vertical phase-plane fit remains accurate
+to the same smallest displacement found for the noisy lateral case
+(@fig:tlp-noise), and compare directly against the clean vertical fit of
+@fig:tlp-vert-validation.]
 
 == Noisy Diagonal Movement <sec:hyp3-diagonal>
 
 The diagonal displacement sweep of @sec:hyp1-diagonal is likewise repeated
 under Laplace noise, for all three migration algorithms, again using sign-bit
-time-reversal for the noisy back-propagation run. @fig:dtl-noisy-kirchhoff
-and @fig:dtl-noisy-gazdag show the noisy Kirchhoff and Gazdag migrations and
-their time-lapse differences; @fig:dtl-noisy-backprop shows the sign-bit
-time-reversed excitation itself and the noisy sign-bit back-propagation
-result.
+time-reversal for the noisy back-propagation run. @fig:dtl-noisy-summary-amp
+overlays the signed, diagonally-sampled time-lapse-difference amplitude from
+all three algorithms, directly comparable to the clean-data summary of
+@sec:dtl-detectability, and @fig:dtl-noisy-summary-psf plots the
+corresponding normalised diagonal PSF. @fig:dtl-noisy-signbit shows the
+sign-bit time-reversed excitation itself.
 
 #figure(
-  subfigs(cols: 1,
-    img("DTL_026_Kirchhoff_Migration__Noisy_zoomed____f_c15_GHz____aperture40.png"),
-    img("DTL_028_Kirchhoff_Migration__Noisy_TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Kirchhoff migration of the _noisy_ diagonal time-lapse data
-    ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterer:
-    (a) migrated image for all scenarios; (b) time-lapse difference.],
-) <fig:dtl-noisy-kirchhoff>
+  img("DTL_040_Diagonal_TimeLapse_Migration_Comparison_Noisy__Signed_Amplit.png"),
+  caption: [Signed time-lapse-difference amplitude for all three migration
+    algorithms on the _noisy_ diagonal dataset, sampled along the diagonal
+    motion direction.],
+) <fig:dtl-noisy-summary-amp>
 
 #figure(
-  subfigs(cols: 1,
-    img("DTL_030_Gazdag_Phase-Shift_Migration__Noisy_zoomed____f_c15_GHz.png"),
-    img("DTL_032_Gazdag_Migration__Noisy_TimeLapse_Differences_zoomed.png"),
-  ),
-  caption: [Gazdag phase-shift migration of the _noisy_ diagonal time-lapse
-    data ($f_c = 1.5 "GHz"$), zoomed around the scatterer: (a) migrated image;
-    (b) time-lapse difference.],
-) <fig:dtl-noisy-gazdag>
+  img("DTL_041_Normalised_Diagonal_PSF_Noisy__TimeLapse_Difference_Along_Mo.png", width: 80%),
+  caption: [Normalised diagonal PSF of the _noisy_ time-lapse-difference
+    image along the motion direction, swept across the five diagonal
+    scenarios of @tab:dtl-scenarios.],
+) <fig:dtl-noisy-summary-psf>
 
 #figure(
-  subfigs(cols: 1,
-    img("DTL_033_Sign-Bit_Time-Reversed_Excitation__B-scans_and_Spectra_Noisy.png", width: 90%),
-    img("DTL_037_Back-Propagation_Ez_Noisy_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("DTL_039_Back-Propagation_Noisy__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
-  ),
-  caption: [Sign-bit back-propagation of the _noisy_ diagonal time-lapse
-    data, focused at $t = 19.06 "ns"$: (a) the sign-bit time-reversed
-    excitation B-scans and their spectra; (b) the back-propagated $E_z$,
-    zoomed around the scatterer; (c) the $E_z$ time-lapse difference,
-    zoomed.],
-) <fig:dtl-noisy-backprop>
+  img("DTL_033_Sign-Bit_Time-Reversed_Excitation__B-scans_and_Spectra_Noisy.png", width: 90%),
+  caption: [Sign-bit time-reversed excitation B-scans and their frequency
+    spectra for the _noisy_ diagonal dataset, all five displacement
+    scenarios.],
+) <fig:dtl-noisy-signbit>
 
-#draftnote[as for the vertical case, the diagonal WLS phase-plane fit has not
-yet been run on this noisy dataset --- this section is amplitude-level only.
-Read off the diagonal-PSF detectability floor under noise (mirroring
-@sec:dtl-detectability) and state whether it shifts relative to the clean-data
-floor.]
+@fig:dtl-noisy-phaseplane applies the 2D WLS phase-plane fit of
+@sec:meth-phaseplane to the noisy diagonal dataset for all three migration
+methods.
+
+#figure(
+  subfigs(cols: 2,
+    img("TLP_017_DiagonalTimeLapse_Noisy__Phase-plane_shift_estimation__Kirch.png"),
+    img("TLP_018_DiagonalTimeLapse_Noisy__Phase-plane_shift_estimation__Gazda.png"),
+    img("TLP_019_DiagonalTimeLapse_Noisy__Phase-plane_shift_estimation__Back-.png"),
+  ),
+  caption: [2D phase-plane shift estimation applied to the _noisy_ diagonal
+    time-lapse dataset of @sec:hyp1-diagonal, for all three migration
+    methods: (a) Kirchhoff; (b) Gazdag; (c) back-propagation. The recovered
+    $(#Dz, #Dx)$ should satisfy the known $#Dx = 2 #Dz$ ratio of
+    @tab:dtl-scenarios if the fit is working correctly.],
+) <fig:dtl-noisy-phaseplane>
+
+#draftnote[read off the diagonal-PSF detectability floor under noise
+(mirroring @sec:dtl-detectability) and state whether it shifts relative to
+the clean-data floor, and whether @fig:dtl-noisy-phaseplane's recovered
+displacements satisfy the known $#Dx = 2 #Dz$ ratio to the same tolerance as
+the clean-data fit.]
+
+== Noisy Fluid Flow Study <sec:hyp3-fluidflow>
+
+The three translation studies above all move a rigid point scatterer; this
+section instead repeats the noisy migration comparison for a target that is
+directly relevant to the real fluid-injection field data of @ch:hyp3: a
+_graded wetting zone_ rather than a discrete PEC cylinder. The domain, grid,
+and centre frequency match @sec:hyp1-lateral exactly ($4.0 times 1.0$ m,
+$f_c = 1.5 "GHz"$, $lambda = 112.6 "mm"$), but the background medium is ice
+($epsilon_r = 3.15$) and the moving target is a $7$-step graded transition
+(box width $11.3 "mm"$, total transition $78.8 "mm"$) between water and ice at
+depth $0.676 "m"$, standing in for a fluid front advancing through a
+horizontal fracture. As in @sec:hyp1-lateral, the front is swept laterally
+across the same eight scenarios, from $2 lambda$ down to $1 \/ 32 lambda$
+relative to its baseline position, and the same $10%$-of-signal-std synthetic
+Laplace noise of @sec:hyp3-laplace is added before migration.
+
+#draftnote[a clean-data (noise-free) counterpart to this section, mirroring
+@sec:hyp1-lateral's structure, has not yet been written into the thesis even
+though the clean figures (`FF_001`--`FF_024`) already exist --- add a short
+clean-data fluid-flow subsection to @ch:hyp1 or earlier in this chapter, and
+cross-reference it from here, before finalising.]
+
+@fig:ff-noisy-summary-amp overlays the signed time-lapse-difference amplitude
+from all three migration algorithms, directly comparable in structure to
+@fig:tl-noisy-summary-amp, and @fig:ff-noisy-summary-psf plots the
+corresponding normalised PSF. @fig:ff-noisy-signbit shows the sign-bit
+time-reversed excitation itself.
+
+#figure(
+  img("FF_040_TimeLapse_Migration_Comparison_Noisy__Signed_Amplitude____f_.png"),
+  caption: [Signed time-lapse-difference amplitude for all three migration
+    algorithms on the _noisy_ fluid-flow dataset ($f_c = 1.5 "GHz"$,
+    aperture $= 40$).],
+) <fig:ff-noisy-summary-amp>
+
+#figure(
+  img("FF_041_Normalised_Lateral_PSF_Noisy__TimeLapse_Difference_at_True_S.png"),
+  caption: [Normalised PSF of the _noisy_ time-lapse-difference image at the
+    baseline front position, swept across front displacements from
+    $2 lambda$ to $1 \/ 32 lambda$.],
+) <fig:ff-noisy-summary-psf>
+
+#figure(
+  img("FF_033_Sign-Bit_Time-Reversed_Excitation__B-scans_and_Spectra_Noisy.png", width: 90%),
+  caption: [Sign-bit time-reversed excitation B-scans and their frequency
+    spectra for the _noisy_ fluid-flow dataset, all eight displacement
+    scenarios.],
+) <fig:ff-noisy-signbit>
+
+Unlike the three point-scatterer directions above, no dedicated 2D WLS
+phase-plane fit has been run for the fluid-flow front; the closest available
+result is the per-method cross-spectrum displacement estimate already used
+for shift inference, applied here to the noisy fluid-flow baseline/monitor
+pairs at $10%$ noise level (@fig:ff-noisy-phaseplane).
+
+#figure(
+  subfigs(cols: 2,
+    img("TLP_026_FluidFlow_Noisy_noise_level01__Kirchhoff____base_vs_mon_real.png"),
+    img("TLP_027_FluidFlow_Noisy_noise_level01__Gazdag____base_vs_mon_real.png"),
+    img("TLP_028_FluidFlow_Noisy_noise_level01__Back-prop____base_vs_mon_real.png"),
+  ),
+  caption: [Cross-spectrum phase-plane displacement estimation applied to the
+    _noisy_ fluid-flow dataset (noise level $= 0.1$), for all three migration
+    methods: (a) Kirchhoff; (b) Gazdag; (c) back-propagation. Each row shows
+    the baseline-vs-monitor real-part difference, the cross-spectrum phase,
+    the cross-spectrum energy, and the recovered vs. true front
+    displacement.],
+) <fig:ff-noisy-phaseplane>
+
+#draftnote[state whether the recovered front displacement in
+@fig:ff-noisy-phaseplane tracks the true value down to the same smallest
+scale found for the point-scatterer directions above, and whether the
+graded, spatially-extended nature of the fluid front (rather than a discrete
+point reflector) changes the achievable resolution. Relate this result back
+to the real borehole fluid-injection displacements of @sec:hyp3-fielddata
+--- does the synthetic fluid-front experiment support the field-data
+interpretation questions raised in @sec:hyp3-fd-interpretation?]
 
 == Outstanding Quantitative Work <sec:hyp3-gaps>
 
-This chapter currently demonstrates noise robustness convincingly only at the
-level of migrated _images_ for all three displacement directions, and
-demonstrates the phase-plane estimator's noise robustness quantitatively for
-only one case (noisy lateral movement, @fig:tlp-noise). To fully support
-Hypothesis 2, the following quantitative work remains:
+This chapter now demonstrates noise robustness at the level of migrated
+_images_ and the phase-plane estimator for all three point-scatterer
+translation directions (lateral, vertical, diagonal) and, at the
+cross-spectrum level, for the fluid-flow study. To fully support Hypothesis
+2, the following quantitative work remains:
 
-+ Apply the 2D WLS phase-plane fit to the noisy vertical and diagonal datasets
-  of @sec:hyp3-vertical and @sec:hyp3-diagonal, exactly as already done for
-  the lateral case.
++ Run the plain 2D WLS phase-plane fit (rather than the GCC-peak-search
+  fallback of @fig:tlp-noise) on the noisy lateral dataset, and extend it to
+  Gazdag and back-propagation, so that the lateral case has the same
+  three-method phase-plane coverage now available for vertical and diagonal
+  (@fig:vtl-noisy-phaseplane, @fig:dtl-noisy-phaseplane).
+
++ Run a proper 2D WLS phase-plane fit for the fluid-flow front (rather than
+  the cross-spectrum displacement estimate of @fig:ff-noisy-phaseplane), and
+  add the clean-data fluid-flow subsection flagged in @sec:hyp3-fluidflow.
 
 + Quantitatively compare sign-bit versus peak-normalised back-propagation on
   pure noise (@sec:hyp3-purenoise), using the completed gprMax output already
@@ -307,6 +406,9 @@ Hypothesis 2, the following quantitative work remains:
 
 + A $20 times 20$ grid sweep of true $(#Dt, #Dtheta)$ pairs, reported as a
   2D inversion-error heatmap.
+
++ Resolve the colour-scale and "N/A"-column anomalies flagged in
+  @sec:hyp3-lateral for the migration-comparison figures.
 
 == Conclusion: Back-Propagation as the Preferred Method <sec:hyp2-conclusion>
 
@@ -321,5 +423,10 @@ sign-bit time-reversal suppresses impulsive noise by reducing every noise
 spike to the same $plus.minus 1$ amplitude as the coherent signal, preserving
 phase information while stripping the amplitude-based false-positive risk
 that would otherwise allow noise spikes to act as competing point sources
-during back-propagation. This recommendation is used for the real field data
-in @ch:hyp3.
+during back-propagation. The fluid-flow study of @sec:hyp3-fluidflow further
+suggests this recommendation is not specific to discrete point scatterers:
+the same three-way pattern (Kirchhoff/Gazdag amplitude collapse versus
+back-propagation's noisier but present focus) reappears for a graded,
+spatially-extended wetting-zone target, directly relevant to the borehole
+fluid-injection geometry of @ch:hyp3. This recommendation is used for the
+real field data in @ch:hyp3.
