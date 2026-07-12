@@ -16,8 +16,8 @@
   subtitle:       "Using Time-Lapse Data",
   author:         "Conner van Kooten",
   date:           "June 30, 2026",
-  supervisor-one: "<supervisor 1>",
-  supervisor-two: "<supervisor 2>",
+  supervisor-one: "Dr. Alexis Shakas",
+  supervisor-two: "Dr. Johannes Aichele",
   keywords:       "GPR, time-lapse, phase-plane, migration, sub-wavelength",
 )
 
@@ -52,7 +52,7 @@
 #pagebreak()
 
 #include "frontmatter/acronyms.typ"
-#pagebreak()
+#pagebreak() 
 
 // ======================== MAIN MATTER =========================
 

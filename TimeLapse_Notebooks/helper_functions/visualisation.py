@@ -532,6 +532,7 @@ def plot_wavefield_grid(frames, extent, *, field, title, ncols, y_surface=None,
 
 def plot_method_comparison_grid(images, extent, methods, row_labels, *, title,
                                  envelope=False, marker_x=None, marker_z=None,
+                                 marker_x_baseline=None, marker_z_baseline=None,
                                  xlim=None, ylim=None, vmax_percentile=100, figsize=None):
     """n_scenarios x n_methods grid; each cell is an image, None (rendered as
     an N/A placeholder), signed-amplitude, or Hilbert-envelope display.
@@ -557,10 +558,15 @@ def plot_method_comparison_grid(images, extent, methods, row_labels, *, title,
         envelope (bool): False -> raw signed data, CMAP_SIGNED, vmin/vmax
             symmetric about 0. True -> np.abs(hilbert(img, axis=0)),
             CMAP_ENVELOPE, vmin=0.
-        marker_x, marker_z: per-(row,col) marker position. Each accepts a
-            flat value or a callable ``(i, j) -> value`` (marker depth
-            differs by method column in the audited code, e.g. back-prop vs.
-            migration columns use different z references).
+        marker_x, marker_z: per-(row,col) current/timelapsed marker position.
+            Each accepts a flat value or a callable ``(i, j) -> value``
+            (marker depth differs by method column in the audited code, e.g.
+            back-prop vs. migration columns use different z references).
+        marker_x_baseline, marker_z_baseline: per-(row,col) baseline marker
+            position, same accepted types as marker_x/marker_z. Optional —
+            when omitted no baseline star is drawn. Added to actually honour
+            the "★ = baseline" promised by this function's own suptitle,
+            which previously had no corresponding draw call.
         xlim, ylim (tuple, optional): Shared axis window for every panel.
         vmax_percentile (float): Percentile passed to _compute_symmetric_vmax
             (headroom=1.0), computed once per method column from all
@@ -614,6 +620,11 @@ def plot_method_comparison_grid(images, extent, methods, row_labels, *, title,
             mz = _marker_value(marker_z, i, j) if marker_z is not None else None
             if mx is not None and mz is not None:
                 ax.plot(mx, mz, MARKER_CURRENT, ms=MARKER_SIZE, zorder=5)
+
+            bx = _marker_value(marker_x_baseline, i, j) if marker_x_baseline is not None else None
+            bz = _marker_value(marker_z_baseline, i, j) if marker_z_baseline is not None else None
+            if bx is not None and bz is not None:
+                ax.plot(bx, bz, MARKER_BASELINE, ms=MARKER_SIZE, zorder=5)
 
             if xlim is not None:
                 ax.set_xlim(xlim)
