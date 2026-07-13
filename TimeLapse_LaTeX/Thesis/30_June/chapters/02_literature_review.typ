@@ -14,48 +14,138 @@ precedents, none of which are yet represented in the bibliography.]
 
 == EM Theory and GPR Physics
 
-#draftnote[Placeholder]
+Ground-penetrating radar is governed by the same four Maxwell equations that
+describe all classical electromagnetism, specialised to a low-loss dielectric
+medium through the constitutive relations $bold(J) = sigma bold(E)$,
+$bold(D) = epsilon bold(E)$, and $bold(B) = mu bold(H)$ @annan2009. Combining
+Faraday's and Ampère's laws for a source-free, non-magnetic medium eliminates
+the magnetic field and yields a transverse wave equation for $bold(E)$ whose
+loss term is set by conductivity $sigma$ and whose storage term is set by
+permittivity $epsilon$ @annan2009 @slob2024. When displacement currents
+dominate over conduction currents --- true for GPR frequencies of 10 MHz to a
+few GHz in most earth materials --- the equation supports a propagating,
+weakly attenuated plane wave rather than the purely diffusive response that
+underlies DC resistivity and low-frequency EM sounding methods
+@milsom2011electric. In this propagating regime the wave speed and
+attenuation reduce to $v = c\/sqrt(kappa)$ and
+$alpha = (omega\/2)sqrt(mu epsilon_0 kappa) tan delta$, where
+$kappa = epsilon\/epsilon_0$ is the relative permittivity, or "dielectric
+constant," of the medium and $tan delta = sigma\/(omega epsilon)$ is the loss
+tangent @annan2009 @milsom2011gpr. Because $kappa$ alone sets the
+propagation velocity, and an impedance (and hence reflection-coefficient)
+contrast $Delta Z prop Delta(1\/sqrt(kappa))$ at any interface governs the
+amplitude of a returned signal, GPR is fundamentally a survey of subsurface
+permittivity structure rather than of the conductivity structure probed by
+galvanic and inductive electrical methods @milsom2011electric
+@milsom2011gpr; this distinction motivates treating $kappa$, not $sigma$, as
+the primary state variable whose changes this thesis seeks to detect
+time-lapse.
 
-// Ground-penetrating radar images subsurface dielectric contrasts by recording
-// the reflections of a transmitted electromagnetic pulse; the underlying
-// electromagnetic principles, antenna behaviour, and propagation losses that
-// govern the achievable resolution and penetration depth of a survey are
-// covered in @annan2009 and @daniels2004. Both texts establish
-// the half-wavelength rule of thumb for resolving two closely spaced
-// reflectors, which motivates the resolution-limit validation of
-// @sec:meth-resolution.
+The dielectric constant of a natural material is rarely a fixed rock or soil
+property; it is dominated by the volume fraction and phase of water present
+in the pore space, since liquid water's permittivity ($kappa approx 80$) is
+an order of magnitude larger than that of the dry mineral matrix
+($kappa approx 3$–$8$) or of air ($kappa = 1$) @annan2009. Empirical mixing
+relationships such as the Topp equation exploit this contrast to invert GPR
+velocity for volumetric water content, but the same sensitivity means that
+any process which redistributes water --- infiltration, drainage, or a
+change of phase between liquid and ice --- produces a measurable shift in
+$kappa$ and hence in two-way travel time and reflection amplitude, even when
+the bulk geometry of the target is unchanged. Chen et al. @chen2023
+demonstrate this directly for the water-ice-snow system relevant to
+freeze-thaw monitoring, showing that the relative permittivities of ice and
+water are frequency-dependent and separable, which is precisely the physical
+mechanism by which a subsurface interface can appear, sharpen, or fade
+between repeat GPR surveys without any change in the scatterer's shape or
+position. It is this permittivity-driven, rather than purely geometric,
+origin of GPR reflectivity that justifies treating time-lapse amplitude and
+phase changes as evidence of a genuine subsurface state change, and that
+underlies the reflection and resolution formalism developed in
+@sec:lit-resolution.
 
 == Resolution Problems (Lateral and Vertical) and the Fresnel Zone <sec:lit-resolution>
 
-#draftnote[Placeholder]
+Ground-penetrating radar resolution splits into two independent limits, one
+lateral (or horizontal) and one vertical (or range/depth), and both are
+active research questions rather than settled constants, since the
+literature disagrees on the correct closed-form expression for each even
+though the underlying physical mechanisms are well established
+@milsom2011gpr @rial2007.
 
-// Two distinct resolution criteria limit what a GPR survey can image, and both
-// are tested empirically in this thesis.
+#para-head[Lateral resolution and the Fresnel zone.] An unmigrated GPR
+antenna does not illuminate a single point on a reflecting interface; it
+illuminates a finite footprint whose extent is set by the *first Fresnel
+zone* --- the region of the interface from which returning energy arrives
+within half a wavelength ($lambda\/2$) of the shortest, normal-incidence
+path, and therefore sums constructively at the receiver
+@perezgracia2008 @rial2007. Two point reflectors buried at the same depth
+cannot be resolved as separate anomalies once their separation is smaller
+than the diameter of this footprint. The classical closed-form radius,
+derived from the phase-difference geometry of @perezgracia2008 and used
+throughout the antenna-footprint literature, is
+$ r_F = sqrt(h_1 h_2 v\/(f L)) = sqrt(h v \/ (2f)) = (v\/2) sqrt(t\/f) $
+for a target at depth $h$, two-way travel time $t$, velocity $v$, and
+dominant frequency $f$ @perezgracia2008. Noon et al. treat the same
+footprint area as the effective radar cross-section of a "rough planar"
+target in the radar range equation, linking the Fresnel-zone concept
+directly to detectability rather than only to resolvability
+@noon1998. A competing, elliptical formulation that explicitly incorporates
+the host medium's relative permittivity $epsilon_r$,
+$ A = lambda\/4 + h \/ sqrt(epsilon_r - 1), quad B = A\/2, $
+is preferred by some authors because it accounts for the narrowing of the
+illumination pattern with increasing permittivity @rial2007
+@perezgracia2008. Laboratory comparisons in water and sand show that none
+of the competing closed forms match experiment exactly and that the
+achieved lateral resolution depends strongly on the acceptable level of
+inter-target interference, with the fully separated, interference-free
+distance $D_2$ running roughly 1.5--3$times$ larger than the
+first-hyperbola-visible distance $D_1$ for the same target pair
+@perezgracia2008. Since migration (@ch:theory) is, in principle, capable of
+collapsing the Fresnel zone back toward a diffraction-limited point, this
+scatter in the unmigrated literature values motivates treating the
+achievable post-migration lateral resolution as an empirical quantity to be
+measured directly, rather than assumed from a single formula, in
+@sec:meth-resolution and @ch:hyp1.
 
-// #para-head[Lateral resolution.] The lateral resolving power of an unmigrated
-// survey is governed by the _Fresnel zone_ --- the region of the
-// subsurface from which reflected energy arrives within half a wavelength of
-// the direct reflection and therefore interferes constructively at the
-// receiver. Its radius at depth $d$ for a wavelength $lambda$ is
-// approximately $a_F approx sqrt(lambda d \/ 2)$ @annan2009; two
-// reflectors closer together than this radius cannot be distinguished without
-// migration, since their Fresnel zones overlap. Migration (@ch:theory)
-// collapses this zone back towards a point and is, in principle, capable of
-// restoring lateral resolution to a fraction of a wavelength --- the limit
-// quantified empirically in @sec:meth-resolution and tested as a
-// time-lapse detection problem in @ch:hyp1.
+#para-head[Vertical resolution and the Rayleigh criterion.] Vertical
+resolution is governed instead by the temporal bandwidth of the received
+pulse. The standard criterion, adapted from Rayleigh's radar-range
+resolution, states that two equal-strength reflectors are separated in
+range once their travel-time difference exceeds $Delta R = v\/(2B)$, where
+$B$ is the bandwidth of the *received* (not transmitted) signal
+@noon1998. Because attenuation is frequency-dependent, $B$ narrows with
+depth, so a fixed-bandwidth rule of thumb systematically overstates
+resolution at greater penetration depths @noon1998. Experimental
+calibration with bow-tie antennas confirms that vertical resolution in
+practice tracks the effective pulse duration of the source wavelet rather
+than the nominal antenna centre frequency, and additionally depends on the
+electrical contrast of the shallower reflector: a more conductive upper
+interface attenuates more of the signal reaching the lower one, degrading
+resolvability independently of bandwidth @rial2007. Unlike lateral
+resolution, this vertical limit is not improved by migration, since
+migration relocates energy spatially but does not compress the pulse in
+time --- which is why the vertical and lateral displacement-detection
+problems of @ch:hyp1 are treated as genuinely distinct experiments rather
+than as trivial rotations of one another (@sec:th-duality).
 
-// #para-head[Vertical resolution.] Vertical (depth) resolution is instead
-// governed by the _temporal_ bandwidth of the source pulse: two
-// reflectors are distinguishable only once their two-way travel-time
-// separation exceeds roughly one quarter of the dominant period, equivalently
-// about half a wavelength in depth for the broadband Ricker pulse used
-// throughout this thesis @daniels2004. Unlike lateral resolution, this
-// limit is not improved by migration, since migration redistributes energy
-// spatially but does not compress the pulse in time --- a point that motivates
-// why the vertical and lateral displacement-detection problems of
-// @ch:hyp1 are treated as genuinely distinct experiments rather than as
-// trivial rotations of one another (@sec:th-duality).
+#para-head[Sub-wavelength information in the phase.] The Fresnel-zone and
+Rayleigh limits above both describe the resolution of *discrete,
+separately identifiable* targets from amplitude data, and it is this
+amplitude-based, geometric notion of resolution that migration can, at
+best, push to a fraction of a wavelength. Tsoflias and Hoch show that a
+sub-wavelength layer --- far too thin to be resolved as two separate
+interfaces by the Rayleigh criterion above --- still imprints a
+systematic, quantifiable signature on the *phase* of a transmitted or
+reflected GPR wave, with the sign and magnitude of the polarisation-dependent
+phase shift varying continuously with layer thickness and fluid content
+even when no amplitude criterion would flag the layer as resolvable
+@tsoflias2006. This distinction between amplitude-limited geometric
+resolution and phase-encoded sub-wavelength information is the physical
+basis for treating phase, rather than amplitude, as the primary observable
+of this thesis (@ch:hyp1, @ch:hyp2, @ch:hyp3): the Fresnel and Rayleigh limits
+reviewed here bound what a conventional, amplitude-based reading of a
+migrated image can distinguish, not what the underlying wavefield actually
+encodes about sub-wavelength subsurface change.
 
 == GPR Processing
 
