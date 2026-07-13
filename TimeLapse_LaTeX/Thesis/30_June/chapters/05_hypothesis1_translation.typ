@@ -5,34 +5,102 @@
 @sec:meth-resolution established that amplitude-based detection of a
 _stationary_ point scatterer fails below roughly half a wavelength of
 separation. This chapter scales that finding to the time-lapse setting: if a
-single scatterer moves by a sub-wavelength amount between a baseline and a
-monitor survey, can that motion be inferred? The answer is that amplitude
-differencing fails below the same resolution floor --- but examining the
-_phase change_ in the two-dimensional Fourier domain (@ch:theory) reveals
-displacements as small as $1 \/ 32 lambda$. The displacement is swept from
-$2 lambda$ down to $1 \/ 32 lambda$, tested independently in three
-directions: lateral (@sec:hyp1-lateral), vertical (@sec:hyp1-vertical), and
-diagonal (@sec:hyp1-diagonal). @sec:hyp1-phaseplane then applies the global
-2D weighted least-squares (WLS) phase-plane fit, and @sec:hyp1-h15 explores
-an optional, local alternative.
+target moves by a sub-wavelength amount between a baseline and a monitor
+survey, can that motion be inferred? Four synthetic gprMax experiments probe
+this question from different angles, each sweeping a target displacement from
+$2 lambda$ down to $1 \/ 32 lambda$ ($lambda approx 112.6 "mm"$ at the
+$1.5 "GHz"$ centre frequency and pure-ice velocity used throughout):
+
++ *@sec:hyp1-lateral* --- a point scatterer shifted along the survey line.
++ *@sec:hyp1-vertical* --- the same point scatterer shifted deeper into the ice.
++ *@sec:hyp1-diagonal* --- the point scatterer shifted along a combined
+  lateral-and-vertical ($2$:$1$) path.
++ *@sec:hyp1-fluidflow* --- a graded, spatially-extended wetting-front
+  reflector rather than a point target, testing whether the phase-based
+  method generalises beyond an idealised point scatterer.
+
+For every experiment, the answer is the same: amplitude differencing fails
+below the same resolution floor found in @sec:meth-resolution, but examining
+the _phase change_ in the two-dimensional Fourier domain of the migrated
+images (@ch:theory) recovers the displacement accurately down to the smallest
+scale tested. @sec:hyp1-workflow defines the shared processing and analysis
+pipeline used identically across all four experiments; @sec:hyp1-summary then
+collects the resulting displacement errors into one master comparison.
 
 #para-head[Hypothesis 1.] Can multi-dimensional phase-plane regression infer
 lateral, vertical, and diagonal subwavelength displacements from time-lapse
 migrated GPR images, at scales where amplitude differencing has already
 failed?
 
-#para-head[Hypothesis 1.5 (Optional).] Tracking the local phase gradients
-$partial phi \/ partial x$ and $partial phi \/ partial y$ gives an
-equivalent, simpler alternative to the global 2D phase-plane fit for
-inferring horizontal and vertical translation.
+An optional, local trace-based alternative to the global phase-plane fit used
+in this chapter (Hypothesis 1.5: tracking the local phase gradients
+$partial phi \/ partial x$ and $partial phi \/ partial y$ directly) is
+explored separately in @sec:hyp1-h15 and is not required for the results
+below.
+
+== Workflow Defined <sec:hyp1-workflow>
+
+Every experiment in this chapter is analysed by the same five-step pipeline,
+applied identically to Lateral, Vertical, Diagonal, and FluidFlow --- only the
+gprMax domain, the moving target, and the sweep direction differ between
+them. No gprMax forward model or migration is re-run to produce this
+chapter's figures and tables: every B-scan and migrated image is loaded from
+the `.npz` caches already written by the corresponding
+`*_TimeLapse_Playground.ipynb` / `FluidFlow_Playground.ipynb` notebooks.
+
++ *Model set up* (§X.1). The gprMax domain and grid are plotted with the
+  baseline target position, followed by a second view marking every
+  scenario's target position across the full displacement sweep.
++ *Raw and processed B-scans* (§X.2). The background-subtracted B-scan is
+  shown for every scenario, using the tapering and $t_0$-shift conditioning
+  of @sec:meth-conditioning.
++ *Migration results* (§X.3). Every scenario is migrated with Kirchhoff,
+  Gazdag, and back-propagation, and the signed time-lapse-difference
+  amplitude (monitor-minus-baseline) is compared across all three methods in
+  one zoomed grid.
++ *Amplitude test* (§X.4). A Rayleigh-criterion argument is built from the
+  *raw* (non-difference) migrated images, not the bipolar time-lapse
+  difference: the Baseline and each Monitor scenario are each single-lobed
+  point-spread functions, so the Baseline-to-Monitor peak-to-peak separation,
+  measured against the Baseline PSF's own full width at half maximum (FWHM),
+  is the standard two-point resolution argument. A separation/FWHM ratio well
+  below $1$ means the two peaks cannot be distinguished from amplitude alone.
++ *Phase test* (§X.5, @sec:hyp1-phaseplane below). The 2D weighted-least-squares
+  phase-plane fit is applied to the baseline/monitor cross-spectrum, using a
+  window cropped around the target apex, and recovers the sub-wavelength
+  displacement $(#Dz, #Dx)$ directly from the cross-spectrum's phase plane.
+
+=== The Phase-Plane Fit (WLS) <sec:hyp1-phaseplane>
+
+The 2D weighted-least-squares (WLS) phase-plane fit derived in
+@sec:th-fourier-shift, @sec:th-wls, and @sec:th-material-change, and
+implemented as described in @sec:meth-phaseplane, is applied to the
+baseline/monitor cross-spectrum. The target apex is first localised from the
+peak of the Baseline envelope nearest to where the two images differ most,
+both images are then cropped to a $plus.minus 2.5 lambda$ window around that
+apex, and the WLS fit recovers the sub-wavelength displacement
+$(#Dz, #Dx)$ directly from the cropped cross-spectrum's phase plane, using
+the central wavenumber $k_(z,c) = 2 pi \/ lambda$. A four-panel diagnostic
+(cropped difference image with the apex marked, cross-spectrum phase,
+cross-spectrum energy, and a numeric True/Estimated/Error summary) is shown
+for every scenario and every migration method, in every §X.5 section below.
+
+One further subtlety affects the smallest scenarios tested: because the
+FDTD grid cell is $1 "mm"$, the *nominal* fraction-of-$lambda$ displacement
+requested of gprMax (e.g. $1\/32 lambda approx 3.52 "mm"$) is rounded to the
+nearest grid cell before the simulation is run. The *true* displacement used
+throughout this chapter's error tables is this grid-rounded value, not the
+raw continuous fraction --- at the smallest scale tested this is a
+$approx 14%$ correction, and it is why a handful of nominal-$1\/2 lambda$
+scenarios below fall just inside a "$< 1\/2 lambda$" regime rather than
+exactly on its boundary.
 
 == Lateral Movement <sec:hyp1-lateral>
 
-A single PEC cylinder ($r = 28 "mm"$, depth $0.676 "m"$) is held fixed in
-the baseline survey and displaced laterally by each of eight scenarios
-(@tab:tl-scenarios) in the monitor survey, from $2 lambda$ down to
-$1 \/ 32 lambda$ (@fig:tl-setup), using the same gprMax domain and grid as
-@sec:meth-resolution.
+A single PEC cylinder ($r = 28 "mm"$, baseline depth $0.676 "m"$) is held
+fixed in the baseline survey and displaced laterally by each of seven
+scenarios (@tab:h1-lat-scenarios), from $2 lambda$ down to $1 \/ 32 lambda$,
+in a $4.0 times 1.0 "m"$ pure-ice domain ($eps_r = 3.15$).
 
 #figure(
   table(
@@ -56,95 +124,170 @@ $1 \/ 32 lambda$ (@fig:tl-setup), using the same gprMax domain and grid as
     ($#Dx$) while depth is fixed ($#Dz = 0$), swept from $2 lambda$ down to
     $1\/32 lambda$.],
   kind: table,
-) <tab:tl-scenarios>
+) <tab:h1-lat-scenarios>
+
+=== Model Set Up <sec:hyp1-lat-setup>
 
 #figure(
   subfigs(cols: 1,
-    img("TL_001_TimeLapse_Study__Model_Geometry__domain_4010_m_Δx__1_mm_PML.png"),
-    img("TL_002_Moving_scatterer_s1__all_8_scenarios__r__28_mm_depth__0676_m.png", width: 55%),
+    img("H1_001_Lateral_Movement_--_Model_Set_Up.png"),
+    img("H1_002_Lateral_--_target_position_all_8_scenarios.png", width: 70%),
   ),
   caption: [Forward-model setup for the lateral time-lapse study: (a) the
-    gprMax domain and grid; (b) the lateral displacement of scatterer `s1`
-    across all eight scenarios, $r = 28 "mm"$, depth $0.676 "m"$.],
-) <fig:tl-setup>
+    gprMax domain and grid, with the baseline scatterer position and (where
+    present) the fixed second scatterer used for @sec:hyp1-lat-amplitude; (b)
+    the target position for all eight scenarios (Baseline plus seven
+    displacements), colour-coded from $2 lambda$ to $1 \/ 32 lambda$.],
+) <fig:h1-lat-setup>
 
-@fig:tl-bscans shows the background-baseline and time-lapsed raw B-scans,
-the background-subtracted result, and (for later use in @ch:hyp2) the effect
-of adding synthetic Laplace-distributed noise at $10%$ of the signal
-standard deviation.
-
-#figure(
-  subfigs(cols: 1,
-    img("TL_003_GPR_B-Scans__Background_Baseline_and_TimeLapsed_Models.png"),
-    img("TL_004_GPR_B-Scans__Background_Subtracted.png"),
-    img("TL_005_GPR_B-Scans__With_Synthetic_Laplace_Noise_10_of_signal_std.png"),
-  ),
-  caption: [Raw B-scans for the lateral time-lapse study: (a) background and
-    time-lapsed models; (b) background-subtracted; (c) with synthetic
-    Laplace-distributed noise at $10%$ of the signal standard deviation
-    (used in @ch:hyp2).],
-) <fig:tl-bscans>
-
-The same tapering and $t_0$-shift conditioning as @sec:meth-resolution
-(@sec:meth-conditioning) is applied before migration (@fig:tl-taper).
+=== Raw and Processed B-scans <sec:hyp1-lat-bscans>
 
 #figure(
-  subfigs(cols: 1,
-    img("TL_008_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png"),
-    img("TL_009_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png"),
-  ),
-  caption: [Effect of tapering and the $t_0$ shift on the $2 lambda$ lateral
-    displacement dataset: (a) a single trace; (b) the full B-scan.],
-) <fig:tl-taper>
+  img("H1_003_Lateral_Movement_--_Background-Subtracted_B-Scans.png"),
+  caption: [Background-subtracted B-scans for the lateral time-lapse study,
+    all eight scenarios.],
+) <fig:h1-lat-bscans>
 
-Per-method migrated images and time-lapse differences for Kirchhoff, Gazdag,
-and back-propagation migration are given in @app:hyp1-methods
-(@fig:tl-kirchhoff, @fig:tl-gazdag, @fig:tl-backprop). @fig:tl-summary-amp
-below instead overlays the signed difference from all three algorithms
-directly.
-
-=== Amplitude-Based Detectability Summary <sec:tl-detectability>
-
-@fig:tl-summary-amp overlays the signed time-lapse-difference amplitude from
-all three algorithms, and @fig:tl-summary-psf plots the normalised lateral
-point-spread function of that difference at the true scatterer depth, as a
-function of displacement.
+=== Migration Results <sec:hyp1-lat-migration>
 
 #figure(
-  img("TL_024_TimeLapse_Migration_Comparison__Signed_Amplitude____f_c15_GH.png"),
-  caption: [Signed time-lapse-difference amplitude for all three migration
-    algorithms at $f_c = 1.5 "GHz"$.],
+  img("H1_004_Lateral_--_TimeLapse_Migration_Comparison_Clean_--_Signed_Am.png", width: 85%),
+  caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
+    for all three migration algorithms, lateral time-lapse study, clean
+    data.],
 ) <fig:tl-summary-amp>
 
-#figure(
-  img("TL_025_Normalised_Lateral_PSF__TimeLapse_Difference_at_True_Scatter.png"),
-  caption: [Normalised lateral PSF of the time-lapse-difference image at the
-    true scatterer depth, swept across lateral displacements from $2 lambda$
-    to $1 \/ 32 lambda$.],
-) <fig:tl-summary-psf>
+Individual per-method migrated images and time-lapse differences, zoomed
+around the scatterer, are given in @app:hyp1-methods.
 
-#draftnote[state the smallest displacement at which the difference image in
-@fig:tl-summary-psf still shows a clear, unambiguous peak above the numerical
-background, and compare it with the amplitude resolution floor found for
-stationary scatterers in @sec:meth-resolution. The noisy version of this
-sweep, and the noise-mitigation strategies tested against it, are presented
-in @ch:hyp2 rather than here.]
+=== Amplitude Test <sec:hyp1-lat-amplitude>
+
+#figure(
+  img("H1_006_Lateral_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migrat.png", width: 75%),
+  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
+    for the raw (non-difference) migrated lateral images: peak-normalised
+    Baseline (blue) and Monitor (red) 1D slices, with the Baseline FWHM
+    shaded and both peaks marked, for every scenario (rows) and migration
+    method (columns).],
+) <fig:h1-lat-amp-zoom>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$2 lambda$],     [7.306], [4.403], [3.656],
+    [$1 lambda$],     [3.494], [2.106], [1.908],
+    [$1\/2 lambda$],  [1.906], [1.149], [0.954],
+    [$1\/4 lambda$],  [0.953], [0.574], [0.477],
+    [$1\/8 lambda$],  [0.318], [0.383], [0.318],
+    [$1\/16 lambda$], [0.318], [0.191], [0.159],
+    [$1\/32 lambda$], [0.0],   [0.191], [0.159],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Lateral Rayleigh-criterion ratio (Baseline--Monitor peak
+    separation / Baseline FWHM). A ratio well below $1$ means the two peaks
+    cannot be distinguished from amplitude alone.],
+  kind: table,
+) <tab:h1-lat-amp>
+
+Every method's ratio drops below $1$ at or before $1\/4 lambda$ (Kirchhoff
+already at $1\/2 lambda$, ratio $0.954$) and falls below $0.4$ by
+$1\/8 lambda$: from $1\/4 lambda$ downward, amplitude differencing alone
+cannot resolve the lateral displacement for any of the three migration
+algorithms.
+
+=== Phase Test <sec:hyp1-lat-phase>
+
+#figure(
+  img("H1_007_Lateral_--_Phase-plane_shift_estimation_--_Kirchhoff____Base.png", width: 75%),
+  caption: [Kirchhoff-migrated phase-plane shift estimation, lateral study:
+    Baseline versus each of the seven displacement scenarios.],
+) <fig:h1-lat-phase-kirchhoff>
+
+#figure(
+  img("H1_008_Lateral_--_Phase-plane_shift_estimation_--_Gazdag____Baselin.png", width: 75%),
+  caption: [Gazdag-migrated phase-plane shift estimation, lateral study:
+    Baseline versus each of the seven displacement scenarios.],
+) <fig:h1-lat-phase-gazdag>
+
+#figure(
+  img("H1_009_Lateral_--_Phase-plane_shift_estimation_--_Back-prop____Base.png", width: 75%),
+  caption: [Back-propagation-migrated phase-plane shift estimation, lateral
+    study: Baseline versus each of the seven displacement scenarios.],
+) <fig:h1-lat-phase-backprop>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$2 lambda$],     [$-221.66$], [$-201.58$], [$-212.45$],
+    [$1 lambda$],     [$-79.14$],  [$-39.65$],  [$-88.31$],
+    [$1\/2 lambda$],  [$-92.44$],  [$-0.00$],   [$+0.04$],
+    [$1\/4 lambda$],  [$-0.35$],   [$-0.00$],   [$+0.04$],
+    [$1\/8 lambda$],  [$-0.17$],   [$-0.00$],   [$+0.02$],
+    [$1\/16 lambda$], [$-0.10$],   [$-0.00$],   [$+0.01$],
+    [$1\/32 lambda$], [$-0.06$],   [$-0.00$],   [$+0.01$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Lateral phase-plane WLS displacement error, $#Dx$
+    (estimated $-$ true), millimetres.],
+  kind: table,
+) <tab:h1-lat-phase>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$2 lambda$],     [$-98.5%$],  [$-89.6%$], [$-94.4%$],
+    [$1 lambda$],     [$-70.0%$],  [$-35.1%$], [$-78.2%$],
+    [$1\/2 lambda$],  [$-165.1%$], [$-0.0%$],  [$+0.1%$],
+    [$1\/4 lambda$],  [$-1.2%$],   [$-0.0%$],  [$+0.1%$],
+    [$1\/8 lambda$],  [$-1.2%$],   [$-0.0%$],  [$+0.1%$],
+    [$1\/16 lambda$], [$-1.5%$],   [$-0.0%$],  [$+0.1%$],
+    [$1\/32 lambda$], [$-1.6%$],   [$-0.0%$],  [$+0.1%$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Lateral phase-plane WLS displacement error, $#Dx$, as a
+    percentage of the true displacement (compare @tab:h1-lat-phase).],
+  kind: table,
+) <tab:h1-lat-phase-pct>
+
+At $2 lambda$ and $1 lambda$ the cross-spectrum has wrapped and every method
+is off by tens to hundreds of millimetres, as expected outside the
+estimator's unambiguous range. From $1\/4 lambda$ down to $1\/32 lambda$,
+however, every method recovers $#Dx$ to within $0.35 "mm"$ --- Gazdag and
+Kirchhoff are already accurate at $1\/2 lambda$ (within $0.04 "mm"$), while
+back-propagation's fit degrades at that single scale ($-92.44 "mm"$) before
+also becoming sub-millimetre-accurate from $1\/4 lambda$ downward. This is
+exactly the regime (@tab:h1-lat-amp) in which amplitude differencing has
+already collapsed to an unresolvable single lobe for every method --- the
+central empirical claim of Hypothesis 1.
 
 == Vertical Movement <sec:hyp1-vertical>
 
-This section mirrors @sec:hyp1-lateral, replacing lateral displacement of
-the scatterer with _vertical_ (depth) displacement. The two directions are
-not expected to behave identically: @sec:th-duality showed that a migrated
-image separates lateral spatial frequencies like a prism but does not separate
-vertical ones, so the amplitude-based detectability established here is an
-important point of comparison for the phase-based vertical results of
-@sec:hyp1-phaseplane.
+This section mirrors @sec:hyp1-lateral, replacing lateral displacement with
+_vertical_ (depth) displacement. The two directions are not expected to
+behave identically: @sec:th-duality showed that a migrated image separates
+lateral spatial frequencies like a prism but does not separate vertical
+ones, so the results below are an important point of comparison for
+@sec:hyp1-lateral.
 
 A single PEC cylinder ($r = 28 "mm"$) sits at lateral position $x = 2.0 "m"$
-and is displaced _downward_ from its baseline depth across seven scenarios
-(@tab:vtl-scenarios), from $1 lambda$ down to $1 \/ 32 lambda$
-(@fig:vtl-setup), using the same domain and grid as @sec:meth-resolution and
-@sec:hyp1-lateral.
+and is displaced _downward_ from its baseline depth ($0.676 "m"$) across six
+scenarios (@tab:h1-vert-scenarios), from $1 lambda$ down to
+$1 \/ 32 lambda$, using the same domain and grid as @sec:hyp1-lateral.
 
 #figure(
   table(
@@ -167,84 +310,157 @@ and is displaced _downward_ from its baseline depth across seven scenarios
     depth ($#Dz$) while its lateral position is fixed ($#Dx = 0$), swept from
     $1 lambda$ down to $1\/32 lambda$.],
   kind: table,
-) <tab:vtl-scenarios>
+) <tab:h1-vert-scenarios>
+
+=== Model Set Up <sec:hyp1-vert-setup>
 
 #figure(
   subfigs(cols: 1,
-    img("VTL_001_Vertical_TimeLapse_Study__Model_Geometry__domain_4010_m_Δx.png"),
-    img("VTL_002_Moving_scatterer__all_7_scenarios__r__28_mm_x__20_mBaseline.png", width: 45%),
+    img("H1_010_Vertical_Movement_--_Model_Set_Up.png"),
+    img("H1_011_Vertical_--_target_position_all_7_scenarios.png", width: 70%),
   ),
   caption: [Forward-model setup for the vertical time-lapse study: (a) the
-    gprMax domain and grid; (b) the vertical displacement of the scatterer
-    across all seven scenarios, $r = 28 "mm"$, fixed at $x = 2.0 "m"$.],
-) <fig:vtl-setup>
+    gprMax domain and grid, fixed at $x = 2.0 "m"$; (b) the target depth for
+    all seven scenarios (Baseline plus six displacements), colour-coded from
+    $1 lambda$ to $1 \/ 32 lambda$.],
+) <fig:h1-vert-setup>
 
-@fig:vtl-bscans shows the background-baseline and vertically time-lapsed raw
-B-scans and the background-subtracted result, with the expected arrival times
-for each scenario marked, and @fig:vtl-taper the effect of the standard
-tapering and $t_0$-shift conditioning on the $1 lambda$ dataset.
+=== Raw and Processed B-scans <sec:hyp1-vert-bscans>
 
 #figure(
-  subfigs(cols: 1,
-    img("VTL_003_GPR_B-Scans__Background_Baseline_and_Vertical_TimeLapsed_Mod.png"),
-    img("VTL_004_GPR_B-Scans__Background_Subtracted__green_dashed__expected_a.png"),
+  img("H1_012_Vertical_Movement_--_Background-Subtracted_B-Scans.png"),
+  caption: [Background-subtracted B-scans for the vertical time-lapse study,
+    all seven scenarios.],
+) <fig:h1-vert-bscans>
+
+=== Migration Results <sec:hyp1-vert-migration>
+
+#figure(
+  img("H1_013_Vertical_--_TimeLapse_Migration_Comparison_Clean_--_Signed_A.png", width: 85%),
+  caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
+    for all three migration algorithms, vertical time-lapse study, clean
+    data.],
+) <fig:h1-vert-summary-amp>
+
+Individual per-method migrated images and time-lapse differences, zoomed
+around the scatterer, are given in @app:hyp1-methods.
+
+=== Amplitude Test <sec:hyp1-vert-amplitude>
+
+#figure(
+  img("H1_015_Vertical_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migra.png", width: 75%),
+  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
+    for the raw migrated vertical images, all scenarios and migration
+    methods.],
+) <fig:h1-vert-amp-zoom>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$1 lambda$],     [6.096], [7.564], [6.528],
+    [$1\/2 lambda$],  [3.180], [3.946], [3.406],
+    [$1\/4 lambda$],  [1.590], [1.973], [1.703],
+    [$1\/8 lambda$],  [0.795], [0.987], [0.851],
+    [$1\/16 lambda$], [0.530], [0.658], [0.568],
+    [$1\/32 lambda$], [0.265], [0.329], [0.284],
+    table.hline(stroke: 0.7pt),
   ),
-  caption: [Raw B-scans for the vertical time-lapse study: (a) background and
-    time-lapsed models; (b) background-subtracted, with expected arrival
-    times marked (green, dashed).],
-) <fig:vtl-bscans>
+  caption: [Vertical Rayleigh-criterion ratio (Baseline--Monitor peak
+    separation / Baseline FWHM).],
+  kind: table,
+) <tab:h1-vert-amp>
+
+Unlike the lateral case, every method's ratio stays above $1$ down to
+$1\/4 lambda$ (minimum $1.590$), and only drops below $1$ starting at
+$1\/8 lambda$ --- a full octave lower than the lateral floor of
+@tab:h1-lat-amp. Vertical amplitude differencing is therefore resolvable
+over a wider sub-wavelength range than lateral, before it too collapses
+($<0.33$ for all methods) by $1\/32 lambda$.
+
+=== Phase Test <sec:hyp1-vert-phase>
 
 #figure(
-  subfigs(cols: 1,
-    img("VTL_007_Effect_of_Tapering_and_t0_Shift__1λ_dataset_single_trace.png"),
-    img("VTL_008_B-scan_effect_of_tapering_and_t0_shift__1λ_dataset.png"),
+  img("H1_016_Vertical_--_Phase-plane_shift_estimation_--_Kirchhoff____Bas.png", width: 75%),
+  caption: [Kirchhoff-migrated phase-plane shift estimation, vertical study:
+    Baseline versus each of the six displacement scenarios.],
+) <fig:h1-vert-phase-kirchhoff>
+
+#figure(
+  img("H1_017_Vertical_--_Phase-plane_shift_estimation_--_Gazdag____Baseli.png", width: 75%),
+  caption: [Gazdag-migrated phase-plane shift estimation, vertical study:
+    Baseline versus each of the six displacement scenarios.],
+) <fig:h1-vert-phase-gazdag>
+
+#figure(
+  img("H1_018_Vertical_--_Phase-plane_shift_estimation_--_Back-prop____Bas.png", width: 75%),
+  caption: [Back-propagation-migrated phase-plane shift estimation, vertical
+    study: Baseline versus each of the six displacement scenarios.],
+) <fig:h1-vert-phase-backprop>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$1 lambda$],     [$-100.01$], [$-90.08$], [$-86.93$],
+    [$1\/2 lambda$],  [$-59.67$],  [$-80.37$], [$-83.99$],
+    [$1\/4 lambda$],  [$+0.03$],   [$-0.01$],  [$-0.00$],
+    [$1\/8 lambda$],  [$+0.03$],   [$-0.01$],  [$-0.00$],
+    [$1\/16 lambda$], [$+0.02$],   [$-0.00$],  [$-0.00$],
+    [$1\/32 lambda$], [$+0.01$],   [$-0.00$],  [$-0.00$],
+    table.hline(stroke: 0.7pt),
   ),
-  caption: [Effect of tapering and the $t_0$ shift on the $1 lambda$ vertical
-    displacement dataset: (a) a single trace; (b) the full B-scan.],
-) <fig:vtl-taper>
-
-Per-method migrated images and time-lapse differences for Kirchhoff, Gazdag,
-and back-propagation migration are given in @app:hyp1-methods
-(@fig:vtl-kirchhoff, @fig:vtl-gazdag, @fig:vtl-backprop). @fig:vtl-summary-amp
-below instead overlays the signed difference from all three algorithms
-directly.
-
-=== Vertical Detectability Summary <sec:vtl-detectability>
-
-@fig:vtl-summary-amp overlays the signed time-lapse-difference amplitude from
-all three algorithms, and @fig:vtl-summary-psf plots the normalised
-_vertical_ point-spread function of that difference at $x = 2.0 "m"$, as a
-function of vertical displacement.
+  caption: [Vertical phase-plane WLS displacement error, $#Dz$
+    (estimated $-$ true), millimetres.],
+  kind: table,
+) <tab:h1-vert-phase>
 
 #figure(
-  img("VTL_023_Vertical_TimeLapse_Migration_Comparison__Signed_Amplitude.png"),
-  caption: [Signed time-lapse-difference amplitude for all three migration
-    algorithms.],
-) <fig:vtl-summary-amp>
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$1 lambda$],     [$-88.5%$],  [$-79.7%$],  [$-76.9%$],
+    [$1\/2 lambda$],  [$-106.6%$], [$-143.5%$], [$-150.0%$],
+    [$1\/4 lambda$],  [$+0.1%$],   [$-0.0%$],   [$-0.0%$],
+    [$1\/8 lambda$],  [$+0.2%$],   [$-0.0%$],   [$-0.0%$],
+    [$1\/16 lambda$], [$+0.2%$],   [$-0.0%$],   [$-0.0%$],
+    [$1\/32 lambda$], [$+0.3%$],   [$-0.0%$],   [$-0.0%$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Vertical phase-plane WLS displacement error, $#Dz$, as a
+    percentage of the true displacement (compare @tab:h1-vert-phase).],
+  kind: table,
+) <tab:h1-vert-phase-pct>
 
-#figure(
-  img("VTL_024_Normalised_Vertical_PSF__TimeLapse_Difference_at_x__20_m.png", width: 55%),
-  caption: [Normalised vertical PSF of the time-lapse-difference image at
-    $x = 2.0 "m"$, swept across vertical displacements from $1 lambda$ to
-    $1 \/ 32 lambda$.],
-) <fig:vtl-summary-psf>
-
-#draftnote[compare the smallest reliably-detected vertical displacement in
-@fig:vtl-summary-psf against the lateral result of @fig:tl-summary-psf
-(@sec:tl-detectability) and discuss whether the lateral/vertical asymmetry
-predicted by the instantaneous-phase theory of @sec:th-duality is also visible
-at the amplitude level, or only emerges once the phase-plane estimator of
-@sec:hyp1-phaseplane is applied.]
+The phase-plane fit becomes accurate ($<=0.03 "mm"$ error) for every method
+from $1\/4 lambda$ down to $1\/32 lambda$ --- the same threshold at which
+@tab:h1-vert-amp still shows a resolvable amplitude PSF ($1.59$--$1.97$).
+Only at $1 lambda$ and $1\/2 lambda$, where amplitude differencing remains
+comfortably resolvable, is the phase fit still wrapped and inaccurate,
+confirming that the phase estimator's advantage over amplitude is concentrated
+in the sub-$1\/4 lambda$ regime rather than uniformly across the whole sweep.
 
 == Diagonal Movement <sec:hyp1-diagonal>
 
-The third and final translation direction combines the previous two: the
-scatterer moves simultaneously laterally and vertically, along a fixed $2:1$
-diagonal ($#Dx = 2 thin #Dz$ in every scenario), so that all scenarios lie
-on the same line through the baseline position. A single PEC cylinder at
+The third translation direction combines the previous two: the scatterer
+moves simultaneously laterally and vertically, along a fixed $2$:$1$
+diagonal ($#Dx = 2 thin #Dz$ in every scenario), so that all scenarios lie on
+the same line through the baseline position. A single PEC cylinder at
 $x = 2.0 "m"$, baseline depth $0.676 "m"$, is displaced diagonally across
-five scenarios (@tab:dtl-scenarios), using the same domain and grid as
-@sec:meth-resolution, @sec:hyp1-lateral, and @sec:hyp1-vertical.
+five scenarios (@tab:h1-diag-scenarios), using the same domain and grid as
+@sec:hyp1-lateral and @sec:hyp1-vertical.
 
 #figure(
   table(
@@ -264,182 +480,432 @@ five scenarios (@tab:dtl-scenarios), using the same domain and grid as
   ),
   caption: [Diagonal displacement scenarios: lateral ($#Dx$, rightward) and
     vertical ($#Dz$, downward) components, both expressed as fractions of the
-    dominant wavelength $lambda$.],
+    dominant wavelength $lambda$, in a fixed $2$:$1$ ratio.],
   kind: table,
-) <tab:dtl-scenarios>
+) <tab:h1-diag-scenarios>
+
+=== Model Set Up <sec:hyp1-diag-setup>
 
 #figure(
   subfigs(cols: 1,
-    img("DTL_001_Diagonal_TimeLapse_Study__Model_Geometry__domain_4010_m_Δx.png"),
-    img("DTL_002_Diagonal_scatterer_path__all_6_scenarios__r__28_mm.png", width: 55%),
+    img("H1_019_Diagonal_Movement_--_Model_Set_Up.png"),
+    img("H1_020_Diagonal_--_target_position_all_6_scenarios.png", width: 70%),
   ),
   caption: [Forward-model setup for the diagonal time-lapse study: (a) the
-    gprMax domain and grid; (b) the diagonal displacement path of the scatterer
-    across all scenarios, $r = 28 "mm"$.],
-) <fig:dtl-setup>
+    gprMax domain and grid; (b) the target position for all six scenarios
+    (Baseline plus five displacements) along the $2$:$1$ diagonal.],
+) <fig:h1-diag-setup>
 
-@fig:dtl-bscans shows the background-baseline and diagonally time-lapsed raw
-B-scans, the background-subtracted result, and the effect of the synthetic
-Laplace noise used later in @ch:hyp2; @fig:dtl-taper shows the standard
-tapering and $t_0$-shift conditioning on the scenario-1 dataset.
+=== Raw and Processed B-scans <sec:hyp1-diag-bscans>
+
+#figure(
+  img("H1_021_Diagonal_Movement_--_Background-Subtracted_B-Scans.png"),
+  caption: [Background-subtracted B-scans for the diagonal time-lapse study,
+    all six scenarios.],
+) <fig:h1-diag-bscans>
+
+=== Migration Results <sec:hyp1-diag-migration>
+
+#figure(
+  img("H1_022_Diagonal_--_TimeLapse_Migration_Comparison_Clean_--_Signed_A.png", width: 85%),
+  caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
+    for all three migration algorithms, diagonal time-lapse study, clean
+    data, sampled along the diagonal motion direction.],
+) <fig:h1-diag-summary-amp>
+
+Individual per-method migrated images and time-lapse differences, zoomed
+around the scatterer, are given in @app:hyp1-methods.
+
+=== Amplitude Test <sec:hyp1-diag-amplitude>
+
+#figure(
+  img("H1_024_Diagonal_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migra.png", width: 75%),
+  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
+    for the raw migrated diagonal images, sampled along the motion direction,
+    all scenarios and migration methods.],
+) <fig:h1-diag-amp-zoom>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [1 ($1 lambda_x$, $1\/2 lambda_z$)],   [5.065], [4.169], [3.429],
+    [2 ($1\/2 lambda_x$, $1\/4 lambda_z$)], [2.392], [2.025], [1.663],
+    [3 ($1\/4 lambda_x$, $1\/8 lambda_z$)], [1.266], [0.953], [0.831],
+    [4 ($1\/8 lambda_x$, $1\/16 lambda_z$)],[0.563], [0.596], [0.312],
+    [5 ($1\/16 lambda_x$, $1\/32 lambda_z$)],[0.422],[0.238], [0.104],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Diagonal Rayleigh-criterion ratio (Baseline--Monitor peak
+    separation / Baseline FWHM, sampled along the motion direction).],
+  kind: table,
+) <tab:h1-diag-amp>
+
+The diagonal amplitude ratio crosses below $1$ at Scenario 3
+($1\/4 lambda_x$, $1\/8 lambda_z$) for Gazdag and Kirchhoff, and remains just
+above $1$ for back-propagation at that scenario ($1.266$) before also
+collapsing by Scenario 4. Diagonal movement therefore fails at roughly the
+same combined-displacement scale as the lateral case (@tab:h1-lat-amp), not
+at the looser vertical floor of @tab:h1-vert-amp.
+
+=== Phase Test <sec:hyp1-diag-phase>
+
+#figure(
+  img("H1_025_Diagonal_--_Phase-plane_shift_estimation_--_Kirchhoff____Bas.png", width: 75%),
+  caption: [Kirchhoff-migrated phase-plane shift estimation, diagonal study:
+    Baseline versus each of the five displacement scenarios.],
+) <fig:h1-diag-phase-kirchhoff>
+
+#figure(
+  img("H1_026_Diagonal_--_Phase-plane_shift_estimation_--_Gazdag____Baseli.png", width: 75%),
+  caption: [Gazdag-migrated phase-plane shift estimation, diagonal study:
+    Baseline versus each of the five displacement scenarios.],
+) <fig:h1-diag-phase-gazdag>
+
+#figure(
+  img("H1_027_Diagonal_--_Phase-plane_shift_estimation_--_Back-prop____Bas.png", width: 75%),
+  caption: [Back-propagation-migrated phase-plane shift estimation, diagonal
+    study: Baseline versus each of the five displacement scenarios.],
+) <fig:h1-diag-phase-backprop>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [1], [$-59.49$], [$-56.09$], [$-54.30$],
+    [2], [$-49.09$], [$-7.48$],  [$-12.54$],
+    [3], [$-1.51$],  [$-0.01$],  [$-0.00$],
+    [4], [$+0.01$],  [$-0.00$],  [$-0.00$],
+    [5], [$+0.01$],  [$-0.00$],  [$-0.00$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Diagonal phase-plane WLS displacement error, $#Dz$
+    (estimated $-$ true), millimetres.],
+  kind: table,
+) <tab:h1-diag-phase-dz>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [1], [$-121.17$], [$-184.50$], [$-146.94$],
+    [2], [$-47.25$],  [$-70.89$],  [$-83.58$],
+    [3], [$-1.32$],   [$-0.00$],   [$+0.02$],
+    [4], [$-0.02$],   [$-0.00$],   [$+0.01$],
+    [5], [$-0.01$],   [$-0.00$],   [$+0.01$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Diagonal phase-plane WLS displacement error, $#Dx$
+    (estimated $-$ true), millimetres.],
+  kind: table,
+) <tab:h1-diag-phase-dx>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [1], [$-106.2%$], [$-100.2%$], [$-97.0%$],
+    [2], [$-175.3%$], [$-26.7%$],  [$-44.8%$],
+    [3], [$-10.8%$],  [$-0.0%$],   [$-0.0%$],
+    [4], [$+0.2%$],   [$-0.0%$],   [$-0.0%$],
+    [5], [$+0.3%$],   [$-0.0%$],   [$-0.0%$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Diagonal phase-plane WLS displacement error, $#Dz$, as a
+    percentage of the true displacement (compare @tab:h1-diag-phase-dz).],
+  kind: table,
+) <tab:h1-diag-phase-dz-pct>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [1], [$-107.2%$], [$-163.3%$], [$-130.0%$],
+    [2], [$-84.4%$],  [$-126.6%$], [$-149.3%$],
+    [3], [$-4.7%$],   [$-0.0%$],   [$+0.1%$],
+    [4], [$-0.1%$],   [$-0.0%$],   [$+0.1%$],
+    [5], [$-0.1%$],   [$-0.0%$],   [$+0.1%$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Diagonal phase-plane WLS displacement error, $#Dx$, as a
+    percentage of the true displacement (compare @tab:h1-diag-phase-dx).],
+  kind: table,
+) <tab:h1-diag-phase-dx-pct>
+
+Scenarios 1 and 2 remain wrapped for every method, as in the lateral and
+vertical cases. From Scenario 3 downward, Gazdag and Kirchhoff recover both
+$#Dz$ and $#Dx$ to within $0.02 "mm"$, and back-propagation follows from
+Scenario 4 (a single outlier of $-1.51 "mm"$ in $#Dz$ remains at Scenario
+3). The recovered $#Dz$ and $#Dx$ at Scenarios 3--5 satisfy the known
+$#Dx = 2 #Dz$ ratio of @tab:h1-diag-scenarios to well within the reported
+error, confirming that the 2D WLS fit correctly separates the two
+simultaneous displacement components.
+
+== Fluid Flow <sec:hyp1-fluidflow>
+
+The three translation studies above all move a rigid point scatterer; this
+final experiment instead repeats the clean-data comparison for a target that
+is directly relevant to the real fluid-injection field data of @ch:hyp3 ---
+a _graded wetting zone_ rather than a discrete PEC cylinder. The domain, grid,
+and centre frequency match @sec:hyp1-lateral exactly ($4.0 times 1.0 "m"$,
+$f_c = 1.5 "GHz"$, $lambda = 112.6 "mm"$), but the moving target is a
+$7$-step graded permittivity transition (box width $11.3 "mm"$, total
+transition $78.8 "mm"$) between water and ice at depth $0.676 "m"$, standing
+in for a fluid front advancing through a horizontal fracture. As in
+@sec:hyp1-lateral, the front is swept laterally across the same seven
+scenarios, from $2 lambda$ down to $1 \/ 32 lambda$ relative to its baseline
+position (@tab:h1-ff-scenarios).
+
+#figure(
+  table(
+    columns: (auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Front displacement $#Dx$*],
+    table.hline(stroke: 0.4pt),
+    [Baseline], [$0$],
+    [$2 lambda$], [$2 lambda$],
+    [$1 lambda$], [$1 lambda$],
+    [$1\/2 lambda$], [$1\/2 lambda$],
+    [$1\/4 lambda$], [$1\/4 lambda$],
+    [$1\/8 lambda$], [$1\/8 lambda$],
+    [$1\/16 lambda$], [$1\/16 lambda$],
+    [$1\/32 lambda$], [$1\/32 lambda$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [FluidFlow displacement scenarios: the graded wetting front's
+    centroid moves laterally, swept from $2 lambda$ down to $1\/32 lambda$
+    ---identical sweep to @sec:hyp1-lateral.],
+  kind: table,
+) <tab:h1-ff-scenarios>
+
+=== Model Set Up <sec:hyp1-ff-setup>
 
 #figure(
   subfigs(cols: 1,
-    img("DTL_003_GPR_B-Scans__Background_Baseline_and_Diagonal_TimeLapsed_Mod.png"),
-    img("DTL_004_GPR_B-Scans__Background_Subtracted__green_dashed__expected_a.png"),
-    img("DTL_005_GPR_B-Scans__With_Synthetic_Laplace_Noise_10_of_signal_std.png"),
+    img("H1_028_FluidFlow_--_Model_Set_Up_baseline_graded_zone_true_scale.png"),
+    img("H1_029_FluidFlow_--_graded_wetting_zone_all_8_scenarios_box_width11.png", width: 90%),
   ),
-  caption: [Raw B-scans for the diagonal time-lapse study: (a) background and
-    time-lapsed models; (b) background-subtracted, with expected arrival times
-    marked; (c) with synthetic Laplace-distributed noise at $10%$ of the
-    signal standard deviation (used in @ch:hyp2).],
-) <fig:dtl-bscans>
+  caption: [Forward-model setup for the fluid-flow time-lapse study: (a) the
+    gprMax domain with the baseline graded wetting zone at true scale; (b)
+    the graded zone's position for all eight scenarios (Baseline plus seven
+    displacements).],
+) <fig:h1-ff-setup>
+
+=== Raw and Processed B-scans <sec:hyp1-ff-bscans>
 
 #figure(
-  subfigs(cols: 1,
-    img("DTL_007_Effect_of_Tapering_and_t0_Shift__Scenario_1_dataset_single_t.png"),
-    img("DTL_008_B-scan_effect_of_tapering_and_t0_shift__Scenario_1_dataset.png"),
+  img("H1_030_FluidFlow_Movement_--_Background-Subtracted_B-Scans.png"),
+  caption: [Background-subtracted B-scans for the fluid-flow time-lapse
+    study, all eight scenarios.],
+) <fig:h1-ff-bscans>
+
+=== Migration Results <sec:hyp1-ff-migration>
+
+#figure(
+  img("H1_031_FluidFlow_--_TimeLapse_Migration_Comparison_Clean_--_Signed.png", width: 85%),
+  caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
+    for all three migration algorithms, fluid-flow time-lapse study, clean
+    data.],
+) <fig:h1-ff-summary-amp>
+
+=== Amplitude Test <sec:hyp1-ff-amplitude>
+
+#figure(
+  img("H1_033_FluidFlow_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migr.png", width: 75%),
+  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
+    for the raw migrated fluid-flow images, all scenarios and migration
+    methods.],
+) <fig:h1-ff-amp-zoom>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$2 lambda$],     [1.978], [0.781], [5.442],
+    [$1 lambda$],     [1.032], [0.391], [2.721],
+    [$1\/2 lambda$],  [0.516], [0.178], [1.237],
+    [$1\/4 lambda$],  [0.258], [0.107], [0.495],
+    [$1\/8 lambda$],  [0.172], [0.036], [0.247],
+    [$1\/16 lambda$], [0.086], [0.0],   [0.0],
+    [$1\/32 lambda$], [0.086], [0.0],   [0.0],
+    table.hline(stroke: 0.7pt),
   ),
-  caption: [Effect of tapering and the $t_0$ shift on the scenario-1
-    ($1 lambda, 1\/2 lambda$) diagonal displacement dataset: (a) a single
-    trace; (b) the full B-scan.],
-) <fig:dtl-taper>
+  caption: [FluidFlow Rayleigh-criterion ratio (Baseline--Monitor peak
+    separation / Baseline FWHM).],
+  kind: table,
+) <tab:h1-ff-amp>
 
-Per-method migrated images and time-lapse differences for Kirchhoff, Gazdag,
-and back-propagation migration are given in @app:hyp1-methods
-(@fig:dtl-kirchhoff, @fig:dtl-gazdag, @fig:dtl-backprop). @fig:dtl-summary-amp
-below instead overlays the signed difference from all three algorithms
-directly.
+The graded front's broader intrinsic point-spread function makes amplitude
+differencing far harder than for a discrete point scatterer even at large
+scales: Gazdag's ratio is already below $1$ at $2 lambda$, and Kirchhoff is
+the only method still resolvable ($1.237$) at $1\/2 lambda$, failing by
+$1\/4 lambda$. By $1\/16 lambda$ every method has collapsed to $ratio <= 0.09$.
 
-=== Diagonal Detectability Summary <sec:dtl-detectability>
-
-Because every scenario moves the scatterer along the same $2:1$ diagonal line
-through the baseline, the detectability analysis samples each
-time-lapse-difference image _along that line_ rather than along a single
-Cartesian axis: @fig:dtl-summary-amp overlays the signed, diagonally-sampled
-amplitude from all three algorithms, and @fig:dtl-summary-psf plots the
-normalised diagonal point-spread function (signed amplitude and Hilbert
-envelope) as a function of signed distance along the motion direction.
+=== Phase Test <sec:hyp1-ff-phase>
 
 #figure(
-  img("DTL_023_Diagonal_TimeLapse_Migration_Comparison__Signed_Amplitude.png"),
-  caption: [Signed time-lapse-difference amplitude for all three migration
-    algorithms, sampled along the diagonal motion direction.],
-) <fig:dtl-summary-amp>
+  img("H1_034_FluidFlow_--_Phase-plane_shift_estimation_--_Kirchhoff____Ba.png", width: 75%),
+  caption: [Kirchhoff-migrated phase-plane shift estimation, fluid-flow
+    study: Baseline versus each of the seven displacement scenarios.],
+) <fig:h1-ff-phase-kirchhoff>
 
 #figure(
-  img("DTL_024_Normalised_Diagonal_PSF__TimeLapse_Difference_Along_Motion_D.png", width: 80%),
-  caption: [Normalised diagonal PSF of the time-lapse-difference image along
-    the motion direction, swept across the five diagonal scenarios of
-    @tab:dtl-scenarios.],
-) <fig:dtl-summary-psf>
-
-#draftnote[state the smallest diagonal displacement at which
-@fig:dtl-summary-psf still shows a clear, unambiguous peak above background,
-and compare it with the lateral and vertical floors of @sec:tl-detectability
-and @sec:vtl-detectability --- since the diagonal step combines a lateral and
-a vertical component of different magnitude ($#Dx = 2 #Dz$), state whether
-the effective detectability floor tracks the (tighter) lateral floor, the
-(looser) vertical floor, or some combination of the two.]
-
-== Global Phase-Plane Validation <sec:hyp1-phaseplane>
-
-@sec:hyp1-lateral, @sec:hyp1-vertical, and @sec:hyp1-diagonal showed that
-simple amplitude differencing of migrated images detects sub-wavelength
-displacement only down to a finite floor, in all three directions. This
-section applies the phase-plane shift estimator derived in
-@sec:th-fourier-shift, @sec:th-wls, and @sec:th-material-change, and
-implemented as described in @sec:meth-phaseplane, to the lateral and vertical
-displacement datasets, and shows that it remains accurate at displacement
-scales where the amplitude image is already featureless.
-
-Because several of the analyses below are repeated identically across seven
-(or six) wavelength scales, only one or two representative scales are shown
-in this section; the complete sweep for every analysis is given in
-@app:extended-sweeps, so that every one of the relevant figures produced by
-`TimeLapse_Processing.ipynb` for these scenarios appears at least once in the
-thesis.
-
-=== Migrated Baseline Overview Across Scenarios <sec:tlp-overview>
-
-@fig:tlp-overview shows the starting point for every analysis in this section:
-the raw background-subtracted B-scans and the three migrated images
-(Kirchhoff, Gazdag, back-propagation) for every scenario used below.
+  img("H1_035_FluidFlow_--_Phase-plane_shift_estimation_--_Gazdag____Basel.png", width: 75%),
+  caption: [Gazdag-migrated phase-plane shift estimation, fluid-flow study:
+    Baseline versus each of the seven displacement scenarios.],
+) <fig:h1-ff-phase-gazdag>
 
 #figure(
-  subfigs(cols: 2,
-    img("TLP_001_Raw_Background-Subtracted_B-Scans__All_Scenarios.png"),
-    img("TLP_002_Kirchhoff_Migration__All_Scenarios.png"),
-    img("TLP_003_Gazdag_Migration__All_Scenarios.png"),
-    img("TLP_004_Back-prop_Migration__All_Scenarios.png"),
+  img("H1_036_FluidFlow_--_Phase-plane_shift_estimation_--_Back-prop____Ba.png", width: 75%),
+  caption: [Back-propagation-migrated phase-plane shift estimation,
+    fluid-flow study: Baseline versus each of the seven displacement
+    scenarios.],
+) <fig:h1-ff-phase-backprop>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$2 lambda$],     [$-293.35$], [$-225.00$], [$-225.00$],
+    [$1 lambda$],     [$-84.57$],  [$+0.15$],   [$+1.18$],
+    [$1\/2 lambda$],  [$+0.47$],   [$+0.61$],   [$+0.90$],
+    [$1\/4 lambda$],  [$+0.52$],   [$-0.07$],   [$+0.52$],
+    [$1\/8 lambda$],  [$+0.29$],   [$-0.04$],   [$+0.07$],
+    [$1\/16 lambda$], [$+0.34$],   [$-0.02$],   [$+0.04$],
+    [$1\/32 lambda$], [$+0.15$],   [$-0.01$],   [$+0.03$],
+    table.hline(stroke: 0.7pt),
   ),
-  caption: [Overview of all scenarios re-used from @sec:hyp1-lateral in this
-    section: (a) raw background-subtracted B-scans; (b--d) the same data
-    migrated with Kirchhoff, Gazdag, and back-propagation migration.],
-) <fig:tlp-overview>
-
-=== Phase-Plane Fit: Lateral Shift Validation <sec:tlp-horizontal-validation>
-
-For every lateral-displacement scenario of @sec:hyp1-lateral, the estimator
-of @sec:meth-phaseplane is applied to the baseline/monitor pair, cropped to
-$plus.minus 2.5 lambda$ around the scatterer apex (located from the Hilbert
-envelope of the baseline image). @fig:tlp-horiz-validation shows the
-recovered $(#Dz, #Dx)$ compared with the known ground truth for all three
-migration methods.
+  caption: [FluidFlow phase-plane WLS front-displacement error, $#Dx$
+    (estimated $-$ true, centroid-corrected $times 2$ for Kirchhoff/Gazdag),
+    millimetres.],
+  kind: table,
+) <tab:h1-ff-phase>
 
 #figure(
-  subfigs(cols: 2,
-    img("TLP_005_Phase-plane_shift_estimation__Kirchhoff____Baseline_vs_each.png"),
-    img("TLP_006_Phase-plane_shift_estimation__Gazdag____Baseline_vs_each_sce.png"),
-    img("TLP_007_Phase-plane_shift_estimation__Back-prop____Baseline_vs_each.png"),
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$2 lambda$],     [$-130.4%$], [$-100.0%$], [$-100.0%$],
+    [$1 lambda$],     [$-74.8%$],  [$+0.1%$],   [$+1.0%$],
+    [$1\/2 lambda$],  [$+0.8%$],   [$+1.1%$],   [$+1.6%$],
+    [$1\/4 lambda$],  [$+1.8%$],   [$-0.2%$],   [$+1.9%$],
+    [$1\/8 lambda$],  [$+2.0%$],   [$-0.3%$],   [$+0.5%$],
+    [$1\/16 lambda$], [$+4.8%$],   [$-0.3%$],   [$+0.6%$],
+    [$1\/32 lambda$], [$+3.8%$],   [$-0.3%$],   [$+0.7%$],
+    table.hline(stroke: 0.7pt),
   ),
-  caption: [2D phase-plane shift estimation applied to the
-    baseline-versus-each-scenario pairs of @sec:hyp1-lateral, for all three
-    migration methods: (a) Kirchhoff; (b) Gazdag; (c) back-propagation.],
-) <fig:tlp-horiz-validation>
+  caption: [FluidFlow phase-plane WLS front-displacement error, $#Dx$, as a
+    percentage of the true displacement (compare @tab:h1-ff-phase).],
+  kind: table,
+) <tab:h1-ff-phase-pct>
 
-#draftnote[read off @fig:tlp-horiz-validation the smallest lateral displacement
-at which the estimated $#Dx$ still tracks the true value to within (state your
-accepted tolerance, e.g. $plus.minus 5%$ or $plus.minus 1 "mm"$), for each
-migration method, and contrast this explicitly with the amplitude floor found
-in @sec:tl-detectability.]
+Gazdag and Kirchhoff are already accurate (within $1.2 "mm"$) from
+$1 lambda$ downward, and all three methods are within $1 "mm"$ from
+$1\/2 lambda$ down to $1\/32 lambda$ --- the entire regime in which
+@tab:h1-ff-amp showed amplitude differencing has already failed. The graded,
+spatially-extended front is therefore recovered by the same phase-plane
+approach used for the point scatterers above, despite its inherently
+broader PSF.
 
-=== Phase-Plane Fit: Vertical Shift Validation <sec:tlp-vertical>
+== Summary of the Results <sec:hyp1-summary>
 
-@fig:tlp-vert-validation repeats the previous analysis for the
-vertical-displacement dataset of @sec:hyp1-vertical, with the ROI crop and
-cross-spectrum fit unchanged except that the displacement being recovered is
-now $#Dz$ rather than $#Dx$.
+@tab:h1-lat-phase, @tab:h1-vert-phase, @tab:h1-diag-phase-dz/@tab:h1-diag-phase-dx,
+and @tab:h1-ff-phase give the full per-scenario phase-plane error for each
+experiment in millimetres, with the same errors expressed as a percentage of
+the true displacement in @tab:h1-lat-phase-pct, @tab:h1-vert-phase-pct,
+@tab:h1-diag-phase-dz-pct/@tab:h1-diag-phase-dx-pct, and
+@tab:h1-ff-phase-pct. @tab:h1-mae condenses the millimetre errors into one
+mean absolute error (MAE)
+per movement type and migration method, restricted to the sub-half-wavelength
+regime ($1\/4 lambda$ down to $1\/32 lambda$, plus any nominal $1\/2 lambda$
+scenario that the $1 "mm"$ FDTD grid rounds to just under $0.5 lambda$,
+@sec:hyp1-workflow) --- the regime in which every amplitude test above
+(@tab:h1-lat-amp, @tab:h1-vert-amp, @tab:h1-diag-amp, @tab:h1-ff-amp) has
+already collapsed.
 
 #figure(
-  subfigs(cols: 2,
-    img("TLP_011_VerticalTimeLapse__Phase-plane_shift_estimation__Kirchhoff.png"),
-    img("TLP_012_VerticalTimeLapse__Phase-plane_shift_estimation__Gazdag____B.png"),
-    img("TLP_013_VerticalTimeLapse__Phase-plane_shift_estimation__Back-prop.png"),
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Movement*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [Lateral],   [23.645], [0.000], [0.027],
+    [Vertical],  [11.950], [16.079], [16.799],
+    [Diagonal],  [0.683],  [0.003],  [0.016],
+    [FluidFlow], [0.967],  [0.172],  [0.335],
+    table.hline(stroke: 0.7pt),
   ),
-  caption: [2D phase-plane shift estimation applied to the
-    baseline-versus-each-scenario pairs of @sec:hyp1-vertical, for all three
-    migration methods: (a) Kirchhoff; (b) Gazdag; (c) back-propagation.],
-) <fig:tlp-vert-validation>
+  caption: [Mean absolute phase-plane displacement error [mm], clean data,
+    sub-half-wavelength regime only.],
+  kind: table,
+) <tab:h1-mae>
 
-#draftnote[state whether the vertical phase-plane fit remains accurate to the
-same smallest displacement found for the lateral case in
-@sec:tlp-horizontal-validation, or whether the lateral/vertical asymmetry
-predicted in @sec:th-duality (a constant vertical _plateau_ versus a lateral
-_slope_) shows up as a difference in achievable precision between
-@fig:tlp-horiz-validation and @fig:tlp-vert-validation.]
+Two patterns stand out. First, for every point-scatterer geometry
+(Lateral, Vertical, Diagonal), at least one migration method recovers the
+true displacement to a few hundredths of a millimetre mean absolute error
+(Gazdag on Lateral and Diagonal; Kirchhoff on Lateral) --- several orders of
+magnitude below the wavelength scale, at displacements where
+@sec:hyp1-lat-amplitude, @sec:hyp1-vert-amplitude, and
+@sec:hyp1-diag-amplitude showed amplitude differencing has already failed.
+Second, the larger MAE values in @tab:h1-mae are driven almost entirely by a
+*single* remaining scenario per (movement, method) pair, not by a systematic
+sub-wavelength failure: back-propagation's $23.6 "mm"$ Lateral MAE is $99%$
+attributable to its one poorly-resolved $1\/2 lambda$ scenario
+(@tab:h1-lat-phase); Gazdag's and Kirchhoff's $16$--$17 "mm"$ Vertical MAE is
+likewise dominated by their shared $1\/2 lambda$ scenario
+(@tab:h1-vert-phase), while $1\/4 lambda$ and below are already accurate to
+$0.03 "mm"$ for all three methods. Diagonal, which combines both axes, is
+the easiest case for every method once past its two largest scenarios.
+FluidFlow's graded, spatially-extended front is recovered to within roughly
+$1 "mm"$ mean absolute error by every method --- harder than the sharpest
+point-scatterer results, but still two to three orders of magnitude below
+the wavelength scale, and, per @sec:hyp1-ff-phase, at displacement scales
+where amplitude differencing has already collapsed for all three algorithms.
 
-=== Phase-Plane Fit: Diagonal Shift Validation <sec:tlp-diagonal>
-
-#draftnote[*Gap:* unlike the lateral and vertical cases above, the 2D WLS
-phase-plane fit has not yet been run on the diagonal dataset of
-@sec:hyp1-diagonal --- `Diagonal_TimeLapse_Playground.ipynb` currently only
-produces the amplitude-based detectability result of @sec:dtl-detectability.
-Completing Hypothesis 1's diagonal claim requires applying `estimate_shift_2d`
-(@sec:meth-phaseplane) to the same baseline/monitor pairs and recovering the
-joint $(#Dz, #Dx)$ estimate, which should satisfy the known $#Dx = 2 #Dz$
-ratio of @tab:dtl-scenarios if the fit is working correctly --- this is the
-single most important piece of evidence still missing from this chapter.]
-
-Hypothesis 1.5, exploring a local, trace-based alternative to the global
-phase-plane fit, is developed separately in @sec:hyp1-h15.
+Across all four experiments, from $1\/4 lambda$ down to $1\/32 lambda$, the
+phase-plane fit remains accurate to a few tenths of a millimetre or better
+for the large majority of (movement, method) pairs, exactly where amplitude
+differencing has already failed --- supporting Hypothesis 1's central claim
+that sub-wavelength displacement is recoverable from phase, not amplitude,
+information. The one systematic weak point is back-propagation's fit at
+$1\/2 lambda$ (Lateral) and at $1 lambda$/$1\/2 lambda$ (Vertical, shared
+with the two analytic methods): whether this reflects a genuine
+displacement-scale effect specific to back-propagation's excitation scheme,
+or noise-free numerical sensitivity of the WLS fit at that particular scale,
+is revisited in @ch:hyp2 once Laplace noise is introduced.

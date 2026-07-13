@@ -26,6 +26,8 @@
   else if name.starts-with("RES_") { "Resolution_Study/" }
   else if name.starts-with("TLC_") { "TimeLapse_Cleaning/" }
   else if name.starts-with("FD_")  { "FieldData_Study/" }
+  else if name.starts-with("H1_")  { "Hypothesis_1/" }
+  else if name.starts-with("H2_")  { "Hypothesis_2/" }
   else                              { "" }
 }
 
