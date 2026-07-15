@@ -131,6 +131,58 @@ by its RMS value amplifies low-SNR traces far from the fluid front, and
 these noisy traces then back-propagate *coherently* toward the borehole
 axis, making the halo worse rather than better.
 
+*Post-imaging clutter removal.* The steps above all act before or during
+injection into gprMax; a further round of processing was explored on the
+completed back-propagation focus image itself (profile 1 only), following
+two published time-reversal/migration post-processing schemes. Gaussian
+smoothing followed by decomposition into low-rank and sparse components via
+Robust Principal Component Analysis (RPCA), after Li and Yan (2021), was
+tested and rejected: RPCA separates an image by amplitude sparsity, which
+suits a compact, point-like target, but this reflector's response is
+spatially extended along a consistent dip, so it behaves as low-rank rather
+than sparse and RPCA could not isolate it from the low-rank background even
+after sweeping the sparsity weight. An $f$-$k$ dip (fan) filter was adopted
+instead, separating the reflector from clutter by orientation rather than
+amplitude: the reflector's dip is estimated directly from the image (a
+per-column peak-amplitude pick over a sub-window containing the primary
+reflection, fitted with a straight line) rather than assumed, and a
+cosine-tapered wedge of $plus.minus 20 "deg"$ around that orientation in
+the $(k_z, k_x)$ domain is kept, with the taper avoiding the Gibbs ringing a
+hard-edged wedge produces. Widening the fan enough to preserve the reflector
+introduced a new artefact: incoherent noise sharing the target's orientation
+was reconstructed as coherent diagonal streaks throughout the image, since
+the filter is global and translation-invariant with no notion of proximity
+to the true reflector. An amplitude gate built from the raw image's own
+local energy envelope removes this cleanly; a windowed (spatially localised)
+version of the fan filter was also tested and rejected, since restricting
+the FFT to a local window does not stop locally-oriented noise from being
+reconstructed within that window -- the artefact is a property of what
+survives the dip criterion, not of the transform's spatial support. A final
+cosine-ramped taper suppresses residual clutter between $1.0$ and
+$3.0 "m"$ radial distance (widened from an initial $2.5 "m"$ after visual
+inspection showed clutter persisting slightly past that point), beyond the
+hard injection-halo mask already applied above.
+
+This recipe is now applied identically across the five profiles used
+throughout this chapter (1, 3, 8, 20, 38): the dip fit, fan filter, gate and
+taper are all recomputed independently per profile, since each profile's
+reflector sits at a different position. Profiles 3, 8, 20 and 38 additionally
+required new $d_x = 0.02 "m"$ gprMax back-propagation runs (profile 1's
+already existed from the grid-resolution diagnostic above) with the same
+scaled-water-permittivity, peak-normalised settings.
+
+#draftnote[this post-imaging recipe (20-degree tapered fan filter +
+amplitude gate + near-borehole radial taper) is fully validated on profile 1
+only at time of writing; profiles 3, 8, 20 and 38 have their $d_x = 0.02 "m"$
+`.in` files written but still need their gprMax runs completed before the
+recipe can be applied to them. It is applied purely to the output focus
+image -- it does not change the gprMax injection file, which still only uses
+the peak-normalisation choice described above. Applying it across the full
+profile set, and
+deciding whether/how the time-lapse analysis cells further downstream
+should consume this processed result rather than the raw back-propagation
+snapshot, is still pending.]
+
 @fig:fd-profile-grid compares five representative profiles (1, 3, 8, 20 and
 38, spanning the four operational stages) across all four representations:
 the processed B-scan, the Kirchhoff-BP migration, the Gazdag migration, and
