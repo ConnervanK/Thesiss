@@ -41,29 +41,95 @@ counterparts, in @fig:fd-profile-grid.
 
 == Processing <sec:hyp3-fd-processing>
 
-The raw profiles are pre-processed using an 11-step pipeline: bandpass filter
-($0.02$--$0.20 "GHz"$), DC and direct-wave removal, trace alignment (×5
-upsampling), SVD rank-1 direct-wave suppression, time-lapse differencing
-against the reference profile, linear spherical-gain correction, Tukey
-tapering, f-k_z dip filter, excitation low-pass filter, and edge zeroing.
+The raw profiles share a common five-step conditioning chain -- bandpass
+filter ($0.02$--$0.20 "GHz"$), DC and direct-wave removal, trace alignment
+(×5 upsampling), SVD rank-1 direct-wave suppression, and time-lapse
+differencing against the reference profile -- after which Kirchhoff/Gazdag
+migration and back-propagation diverge. Kirchhoff and Gazdag apply a linear
+spherical-gain correction (compensating $1\/r$ geometric spreading) directly
+to the differenced B-scan before migrating. Back-propagation instead applies
+a physics-based 3D-to-2D Green's-function correction -- a $sqrt(r)$
+amplitude gain together with a $1\/sqrt(omega) dot e^(i phi)$ frequency-domain
+phase filter -- because the survey records a 3D field but gprMax
+back-propagates it through a 2D grid, and a 3D point source and a 2D line
+source have different Green's functions; without this correction the
+resulting amplitude and phase mismatch propagates directly into the
+back-propagated image. The corrected B-scan is then spatially and temporally
+Tukey-tapered, passed through an $f$-$k_z$ dip filter to remove evanescent
+energy, time-reversed and peak-normalised (range $[-1,1]$), low-pass
+filtered to gprMax's numerical-dispersion limit, and edge-zeroed before
+injection.
+
+#draftnote[the sign of the $1\/sqrt(omega)$ filter's $pi\/4$ phase term, and
+whether a water-level regularisation should be added near DC, were both left
+open pending a dedicated validation experiment (single synthetic reflector,
+compared against Kirchhoff/Gazdag as ground truth). State the resolved
+choice here once confirmed.]
+
+*Borehole geometry.* Back-propagation now additionally models the borehole
+itself, rather than treating the medium around the source array as a single
+homogeneous material: a real single-hole survey has both antennas inside a
+fluid-filled channel whose permittivity ($approx 81$ for water) differs
+sharply from the surrounding rock/ice ($approx 9$), a discontinuity the
+homogeneous model omitted entirely. The gprMax domain now includes an
+explicit $10 "cm"$-wide, water-filled rectangle spanning the full modelled
+depth range, with the source/receiver on its lateral centreline, $1 "m"$ of
+background medium to its left (radial direction), and at least $12 "m"$ of
+imaging clearance to its right. Both the background and the borehole water
+use the same $times 4$ permittivity scaling ($v -> #vmig = v \/ 2$) that
+implements the exploding-reflector convention shared with Kirchhoff and
+Gazdag, so that the one-way/two-way travel-time equivalence the scaling
+relies on holds consistently across every material in the model, not only
+the background.
+
+Modelling the borehole this way initially made results worse, not better,
+than the homogeneous-domain baseline. At the grid spacing used elsewhere in
+this study ($d_x = 0.05 "m"$), the $10 "cm"$ channel is resolved by only two
+grid cells -- too coarse to represent a sharp, high-contrast material
+boundary without introducing numerical stair-casing artefacts on top of the
+genuine physics. A diagnostic on profile 1, isolating grid resolution from
+the permittivity-scaling choice, confirmed that refining to $d_x = 0.02 "m"$
+(five cells across the channel) removes most of the excess clutter and
+recovers a reflector consistent in position with Kirchhoff and Gazdag; using
+the borehole's true, unscaled permittivity instead of the scaled value did
+not help and introduced a small position shift, so the scaled value is
+retained. An alternative amplitude normalisation (rescaling each
+time-reversed trace to $[0,1]$ rather than $[-1,1]$ around zero) was also
+tested and rejected: it removes the physical zero baseline from a bipolar
+field, and the resulting non-zero DC component injected by every current
+source overwhelmed the simulation with spurious energy -- far worse than the
+coarse-grid clutter it was meant to fix.
+
+#draftnote[the refined ($d_x = 0.02 "m"$, explicit borehole) back-propagation
+pipeline is validated on profile 1 only at time of writing. The 14-profile
+back-propagation results referenced below (@fig:fd-profile-grid onward)
+still use the earlier homogeneous-domain model at $d_x = 0.05 "m"$ with no
+explicit borehole material. Re-run the full profile set under the refined
+geometry, confirm the open sign/water-level question above, and update the
+figures, profile count, and injection-halo discussion below before this
+chapter is finalised -- source positions no longer sit at the domain edge
+($y approx 0$) under the refined geometry but on the borehole's centreline,
+so the halo-masking distance below will need re-deriving too.]
+
 Kirchhoff and Gazdag migrations are available for all 37 processed profiles
 (profiles 2--38 differenced against profile 1 as the fixed baseline);
-back-propagation is available for 14 profiles (profiles 1--5, 7--10, 13, 16,
-20, 21, 38), the remainder still pending gprMax forward runs.
+back-propagation (homogeneous-domain model) is available for 14 profiles
+(profiles 1--5, 7--10, 13, 16, 20, 21, 38), the remainder still pending
+gprMax forward runs.
 
 Back-propagation additionally requires suppressing an *injection halo*: every
 gprMax source in the time-reversal simulation is injected at the borehole
-wall ($y approx 0 "m"$), and the destructive interference among sources that
-should cancel the field away from the true reflector is never fully complete
-near $y = 0$, leaving residual energy at small radial distance regardless of
-how the input is pre-processed. This is a structural property of
-single-sided time-reversal from a borehole source array, not a
-pre-processing shortcoming, and is suppressed for display by zeroing the
-first $2.0 "m"$ of the radial axis. One candidate fix was tested and
-reverted: normalising each receiver trace by its RMS value amplifies
-low-SNR traces far from the fluid front, and these noisy traces then
-back-propagate *coherently* toward the borehole axis, making the halo worse
-rather than better.
+wall ($y approx 0 "m"$ in this homogeneous-domain model), and the
+destructive interference among sources that should cancel the field away
+from the true reflector is never fully complete near $y = 0$, leaving
+residual energy at small radial distance regardless of how the input is
+pre-processed. This is a structural property of single-sided time-reversal
+from a borehole source array, not a pre-processing shortcoming, and is
+suppressed for display by zeroing the first $2.0 "m"$ of the radial axis.
+One candidate fix was tested and reverted: normalising each receiver trace
+by its RMS value amplifies low-SNR traces far from the fluid front, and
+these noisy traces then back-propagate *coherently* toward the borehole
+axis, making the halo worse rather than better.
 
 @fig:fd-profile-grid compares five representative profiles (1, 3, 8, 20 and
 38, spanning the four operational stages) across all four representations:

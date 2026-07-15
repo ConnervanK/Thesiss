@@ -183,7 +183,14 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
     the coherent signal, stripping them of the outsized amplitude they'd
     otherwise inject as competing point sources. See TimeLapse_Processing.ipynb.
 
-    Returns (in_path, n_src, n_snaps, t_focus_ns).
+    Returns (in_path, n_src, n_snaps, t_focus_ns). If min(x_midpoints[::stride])
+    is closer to 0 than pml_cells*dx, every source (and the domain) is silently
+    shifted by x_offset = pml_cells*dx - min(x_midpoints[::stride]) so sources
+    clear the x-min PML band -- gprMax x=0 then corresponds to true x_midpoints
+    value -x_offset. x_offset is not returned (kept out of the return tuple for
+    backward compatibility with existing 4-way unpacking call sites); recompute
+    it from the same inputs if you need to map gprMax x back to physical
+    coordinates, e.g. `x_offset = max(0.0, pml_cells*dx - min(x_midpoints))`.
     """
     import pathlib
     study_root = pathlib.Path(study_root)
@@ -236,6 +243,23 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
     header = 'time ' + ' '.join(f'bp_{i}' for i in range(n_src))
     np.savetxt(exc_path, exc_arr, fmt='%.6e', header=header, comments='')
 
+    # Domain geometry derived from source positions and grid parameters.
+    # x_offset shifts every source away from x=0 only when the minimum source
+    # position would otherwise land inside the x-min PML band (e.g. a profile
+    # that starts at or near 0 m -- #pml_cells applies a pml_pad-thick layer on
+    # *both* x edges, not just x_max, so sources near x=0 need the same margin
+    # sources near x_max already get from the padded domain_x below). For the
+    # normal case (min source position already well clear of pml_pad, as with
+    # borehole depths of tens of metres) x_offset is 0 and behaviour is
+    # unchanged from before.
+    pml_pad  = pml_cells * dx
+    x_min    = float(np.min(x_src))
+    x_max    = float(np.max(x_src))
+    x_offset = max(0.0, pml_pad - x_min)
+    x_src    = x_src + x_offset
+    domain_x = np.ceil((x_max + x_offset + pml_pad) / dx) * dx + pml_pad
+    dz       = dx
+
     # Source x-positions (loaded at gprMax runtime)
     npy_path = out_dir / 'src_positions.npy'
     np.save(npy_path, x_src)
@@ -244,12 +268,6 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
     eps_r_half = 4.0 * eps_r
     v_half     = v_ice / 2
     in_path    = out_dir / f'backprop_{slug}.in'
-
-    # Domain geometry derived from source positions and grid parameters
-    pml_pad  = pml_cells * dx
-    x_max    = float(np.max(x_src))
-    domain_x = np.ceil((x_max + pml_pad) / dx) * dx + pml_pad
-    dz       = dx
 
     excitation_mode = 'sign-bit (sign(u), amplitude stripped)' if sign_bit else 'peak-normalised'
     in_lines = [
@@ -292,6 +310,307 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
     ]
     in_path.write_text('\n'.join(in_lines) + '\n', encoding='utf-8')
     return in_path, n_src, n_snaps, t_focus_ns
+
+
+def write_borehole_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpoints,
+                                   t0_ns, eps_r, v_ice, eps_r_water=81.0, sigma_water=0.01,
+                                   borehole_width=0.10, left_buffer=1.0, imaging_range=12.0,
+                                   src_offset=3.2, stride=1, n_snap=30, snap_win=1.0,
+                                   sign_bit=False, dx=0.001, pml_cells=10, scale_water_eps=True,
+                                   normalize_mode='peak'):
+    """
+    Write gprMax excitation file and .in file for back-propagation migration through an
+    explicit single-borehole geometry, instead of assuming a homogeneous background
+    medium starting right at the source (as write_backprop_files does). The borehole is
+    modelled as a vertical, borehole_width-wide rectangle of water spanning the full
+    depth extent of the domain; source/receiver sit on its lateral centreline, matching
+    a real single-hole VRP survey where both antennas are inside the fluid-filled hole.
+    Files go in study_root/backprop/<slug>/.
+
+    Radial (y) geometry, left to right:
+        [PML] [left_buffer]  [borehole_width, water]  [>= imaging_range, background]  [PML]
+    Source/receiver sit at the borehole's lateral centreline (the middle of the
+    borehole_width rectangle).
+
+    Depth (x) geometry: spans min(x_midpoints) to max(x_midpoints) (the recorded
+    interval), padded by src_offset/2 on each end so the domain comfortably contains the
+    physical Tx-Rx antenna pair even at the shallowest/deepest recorded position, plus
+    PML beyond that. The whole depth axis is then shifted so gprMax x=0 sits exactly
+    pml_pad + src_offset/2 before min(x_midpoints) -- unlike write_backprop_files (which
+    leaves real depths like 60-85 m unshifted, wasting a 0-60 m stretch of empty
+    domain), this always shifts, so the modelled domain is only as tall as it needs to
+    be. True depth = gprMax x - x_shift (both returned in geom, see below).
+
+    ASSUMPTIONS WORTH CONFIRMING (flagged because they're judgment calls, not given
+    directly by the problem spec):
+      1. Sources are still placed one per trace at x_midpoints (the Tx-Rx midpoint),
+         with the background medium halved in velocity -- the same exploding-reflector
+         convention used everywhere else in this codebase (Kirchhoff, Gazdag,
+         write_backprop_files). src_offset is used only to size the depth buffer above,
+         NOT to place two separate offset Tx/Rx sources. If a real two-antenna forward
+         model (true offset, true velocity, no exploding-reflector trick) was intended
+         instead, this function needs a different source scheme.
+      2. scale_water_eps=True (default) ALSO quadruples the borehole water's
+         permittivity (eps_r_water_half = 4*eps_r_water), exactly like the background
+         medium. This is required for internal consistency of the exploding-reflector
+         trick: one-way travel time at half-velocity only equals the true two-way
+         travel time if EVERY material in the model is scaled the same way -- leaving
+         the borehole at its true permittivity while halving the background would
+         distort the relative delay through the borehole vs. the surrounding medium.
+         sigma_water is always left unscaled regardless (conductivity sets
+         attenuation, not the travel-time equivalence the halving trick relies on).
+
+         scale_water_eps=False uses eps_r_water as-is (unscaled). This breaks that
+         travel-time consistency for the (short) borehole segment specifically, but
+         also weakens the borehole's dielectric-waveguide effect: at the scaled
+         permittivity the guided wavelength (~17 cm at eps=324, f0=100 MHz) is
+         comparable to a 10 cm borehole, i.e. strong modal confinement; at the true
+         permittivity (eps=81) the wavelength is ~33 cm, giving markedly weaker
+         confinement. Worth testing as a source of excess clutter in the back-
+         propagated image before assuming it's real physics.
+
+    sign_bit=True -- see write_backprop_files' docstring; identical behaviour here.
+
+    normalize_mode : {'peak', 'minmax'}
+        How each reversed trace is scaled before injection (ignored if sign_bit=True).
+        'peak' (default) divides by max(|x|), range [-1, 1], sign-preserving -- the
+        convention used everywhere else in this codebase. 'minmax' instead applies
+        Eq 7 of Santos & Teixeira (2017): (x - x_min) / (x_max - x_min), per trace,
+        range [0, 1]. Per that paper's own text and Fig. 2, Eq 7 most likely normalises
+        the *output* TR wavefield for the std-based Mode 1/2/X12 statistics, not the
+        pre-injection excitation -- so 'minmax' here is an explicit experiment, not a
+        reproduction of the paper's actual injection step. It is NOT sign-preserving:
+        every trace's background sits at a non-zero, non-physical DC level instead of
+        zero, which can inject spurious low-frequency energy from a current source.
+        Confirm this is what you want before trusting the result.
+
+    Returns (in_path, n_src, n_snaps, t_focus_ns, geom). geom is a dict of the computed
+    domain layout (domain_x, domain_y, dz, dx, pml_pad, x_shift, x_min_true, x_max_true,
+    depth_buffer, y_bh_start, y_bh_end, y_img_end, src_y, borehole_width, left_buffer,
+    imaging_range) -- also consumed by plot_borehole_domain() for the confirmation
+    figure.
+    """
+    import pathlib
+    study_root = pathlib.Path(study_root)
+    out_dir = study_root / 'backprop' / slug
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    _, n_t = tapered_ntr_nt.shape
+    dt_s  = dt_ns * 1e-9
+    T_ns  = n_t * dt_ns
+    dz    = dx
+
+    # --- Time-reversal + polarity flip (identical to write_backprop_files -- see its
+    # docstring/comments for why the extra 180-degree flip is needed for a current-
+    # source hertzian_dipole) ---
+    data_s     = tapered_ntr_nt[::stride]
+    x_src_true = np.asarray(x_midpoints)[::stride]
+    n_src      = len(x_src_true)
+    data_rev   = -data_s[:, ::-1].copy()
+    if sign_bit:
+        data_rev = np.sign(data_rev)
+    elif normalize_mode == 'minmax':
+        x_min = np.min(data_rev, axis=1, keepdims=True)
+        x_max = np.max(data_rev, axis=1, keepdims=True)
+        span  = x_max - x_min
+        span[span == 0] = 1.0
+        data_rev = (data_rev - x_min) / span
+    elif normalize_mode == 'peak':
+        peak     = np.max(np.abs(data_rev), axis=1, keepdims=True)
+        peak[peak == 0] = 1.0
+        data_rev /= peak
+    else:
+        raise ValueError(f"normalize_mode must be 'peak' or 'minmax', got {normalize_mode!r}")
+
+    # Snapshot timing: all depths focus simultaneously at t_focus = T - t0
+    t_focus_ns = T_ns - t0_ns
+    t_start_ns = max(dt_ns, t_focus_ns - snap_win)
+    t_start_s  = t_start_ns * 1e-9
+    snap_step  = max(1, int((T_ns * 1e-9 - t_start_s) / (max(1, n_snap - 1) * dt_s)))
+    n_snaps    = max(1, int((n_t * dt_s - t_start_s) / (snap_step * dt_s)))
+
+    exc_path = out_dir / 'excitation.txt'
+    time_s   = np.arange(n_t) * dt_s
+    N_PAD    = 10
+    pad_t    = np.arange(n_t, n_t + N_PAD) * dt_s
+    exc_arr  = np.vstack([
+        np.column_stack([time_s, data_rev.T]),
+        np.column_stack([pad_t,  np.zeros((N_PAD, n_src))]),
+    ])
+    header = 'time ' + ' '.join(f'bp_{i}' for i in range(n_src))
+    np.savetxt(exc_path, exc_arr, fmt='%.6e', header=header, comments='')
+
+    # --- Depth (x) axis geometry: shift so gprMax x=0 sits pml_pad+depth_buffer before
+    # the shallowest recorded position, and size the domain to just cover the recorded
+    # interval plus buffers on both ends. ---
+    pml_pad      = pml_cells * dx
+    depth_buffer = src_offset / 2.0
+    x_min_true   = float(np.min(x_src_true))
+    x_max_true   = float(np.max(x_src_true))
+    x_shift      = pml_pad + depth_buffer - x_min_true
+    x_src        = x_src_true + x_shift
+    domain_x     = np.ceil((x_max_true - x_min_true + 2 * depth_buffer) / dx) * dx + 2 * pml_pad
+
+    # --- Radial (y) axis geometry: [PML][left_buffer][borehole][imaging_range][PML] ---
+    y_bh_start = pml_pad + left_buffer
+    y_bh_end   = y_bh_start + borehole_width
+    y_img_end  = y_bh_end + imaging_range
+    domain_y   = y_img_end + pml_pad
+    src_y      = (y_bh_start + y_bh_end) / 2.0
+
+    npy_path = out_dir / 'src_positions.npy'
+    np.save(npy_path, x_src)
+
+    eps_r_half       = 4.0 * eps_r
+    eps_r_water_half = 4.0 * eps_r_water if scale_water_eps else eps_r_water
+    v_half           = v_ice / 2
+    in_path          = out_dir / f'backprop_{slug}.in'
+
+    if sign_bit:
+        excitation_mode = 'sign-bit (sign(u), amplitude stripped)'
+    elif normalize_mode == 'minmax':
+        excitation_mode = 'min-max normalised (Eq 7 style, range [0,1], NOT sign-preserving)'
+    else:
+        excitation_mode = 'peak-normalised (range [-1,1])'
+    in_lines = [
+        f'#title: Borehole Back-Propagation -- {label}',
+        f'// Excitation mode: {excitation_mode}',
+        f'#domain: {domain_x:.6f} {domain_y:.6f} {dz:.6f}',
+        f'#dx_dy_dz: {dx:.6f} {dx:.6f} {dz:.6f}',
+        f'#time_window: {n_t * dt_s:.6e}',
+        f'#pml_cells: {pml_cells} {pml_cells} 0 {pml_cells} {pml_cells} 0',
+        '',
+        f'// Half-velocity background: eps_r={eps_r_half:.2f} (=4x{eps_r:.4f}) -> v={v_half:.5f} m/ns',
+        f'#material: {eps_r_half:.4f} 1e-6 1.0 0 ice',
+        f'// {"Half-velocity" if scale_water_eps else "TRUE, unscaled"} borehole fluid: '
+        f'eps_r={eps_r_water_half:.2f} '
+        f'({"=4x" + str(eps_r_water) if scale_water_eps else "unscaled, true permittivity"}), '
+        f'sigma={sigma_water} S/m (always unscaled -- see docstring point 2)',
+        f'#material: {eps_r_water_half:.4f} {sigma_water:.6f} 1.0 0 water',
+        '',
+        f'#box: 0 0 0 {domain_x:.6f} {domain_y:.6f} {dz:.6f} ice',
+        f'// Borehole: {borehole_width * 100:.0f} cm wide water-filled rectangle, full depth extent',
+        f'#box: 0 {y_bh_start:.6f} 0 {domain_x:.6f} {y_bh_end:.6f} {dz:.6f} water',
+        '',
+        f'#excitation_file: {exc_path.name}',
+        '',
+        f'// {n_src} time-reversed sources at Tx-Rx midpoints, on the borehole centreline (y={src_y:.4f} m)',
+        '#python:',
+        'from gprMax.input_cmd_funcs import *',
+        'import numpy as np',
+        f"x_sources = np.load(r'{npy_path}')",
+        'for i, x in enumerate(x_sources):',
+        f"    hertzian_dipole('z', float(x), {src_y:.6f}, 0.0, 'bp_{{}}'.format(i))",
+        '#end_python:',
+        '',
+        f'// {n_snaps} snapshots  window=[{t_start_ns:.1f}, {T_ns:.1f}] ns  focus at {t_focus_ns:.2f} ns',
+        '#python:',
+        'from gprMax.input_cmd_funcs import *',
+        f't_start = {t_start_s:.8e}',
+        f'step    = {snap_step}',
+        f'dt_gpr  = {dt_s:.8e}',
+        f'n_snap  = {n_snaps}',
+        'for k in range(n_snap):',
+        '    t_snap = t_start + k * step * dt_gpr',
+        f"    print('#snapshot: 0 0 0 {domain_x:.6f} {domain_y:.6f} {dz:.6f} {dx:.6f} {dx:.6f} {dz:.6f} %.8e bp_snap%04d' % (t_snap, k+1))",
+        '#end_python:',
+        '',
+        '#messages: y',
+    ]
+    in_path.write_text('\n'.join(in_lines) + '\n', encoding='utf-8')
+
+    geom = dict(
+        domain_x=domain_x, domain_y=domain_y, dz=dz, dx=dx, pml_pad=pml_pad,
+        x_shift=x_shift, x_min_true=x_min_true, x_max_true=x_max_true,
+        depth_buffer=depth_buffer, y_bh_start=y_bh_start, y_bh_end=y_bh_end,
+        y_img_end=y_img_end, src_y=src_y, borehole_width=borehole_width,
+        left_buffer=left_buffer, imaging_range=imaging_range,
+    )
+    return in_path, n_src, n_snaps, t_focus_ns, geom
+
+
+def plot_borehole_domain(geom, x_src_true=None, save_path=None):
+    """
+    Draw a schematic of the borehole back-propagation domain built by
+    write_borehole_backprop_files() -- PML bands, background medium, the water-filled
+    borehole rectangle, and source/receiver positions -- so the geometry can be sanity-
+    checked before spending any gprMax runtime on it. Pure matplotlib, no gprMax needed.
+
+    Args:
+        geom (dict): The geom dict returned by write_borehole_backprop_files().
+        x_src_true (array-like or None): True (unshifted) source depths to mark on the
+            depth axis. If None, only the modelled depth range is shown.
+        save_path (str, Path, or None): If given, the figure is also saved there.
+
+    Returns:
+        fig (matplotlib.figure.Figure)
+    """
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    domain_x, domain_y = geom['domain_x'], geom['domain_y']
+    pml   = geom['pml_pad']
+    y0    = geom['y_bh_start']
+    y1    = geom['y_bh_end']
+    y2    = geom['y_img_end']
+    src_y = geom['src_y']
+    x_shift = geom['x_shift']
+
+    zoom_x_max = y1 + 1.0     # a bit past the borehole's right edge (radial)
+    zoom_y_max = 4.0          # only show the top few metres of depth -- full 25+ m
+                               # depth in a <3 m-wide panel would force an extreme
+                               # aspect ratio that leaves no room for dimension labels
+
+    fig, (ax_full, ax_zoom) = plt.subplots(1, 2, figsize=(13, 6.5),
+                                            gridspec_kw={'width_ratios': [1.3, 1]})
+
+    for ax in (ax_full, ax_zoom):
+        ax.add_patch(patches.Rectangle((0, 0), domain_y, domain_x,
+                                        facecolor='none', edgecolor='black', lw=1.2))
+        pml_kw = dict(facecolor='lightgray', edgecolor='gray', hatch='//', lw=0.4)
+        ax.add_patch(patches.Rectangle((0, 0), pml, domain_x, **pml_kw))
+        ax.add_patch(patches.Rectangle((domain_y - pml, 0), pml, domain_x, **pml_kw))
+        ax.add_patch(patches.Rectangle((0, 0), domain_y, pml, **pml_kw))
+        ax.add_patch(patches.Rectangle((0, domain_x - pml), domain_y, pml, **pml_kw))
+        ax.add_patch(patches.Rectangle((pml, pml), domain_y - 2 * pml, domain_x - 2 * pml,
+                                        facecolor='#cfe8f3', edgecolor='none', zorder=0))
+        ax.add_patch(patches.Rectangle((y0, 0), y1 - y0, domain_x,
+                                        facecolor='#1f77b4', edgecolor='none', zorder=1))
+        ax.axvline(src_y, color='red', lw=1, ls='--', zorder=2)
+        if x_src_true is not None:
+            xs = np.atleast_1d(x_src_true) + x_shift
+            ax.plot(np.full_like(xs, src_y, dtype=float), xs, 'r.', ms=3, zorder=3)
+        else:
+            ax.plot([src_y], [domain_x / 2], 'r.', ms=6, zorder=3)
+        ax.set_xlabel('Radial distance, y (m)')
+        ax.set_aspect('equal', adjustable='box')
+
+    ax_full.set_xlim(-0.3, domain_y)
+    ax_full.set_ylim(domain_x + 1.0, -1.0)   # depth increases downward
+    ax_full.set_ylabel(f'gprMax depth axis, x (m)  [true depth = x - {x_shift:.2f} m]')
+    ax_full.set_title('Full domain')
+
+    ax_zoom.set_xlim(-0.2, zoom_x_max)
+    ax_zoom.set_ylim(zoom_y_max, -1.6)       # cropped depth window near the top PML
+    ax_zoom.set_ylabel('gprMax depth axis, x (m)')
+    ax_zoom.set_title(f'Near-borehole detail\n(radial 0-{zoom_x_max:.1f} m, depth 0-{zoom_y_max:.0f} m of {domain_x:.0f} m shown)')
+
+    def _dim(ax, x0, x1, y, text, open_ended=False):
+        style = '-|>' if open_ended else '<->'
+        ax.annotate('', xy=(x1, y), xytext=(x0, y),
+                    arrowprops=dict(arrowstyle=style, color='black', lw=0.9))
+        ax.text((x0 + x1) / 2, y - 0.15, text, ha='center', va='bottom', fontsize=8)
+
+    _dim(ax_zoom, pml, y0, -0.6, f'{geom["left_buffer"]:.1f} m buffer')
+    _dim(ax_zoom, y0, y1, -1.3, f'{geom["borehole_width"] * 100:.0f} cm borehole')
+    _dim(ax_zoom, y1, zoom_x_max, -0.6, f'>= {geom["imaging_range"]:.0f} m imaging', open_ended=True)
+    ax_zoom.axvline(pml, color='gray', lw=0.6, ls=':')
+
+    fig.suptitle('Borehole back-propagation domain (schematic)')
+    fig.tight_layout()
+    if save_path is not None:
+        fig.savefig(save_path, dpi=150, bbox_inches='tight')
+    return fig
 
 
 def dispersion_limited_cutoff(eps_r, dx, min_cells_per_wavelength=3, safety_factor=0.7):
@@ -389,11 +708,21 @@ def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, edge_exclude=0, keep
     data = np.loadtxt(exc_path, skiprows=1)
     dt = data[1, 0] - data[0, 0]
     nyquist = 0.5 / dt
-    sos = butter(order, cutoff_hz / nyquist, btype='low', output='sos')
 
-    filtered = data.copy()
-    for col in range(1, data.shape[1]):
-        filtered[:, col] = sosfiltfilt(sos, data[:, col])
+    if cutoff_hz >= nyquist:
+        # The excitation's own sample rate (fixed by the trace dt, independent of the
+        # grid dx cutoff_hz was derived from) already band-limits it below the
+        # requested cutoff -- e.g. a finer grid raises the dispersion-safe cutoff past
+        # the data's Nyquist frequency. Nothing to filter; butter() would otherwise
+        # raise ValueError for a normalised frequency >= 1.
+        print(f'  cutoff {cutoff_hz/1e9:.3f} GHz >= data Nyquist {nyquist/1e9:.3f} GHz -- '
+              f'already band-limited, skipping filter.')
+        filtered = data
+    else:
+        sos = butter(order, cutoff_hz / nyquist, btype='low', output='sos')
+        filtered = data.copy()
+        for col in range(1, data.shape[1]):
+            filtered[:, col] = sosfiltfilt(sos, data[:, col])
 
     if edge_exclude:
         filtered[:, 1:1 + edge_exclude] = 0.0
@@ -412,11 +741,12 @@ def lowpass_filter_excitation(exc_path, cutoff_hz, order=8, edge_exclude=0, keep
 
 
 
-def apply_3d_to_2d_correction(b_scan, dt, velocity, time_zero_idx=0):
+def apply_3d_to_2d_correction(b_scan, dt, velocity, time_zero_idx=0,
+                               phase_sign=-1.0, water_level=0.0):
     """
     Converts 3D recorded GPR data to a 2D equivalent format for 2D FDTD back-propagation.
     Applies the mathematical corrections outlined in the G_2D / G_3D Green's function ratio.
-    
+
     Parameters:
     -----------
     b_scan : numpy.ndarray
@@ -427,7 +757,25 @@ def apply_3d_to_2d_correction(b_scan, dt, velocity, time_zero_idx=0):
         The electromagnetic velocity of the background medium (m/s).
     time_zero_idx : int
         The index of the time zero (t=0) in the trace. Used to properly scale sqrt(t).
-        
+    phase_sign : float
+        Sign of the pi/4 phase rotation applied to positive frequencies, i.e. the
+        filter uses exp(phase_sign * 1j * pi/4). The Hankel-asymptotic derivation
+        (see the docstring's Green's-function ratio) gives +1; the default of -1
+        was chosen empirically by comparing full-pipeline back-propagation output
+        against Kirchhoff/Gazdag images, which is a confounded test (SVD, tapers,
+        the dip filter, and the separate hertzian-dipole polarity flip in
+        write_backprop_files() all sit between this filter and that comparison).
+        Exposed as a parameter so it can be validated in isolation against an
+        analytic single-reflector synthetic instead.
+    water_level : float
+        Regularises the 1/sqrt(omega) pole near DC, expressed as a fraction of the
+        Nyquist angular frequency: omega_eff = max(omega, water_level * omega_nyquist).
+        0 (default) reproduces the original behaviour of exactly zeroing only the
+        DC bin, leaving the next few bins with very large (unregularised) gain.
+        A small positive value (e.g. 0.01-0.05) floors the gain across the whole
+        low-frequency range instead, which should suppress the disproportionate
+        low-frequency noise amplification that a hard-zero-only DC bin permits.
+
     Returns:
     --------
     corrected_b_scan : numpy.ndarray
@@ -435,7 +783,7 @@ def apply_3d_to_2d_correction(b_scan, dt, velocity, time_zero_idx=0):
     """
     num_traces, num_samples = b_scan.shape
     corrected_b_scan = np.zeros_like(b_scan)
-    
+
     # 1. Spatial Amplitude Correction: sqrt(r)
     # Since r = (v * t) / 2 for a reflection, sqrt(r) is proportional to sqrt(t).
     # We apply a sqrt(t) gain to correct 1/r 3D spreading to 1/sqrt(r) 2D spreading.
@@ -443,46 +791,50 @@ def apply_3d_to_2d_correction(b_scan, dt, velocity, time_zero_idx=0):
     # Shift time array so time-zero is actually t=0
     t_array = t_array - (time_zero_idx * dt)
     # Prevent negative times or zero (to avoid divide-by-zero or complex numbers)
-    t_array[t_array <= 0] = 1e-12 
-    
+    t_array[t_array <= 0] = 1e-12
+
     # The amplitude scalar proportional to sqrt(r)
     spatial_gain = np.sqrt(velocity * t_array / 2.0)
-    
-    # 2. Phase and Frequency Correction: (1 / sqrt(w)) * e^(-i * pi / 4)
+
+    # 2. Phase and Frequency Correction: (1 / sqrt(w)) * e^(phase_sign * i * pi / 4)
     # Prepare the frequency axis
     freqs = fftfreq(num_samples, d=dt)
     omega = 2.0 * np.pi * np.abs(freqs)
 
-    # Avoid division by zero at DC (0 Hz)
-    omega[0] = 1e-12
+    if water_level > 0:
+        # Water-level regularisation: floor omega everywhere (including DC) instead
+        # of only zeroing bin 0, to avoid amplifying the low-frequency bins next to it.
+        omega_nyquist = np.pi / dt
+        omega_eff = np.maximum(omega, water_level * omega_nyquist)
+    else:
+        # Original behaviour: only guard against the exact DC divide-by-zero here;
+        # the DC bin itself is hard-zeroed below.
+        omega_eff = omega.copy()
+        omega_eff[0] = 1e-12
 
-    # Create the base filter: 1/sqrt(w) * e^(-i * 45 degrees). Sign verified against
-    # numpy's FFT convention (ifft reconstructs positive-frequency components as
-    # exp(+i*2*pi*f*t)) by comparing to the exact 2D vs 3D wave-equation Green's
-    # functions (cylindrical H_0^(1) vs spherical delta): +i*pi/4 rotates the pulse
-    # into a near-quadrature (Hilbert-transform-like) shape instead of the true
-    # 2D-equivalent response -- this was the source of the polarity/noise mismatch
-    # against the Kirchhoff/Gazdag back-propagation images.
-    H_filter = (1.0 / np.sqrt(omega)) * np.exp(-1j * np.pi / 4.0)
-    
+    H_filter = (1.0 / np.sqrt(omega_eff)) * np.exp(phase_sign * 1j * np.pi / 4.0)
+
     # Ensure Hermitian symmetry for a real-valued time signal
     # Negative frequencies must be the complex conjugate of positive frequencies
     H_filter[freqs < 0] = np.conj(H_filter[freqs < 0])
-    
-    # Zero out the DC component to prevent massive baseline drift from the 1/sqrt(w) integration
-    H_filter[0] = 0.0 + 0.0j
-    
+
+    if water_level <= 0:
+        # Zero out the DC component to prevent massive baseline drift from the
+        # 1/sqrt(w) integration (skipped when water-level regularisation is active,
+        # since omega_eff already gives DC a finite, bounded gain).
+        H_filter[0] = 0.0 + 0.0j
+
     # Apply corrections trace by trace
     for i in range(num_traces):
         trace = b_scan[i, :]
-        
+
         # Step A: Apply spatial gain sqrt(r)
         trace_gained = trace * spatial_gain
-        
+
         # Step B: Apply the half-integration phase shift filter in frequency domain
         trace_fft = fft(trace_gained)
         trace_filtered = np.real(ifft(trace_fft * H_filter))
-        
+
         corrected_b_scan[i, :] = trace_filtered
-        
+
     return corrected_b_scan
