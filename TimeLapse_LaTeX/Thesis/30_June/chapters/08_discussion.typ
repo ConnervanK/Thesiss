@@ -105,12 +105,18 @@
 #draftnote[Placeholder]
 
 // @sec:hyp3-fielddata applied the full pipeline to real borehole GPR data and
-// obtained physically interpretable displacement estimates across four
-// operational stages of a fluid-injection experiment (@tab:fielddata-stages).
-// The Push stage produced a downward displacement of approximately $1.41 "m"$,
-// consistent with active injection; the Wait stage produced near-zero
-// displacement, as expected; and the Pull stage only partially reversed the Push,
-// leaving a net residual.
+// obtained displacement estimates across four operational stages of a
+// fluid-injection experiment (@tab:fielddata-stages). The Push stage produced
+// a displacement of approximately $1.41 "m"$ *upward and toward the borehole*
+// (corrected sign convention, @sec:hyp3-fd-phaseplane) rather than the
+// downward/outward direction naively expected of active injection; the Wait
+// stage produced near-zero displacement, as expected; and the Pull stage only
+// partially reversed the Push, leaving a net residual. An independently
+// re-derived back-propagation estimate (@sec:hyp3-fd-bp-corrected) agrees on
+// both sign and order of magnitude in every stage, so the reversed direction
+// is unlikely to be a processing artefact of either technique alone -- whether
+// it is physically expected for this experiment is still open
+// (@sec:hyp3-fd-interpretation).
 
 // #draftnote[state whether the field-data estimates are consistent with any
 // independent ground-truth available from the field experiment (e.g. injection

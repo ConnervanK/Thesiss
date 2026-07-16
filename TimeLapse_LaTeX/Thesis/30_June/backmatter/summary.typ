@@ -39,11 +39,16 @@
 // *Hypothesis 3* (@ch:hyp3) tested generalisation beyond idealised synthetic
 // data. The phase-plane pipeline was applied to real borehole GPR field data from
 // a controlled fluid-injection experiment (38 profiles, 6 June 2016) and
-// produced physically interpretable displacement estimates: a downward Push
-// displacement of approximately $1.41 "m"$, near-zero Wait, and a partial Pull
-// reversal, with a net residual of $approx +0.94 "m"$ along the borehole at the
-// end of the experiment. The generalisation to complex multi-scatterer synthetic
-// scenes is ongoing and not yet included.
+// produced displacement estimates -- after a sign-convention correction, see
+// @tab:fielddata-stages -- of approximately $1.41 "m"$ upward and toward the
+// borehole during Push, near-zero during Wait, and a partial reversal during
+// Pull, leaving a net residual of $approx 0.94 "m"$ along the borehole at the
+// end of the experiment; an independent back-propagation re-derivation
+// (@sec:hyp3-fd-bp-corrected) agrees on sign and order of magnitude. Whether
+// this upward/inward direction (rather than the originally expected downward
+// and outward) is physically expected for this experiment is still open
+// (@sec:hyp3-fd-interpretation). The generalisation to complex
+// multi-scatterer synthetic scenes is ongoing and not yet included.
 
 // #draftnote[close with a final conclusion sentence stating, in one sentence,
 // whether the Research Question is answered affirmatively by the totality of

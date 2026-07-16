@@ -317,7 +317,7 @@ def write_borehole_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns
                                    borehole_width=0.10, left_buffer=1.0, imaging_range=12.0,
                                    src_offset=3.2, stride=1, n_snap=30, snap_win=1.0,
                                    sign_bit=False, dx=0.001, pml_cells=10, scale_water_eps=True,
-                                   normalize_mode='peak'):
+                                   normalize_mode='peak', norm_scale=None):
     """
     Write gprMax excitation file and .in file for back-propagation migration through an
     explicit single-borehole geometry, instead of assuming a homogeneous background
@@ -372,8 +372,8 @@ def write_borehole_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns
     sign_bit=True -- see write_backprop_files' docstring; identical behaviour here.
 
     normalize_mode : {'peak', 'minmax'}
-        How each reversed trace is scaled before injection (ignored if sign_bit=True).
-        'peak' (default) divides by max(|x|), range [-1, 1], sign-preserving -- the
+        How the reversed traces are scaled before injection (ignored if sign_bit=True).
+        'peak' (default) divides by a single scalar max(|x|), sign-preserving -- the
         convention used everywhere else in this codebase. 'minmax' instead applies
         Eq 7 of Santos & Teixeira (2017): (x - x_min) / (x_max - x_min), per trace,
         range [0, 1]. Per that paper's own text and Fig. 2, Eq 7 most likely normalises
@@ -383,6 +383,20 @@ def write_borehole_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns
         every trace's background sits at a non-zero, non-physical DC level instead of
         zero, which can inject spurious low-frequency energy from a current source.
         Confirm this is what you want before trusting the result.
+
+    norm_scale : float or None
+        Only used when normalize_mode='peak'. If None (default), the scale is
+        max(|data_rev|) over the WHOLE array for this one call -- i.e. a single global
+        scalar per profile, not per trace. Divide every trace by a single number, not
+        by its own individual peak: per-trace normalisation was tried first and found
+        to destroy exactly the amplitude information a time-lapse study depends on --
+        both the real reflectivity change between profiles (an observed ~1.8x RMS
+        difference between two profiles was completely erased) and the real amplitude
+        structure between traces within one profile (per-trace peaks varied by
+        80-160x). Pass an explicit norm_scale (e.g. the peak found across an entire
+        multi-profile time-lapse set) to keep multiple write_borehole_backprop_files()
+        calls on the same amplitude scale, which is required for their back-propagated
+        outputs to be meaningfully differenced against each other.
 
     Returns (in_path, n_src, n_snaps, t_focus_ns, geom). geom is a dict of the computed
     domain layout (domain_x, domain_y, dz, dx, pml_pad, x_shift, x_min_true, x_max_true,
@@ -416,9 +430,10 @@ def write_borehole_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns
         span[span == 0] = 1.0
         data_rev = (data_rev - x_min) / span
     elif normalize_mode == 'peak':
-        peak     = np.max(np.abs(data_rev), axis=1, keepdims=True)
-        peak[peak == 0] = 1.0
-        data_rev /= peak
+        scale = norm_scale if norm_scale is not None else np.max(np.abs(data_rev))
+        if scale == 0:
+            scale = 1.0
+        data_rev /= scale
     else:
         raise ValueError(f"normalize_mode must be 'peak' or 'minmax', got {normalize_mode!r}")
 

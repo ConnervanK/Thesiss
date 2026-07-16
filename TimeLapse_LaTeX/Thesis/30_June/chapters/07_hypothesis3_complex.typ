@@ -100,16 +100,23 @@ field, and the resulting non-zero DC component injected by every current
 source overwhelmed the simulation with spurious energy -- far worse than the
 coarse-grid clutter it was meant to fix.
 
-#draftnote[the refined ($d_x = 0.02 "m"$, explicit borehole) back-propagation
-pipeline is validated on profile 1 only at time of writing. The 14-profile
-back-propagation results referenced below (@fig:fd-profile-grid onward)
-still use the earlier homogeneous-domain model at $d_x = 0.05 "m"$ with no
-explicit borehole material. Re-run the full profile set under the refined
-geometry, confirm the open sign/water-level question above, and update the
-figures, profile count, and injection-halo discussion below before this
-chapter is finalised -- source positions no longer sit at the domain edge
-($y approx 0$) under the refined geometry but on the borehole's centreline,
-so the halo-masking distance below will need re-deriving too.]
+The refined ($d_x = 0.02 "m"$, explicit borehole) pipeline described above
+has since been extended from profile 1 to the full five-profile set used
+throughout the remainder of this chapter (1, 3, 8, 20, 38); the two
+cross-profile registration issues that surfaced once time-lapse differences
+were taken across this extended set, and how they were fixed, are described
+in @sec:hyp3-fd-crossprofile below. The 14-profile back-propagation results
+referenced below (@fig:fd-profile-grid onward, @fig:fd-disp-backprop) still
+use the earlier homogeneous-domain model at $d_x = 0.05 "m"$ with no explicit
+borehole material and predate the fixes of @sec:hyp3-fd-crossprofile; they
+have not been re-run under the refined geometry.
+
+#draftnote[source positions no longer sit at the domain edge ($y approx 0$)
+under the refined geometry but on the borehole's centreline, so the
+injection-halo masking distance discussed below (currently derived for the
+homogeneous-domain, edge-sourced model) should be re-derived for the refined
+geometry if the 14-profile homogeneous-domain results are ever re-run under
+it.]
 
 Kirchhoff and Gazdag migrations are available for all 37 processed profiles
 (profiles 2--38 differenced against profile 1 as the fixed baseline);
@@ -171,17 +178,85 @@ required new $d_x = 0.02 "m"$ gprMax back-propagation runs (profile 1's
 already existed from the grid-resolution diagnostic above) with the same
 scaled-water-permittivity, peak-normalised settings.
 
-#draftnote[this post-imaging recipe (20-degree tapered fan filter +
-amplitude gate + near-borehole radial taper) is fully validated on profile 1
-only at time of writing; profiles 3, 8, 20 and 38 have their $d_x = 0.02 "m"$
-`.in` files written but still need their gprMax runs completed before the
-recipe can be applied to them. It is applied purely to the output focus
-image -- it does not change the gprMax injection file, which still only uses
-the peak-normalisation choice described above. Applying it across the full
-profile set, and
-deciding whether/how the time-lapse analysis cells further downstream
-should consume this processed result rather than the raw back-propagation
-snapshot, is still pending.]
+This post-imaging recipe (20-degree tapered fan filter, amplitude gate and
+near-borehole radial taper) is applied purely to the output focus image; it
+does not change the gprMax injection file, which still only uses the
+peak-normalisation choice described above.
+
+=== Cross-Profile Registration and Amplitude Normalisation <sec:hyp3-fd-crossprofile>
+
+Applying the recipe above independently to all five profiles and taking
+consecutive time-lapse differences (profile $n$ minus profile $n-1$) at
+first produced differences that looked nothing like Kirchhoff/Gazdag's
+compact, localised residuals (@fig:fd-stage-push to @fig:fd-stage-pull):
+instead, each difference showed near-complete smearing across the full
+extent of the reflector, as if the two profiles being compared disagreed
+almost everywhere rather than only where the fluid front had actually moved.
+Isolating the cause -- by differencing raw, unfiltered back-propagation
+frames at matched snapshot times and comparing against the fan-filtered
+result -- ruled out the dip filter itself and traced the problem to two
+independent, structural bugs in how the back-propagation focus frames were
+selected and normalised.
+
+*Snapshot-timing misalignment.* The focus frame for each profile was
+originally selected by an independent per-profile search for the gprMax
+snapshot with the highest masked peak amplitude -- a reasonable choice for
+viewing one profile in isolation, but one that let each profile lock onto a
+different snapshot *time* (indices $25$--$28$ out of the saved snapshot
+sequence, a spread of $approx 26 "ns"$). Differencing two focus frames taken
+at different times makes a still-converging, not-yet-focused wavefront look
+like it moved, even with zero real displacement -- exactly the near-full
+extent smearing observed. The fix mirrors the fixed-time convention already
+used for the homogeneous-domain model's own consecutive differencing
+(`FOCUS_IDX_OFFSET`, @sec:hyp3-fd-processing): every profile now uses the
+same nominal focus time plus the same fixed snapshot-index offset, calibrated
+once against profile 1's previously-validated best-focus index.
+
+*Per-trace amplitude normalisation.* The fixed-timing frames alone did not
+resolve the smearing -- differencing raw, unfiltered frames at matched times
+still showed the same near-full-reflector residual -- which pointed at
+amplitude rather than timing. The gprMax injection preparation
+(`write_borehole_backprop_files`, @sec:hyp3-fd-processing) normalised every
+trace to its own individual peak amplitude before injection. Measured
+directly across the dataset: profile 3's real, pre-normalisation RMS
+amplitude is $approx 1.8$ times profile 1's -- consistent with the reflector
+genuinely sharpening through the push stage, exactly the kind of change a
+time-lapse study is trying to detect -- and per-trace rescaling erased that
+signal entirely, along with within-profile amplitude structure (individual
+trace peaks varied $80$--$160 times$ before normalisation, so weak,
+mostly-noise traces were boosted to the same injected amplitude as the
+strongest genuine reflections). The fix replaces the per-trace scalar with a
+single amplitude shared across all five profiles -- the peak found across
+all five profiles' excitation data -- so every trace still divides by a
+constant, as gprMax's numerical stability requires, but the same constant for
+every profile, preserving both the within-profile and cross-profile
+amplitude structure.
+
+With both fixes applied and all five profiles re-run through gprMax,
+@fig:fd-borehole-final-grid shows the raw focus frame, the final (fan +
+gate + taper) processed frame, and the consecutive time-lapse difference for
+each of the five profiles: the differences are now compact and localised,
+qualitatively matching the character of the Kirchhoff/Gazdag residuals shown
+earlier in this chapter, a marked change from the near-full-reflector
+smearing the two bugs above had produced. One caveat carried forward
+transparently: the per-column automatic dip fit that seeds the fan filter's
+orientation, reliable for profile 1 alone, did not generalise once the
+timing and normalisation fixes changed the underlying frames -- it also
+began locking onto near-source clutter for profiles 1 and 3, not only
+8/20/38 as before the fixes. All five profiles shown in
+@fig:fd-borehole-final-grid therefore use the same manually-specified dip
+override ($m_0 = 2.2$) rather than five independent automatic fits; the
+robustness of the automatic dip estimator itself is not addressed further
+here.
+
+#figure(
+  cimg("FD_borehole_final_processed_all_profiles.png"),
+  caption: [Corrected back-propagation pipeline (fixed snapshot timing +
+    shared global amplitude normalisation), all five profiles: raw focus
+    frame (top row), final fan+gate+taper-processed frame (middle row), and
+    consecutive time-lapse difference (bottom row, profile $n$ minus profile
+    $n-1$).],
+) <fig:fd-borehole-final-grid>
 
 @fig:fd-profile-grid compares five representative profiles (1, 3, 8, 20 and
 38, spanning the four operational stages) across all four representations:
@@ -334,7 +409,12 @@ image or the difference B-scan.
 
 Picking the cross-spectrum directly lets the fit be restricted to exactly the
 two energy lobes visible in the display, without a relative amplitude
-threshold or a fixed $(k_z, k_x)$ band. For the Chase-stage pair (3→8),
+threshold or a fixed $(k_z, k_x)$ band. The $#Dz$ figures quoted throughout
+this subsection are the *raw* WLS fit output, not yet converted to the
+"positive = downward" convention established later in @sec:hyp3-fd-phaseplane
+(@tab:fielddata-stages) -- the internal, relative comparisons below (manual
+vs. automatic vs. painted) are unaffected either way, since all three share
+the same raw convention consistently. For the Chase-stage pair (3→8),
 @fig:fd-napari-kspace compares a tight manual pick around the lobe peaks
 ($194$ pixels) against the automatic band-plus-amplitude gate ($1300$
 pixels): $#Dz = +1.147 "m"$, $#Dx = -0.129 "m"$ (manual) versus
@@ -419,35 +499,54 @@ of the total displacement per stage, are summarised in @tab:fielddata-stages.
     table.hline(stroke: 0.7pt),
     [*Stage*], [*Profiles*], [*$#Dz$ (depth)*], [*$#Dx$ (radial)*],
     table.hline(stroke: 0.4pt),
-    [Push],  [1→4],   [$+1.41 "m"$], [$-0.26 "m"$],
-    [Chase], [5→9],   [$+0.18 "m"$], [$-0.04 "m"$],
-    [Wait],  [10→20], [$-0.11 "m"$], [$+0.03 "m"$],
-    [Pull],  [21→38], [$-0.26 "m"$], [$+0.05 "m"$],
+    [Push],  [1→4],   [$-1.41 "m"$], [$-0.26 "m"$],
+    [Chase], [5→9],   [$-0.18 "m"$], [$-0.04 "m"$],
+    [Wait],  [10→20], [$+0.11 "m"$], [$+0.03 "m"$],
+    [Pull],  [21→38], [$+0.26 "m"$], [$+0.05 "m"$],
     table.hline(stroke: 0.4pt),
-    [*Net (prof 1→38)*], [], [$+0.94 "m"$], [$-0.18 "m"$],
+    [*Net (prof 1→38)*], [], [$-0.94 "m"$], [$-0.18 "m"$],
     table.hline(stroke: 0.7pt),
   ),
   caption: [Stage-anchored (Strategy 3) phase-plane displacement estimates
     from the borehole GPR field dataset. Positive $#Dz$ is downward (along
-    the borehole); negative $#Dx$ is away from the borehole. Net values are
-    the reconstructed global trajectory after stitching the four stage
-    estimates; the Pull stage did not fully reverse the Push.],
+    the borehole, increasing depth); positive $#Dx$ is away from the
+    borehole. Net values are the reconstructed global trajectory after
+    stitching the four stage estimates.],
   kind: table,
 ) <tab:fielddata-stages>
 
-The dominant signal is a downward displacement of approximately $1.41 "m"$
-during the Push stage, accompanied by a lateral spread of $0.26 "m"$ away
-from the borehole, consistent with fluid being injected downward and outward.
-The Chase stage adds a smaller increment in the same direction, the Wait stage
-is near-zero (as expected for paused injection), and the Pull stage partially
-reverses the Push but leaves a net residual of $#Dz approx +0.94 "m"$,
-$#Dx approx -0.18 "m"$ at profile 38 relative to profile 1. These stage-level
-magnitudes are consistent with the Push/Chase/Wait/Pull ordering already seen
-qualitatively in the sliding-window maps of @fig:fd-sliding-maps and the
-single-pair estimates of @sec:hyp3-fd-roi-picking, which used a different
-(shorter) set of representative pairs and, for Chase, a somewhat larger
-$#Dz$ estimate -- the two are not directly comparable (different pairs,
-different ROI-selection method) but agree on sign and order of magnitude.
+#draftnote[the sign of both columns above was corrected from the values
+originally reported here (previously $+1.41$/$-0.26 "m"$ for Push,
+$+0.94$/$-0.18 "m"$ Net, with the caption stating the opposite convention for
+both axes). A synthetic test with a known, directly injected shift -- run
+against the exact WLS fit function and depth/radial axis conventions used to
+produce this table -- confirmed the raw fit output equals $-#Dz$ under the
+"positive = downward" convention (an artefact of the depth axis decreasing
+with row index) but equals $+#Dx$ directly under "positive = away" (radial
+axis increases with column index, so no flip is needed there). Verify this
+correction against the underlying `strat3b_cd` notebook cell before treating
+the corrected numbers as final.]
+
+The dominant signal is an *upward* displacement of approximately $1.41 "m"$
+during the Push stage, accompanied by a lateral shift of $0.26 "m"$ *toward*
+the borehole -- the opposite direction, on both axes, from what a naive
+"downward and outward" injection picture would predict. The Chase stage adds
+a smaller increment in the same (upward, inward) direction, the Wait stage is
+near-zero (as expected for paused injection), and the Pull stage reverses
+direction (downward, outward) but not enough to erase the Push/Chase
+increment, leaving a net residual of $#Dz approx -0.94 "m"$ (upward),
+$#Dx approx -0.18 "m"$ (toward the borehole) at profile 38 relative to
+profile 1. @sec:hyp3-fd-interpretation returns to whether this reversed
+direction is physically plausible for this experiment -- it is reported here
+as a corrected, sign-verified number, not yet as a settled physical
+interpretation. These stage-level magnitudes are consistent with the
+Push/Chase/Wait/Pull *ordering* already seen qualitatively in the
+sliding-window maps of @fig:fd-sliding-maps and the single-pair estimates of
+@sec:hyp3-fd-roi-picking, which used a different (shorter) set of
+representative pairs and, for Chase, a somewhat larger $#Dz$ magnitude -- the
+two are not directly comparable (different pairs, different ROI-selection
+method) but agree on relative magnitude and (once @sec:hyp3-fd-roi-picking's
+own numbers are read under the same corrected convention) on direction.
 
 @fig:fd-disp-kirchhoff to @fig:fd-disp-backprop cross-check this result across
 migration techniques: the same WLS cross-spectrum phase-plane fit
@@ -489,28 +588,141 @@ $#Dz$; this is addressed as an open question in @sec:hyp3-fd-interpretation.
     @fig:fd-disp-kirchhoff.],
 ) <fig:fd-disp-backprop>
 
+== Corrected Back-Propagation Displacement Re-Estimation <sec:hyp3-fd-bp-corrected>
+
+With the timing and normalisation fixes of @sec:hyp3-fd-crossprofile applied,
+the manually-painted-ROI phase-plane fit of @sec:hyp3-fd-roi-picking was
+re-run directly on the five corrected, final-processed focus frames, for the
+same four representative consecutive pairs used throughout
+@sec:hyp3-fd-roi (1→3, 3→8, 8→20, 20→38). Painting is done directly on the
+difference image rather than the cross-spectrum -- the same B-scan-painting
+variant of @fig:fd-napari-bscan -- since a Gaussian-softened painted mask
+avoids the hard-edge spectral leakage a rectangular window would introduce,
+and the reflector's shape (and, in two of the four pairs, a visible
+side-lobe not present in the rectangular ROI) is easier to trace by eye on
+the spatial difference than on the cross-spectrum phase.
+
+A third bug surfaced while validating this re-estimation, independent of the
+two in @sec:hyp3-fd-crossprofile: the corrected back-propagation frames'
+depth axis increases with row index (row 0 $approx 60 "m"$, shallow; the
+last row $approx 85 "m"$, deep), the opposite convention to the
+Kirchhoff/Gazdag depth array used everywhere else in this chapter, which
+*decreases* with row index (row 0 $= 85 "m"$, deep). The phase-plane fit
+measures displacement along the increasing-row-index direction, so feeding
+it a plain positive row spacing -- as @sec:meth-phaseplane's fit does
+uniformly -- would silently report $+#Dz$ (raw fit output) for a shift
+toward *shallower* depth under the Kirchhoff/Gazdag row-index convention,
+but $+#Dz$ for a shift toward *deeper* depth under the back-propagation
+row-index convention: the same physical event, opposite-signed raw number.
+The fix negates the row-spacing constant used to build the fit's $k_z$ axis
+for the back-propagation frames only, so the *raw* fit output means the same
+physical row-index direction under both conventions -- the values below are
+already reported after that fix, and additionally converted to the
+"positive $#Dz$ = downward" convention established for
+@tab:fielddata-stages (@sec:hyp3-fd-phaseplane), i.e. negated once more
+relative to the raw fit output, consistently with that table.
+
+@tab:fielddata-bp-corrected reports the corrected, sign-converted estimates.
+Direction now agrees with the corrected @tab:fielddata-stages throughout:
+upward and toward the borehole during Push and Chase, downward and away
+during Wait and Pull -- the same reversed-from-naive-expectation pattern
+discussed above, reproduced independently by a technique that shares no
+processing steps with Kirchhoff/Gazdag downstream of the raw B-scans (one
+migrates a differenced B-scan; the other back-propagates a gprMax simulation
+through an explicit borehole geometry). Magnitudes are consistent in order
+with the established Gazdag results for the same representative pairs, once
+those are read under the same corrected convention (@sec:hyp3-fd-roi-picking):
+the Chase-stage pair (3→8) gives $#Dz = -1.37 "m"$ here against
+$-1.05$ to $-1.27 "m"$ across the three Gazdag ROI-selection variants, and
+the Wait-stage pair (8→20) gives the smallest magnitude of the four here
+($#Dz = +0.54 "m"$), matching the near-zero-net expectation of the
+paused-injection stage already established qualitatively in
+@fig:fd-sliding-maps. Two independently-processed techniques agreeing on
+both sign and order of magnitude in every stage is a stronger check than
+either alone, but it also means the reversed direction is very unlikely to
+be a processing artefact specific to one pipeline -- @sec:hyp3-fd-interpretation
+returns to what it might mean instead.
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Pair*], [*Stage*], [*$#Dz$ (depth)*], [*$#Dx$ (radial)*],
+    table.hline(stroke: 0.4pt),
+    [1→3],   [Push],  [$-1.91 "m"$], [$-0.34 "m"$],
+    [3→8],   [Chase], [$-1.37 "m"$], [$-0.21 "m"$],
+    [8→20],  [Wait],  [$+0.54 "m"$], [$+0.08 "m"$],
+    [20→38], [Pull],  [$+0.75 "m"$], [$+0.14 "m"$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Corrected back-propagation pipeline: manually-painted-ROI
+    phase-plane displacement estimates for the four representative
+    consecutive pairs, after the timing, normalisation and depth-axis-sign
+    fixes of @sec:hyp3-fd-crossprofile and @sec:hyp3-fd-bp-corrected.
+    Positive $#Dz$ is downward and positive $#Dx$ is away from the borehole,
+    matching the corrected convention of @tab:fielddata-stages.],
+  kind: table,
+) <tab:fielddata-bp-corrected>
+
+#figure(
+  subfigs(cols: 2,
+    cimg("FD_borehole_napari_wls_1_to_3.png"),
+    cimg("FD_borehole_napari_wls_3_to_8.png"),
+    cimg("FD_borehole_napari_wls_8_to_20.png"),
+    cimg("FD_borehole_napari_wls_20_to_38.png"),
+  ),
+  caption: [Corrected back-propagation pipeline, painted-ROI phase-plane fit
+    for the four representative pairs: (a) 1→3 (Push), (b) 3→8 (Chase), (c)
+    8→20 (Wait), (d) 20→38 (Pull). Green outline marks the painted region on
+    the time-lapse difference image. The $#Dz$/$#Dx$ annotations in each
+    panel are the *raw* fit output (row-index-direction convention, fixed
+    for the depth-axis bug described above but *not* yet converted to the
+    "positive = downward" convention of @tab:fielddata-stages) -- compare
+    @tab:fielddata-bp-corrected for the sign-converted values used in the
+    text.],
+) <fig:fd-borehole-napari-pairs>
+
 == Interpretation <sec:hyp3-fd-interpretation>
 
-#draftnote[Placeholder]
+*On the back-propagation/Kirchhoff-Gazdag sign disagreement.* The
+14-profile, homogeneous-domain back-propagation result of
+@fig:fd-disp-backprop disagreeing with Kirchhoff/Gazdag on the sign of
+$#Dz$ (noted above, @sec:hyp3-fd-phaseplane) was previously an open
+question: a genuine sign-convention difference between the two coordinate
+systems, back-propagation's lower SNR, or a real technique-dependent
+reliability issue consistent with @ch:hyp2. @sec:hyp3-fd-bp-corrected's
+independent re-derivation resolves this in favour of the first explanation
+for the *corrected* ($d_x = 0.02 "m"$, five-profile, fixed-timing,
+globally-normalised) back-propagation pipeline: once the back-propagation
+depth axis's opposite row-index direction is accounted for
+(@sec:hyp3-fd-bp-corrected), the two techniques agree on sign in every
+stage, despite sharing no processing steps downstream of the raw B-scans.
+This does not by itself explain the disagreement seen in the *original*
+14-profile homogeneous-domain figures (@fig:fd-disp-backprop), which predate
+all three fixes of @sec:hyp3-fd-crossprofile and @sec:hyp3-fd-bp-corrected
+and have not been re-run under them; the SNR and technique-reliability
+explanations remain open for that specific figure.
 
-// #draftnote[fill in the physical interpretation once the borehole geometry,
-// injection depth, and fluid-injection parameters are confirmed from the field
-// survey metadata. Key questions to address: (1) do the inferred $#Dz$ and $#Dx$
-// values agree with the known injection depth and the expected lateral spread for
-// the given fracture geometry? (2) @fig:fd-disp-backprop shows back-propagation
-// disagreeing with Kirchhoff/Gazdag (@fig:fd-disp-kirchhoff, @fig:fd-disp-gazdag)
-// on the sign of $#Dz$, despite all three sharing the same ROI and stage pairs
-// -- is this a genuine sign-convention difference between the two coordinate
-// systems (the back-propagation depth axis runs in the opposite direction to
-// the Kirchhoff/Gazdag depth array; @fig:fd-stage-push to @fig:fd-stage-pull show
-// the same reflector location in both, so the ROI itself is not the issue), a
-// consequence of back-propagation's lower SNR (14 profiles vs. 37, and visibly
-// noisier 1-D slices), or evidence that the phase-plane fit is less reliable on
-// this technique in the field, consistent with @ch:hyp2? (3) does the field
-// result agree with the synthetic fluid-front experiment? (4) the ROI-selection
-// comparison of @sec:hyp3-fd-roi shows a 10-30% spread in the displacement
-// estimate depending on whether the region is chosen by hand, swept
-// automatically, or painted directly onto the data -- does this spread bound a
-// meaningful "ROI-choice uncertainty" that should be reported alongside the
-// Strategy-3 numbers in @tab:fielddata-stages? State these explicitly once the
-// field context is available.]
+#draftnote[fill in the remaining physical interpretation once the borehole
+geometry, injection depth, and fluid-injection parameters are confirmed from
+the field survey metadata. Key questions to address: (1) do the inferred
+$#Dz$ and $#Dx$ values agree with the known injection depth and the expected
+lateral spread for the given fracture geometry -- and, now that
+@tab:fielddata-stages and @tab:fielddata-bp-corrected have been corrected to
+a verified sign convention (@sec:hyp3-fd-phaseplane), both agree that Push
+and Chase move *upward and toward the borehole* rather than the
+"downward and outward" direction a naive injection picture would predict:
+is there a physical reason (fracture geometry, the specific reflector being
+tracked vs. the injection point, a coordinate-system offset in how "depth"
+and "radial distance" map onto the actual borehole/fracture geometry) this
+reversed direction should be expected, or does it warrant re-checking against
+the field survey log before being reported as a finding? (2) does the field
+result agree with the synthetic fluid-front experiment? (3) the ROI-selection
+comparison of @sec:hyp3-fd-roi shows a 10-30% spread in the displacement
+estimate depending on whether the region is chosen by hand, swept
+automatically, or painted directly onto the data -- does this spread bound a
+meaningful "ROI-choice uncertainty" that should be reported alongside the
+Strategy-3 numbers in @tab:fielddata-stages? State these explicitly once the
+field context is available.]
