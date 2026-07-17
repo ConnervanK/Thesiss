@@ -162,14 +162,8 @@ around the scatterer, are given in @app:hyp1-methods.
 
 === Amplitude Test <sec:hyp1-lat-amplitude>
 
-#figure(
-  img("H1_006_Lateral_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migrat.png", width: 75%),
-  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
-    for the raw (non-difference) migrated lateral images: peak-normalised
-    Baseline (blue) and Monitor (red) 1D slices, with the Baseline FWHM
-    shaded and both peaks marked, for every scenario (rows) and migration
-    method (columns).],
-) <fig:h1-lat-amp-zoom>
+#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
+scenario set is provided in the Supplementary Material, §S1.1.1.]
 
 #figure(
   table(
@@ -202,23 +196,9 @@ algorithms.
 
 === Phase Test <sec:hyp1-lat-phase>
 
-#figure(
-  img("H1_007_Lateral_--_Phase-plane_shift_estimation_--_Kirchhoff____Base.png", width: 75%),
-  caption: [Kirchhoff-migrated phase-plane shift estimation, lateral study:
-    Baseline versus each of the seven displacement scenarios.],
-) <fig:h1-lat-phase-kirchhoff>
-
-#figure(
-  img("H1_008_Lateral_--_Phase-plane_shift_estimation_--_Gazdag____Baselin.png", width: 75%),
-  caption: [Gazdag-migrated phase-plane shift estimation, lateral study:
-    Baseline versus each of the seven displacement scenarios.],
-) <fig:h1-lat-phase-gazdag>
-
-#figure(
-  img("H1_009_Lateral_--_Phase-plane_shift_estimation_--_Back-prop____Base.png", width: 75%),
-  caption: [Back-propagation-migrated phase-plane shift estimation, lateral
-    study: Baseline versus each of the seven displacement scenarios.],
-) <fig:h1-lat-phase-backprop>
+#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated
+phase-plane shift-estimation diagnostics for this scenario set are provided
+in the Supplementary Material, §S1.1.2.]
 
 #figure(
   table(
@@ -347,12 +327,8 @@ around the scatterer, are given in @app:hyp1-methods.
 
 === Amplitude Test <sec:hyp1-vert-amplitude>
 
-#figure(
-  img("H1_015_Vertical_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migra.png", width: 75%),
-  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
-    for the raw migrated vertical images, all scenarios and migration
-    methods.],
-) <fig:h1-vert-amp-zoom>
+#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
+scenario set is provided in the Supplementary Material, §S1.2.1.]
 
 #figure(
   table(
@@ -384,23 +360,9 @@ over a wider sub-wavelength range than lateral, before it too collapses
 
 === Phase Test <sec:hyp1-vert-phase>
 
-#figure(
-  img("H1_016_Vertical_--_Phase-plane_shift_estimation_--_Kirchhoff____Bas.png", width: 75%),
-  caption: [Kirchhoff-migrated phase-plane shift estimation, vertical study:
-    Baseline versus each of the six displacement scenarios.],
-) <fig:h1-vert-phase-kirchhoff>
-
-#figure(
-  img("H1_017_Vertical_--_Phase-plane_shift_estimation_--_Gazdag____Baseli.png", width: 75%),
-  caption: [Gazdag-migrated phase-plane shift estimation, vertical study:
-    Baseline versus each of the six displacement scenarios.],
-) <fig:h1-vert-phase-gazdag>
-
-#figure(
-  img("H1_018_Vertical_--_Phase-plane_shift_estimation_--_Back-prop____Bas.png", width: 75%),
-  caption: [Back-propagation-migrated phase-plane shift estimation, vertical
-    study: Baseline versus each of the six displacement scenarios.],
-) <fig:h1-vert-phase-backprop>
+#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated
+phase-plane shift-estimation diagnostics for this scenario set are provided
+in the Supplementary Material, §S1.2.2.]
 
 #figure(
   table(
@@ -518,12 +480,8 @@ around the scatterer, are given in @app:hyp1-methods.
 
 === Amplitude Test <sec:hyp1-diag-amplitude>
 
-#figure(
-  img("H1_024_Diagonal_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migra.png", width: 75%),
-  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
-    for the raw migrated diagonal images, sampled along the motion direction,
-    all scenarios and migration methods.],
-) <fig:h1-diag-amp-zoom>
+#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
+scenario set is provided in the Supplementary Material, §S1.3.1.]
 
 #figure(
   table(
@@ -554,23 +512,9 @@ at the looser vertical floor of @tab:h1-vert-amp.
 
 === Phase Test <sec:hyp1-diag-phase>
 
-#figure(
-  img("H1_025_Diagonal_--_Phase-plane_shift_estimation_--_Kirchhoff____Bas.png", width: 75%),
-  caption: [Kirchhoff-migrated phase-plane shift estimation, diagonal study:
-    Baseline versus each of the five displacement scenarios.],
-) <fig:h1-diag-phase-kirchhoff>
-
-#figure(
-  img("H1_026_Diagonal_--_Phase-plane_shift_estimation_--_Gazdag____Baseli.png", width: 75%),
-  caption: [Gazdag-migrated phase-plane shift estimation, diagonal study:
-    Baseline versus each of the five displacement scenarios.],
-) <fig:h1-diag-phase-gazdag>
-
-#figure(
-  img("H1_027_Diagonal_--_Phase-plane_shift_estimation_--_Back-prop____Bas.png", width: 75%),
-  caption: [Back-propagation-migrated phase-plane shift estimation, diagonal
-    study: Baseline versus each of the five displacement scenarios.],
-) <fig:h1-diag-phase-backprop>
+#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated
+phase-plane shift-estimation diagnostics for this scenario set are provided
+in the Supplementary Material, §S1.3.2.]
 
 #figure(
   table(
@@ -732,12 +676,8 @@ position (@tab:h1-ff-scenarios).
 
 === Amplitude Test <sec:hyp1-ff-amplitude>
 
-#figure(
-  img("H1_033_FluidFlow_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migr.png", width: 75%),
-  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
-    for the raw migrated fluid-flow images, all scenarios and migration
-    methods.],
-) <fig:h1-ff-amp-zoom>
+#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
+scenario set is provided in the Supplementary Material, §S1.4.1.]
 
 #figure(
   table(
@@ -769,24 +709,9 @@ $1\/4 lambda$. By $1\/16 lambda$ every method has collapsed to $ratio <= 0.09$.
 
 === Phase Test <sec:hyp1-ff-phase>
 
-#figure(
-  img("H1_034_FluidFlow_--_Phase-plane_shift_estimation_--_Kirchhoff____Ba.png", width: 75%),
-  caption: [Kirchhoff-migrated phase-plane shift estimation, fluid-flow
-    study: Baseline versus each of the seven displacement scenarios.],
-) <fig:h1-ff-phase-kirchhoff>
-
-#figure(
-  img("H1_035_FluidFlow_--_Phase-plane_shift_estimation_--_Gazdag____Basel.png", width: 75%),
-  caption: [Gazdag-migrated phase-plane shift estimation, fluid-flow study:
-    Baseline versus each of the seven displacement scenarios.],
-) <fig:h1-ff-phase-gazdag>
-
-#figure(
-  img("H1_036_FluidFlow_--_Phase-plane_shift_estimation_--_Back-prop____Ba.png", width: 75%),
-  caption: [Back-propagation-migrated phase-plane shift estimation,
-    fluid-flow study: Baseline versus each of the seven displacement
-    scenarios.],
-) <fig:h1-ff-phase-backprop>
+#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated
+phase-plane shift-estimation diagnostics for this scenario set are provided
+in the Supplementary Material, §S1.4.2.]
 
 #figure(
   table(

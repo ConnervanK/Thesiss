@@ -203,12 +203,8 @@ time-reversal (@sec:hyp3-signbit) for back-propagation.
 
 === Amplitude Test <sec:hyp3-lat-amplitude>
 
-#figure(
-  img("H2_008_Lateral_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 75%),
-  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
-    for the raw _noisy_ migrated lateral images, all scenarios and migration
-    methods.],
-) <fig:h2-lat-amp-zoom>
+#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
+_noisy_ scenario set is provided in the Supplementary Material, §S2.1.1.]
 
 #figure(
   table(
@@ -240,24 +236,9 @@ perturbs only slightly.
 
 === Phase Test <sec:hyp3-lat-phase>
 
-#figure(
-  img("H2_009_Lateral_Noisy_--_Phase-plane_shift_estimation_--_Kirchhoff.png", width: 75%),
-  caption: [Kirchhoff-migrated phase-plane shift estimation, _noisy_ lateral
-    study: Baseline versus each of the seven displacement scenarios.],
-) <fig:h2-lat-phase-kirchhoff>
-
-#figure(
-  img("H2_010_Lateral_Noisy_--_Phase-plane_shift_estimation_--_Gazdag____B.png", width: 75%),
-  caption: [Gazdag-migrated phase-plane shift estimation, _noisy_ lateral
-    study: Baseline versus each of the seven displacement scenarios.],
-) <fig:h2-lat-phase-gazdag>
-
-#figure(
-  img("H2_011_Lateral_Noisy_--_Phase-plane_shift_estimation_--_Back-prop.png", width: 75%),
-  caption: [Back-propagation-migrated (sign-bit) phase-plane shift
-    estimation, _noisy_ lateral study: Baseline versus each of the seven
-    displacement scenarios.],
-) <fig:h2-lat-phase-backprop>
+#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit)
+phase-plane shift-estimation diagnostics for this _noisy_ scenario set are
+provided in the Supplementary Material, §S2.1.2.]
 
 #figure(
   table(
@@ -332,12 +313,8 @@ algorithms, using sign-bit time-reversal for the noisy back-propagation run.
 
 === Amplitude Test <sec:hyp3-vert-amplitude>
 
-#figure(
-  img("H2_013_Vertical_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 75%),
-  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
-    for the raw _noisy_ migrated vertical images, all scenarios and
-    migration methods.],
-) <fig:h2-vert-amp-zoom>
+#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
+_noisy_ scenario set is provided in the Supplementary Material, §S2.2.1.]
 
 #figure(
   table(
@@ -367,24 +344,9 @@ this floor either.
 
 === Phase Test <sec:hyp3-vert-phase>
 
-#figure(
-  img("H2_014_Vertical_Noisy_--_Phase-plane_shift_estimation_--_Kirchhoff.png", width: 75%),
-  caption: [Kirchhoff-migrated phase-plane shift estimation, _noisy_
-    vertical study: Baseline versus each of the six displacement scenarios.],
-) <fig:h2-vert-phase-kirchhoff>
-
-#figure(
-  img("H2_015_Vertical_Noisy_--_Phase-plane_shift_estimation_--_Gazdag.png", width: 75%),
-  caption: [Gazdag-migrated phase-plane shift estimation, _noisy_ vertical
-    study: Baseline versus each of the six displacement scenarios.],
-) <fig:h2-vert-phase-gazdag>
-
-#figure(
-  img("H2_016_Vertical_Noisy_--_Phase-plane_shift_estimation_--_Back-prop.png", width: 75%),
-  caption: [Back-propagation-migrated (sign-bit) phase-plane shift
-    estimation, _noisy_ vertical study: Baseline versus each of the six
-    displacement scenarios.],
-) <fig:h2-vert-phase-backprop>
+#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit)
+phase-plane shift-estimation diagnostics for this _noisy_ scenario set are
+provided in the Supplementary Material, §S2.2.2.]
 
 #figure(
   table(
@@ -455,12 +417,8 @@ back-propagation run.
 
 === Amplitude Test <sec:hyp3-diag-amplitude>
 
-#figure(
-  img("H2_018_Diagonal_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 75%),
-  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
-    for the raw _noisy_ migrated diagonal images, all scenarios and
-    migration methods.],
-) <fig:h2-diag-amp-zoom>
+#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
+_noisy_ scenario set is provided in the Supplementary Material, §S2.3.1.]
 
 #figure(
   table(
@@ -484,24 +442,9 @@ back-propagation run.
 
 === Phase Test <sec:hyp3-diag-phase>
 
-#figure(
-  img("H2_019_Diagonal_Noisy_--_Phase-plane_shift_estimation_--_Kirchhoff.png", width: 75%),
-  caption: [Kirchhoff-migrated phase-plane shift estimation, _noisy_
-    diagonal study: Baseline versus each of the five displacement scenarios.],
-) <fig:h2-diag-phase-kirchhoff>
-
-#figure(
-  img("H2_020_Diagonal_Noisy_--_Phase-plane_shift_estimation_--_Gazdag.png", width: 75%),
-  caption: [Gazdag-migrated phase-plane shift estimation, _noisy_ diagonal
-    study: Baseline versus each of the five displacement scenarios.],
-) <fig:h2-diag-phase-gazdag>
-
-#figure(
-  img("H2_021_Diagonal_Noisy_--_Phase-plane_shift_estimation_--_Back-prop.png", width: 75%),
-  caption: [Back-propagation-migrated (sign-bit) phase-plane shift
-    estimation, _noisy_ diagonal study: Baseline versus each of the five
-    displacement scenarios.],
-) <fig:h2-diag-phase-backprop>
+#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit)
+phase-plane shift-estimation diagnostics for this _noisy_ scenario set are
+provided in the Supplementary Material, §S2.3.2.]
 
 #figure(
   table(
@@ -613,12 +556,8 @@ swept laterally across the same seven scenarios.
 
 === Amplitude Test <sec:hyp3-ff-amplitude>
 
-#figure(
-  img("H2_023_FluidFlow_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RA.png", width: 75%),
-  caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
-    for the raw _noisy_ migrated fluid-flow images, all scenarios and
-    migration methods.],
-) <fig:h2-ff-amp-zoom>
+#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
+_noisy_ scenario set is provided in the Supplementary Material, §S2.4.1.]
 
 #figure(
   table(
@@ -644,25 +583,9 @@ swept laterally across the same seven scenarios.
 
 === Phase Test <sec:hyp3-ff-phase>
 
-#figure(
-  img("H2_024_FluidFlow_Noisy_--_Phase-plane_shift_estimation_--_Kirchhoff.png", width: 75%),
-  caption: [Kirchhoff-migrated phase-plane shift estimation, _noisy_
-    fluid-flow study: Baseline versus each of the seven displacement
-    scenarios.],
-) <fig:h2-ff-phase-kirchhoff>
-
-#figure(
-  img("H2_025_FluidFlow_Noisy_--_Phase-plane_shift_estimation_--_Gazdag.png", width: 75%),
-  caption: [Gazdag-migrated phase-plane shift estimation, _noisy_ fluid-flow
-    study: Baseline versus each of the seven displacement scenarios.],
-) <fig:h2-ff-phase-gazdag>
-
-#figure(
-  img("H2_026_FluidFlow_Noisy_--_Phase-plane_shift_estimation_--_Back-prop.png", width: 75%),
-  caption: [Back-propagation-migrated (sign-bit) phase-plane shift
-    estimation, _noisy_ fluid-flow study: Baseline versus each of the seven
-    displacement scenarios.],
-) <fig:h2-ff-phase-backprop>
+#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit)
+phase-plane shift-estimation diagnostics for this _noisy_ scenario set are
+provided in the Supplementary Material, §S2.4.2.]
 
 #figure(
   table(

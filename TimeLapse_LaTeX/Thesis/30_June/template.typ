@@ -384,6 +384,124 @@
   set page(numbering: "1")
 }
 
+// ---- Pointer to supplementary material ---------------------
+// Inline note left behind in the main thesis text where a figure has
+// been moved out to the companion supplementary document, e.g.:
+//   #supp-note[The PSF comparison for this scenario set is provided
+//     in the Supplementary Material, §S1.1.1.]
+#let supp-note(body) = block(
+  above: 0.6em, below: 0.8em,
+)[#text(style: "italic", size: 10pt)[#body]]
+
+// ---- Supplementary-document template ------------------------
+// A lightweight companion to thesis(): same body typography, figure,
+// and table styling, but a simplified cover (no signature pages) and
+// "S"-prefixed chapter/section numbering (S1, S1.1, S1.1.1, ...) so
+// its own numbering is never confused with the main thesis's, mirroring
+// how start-appendix() prefixes appendix chapters with letters instead.
+#let supplement(
+  title:        "Supplementary Material",
+  parent-title: "Subwavelength Imaging in Ground-Penetrating Radar",
+  author:       "",
+  date:         "",
+  body
+) = {
+  set document(title: title, author: author)
+
+  set page(
+    paper: "a4",
+    margin: (left: 3.0cm, right: 2.5cm, top: 2.8cm, bottom: 2.8cm),
+    header-ascent: 40%,
+    footer-descent: 30%,
+  )
+
+  set text(font: "Linux Libertine O", size: 11pt, lang: "en", hyphenate: true)
+  set par(justify: true, first-line-indent: 0pt, spacing: 0.65em)
+
+  set figure(gap: 0.5em, supplement: "Figure")
+  set figure.caption(separator: [. ], position: bottom)
+  show figure.caption: c => {
+    set text(size: 9pt, font: "Linux Biolinum O")
+    [*#c.supplement #context c.counter.display(c.numbering):* #c.body]
+  }
+
+  set table(stroke: none, inset: (x: 0.6em, y: 0.35em))
+  show table.cell.where(y: 0): set text(weight: "bold")
+
+  // "S"-prefixed numbering: S1, S1.1, S1.1.1, ...
+  set heading(numbering: (..nums) => "S" + nums.pos().map(str).join("."))
+  show heading.where(level: 1): set heading(supplement: "Chapter")
+  show heading.where(level: 2): set heading(supplement: "Section")
+  show heading.where(level: 3): set heading(supplement: "Section")
+
+  show heading.where(level: 1): h => {
+    pagebreak(weak: true)
+    v(1.0em)
+    line(length: 100%, stroke: 0.8pt)
+    v(0.25em)
+    context text(font: "Linux Biolinum O", size: 13pt, weight: "regular")[
+      SUPPLEMENT #counter(heading).display()
+    ]
+    v(0.25em)
+    line(length: 100%, stroke: 0.8pt)
+    v(0.4em)
+    align(right, text(font: "Linux Biolinum O", size: 21pt, weight: "bold")[#h.body])
+    v(2.2em)
+  }
+
+  show heading.where(level: 2): h => {
+    v(1.0em, weak: false)
+    text(font: "Linux Biolinum O", size: 13pt, weight: "bold")[
+      #context counter(heading).display() #h.body
+    ]
+    v(0.45em, weak: false)
+  }
+
+  show heading.where(level: 3): h => {
+    v(0.75em, weak: false)
+    text(font: "Linux Biolinum O", size: 12pt, weight: "bold")[
+      #context counter(heading).display() #h.body
+    ]
+    v(0.35em, weak: false)
+  }
+
+  // ---- Simple cover (no logo / signature pages) ----
+  set page(numbering: none, header: none, footer: none)
+  v(3cm)
+  align(center)[
+    #text(size: 14pt, weight: "regular")[#smallcaps[Supplementary Material to]]
+    #v(0.6em)
+    #text(size: 20pt, weight: "bold", font: "Linux Biolinum O")[#parent-title]
+    #v(1.5em)
+    #text(size: 13pt)[#author]
+    #v(0.4em)
+    #text(size: 11pt)[#date]
+  ]
+  v(1fr)
+  align(center)[
+    #text(size: 10pt, style: "italic")[
+      This document collects figures referenced from, but not reproduced
+      in, the main thesis text, to keep the main chapters concise. Section
+      numbers are prefixed "S" and mirror the corresponding thesis
+      chapter's own section names one-for-one (e.g. §S1.1 corresponds to
+      the "Lateral Movement" section of Chapter 5), so that a figure
+      pointer left in the main text can be located directly.
+    ]
+  ]
+  v(1fr)
+  pagebreak()
+
+  outline(title: [Table of Contents], indent: 2em, depth: 3)
+  pagebreak()
+  outline(title: [List of Figures], target: figure.where(kind: image))
+  pagebreak()
+
+  counter(page).update(1)
+  set page(numbering: "1")
+
+  body
+}
+
 // ---- Transition to appendix ------------------------------
 #let start-appendix() = {
   counter(heading).update(0)
