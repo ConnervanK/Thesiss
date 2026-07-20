@@ -568,13 +568,20 @@ def plot_method_comparison_grid(images, extent, methods, row_labels, *, title,
             the "★ = baseline" promised by this function's own suptitle,
             which previously had no corresponding draw call.
         xlim, ylim (tuple, optional): Shared axis window for every panel.
-        vmax_percentile (float): Percentile passed to _compute_symmetric_vmax
-            (headroom=1.0), computed once per method column from all
-            available (non-None) images in that column so every scenario for
-            a given method shares one color scale. Colorscales are not
-            shared across columns/methods, since different methods can
-            produce genuinely different amplitude scales and sharing across
-            columns lets the largest method dominate the others.
+        vmax_percentile (float or sequence[float]): Percentile passed to
+            _compute_symmetric_vmax (headroom=1.0), computed once per method
+            column from all available (non-None) images in that column so
+            every scenario for a given method shares one color scale.
+            Colorscales are not shared across columns/methods, since
+            different methods can produce genuinely different amplitude
+            scales and sharing across columns lets the largest method
+            dominate the others. A single float applies to every column
+            (the default, 100, reproduces the plain max). A sequence of one
+            float per column (same order as `methods`) lets a noisy/outlier-
+            heavy column (e.g. Gazdag under Laplace noise, whose rare
+            extreme-amplitude speckle pixels can otherwise wash its own
+            column's scale down to blank white) use a lower, more robust
+            percentile without changing every other column's scale.
         figsize (tuple, optional): Defaults from grid shape.
 
     Returns:
@@ -598,12 +605,14 @@ def plot_method_comparison_grid(images, extent, methods, row_labels, *, title,
         display_images = images
         cmap, vmin = CMAP_SIGNED, None
 
+    col_percentiles = (list(vmax_percentile) if isinstance(vmax_percentile, (list, tuple))
+                        else [vmax_percentile] * n_cols)
     col_vmax = []
     for j in range(n_cols):
         available = [display_images[i][j] for i in range(n_rows)
                      if display_images[i][j] is not None]
         col_vmax.append(_compute_symmetric_vmax(
-            available, percentile=vmax_percentile, headroom=1.0) if available else 1.0)
+            available, percentile=col_percentiles[j], headroom=1.0) if available else 1.0)
 
     for i, row_imgs in enumerate(display_images):
         for j, img in enumerate(row_imgs):

@@ -80,10 +80,19 @@ peak of the Baseline envelope nearest to where the two images differ most,
 both images are then cropped to a $plus.minus 2.5 lambda$ window around that
 apex, and the WLS fit recovers the sub-wavelength displacement
 $(#Dz, #Dx)$ directly from the cropped cross-spectrum's phase plane, using
-the central wavenumber $k_(z,c) = 2 pi \/ lambda$. A four-panel diagnostic
+the central wavenumber $k_(z,c) = 2 pi \/ lambda$. A six-panel diagnostic
 (cropped difference image with the apex marked, cross-spectrum phase,
-cross-spectrum energy, and a numeric True/Estimated/Error summary) is shown
-for every scenario and every migration method, in every §X.5 section below.
+cross-spectrum energy, a numeric True/Estimated/Error summary, and two
+plane-fit panels) is shown for every scenario and every migration method, in
+every §X.5 section below. The two plane-fit panels isolate the fitted plane
+$phi = k_z #Dz + k_x #Dx + phi_0$ along each wavenumber axis separately, by
+subtracting the *other* axis's fitted contribution from the measured
+cross-spectrum phase ($phi - k_z #Dz$ plotted against $k_x$, and
+$phi - k_x #Dx$ plotted against $k_z$): a good fit collapses the scattered,
+per-bin phase measurements onto the fitted line in both panels. Each point is
+coloured by the cross-spectrum magnitude $|X S|$, i.e. the weight that bin
+actually received in the WLS fit, making visible which measurements drove the
+result versus which were downweighted as noise.
 
 One further subtlety affects the smallest scenarios tested: because the
 FDTD grid cell is $1 "mm"$, the *nominal* fraction-of-$lambda$ displacement

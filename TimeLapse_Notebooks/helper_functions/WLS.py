@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 from scipy.signal         import hilbert as sp_hilbert
 from scipy.signal.windows import tukey
 
-def estimate_shift_2d(base, mon, dz_g, dx_g, kz_cent, kz_pos_only=False, force_dz_zero=False):
+def estimate_shift_2d(base, mon, dz_g, dx_g, kz_cent, kz_pos_only=False, force_dz_zero=False,
+                       weighted=True, return_fit_points=False):
     """
     Estimate sub-pixel 2-D shifts between two images via weighted least-squares
     phase-plane fitting of their cross-spectrum.
@@ -48,6 +49,14 @@ def estimate_shift_2d(base, mon, dz_g, dx_g, kz_cent, kz_pos_only=False, force_d
             known to be absent: avoids ill-conditioning that arises with a
             narrowband wavelet where the kz*dz and phi_0 terms become nearly
             indistinguishable on the one-sided spectrum.
+        weighted (bool): If True (default), weight each masked bin by its
+            cross-spectrum magnitude (WLS). If False, every masked bin gets
+            equal weight (ordinary least squares) -- the mask/band selection
+            is unchanged, only the fit itself stops discounting low-energy
+            bins. Exists for the OLS-vs-WLS comparison in Chapter 5.4.
+        return_fit_points (bool): If True, also return a dict with the
+            per-bin (kz, kx, phi, weight) arrays actually used in the fit,
+            for diagnostic scatter plots.
 
     Returns:
         dz_est (float): Estimated shift along the z axis [units of dz_g].
@@ -58,6 +67,11 @@ def estimate_shift_2d(base, mon, dz_g, dx_g, kz_cent, kz_pos_only=False, force_d
             for diagnostic plots.
         kz_ax (ndarray): 1-D kz wavenumber axis [rad / unit of dz_g].
         kx_ax (ndarray): 1-D kx wavenumber axis [rad/m].
+        fit_points (dict, only if return_fit_points=True): {'kz', 'kx',
+            'phi', 'weight'} -- the masked, per-bin arrays the fit was run
+            on (weight is always the cross-spectrum magnitude, regardless of
+            the `weighted` flag, so it can be used to visualise what WLS
+            would/does emphasise).
     """
     Nz, Nx = base.shape
 
@@ -80,13 +94,19 @@ def estimate_shift_2d(base, mon, dz_g, dx_g, kz_cent, kz_pos_only=False, force_d
         mask &= (KZ > 0)
 
     W = w[mask]
+    Wfit = W if weighted else np.ones_like(W)
     if force_dz_zero:
         # 2-parameter fit: phi = kx*dx + phi_0  (dz = 0 by physics)
         A = np.column_stack([KX[mask], np.ones(mask.sum())])
-        c = np.linalg.lstsq(A * W[:, None], phi[mask] * W, rcond=None)[0]
-        return 0.0, c[0], c[1], XS, kz_ax, kx_ax
+        c = np.linalg.lstsq(A * Wfit[:, None], phi[mask] * Wfit, rcond=None)[0]
+        dz_est, dx_est, phi_0 = 0.0, c[0], c[1]
     else:
         # 3-parameter fit: phi = kz*dz + kx*dx + phi_0
         A = np.column_stack([KZ[mask], KX[mask], np.ones(mask.sum())])
-        c = np.linalg.lstsq(A * W[:, None], phi[mask] * W, rcond=None)[0]
-        return c[0], c[1], c[2], XS, kz_ax, kx_ax
+        c = np.linalg.lstsq(A * Wfit[:, None], phi[mask] * Wfit, rcond=None)[0]
+        dz_est, dx_est, phi_0 = c[0], c[1], c[2]
+
+    if return_fit_points:
+        fit_points = dict(kz=KZ[mask], kx=KX[mask], phi=phi[mask], weight=W)
+        return dz_est, dx_est, phi_0, XS, kz_ax, kx_ax, fit_points
+    return dz_est, dx_est, phi_0, XS, kz_ax, kx_ax

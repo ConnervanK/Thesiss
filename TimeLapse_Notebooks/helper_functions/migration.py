@@ -2,6 +2,8 @@
 Migration functions shared by Resolution_Playground and TimeLapse_Playground notebooks.
 """
 
+from dataclasses import dataclass, field
+
 import numpy as np
 import pylops
 from scipy.fft import fft, ifft, fftfreq
@@ -853,3 +855,265 @@ def apply_3d_to_2d_correction(b_scan, dt, velocity, time_zero_idx=0,
         corrected_b_scan[i, :] = trace_filtered
 
     return corrected_b_scan
+
+
+@dataclass
+class MigratedImage:
+    """Unified container returned by load_migrated_image() for a single migrated /
+    back-propagated image. image/depth_axis/radial_axis always follow ONE convention
+    -- row index increases with physical depth (row 0 = shallowest), column index
+    increases with radial distance from the borehole (col 0 = nearest) -- regardless
+    of which native convention the underlying migration technique used. See
+    load_migrated_image's docstring for why this matters.
+    """
+    image: np.ndarray
+    depth_axis: np.ndarray
+    radial_axis: np.ndarray
+    dz: float
+    dx: float
+    kz_cent: float
+    method: str
+    run: int
+    meta: dict = field(default_factory=dict)
+
+
+def load_migrated_image(method, run, *, migrated_dir=None, borehole_dir=None,
+                         depth_gk=None, x_img_gk=None, dL_gk=None,
+                         f0_mig=None, v=None):
+    """
+    Single, technique-agnostic loader for the three migration techniques used in
+    FieldData_Playground.ipynb's ROI / displacement-estimation workflow (Gazdag,
+    Kirchhoff-BP, back-propagation through the borehole-geometry gprMax pipeline).
+
+    Resolves, architecturally, a sign-convention bug that was previously patched
+    one-off per call site (e.g. a manual dz_g_bh negation in the notebook's
+    borehole-displacement cell): Gazdag/Kirchhoff-BP's cached 'migrated/
+    {method}_{run}.npy' arrays and the shared `depth` axis DECREASE with row index
+    (row 0 = 85 m, deepest), while back-propagation's per-run
+    'borehole_prof_{run}_dx02_final_processed.npz' INCREASES with row index (row 0 =
+    shallowest). Feeding a WLS phase-plane fit two images on opposite row-direction
+    conventions makes its raw Delta_z sign mean opposite physical directions
+    depending on which technique produced the image, even though the fit code itself
+    never changes. This function is the single place that normalises every
+    technique's image + axes to the same convention before anything downstream (ROI
+    selection, cropping, the WLS fit) ever sees it, so no per-technique sign
+    correction is needed anywhere else.
+
+    Parameters
+    ----------
+    method : {'gazdag', 'kirchhoff_bp', 'backprop'}
+    run : int
+        Profile number.
+    migrated_dir : Path
+        Directory holding f'{method}_{run}.npy' (gazdag / kirchhoff_bp only).
+    borehole_dir : Path
+        Directory holding f'borehole_prof_{run}_dx02_final_processed.npz'
+        (method='backprop' only -- this is `bh_out` in the notebook).
+    depth_gk, x_img_gk, dL_gk : ndarray, ndarray, float
+        The notebook's shared `depth` (decreasing, m), `x_img` (increasing, m) and
+        `dL` (trace spacing, m) globals -- gazdag/kirchhoff_bp only; the cached .npy
+        arrays don't carry their own axes.
+    f0_mig, v : float
+        Centre frequency [GHz] and full (round-trip) velocity [m/ns].
+        gazdag/kirchhoff_bp: kz_cent = 2*pi*f0_mig/v (full velocity).
+        backprop: kz_cent = 2*pi*f0_mig/(v/2) (half-velocity exploding-reflector
+        convention -- gprMax's back-propagation snapshots live in that domain,
+        unlike the already-migrated Kirchhoff/Gazdag .npy images).
+
+    Returns
+    -------
+    MigratedImage, or None if the underlying file does not exist (mirrors the
+    notebook's previous per-cell `_load_img` contract).
+    """
+    import pathlib
+
+    if method in ('gazdag', 'kirchhoff_bp'):
+        p = pathlib.Path(migrated_dir) / f'{method}_{run}.npy'
+        if not p.exists():
+            return None
+        image_dec = np.load(p)
+        n = image_dec.shape[0]
+        radial_axis = np.asarray(x_img_gk)
+        return MigratedImage(
+            image=image_dec[::-1, :].copy(),
+            depth_axis=np.asarray(depth_gk)[:n][::-1].copy(),
+            radial_axis=radial_axis,
+            dz=float(dL_gk),
+            dx=float(radial_axis[1] - radial_axis[0]),
+            kz_cent=2.0 * np.pi * f0_mig / v,
+            method=method, run=run, meta={},
+        )
+    elif method == 'backprop':
+        p = pathlib.Path(borehole_dir) / f'borehole_prof_{run}_dx02_final_processed.npz'
+        if not p.exists():
+            return None
+        d = np.load(p)
+        depth_axis = d['depth_axis']
+        radial_axis = d['radial_axis']
+        meta = {k: (d[k].item() if d[k].ndim == 0 else d[k])
+                for k in d.files if k not in ('image', 'depth_axis', 'radial_axis')}
+        return MigratedImage(
+            image=d['image'], depth_axis=depth_axis, radial_axis=radial_axis,
+            dz=float(depth_axis[1] - depth_axis[0]),
+            dx=float(radial_axis[1] - radial_axis[0]),
+            kz_cent=2.0 * np.pi * f0_mig / (v / 2.0),
+            method=method, run=run, meta=meta,
+        )
+    else:
+        raise ValueError(
+            f"method must be 'gazdag', 'kirchhoff_bp', or 'backprop', got {method!r}")
+
+
+def wls_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
+                         roi_px=None, data_pad=8, taper='edge', tukey_alpha=0.15,
+                         kz_band_fac=0.5, kx_band_fac=2.0, amp_thr=0.20, wls_pow=1,
+                         pad_fac=10, force_dz_zero=False, mask=None,
+                         return_diagnostics=False):
+    """
+    Weighted least-squares (WLS) cross-spectrum phase-plane fit -- the displacement
+    estimator behind every ROI-workflow strategy in FieldData_Playground.ipynb
+    (rectangular window, sliding window, k-space / depth-radial manual picking).
+    Fits phi(kz, kx) = kz*dz_est + kx*dx_est + phi_0 to the phase of the cross-
+    spectrum XS = FFT(base) * conj(FFT(mon)), weighted by |XS|**wls_pow and
+    restricted to either an automatic band + amplitude-threshold mask or an explicit
+    caller-supplied k-space mask (manual picking).
+
+    Consolidates what were previously ~4 separately-maintained, quietly-diverged
+    copies of this same fit (two rectangular-window cells, one sliding-window
+    helper, one bare mask-only helper) into one function, with what divergence
+    turned out to be genuine (rather than accidental drift) exposed as explicit,
+    per-technique-configurable parameters -- see WLS_FIT_DEFAULTS_BY_METHOD in the
+    notebook.
+
+    Parameters
+    ----------
+    base, mon : ndarray (n_depth, n_radial)
+        base = earlier profile, mon = later profile, on a shared grid already in the
+        row-index-increases-with-depth convention (e.g. from load_migrated_image).
+        If roi_px is None, base/mon are used exactly as passed -- crop to the region
+        of interest yourself first (sliding-window, or a Gaussian-softened painted
+        mask already baked in for picking). If roi_px is given, pass the full image
+        and this function does the cropping.
+    dz, dx : float
+        Grid spacing [m] (positive).
+    kz_cent : float
+        Dominant wavenumber [rad/m] (2*pi*f0/v, or the half-velocity equivalent for
+        back-propagation); sets the default kz/kx band via kz_band_fac/kx_band_fac.
+    roi_px : (z0, z1, x0, x1) or None
+        Pixel-index ROI within base/mon. If given, crops with `data_pad` extra
+        pixels of real data on each side before tapering, so the taper rolls off
+        through genuine surrounding data instead of attenuating the ROI signal
+        itself (the rectangular-window recipe). If None, no cropping is done here.
+    data_pad : int
+        Real-data margin pixels added around roi_px before tapering. Only used when
+        roi_px is given and taper='edge'.
+    taper : {'edge', 'tukey', 'none'}
+        'edge': sin^2 ramp over exactly the data_pad margin -- requires roi_px.
+        'tukey': tukey(alpha=tukey_alpha) window over the whole array as passed.
+        'none': no taper applied here -- use when the caller already tapered/masked
+        base/mon before calling (e.g. picking cells bake a Gaussian-softened painted
+        mask into base/mon directly).
+    kz_band_fac, kx_band_fac : float
+        Automatic mask band: |KZ| < kz_band_fac*kz_cent, |KX| < kx_band_fac*kz_cent.
+        Ignored if `mask` is given.
+    amp_thr : float
+        Automatic mask amplitude gate: |XS| > amp_thr * max(|XS|). Ignored if `mask`
+        is given.
+    wls_pow : float
+        Weight exponent -- W = |XS|**wls_pow. A higher power (e.g. 3) suppresses
+        low-energy peripheral k-cells that would otherwise bias the fit; whether a
+        given technique needs this is empirical, not universal -- see
+        WLS_FIT_DEFAULTS_BY_METHOD.
+    pad_fac : int
+        Zero-padding factor before the FFT2 (denser kz/kx sampling).
+    force_dz_zero : bool
+        If True, fit only (dx_est, phi_0) -- for a known lateral-only displacement.
+    mask : ndarray (bool) or None
+        Explicit k-space mask over the (padded) KZ/KX grid. If given, the fit is
+        restricted to exactly these cells and kz_band_fac/kx_band_fac/amp_thr are
+        ignored entirely (manual picking).
+    return_diagnostics : bool
+        If True, also return a dict with KZ, KX, w (amplitude), phi (phase), the
+        selected mask, and the fitted-plane array -- everything a 5-panel diagnostic
+        figure needs; 1-D kz/kx slice extraction for that figure is left to the
+        caller (a plotting concern, not a fit concern).
+
+    Returns
+    -------
+    (dz_est, dx_est, phi_0, n_mask) or, if return_diagnostics, with a 5th dict
+    element `diag` containing KZ, KX, w, phi, mask, fitted, kz_ax, kx_ax.
+    """
+    from scipy.signal.windows import tukey as _tukey
+
+    if roi_px is not None:
+        z0, z1, x0, x1 = roi_px
+        Nz_img, Nx_img = base.shape
+        z0p, z1p = max(0, z0 - data_pad), min(Nz_img, z1 + data_pad)
+        x0p, x1p = max(0, x0 - data_pad), min(Nx_img, x1 + data_pad)
+        base_crop = base[z0p:z1p, x0p:x1p]
+        mon_crop = mon[z0p:z1p, x0p:x1p]
+        pad_lo_hi = (z0 - z0p, z1p - z1, x0 - x0p, x1p - x1)
+    else:
+        base_crop, mon_crop = base, mon
+        pad_lo_hi = None
+
+    Nz, Nx = base_crop.shape
+    Nz_pad, Nx_pad = Nz * pad_fac, Nx * pad_fac
+
+    if taper == 'edge':
+        if pad_lo_hi is None:
+            raise ValueError(
+                "taper='edge' requires roi_px (needs a real-data margin to ramp through)")
+
+        def _edge_taper_1d(N, n_lo, n_hi):
+            win = np.ones(N)
+            if n_lo > 0:
+                win[:n_lo] = np.sin(np.linspace(0, np.pi / 2, n_lo)) ** 2
+            if n_hi > 0:
+                win[-n_hi:] = np.sin(np.linspace(np.pi / 2, 0, n_hi)) ** 2
+            return win
+
+        nz_lo, nz_hi, nx_lo, nx_hi = pad_lo_hi
+        win2d = np.outer(_edge_taper_1d(Nz, nz_lo, nz_hi), _edge_taper_1d(Nx, nx_lo, nx_hi))
+    elif taper == 'tukey':
+        win2d = np.outer(_tukey(Nz, alpha=tukey_alpha), _tukey(Nx, alpha=tukey_alpha))
+    elif taper == 'none':
+        win2d = 1.0
+    else:
+        raise ValueError(f"taper must be 'edge', 'tukey', or 'none', got {taper!r}")
+
+    kz_ax = np.fft.fftfreq(Nz_pad, d=dz) * 2 * np.pi
+    kx_ax = np.fft.fftfreq(Nx_pad, d=dx) * 2 * np.pi
+    KZ, KX = np.meshgrid(kz_ax, kx_ax, indexing='ij')
+
+    XS = (np.fft.fft2(base_crop * win2d, s=(Nz_pad, Nx_pad)) *
+          np.conj(np.fft.fft2(mon_crop * win2d, s=(Nz_pad, Nx_pad))))
+    w_amp, phi = np.abs(XS), np.angle(XS)
+
+    if mask is not None:
+        kmask = mask
+    else:
+        band = (np.abs(KZ) < kz_band_fac * kz_cent) & (np.abs(KX) < kx_band_fac * kz_cent)
+        kmask = (w_amp > amp_thr * w_amp.max()) & band & ((np.abs(KZ) + np.abs(KX)) > 0)
+
+    n_mask = int(kmask.sum())
+    if n_mask < 3:
+        dz_est = dx_est = phi_0 = 0.0
+    else:
+        W = w_amp[kmask] ** wls_pow
+        if force_dz_zero:
+            A = np.column_stack([KX[kmask], np.ones(n_mask)])
+            c = np.linalg.lstsq(A * W[:, None], phi[kmask] * W, rcond=None)[0]
+            dz_est, dx_est, phi_0 = 0.0, float(c[0]), float(c[1])
+        else:
+            A = np.column_stack([KZ[kmask], KX[kmask], np.ones(n_mask)])
+            c = np.linalg.lstsq(A * W[:, None], phi[kmask] * W, rcond=None)[0]
+            dz_est, dx_est, phi_0 = float(c[0]), float(c[1]), float(c[2])
+
+    if not return_diagnostics:
+        return dz_est, dx_est, phi_0, n_mask
+
+    fitted = KX * dx_est + KZ * dz_est + phi_0
+    diag = dict(KZ=KZ, KX=KX, w=w_amp, phi=phi, mask=kmask, fitted=fitted,
+                kz_ax=kz_ax, kx_ax=kx_ax)
+    return dz_est, dx_est, phi_0, n_mask, diag
