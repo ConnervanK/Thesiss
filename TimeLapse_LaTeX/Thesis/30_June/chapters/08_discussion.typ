@@ -2,161 +2,326 @@
 
 = Discussion <ch:discussion>
 
-#draftnote[Placeholder]
-
-// #draftnote[this chapter is a placeholder skeleton built around the draft-note
-// prompts left in @ch:hyp1, @ch:hyp2, and @ch:hyp3. Resolve those prompts
-// first (they ask for specific numbers read off specific figures), then rewrite
-// this chapter as connected prose rather than a list.]
-
-// This chapter returns to the Research Question of @ch:introduction --- can
-// time-lapse GPR accurately track subwavelength movement by analysing phase
-// changes in migrated images? --- and integrates the results of Hypotheses 1--3
-// to answer it.
+This chapter returns to the Research Question of @ch:introduction --- can
+time-lapse GPR accurately track subwavelength movement by analysing phase
+changes in migrated images? --- and integrates the results of Hypotheses
+1--3 to answer it. Hypothesis 1 is supported without qualification: the
+phase-plane fit recovers displacement, on synthetic data, well below the
+amplitude-based resolution floor established in @sec:meth-resolution.
+Hypothesis 2's original framing --- that a single migration technique is
+unconditionally "most noise-robust" --- turns out to be the wrong question;
+@ch:hyp2 shows the answer instead depends on what "robust" is taken to mean.
+Hypothesis 3 is supported procedurally rather than conclusively: the pipeline
+generalises to real, noisy borehole field data and produces stable,
+cross-technique-corroborated displacement estimates, but whether those
+estimates are physically correct is still open, and generalisation to
+multiple simultaneously-moving scatterers was not tested.
 
 == Hypothesis 1: Phase Changes Reveal Sub-Resolution Movement
 
-#draftnote[Placeholder]
-
-// @sec:hyp1-lateral, @sec:hyp1-vertical, and @sec:hyp1-diagonal established an
-// amplitude-based detectability floor in all three translation directions, and
-// @sec:hyp1-phaseplane showed the phase-plane estimator remaining accurate at
-// lateral and vertical scales where that amplitude floor has already been
-// reached.
-
-// #draftnote[state the improvement factor explicitly: floor scale found in
-// @sec:tl-detectability, @sec:vtl-detectability, and @sec:dtl-detectability
-// versus the smallest scale at which @sec:tlp-horizontal-validation and
-// @sec:tlp-vertical still recover $(#Dz, #Dx)$ within tolerance. Note that the
-// diagonal phase-plane fit itself is still outstanding (@sec:tlp-diagonal), so
-// Hypothesis 1's diagonal claim is currently supported only at the amplitude
-// level --- flag this explicitly rather than overstating the result.]
+Across all four @ch:hyp1 experiments --- Lateral, Vertical, Diagonal, and
+FluidFlow --- the same pattern holds: amplitude differencing of the migrated
+time-lapse images fails once the true displacement drops below roughly
+$1\/4$--$1\/2 lambda$ (@tab:h1-lat-amp and its Vertical/Diagonal/FluidFlow
+counterparts), while the 2D weighted-least-squares phase-plane fit of
+@sec:hyp1-phaseplane remains accurate from that same failure point down to
+the smallest scale tested, $1\/32 lambda$. @tab:h1-mae and
+@fig:h1-detectability make this directly visible: in every column, the
+phase-error curve drops below its $5%$ threshold at or before the
+amplitude-ratio curve crosses below $1$, for all three migration methods and
+all four movement types. Where the fit is accurate it is accurate to a few
+hundredths of a millimetre in the best case (Gazdag and Kirchhoff, Lateral
+and Diagonal) --- several orders of magnitude below the wavelength scale.
+The larger mean-absolute-error values in @tab:h1-mae are not evidence of a
+systematic sub-wavelength failure; they are driven almost entirely by a
+single poorly-resolved scenario per (movement, method) pair, close to the
+amplitude/phase crossover itself (back-propagation's Lateral fit at
+$1\/2 lambda$; the shared Vertical outlier at $1\/2 lambda$ for Gazdag and
+Kirchhoff), with every scale below that already accurate to a few tenths of a
+millimetre or better. The FluidFlow experiment extends this conclusion beyond
+an idealised point scatterer: despite a graded wetting-front target whose
+broader intrinsic point-spread function makes amplitude differencing fail
+even earlier than for a discrete PEC cylinder (Gazdag's ratio is already
+below $1$ at $2 lambda$), the phase-plane fit recovers the front's
+displacement to within about a millimetre from $1\/2 lambda$ downward,
+confirming that the method's advantage is not an artefact of the idealised
+point-scatterer geometry used in the other three experiments.
 
 === Lateral/Vertical Asymmetry
 
-#draftnote[Placeholder]
+@sec:th-duality predicted, from first principles, that a migrated image
+separates lateral spatial frequency like a prism (@eq:kx-inst) but leaves
+vertical spatial frequency at a fixed carrier wavenumber regardless of depth
+(@eq:kz-inst) --- so a lateral displacement should collapse the amplitude
+image's resolvability sooner than an equivalent vertical displacement. The
+amplitude tests bear this out directly: the Lateral Rayleigh ratio
+(@tab:h1-lat-amp) already crosses below $1$ for Kirchhoff at $1\/2 lambda$,
+whereas the Vertical ratio (@sec:hyp1-vertical) stays above $1$ a full octave
+lower, only failing between $1\/4 lambda$ and $1\/8 lambda$. The Diagonal
+experiment (@sec:hyp1-diagonal), which combines both components on a fixed
+$2$:$1$ path, collapses at roughly the same scale as the pure Lateral case
+(Scenario 3, $1\/4 lambda_x$/$1\/8 lambda_z$) rather than at the looser
+Vertical floor --- i.e. the lateral component of a combined displacement,
+not the vertical one, sets when amplitude differencing gives out. For a
+field deployment, this means the direction of an expected displacement
+matters for how soon phase-based inference becomes necessary: a process that
+is known to be purely vertical (e.g. compaction or settling) remains
+amplitude-detectable over a wider range of sub-wavelength scales than one
+with any lateral component.
 
-// @sec:th-duality predicted, from first principles, that a migrated image
-// separates lateral spatial frequency like a prism but not vertical frequency.
-
-// #draftnote[state whether this asymmetry was visible only in the
-// instantaneous-phase analysis (@fig:tlp-instphase-horiz-summary vs.
-// @fig:tlp-instphase-vert-summary) or also at the amplitude level
-// (@fig:tl-summary-psf vs. @fig:vtl-summary-psf), and what that implies for a field
-// deployment that cares more about one direction than the other. Discuss whether
-// the diagonal detectability floor of @sec:dtl-detectability sits closer to the
-// (tighter) lateral floor or the (looser) vertical one, as a further test of
-// the same asymmetry.]
+Importantly, this asymmetry is specific to the amplitude-detectability
+_floor_, not to the phase estimator's accuracy once that floor is crossed:
+@sec:hyp1-vertical notes explicitly that the phase fit is already accurate
+($<=0.03 "mm"$) from $1\/4 lambda$ downward in both the lateral and vertical
+cases, but at $1 lambda$ and $1\/2 lambda$ --- where amplitude differencing
+is still comfortably resolvable in the vertical case --- the phase fit
+itself remains wrapped and unreliable regardless of direction. The phase
+estimator's advantage is therefore concentrated specifically where amplitude
+has already failed, and the lateral/vertical asymmetry predicted by
+@sec:th-duality shows up in _where that failure point sits_, not in how well
+phase performs once it is reached.
 
 === Hypothesis 1.5: Local Phase-Gradient Methods
 
-#draftnote[Placeholder]
+The local, trace-based alternative explored in @sec:hyp1-h15 --- tracking
+the instantaneous phase gradient directly, rather than fitting a global 2D
+plane to the cross-spectrum --- can only be reported as exploratory. Where
+it has actually been computed, the results are qualitatively consistent with
+the global fit and with @sec:th-duality's predicted asymmetry: the lateral
+instantaneous-phase cross-section produces a slope proportional to
+displacement, while the vertical cross-section produces a plateau rather than
+a slope, exactly mirroring @eq:dphi-lateral and @eq:dphi-vertical. However,
+three of the four diagnostic views described in @sec:th-local --- the
+spectral-line fit, the cross-phase spectrogram, and the localised
+short-time-Fourier-transform decomposition (@sec:tlp-spectral-line,
+@sec:tlp-spectrogram, @sec:tlp-stft) --- currently have no corresponding
+figures at all, because the notebook sections that generate them are
+disabled, and no direct quantitative comparison between any local method and
+the global WLS fit has been run on the same dataset. Hypothesis 1.5 is
+therefore neither confirmed nor refuted by the evidence collected so far: the
+one local method with results available (instantaneous-phase imaging) is
+consistent with the global fit wherever both exist, but the claim that local
+phase gradients offer an "equivalent, simpler" route to the same displacement
+estimate remains untested.
 
-// #draftnote[state whether the local, trace-based methods of @sec:hyp1-h15
-// (instantaneous phase, spectral-line fitting, cross-phase spectrograms,
-// localised STFT) gave results consistent with the global WLS fit wherever both
-// were computed, and whether Hypothesis 1.5 can be considered supported,
-// exploratory-but-promising, or unresolved given that no direct quantitative
-// comparison between the two has yet been run.]
+== Hypothesis 2: Accuracy and False-Positive Avoidance Favour Different Methods
 
-== Hypothesis 2: Back-Propagation Is the Preferred Method
+@ch:hyp2's own framing of Hypothesis 2 already anticipates the result: which
+migration algorithm is "best suited" to noise-robust tracking depends on
+whether robustness is measured as lowest aggregate displacement error, or as
+avoiding manufactured false-positive structure. The two criteria pick
+different winners. On raw accuracy, @tab:h2-mae is unambiguous: Kirchhoff's
+mean absolute error across all four movement types ($4.5 "mm"$) is
+roughly $2.5 times$ below sign-bit back-propagation's ($11.1 "mm"$) and
+$4.5 times$ below Gazdag's ($20.3 "mm"$), and Kirchhoff is individually the
+most accurate method for three of the four movement types (Lateral,
+Diagonal, FluidFlow); back-propagation is more accurate only for Vertical.
+On false-positive risk, the pure-noise sanity check of @sec:hyp3-purenoise
+reverses the ranking: Kirchhoff's delay-and-sum aperture stacking turns pure
+Laplace noise into smooth, wave-like coherent bands that could plausibly be
+misread as real layered structure, while Gazdag's frequency-domain
+continuation and back-propagation's phase-governed focusing both leave pure
+noise as incoherent speckle with no comparable artefact. Sign-bit
+time-reversal (@sec:hyp3-signbit) is what makes back-propagation usable
+under noise at all: by injecting only the sign of the time-reversed
+wavefield rather than its peak-normalised amplitude, it keeps every
+zero-crossing of the true signal intact while clamping noise spikes to the
+same $plus.minus 1$ amplitude as genuine reflections, removing the outsized
+amplitude that would otherwise let a single spike compete with the real
+source during back-propagation.
 
-#draftnote[Placeholder]
-
-// @ch:hyp2 showed that the choice of migration algorithm matters substantially
-// under heavy-tailed Laplace noise: Kirchhoff creates false-coherent bands from
-// pure noise (raising false-positive risk), Gazdag stays incoherent but adds
-// significant speckle, and back-propagation with sign-bit time-reversal
-// suppresses impulsive noise by clamping spike amplitudes to $plus.minus 1$
-// while preserving all phase information. The phase-plane estimator's noise
-// resilience is now demonstrated quantitatively for all three point-scatterer
-// directions: the lateral case via a robust GCC/least-squares fallback
-// (@fig:tlp-noise, Kirchhoff only), and the vertical and diagonal cases via the
-// plain 2D WLS fit for all three migration methods
-// (@fig:vtl-noisy-phaseplane, @fig:dtl-noisy-phaseplane); a cross-spectrum
-// displacement estimate is also available for the fluid-flow front
-// (@fig:ff-noisy-phaseplane). Running the plain WLS fit on the lateral case
-// itself, for all three methods, remains outstanding (see @sec:hyp3-gaps).
-
-// #draftnote[state the quantitative degradation in estimated $#Dx$/$#Dz$
-// between the clean results of @fig:tlp-horiz-validation, @fig:tlp-vert-validation
-// and the noisy results of @fig:tlp-noise, @fig:vtl-noisy-phaseplane,
-// @fig:dtl-noisy-phaseplane, for all three migration methods where available.
-// State whether back-propagation with sign-bit time-reversal gives a better
-// phase-plane estimate than the analytic methods under noise, once the
-// pure-noise back-prop comparison (@sec:hyp3-purenoise) is completed.]
+Gazdag is the clear loser on both criteria, though not for a fixed reason
+across movement types. Once the target-localisation problem of
+@sec:hyp3-groundtruth-apex is corrected (cropping the WLS fit around the
+_known_ target position in both $x$ and $z$, rather than an apex hunted for
+in the noisy envelope), Gazdag's mean MAE falls from $28.9 "mm"$ to
+$20.3 "mm"$, and its FluidFlow error in particular improves by more than an
+order of magnitude ($25.6 -> 0.98 "mm"$) --- consistent with localisation,
+not a fundamental weakness in the phase-shift operator itself, having been
+the dominant error source there. Vertical movement is the exception: Gazdag's
+error there gets _worse_ after the same localisation fix ($26.0 ->
+34.5 "mm"$), traced to spurious lateral ($#Dx$) error the WLS fit assigns
+even though the true $#Dx = 0$ by construction --- a cross-axis leakage that
+a better crop window does not resolve and that remains an open,
+Gazdag-specific weakness (@sec:hyp3-summary).
 
 === Implications for Migration Choice in Practice
 
-#draftnote[Placeholder]
-
-// The recommendation to use back-propagation has a practical cost: it requires
-// a full gprMax forward simulation for each profile pair, which is substantially
-// more expensive than Kirchhoff or Gazdag. For field surveys with many profiles,
-// this cost must be weighed against the noise-robustness benefit.
-
-// #draftnote[add a brief practical recommendation: under what noise level and
-// target complexity should a practitioner prefer back-propagation with sign-bit
-// time-reversal versus one of the analytic methods? Use the SNR sweep proposed
-// in @sec:hyp3-gaps as the basis for this recommendation once it is run.]
+The recommendation is therefore conditional, not absolute. Where raw
+displacement accuracy is the primary objective and the survey volume is
+large enough that back-propagation's added cost (a full gprMax forward
+simulation per profile pair, versus a comparatively cheap post-processing
+step for Kirchhoff or Gazdag) is a real constraint, Kirchhoff's phase-plane
+fit is both the cheapest and the most accurate of the three methods tested,
+for three of the four movement types --- provided its false-positive risk is
+managed by some independent check (e.g. cross-referencing a suspicious
+detection against Gazdag or back-propagation, or against the pure-noise
+signature of @fig:h2-purenoise-kg) rather than trusted blindly. Where
+avoiding a manufactured false detection matters more than raw accuracy ---
+for instance, a first-pass anomaly screen in a monitoring context where a
+false positive is costly to chase down --- sign-bit back-propagation is the
+more conservative choice, and it is the single most accurate method
+available specifically for vertical-only displacement monitoring. Gazdag is
+not recommended under noise by either criterion: its aggregate error remains
+the worst of the three even after the localisation fix, and its unresolved
+cross-axis leakage on purely vertical motion is a specific, uncorrected
+failure mode. This recommendation is based on the single noise level actually
+tested here ($10%$ of each B-scan's own signal standard deviation,
+@sec:hyp3-laplace); a systematic sweep across multiple noise levels, which
+would locate any crossover between Kirchhoff's accuracy advantage and
+back-propagation's false-positive-avoidance advantage, has not been run and
+is identified as future work below.
 
 == Hypothesis 3: Generalisation to Field Data
 
-#draftnote[Placeholder]
+@sec:hyp3-fielddata applied the full pipeline to 38 real, zero-offset
+borehole GPR profiles from a controlled fluid-injection experiment, where ---
+unlike every @ch:hyp1/@ch:hyp2 experiment --- neither the target geometry nor
+the true displacement is known in advance. Three independent strategies for
+choosing the region of influence that the phase-plane fit is restricted to
+(a hand-picked rectangular window, a systematic sliding-window scan, and
+manual pixel-level painting, @sec:hyp3-fd-roi) agree on where the reflector
+is and on the sign of the displacement, while differing by $10$--$30%$ on
+its exact magnitude --- a real, quantified source of estimate uncertainty
+that has no counterpart in the synthetic studies, where the crop window is
+centred on a known ground-truth position instead.
 
-// @sec:hyp3-fielddata applied the full pipeline to real borehole GPR data and
-// obtained displacement estimates across four operational stages of a
-// fluid-injection experiment (@tab:fielddata-stages). The Push stage produced
-// a displacement of approximately $1.41 "m"$ *upward and toward the borehole*
-// (corrected sign convention, @sec:hyp3-fd-phaseplane) rather than the
-// downward/outward direction naively expected of active injection; the Wait
-// stage produced near-zero displacement, as expected; and the Pull stage only
-// partially reversed the Push, leaving a net residual. An independently
-// re-derived back-propagation estimate (@sec:hyp3-fd-bp-corrected) agrees on
-// both sign and order of magnitude in every stage, so the reversed direction
-// is unlikely to be a processing artefact of either technique alone -- whether
-// it is physically expected for this experiment is still open
-// (@sec:hyp3-fd-interpretation).
+With the rectangular ROI fixed, the stage-anchored displacement estimates of
+@tab:fielddata-stages (@sec:hyp3-fd-phaseplane) tell a consistent and, at
+first glance, counter-intuitive story: the dominant signal is an upward
+displacement of roughly $1.3$--$1.9 "m"$ and a lateral shift toward the
+borehole during the Push stage, the opposite of both axes from what a naive
+"downward and outward" picture of active fluid injection would predict; the
+Wait stage produces the smallest displacement of the four, as expected of
+paused injection; and the Pull stage only partially reverses the accumulated
+Push/Chase displacement, leaving a net residual rather than returning to the
+starting position. What makes this more than a single-pipeline artefact is
+that the corrected back-propagation re-estimation of @sec:hyp3-fd-bp-corrected
+--- a technique that shares no processing steps with the Kirchhoff/Gazdag
+branch downstream of the raw B-scans --- agrees with the Gazdag estimate on
+sign in every one of the four stages, and on order of magnitude in three of
+the four, once its own depth-axis and amplitude-normalisation bugs
+(@sec:hyp3-fd-crossprofile) are corrected. Two independently-processed
+techniques agreeing this closely makes it unlikely that the reversed
+direction is a processing artefact specific to either pipeline.
 
-// #draftnote[state whether the field-data estimates are consistent with any
-// independent ground-truth available from the field experiment (e.g. injection
-// volume, borehole depth, known fracture geometry). Note explicitly that the
-// complex synthetic model component of @sec:hyp3-complex is still pending, so
-// Hypothesis 3 is only partially supported at this stage.]
+Whether that reversed direction is _physically_ expected for this particular
+fluid-injection experiment, however, is a question this thesis cannot yet
+answer: @sec:hyp3-fd-interpretation explicitly leaves it open pending
+independent ground truth from the field survey (injection depth, volume, and
+fracture geometry) that was not available during processing. Hypothesis 3 is
+therefore best read as partially, not fully, supported: the pipeline
+demonstrably generalises to real, noisy, geometry-unknown field data in the
+procedural sense that it produces stable, self-consistent, cross-technique-
+corroborated displacement estimates rather than noise, but the further claim
+that those estimates are physically correct has not been validated against
+ground truth. The complementary generalisation test proposed alongside the
+field-data study --- a complex synthetic scene with multiple
+independently-moving scatterers under noise (@sec:hyp3-complex) --- was not
+run in this thesis and is left entirely to future work.
 
 == Limitations
 
-#draftnote[Placeholder]
++ Hypothesis 1.5's local phase-gradient methods (@sec:hyp1-h15) remain
+  exploratory: three of the four diagnostic views have no corresponding
+  results because the notebook cells that generate them are currently
+  disabled, and no quantitative comparison against the global WLS fit has
+  been run on shared data.
 
-// #draftnote[list concrete limitations: (1) synthetic gprMax data only for
-// Hypotheses 1--2, pending Hypothesis 3's complex synthetic results; (2) the
-// plain 2D WLS phase-plane fit has not been run for back-propagation (or
-// Gazdag) on the noisy lateral dataset specifically, only the more robust
-// GCC/least-squares fallback for Kirchhoff (@fig:tlp-noise, @sec:hyp3-lateral)
-// --- unlike the vertical and diagonal cases, which now have all three methods
-// (@sec:hyp3-gaps); (3) the domain-size and STFT-scale-labelling
-// uncertainties flagged in @ch:methodology and @sec:tlp-stft; (4) the
-// fluid-front model uses a single idealised thin-layer geometry rather than a
-// swept range of fracture thicknesses or contrasts; (5) the diagonal experiment
-// (@sec:hyp1-diagonal) sweeps only a single fixed $2:1$ lateral-to-vertical
-// ratio rather than a range of diagonal angles; (6) the field-data back-prop
-// runs are incomplete (11/37 profiles), so the preferred method cannot yet be
-// fully applied to the real data.]
++ The clean-versus-noisy comparison of @ch:hyp1/@ch:hyp2 relies on cropping
+  the phase-plane fit around the _known_ target position under noise
+  (@sec:hyp3-groundtruth-apex) --- legitimate for synthetic data with exact
+  ground truth, but unavailable on real field data, where three substitute
+  ROI-selection strategies (@sec:hyp3-fd-roi) were needed instead and
+  introduced a $10$--$30%$ magnitude spread not present in the synthetic
+  study.
+
++ The migration-technique comparison of @ch:hyp2 is based on a single fixed
+  noise level ($10%$ of each B-scan's own signal standard deviation,
+  @sec:hyp3-laplace); no sweep across multiple noise levels has been run, so
+  it is not known whether, or at what noise level, Kirchhoff's raw-accuracy
+  advantage and back-propagation's false-positive-avoidance advantage trade
+  places.
+
++ Field-data back-propagation coverage is partial: the original,
+  homogeneous-domain model reaches 14 of 37 processed profiles, while the
+  corrected, explicit-borehole-geometry pipeline ($d_x = 0.02 "m"$,
+  @sec:hyp3-fd-crossprofile) has been validated on only the five
+  representative profiles (1, 3, 8, 20, 38) used throughout @ch:hyp3, not the
+  full dataset.
+
++ The complex synthetic scene with multiple, independently-moving scatterers
+  under noise (@sec:hyp3-complex) was not run, so simultaneous or
+  interacting displacements --- plausibly closer to a real field scenario
+  than any single-scatterer experiment in this thesis --- remain untested
+  even synthetically.
+
++ The field-data displacement direction reported in @tab:fielddata-stages is
+  internally consistent and corroborated across two independently-processed
+  migration techniques, but its physical interpretation is pending
+  confirmation against independent field-survey metadata not available
+  during this work (@sec:hyp3-fd-interpretation).
+
++ Gazdag's noise sensitivity is only partially diagnosed: correcting the
+  target-localisation crop window resolved most of its excess error, but a
+  residual cross-axis leakage on purely vertical motion remains unexplained,
+  and an earlier hypothesis attributing a related streaking artefact to the
+  phase-shift depth-stepping operator itself has not been re-tested since the
+  localisation fix (@sec:hyp3-summary).
+
++ The velocity-recalibration problem flagged in @sec:meth-phaseplane --- a
+  genuine change in soil or ice moisture between baseline and monitor
+  surveys is, without recalibrating against a known static reflector,
+  indistinguishable from a spurious vertical shift $#Dz$ --- is not tested by
+  any experiment in this thesis, synthetic or field.
+
++ The automatic dip-filter orientation estimator used in the back-propagation
+  field pipeline's post-imaging clutter removal did not generalise once the
+  timing and normalisation fixes of @sec:hyp3-fd-crossprofile were applied,
+  and was replaced by a single manually-specified value shared across all
+  five profiles; the estimator's robustness on a larger profile set is not
+  otherwise established.
 
 == Outlook
 
-#draftnote[Placeholder]
++ Extend the corrected, explicit-borehole-geometry back-propagation pipeline
+  from the five representative profiles used in this thesis to the full
+  38-profile field dataset, and confirm that it continues to agree with the
+  Gazdag trajectory over the complete Push/Chase/Wait/Pull sequence rather
+  than only the four representative pairs checked here.
 
-// The field-data results of @sec:hyp3-fielddata demonstrate that the pipeline is
-// not limited to synthetic data, but several extensions are needed before field
-// deployment can be recommended without reservation:
++ Run the complex synthetic experiment of @sec:hyp3-complex to test whether
+  the phase-plane fit, or a spatially-localised variant of it, can separate
+  multiple simultaneously-moving scatterers under noise --- the natural next
+  step between the idealised single-scatterer studies of @ch:hyp1/@ch:hyp2
+  and the uncontrolled real field data of @sec:hyp3-fielddata.
 
-// #draftnote[expand with concrete next steps: (1) complete the outstanding
-// back-propagation runs for the remaining 26 field profiles and confirm whether
-// the back-prop phase-plane estimates agree with the Gazdag estimates; (2) complete
-// the complex synthetic experiment of @sec:hyp3-complex and test whether local
-// application of the phase-plane fit can separate multiple simultaneously-moving
-// scatterers; (3) quantify the velocity-recalibration procedure needed
-// when soil or ice moisture genuinely changes between baseline and monitor
-// surveys, since this is otherwise indistinguishable from a true vertical shift
-// $#Dz$ in any of the three migration algorithms.]
++ Obtain independent field metadata (injection depth and volume, fracture
+  and borehole geometry) and cross-check it against the field-data
+  displacement estimates of @tab:fielddata-stages, to resolve whether the
+  observed upward, borehole-ward displacement is physically expected for
+  this experiment or points to a coordinate-convention issue not yet
+  identified.
+
++ Run a systematic sweep across multiple noise levels, rather than the
+  single $10%$ level tested in @ch:hyp2, to locate any crossover between
+  Kirchhoff's raw-accuracy advantage and back-propagation's
+  false-positive-avoidance advantage, and to test whether Gazdag's
+  cross-axis leakage on vertical motion is the same numerical artefact
+  suspected earlier in the phase-shift operator or a distinct effect.
+
++ Complete the quantitative validation of Hypothesis 1.5 by re-enabling the
+  disabled processing steps that generate the missing spectral-line,
+  cross-phase-spectrogram, and localised-STFT figures, and run a direct,
+  same-dataset comparison between the local phase-gradient methods and the
+  global WLS fit.
+
++ Quantify the velocity-recalibration procedure needed when soil or ice
+  moisture genuinely changes between a baseline and monitor survey, so that
+  a true velocity change can be distinguished from a spurious vertical shift
+  $#Dz$ in field deployment.
+
++ Propagate the $10$--$30%$ ROI-choice sensitivity found in the field-data
+  study (@sec:hyp3-fd-roi) into a reported uncertainty band alongside the
+  headline displacement numbers of @tab:fielddata-stages, rather than a
+  single point estimate per stage.

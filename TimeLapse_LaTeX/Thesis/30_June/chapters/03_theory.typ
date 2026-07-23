@@ -12,7 +12,13 @@ pipeline and closes with a validation of the amplitude-based resolution floor
 
 == GPR Migration Fundamentals <sec:th-migration>
 
-#draftnote[Placeholder]
+This section derives the three migration algorithms used throughout this
+thesis --- Kirchhoff delay-and-sum, Gazdag phase-shift, and
+back-propagation --- each formulated under the shared zero-offset,
+exploding-reflector convention introduced below. Although they differ
+substantially in computational strategy and underlying approximations, all
+three collapse the same raw hyperbolic B-scan into a focused image of the
+true subsurface reflectivity.
 
 // All data in this thesis are zero-offset (collocated transmitter/receiver)
 // B-scans, which makes the _exploding-reflector model_ applicable
@@ -28,7 +34,27 @@ pipeline and closes with a validation of the amplitude-based resolution floor
 
 === Kirchhoff (Delay-and-Sum) Migration
 
-#draftnote[Placeholder]
+Physically, Kirchhoff migration treats every subsurface point as a Huygens
+secondary source, collapsing the diffraction hyperbola recorded from that
+point back onto its apex, the point's true location @yao2012@ozdemir2014.
+What separates true Kirchhoff migration from a plain hyperbolic
+(diffraction) stack is that it is derived from the Kirchhoff integral
+solution of the scalar wave equation, which additionally weights every
+summed contribution by an obliquity factor $cos theta$ and a
+spherical-spreading term $1 \/ sqrt(#vmig thin r)$ @ozdemir2014@smitha2016.
+@schneider1978 formalises this as a linear inverse problem: Kirchhoff
+migration is the mathematical adjoint $K^upright(T)$ of a forward
+(demigration) operator $K$ that predicts recorded data $d(t,x)$ from a
+reflectivity model $m(z,x)$ --- exactly the correlation-type "imaging
+condition" that @jones2014 describes generally as building an image
+wherever downgoing (source) and upcoming (receiver) wavefield contributions
+coincide in space and time. This thesis implements Kirchhoff migration with
+the PyLops Python library, whose `pylops.waveeqprocessing.Kirchhoff` class
+follows this same _operator-based_ design: the object defines the forward
+demigration operator once, and the delay-and-sum migrated image used
+throughout this thesis is obtained simply by applying its adjoint (`.H`) to
+the recorded data, so that the identical operator can later be reused,
+unmodified, inside an iterative least-squares migration @pylops.
 
 // Kirchhoff migration is formulated as a linear forward operator $K$ mapping a
 // reflectivity model $m(z,x)$ to recorded data $d(t,x)$ by summing the
@@ -47,7 +73,35 @@ pipeline and closes with a validation of the amplitude-based resolution floor
 
 === Gazdag Phase-Shift Migration
 
-#draftnote[Placeholder]
+Gazdag (phase-shift) migration is a one-way wave-equation
+wavefield-extrapolation method that processes the *entire* recorded
+wavefield at once, rather than summing along per-pixel travel-time curves
+as Kirchhoff migration does. The B-scan is Fourier transformed to the
+frequency-wavenumber domain $(omega, #kx)$ and downward-continued one
+depth step $delta z$ at a time by repeatedly multiplying its spectrum by
+the phase-shift term $e^(-j #kz delta z)$ derived from the factorised
+one-way wave equation @schuster2017; at each step the exploding-reflector
+imaging condition reads off the $delta t = 0$ component and adds it into
+the image at that depth, the same downward-continuation-then-imaging-condition
+procedure @jones2014 describes generally for wavefield-extrapolation
+migration. This matches the GPR-specific phase-shift factor
+$K = e^(j #kz delta z)$ applied step by step in @ozdemir2014@smitha2016.
+Because the whole wavefield is extrapolated via FFT rather than by tracing
+individual rays, Gazdag migration avoids Kirchhoff's high-frequency,
+single-arrival approximation and correctly handles multi-path energy, but
+each step is restricted to a laterally invariant $v(z)$ velocity model,
+whereas Kirchhoff's per-pixel hyperbolas tolerate arbitrary $v(x,z)$
+@jones2014@schneider1978@ozdemir2014. Frequency-wavenumber pairs for which
+the argument of #kz is negative are evanescent and numerically unstable to
+continue, so they are excluded from the sum rather than left to grow
+exponentially.
+
+This thesis implements Gazdag migration with PyLops's
+`pylops.waveeqprocessing.PhaseShift` operator: as with the Kirchhoff
+operator above, it builds the depth-stepped continuation directly from the
+phase-shift term for a given velocity and step size, and the migrated
+image is obtained by applying it recursively and reading off the
+$delta t = 0$ imaging condition at each depth @pylops.
 
 // Gazdag migration works entirely in the frequency--wavenumber ($f$-$#kx$)
 // domain @gazdag1978. The recorded wavefield is downward-continued one
@@ -68,7 +122,34 @@ pipeline and closes with a validation of the amplitude-based resolution floor
 
 === Back-Propagation (Time-Reversal) Migration
 
-#draftnote[Placeholder]
+Unlike Kirchhoff and Gazdag migration, back-propagation (time-reversal)
+migration uses no approximate operator at all: each recorded trace is
+reversed in time, normalised, and re-injected as a source at its original
+receiver position into a full electromagnetic simulation of the medium at
+the migration velocity $#vmig$. By the time-reversal symmetry of the wave
+equation, the back-propagated field refocuses at the true scatterer
+location at the focusing time $t_"focus" = T - t_0$ ($T$ the trace length),
+and the migrated image is simply the field snapshot read off at that
+instant. This thesis performs the re-injection and back-propagation
+numerically with gprMax, the same open-source finite-difference
+time-domain (FDTD) electromagnetic solver used for all forward modelling
+in this thesis @gprmax --- using gprMax as the wave-equation solver that
+carries out the extrapolation itself, the same role it plays in
+@geng2022's gprMax-based reverse-time migration (RTM) of GPR data.
+
+Geng and Ye's RTM additionally forward-models the source-side wavefield
+with gprMax and cross-correlates it against the reverse-time-extrapolated
+receiver-side wavefield at every time step to build the image @geng2022,
+a genuinely two-wavefield imaging condition. That is unnecessary here:
+because every survey in this thesis is zero-offset and already treated
+under the exploding-reflector convention of @sec:th-migration
+@claerbout1985, the recorded data already stand in for the source-side
+wavefield, so the single back-propagated wavefield read off at
+$t_"focus"$ is sufficient --- this thesis therefore implements
+back-propagation, not full cross-correlation RTM. Because it makes no
+high-frequency, single-arrival, or $v(z)$-only approximation beyond the
+exploding-reflector velocity halving itself, this method serves as a
+useful independent numerical check on the other two.
 
 // As an independent, purely numerical cross-check of the two analytic methods
 // above, every B-scan is also migrated by literal time-reversal: each trace is

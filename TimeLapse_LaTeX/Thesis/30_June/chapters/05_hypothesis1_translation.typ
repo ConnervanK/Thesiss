@@ -249,39 +249,24 @@ scenarios, from $1 lambda$ down to $1 \/ 32 lambda$, using the same domain
 and grid as @sec:hyp1-lateral.
 
 #supp-note[The forward-model setup (domain, scenario table, target depths),
-background-subtracted B-scans, and migration-comparison figure for this
-scenario set are provided in the Supplementary Material, §S2.2.1. Individual
-per-method migrated images and time-lapse differences, zoomed around the
-scatterer, are given in @app:hyp1-methods.]
+background-subtracted B-scans, migration-comparison figure, Rayleigh-criterion
+ratio table and PSF comparison, and phase-plane WLS displacement-error table
+and shift-estimation diagnostics for this scenario set are all provided in
+the Supplementary Material, §S2.2. Individual per-method migrated images and
+time-lapse differences, zoomed around the scatterer, are given in
+@app:hyp1-methods.]
 
-=== Amplitude Test <sec:hyp1-vert-amplitude>
-
-#supp-note[The Rayleigh-criterion ratio table and the zoomed
-Baseline-versus-Monitor PSF comparison for this scenario set are provided
-in the Supplementary Material, §S2.2.2.]
-
-Unlike the lateral case, every method's ratio stays above $1$ down to
-$1\/4 lambda$ (minimum $1.590$), and only drops below $1$ starting at
-$1\/8 lambda$ --- a full octave lower than the lateral floor of
-@tab:h1-lat-amp. Vertical amplitude differencing is therefore resolvable
-over a wider sub-wavelength range than lateral, before it too collapses
-($<0.33$ for all methods) by $1\/32 lambda$.
-
-=== Phase Test <sec:hyp1-vert-phase>
-
-#supp-note[The per-scenario phase-plane WLS displacement-error table, and
-the Kirchhoff-, Gazdag-, and back-propagation-migrated phase-plane
-shift-estimation diagnostics, for this scenario set are provided in the
-Supplementary Material, §S2.2.3.]
-
-The phase-plane fit becomes accurate ($<=0.03 "mm"$ error) for every method
-from $1\/4 lambda$ down to $1\/32 lambda$ --- the same threshold at which
-the amplitude test above still shows a resolvable amplitude PSF
-($1.59$--$1.97$). Only at $1 lambda$ and $1\/2 lambda$, where amplitude
-differencing remains comfortably resolvable, is the phase fit still wrapped
-and inaccurate, confirming that the phase estimator's advantage over
-amplitude is concentrated in the sub-$1\/4 lambda$ regime rather than
-uniformly across the whole sweep.
+Unlike the lateral case, amplitude differencing here stays resolvable a full
+octave lower: every method's Rayleigh ratio remains above $1$ down to
+$1\/4 lambda$ (minimum $1.590$), only dropping below $1$ at $1\/8 lambda$,
+before collapsing ($<0.33$ for all methods) by $1\/32 lambda$ (compare
+@tab:h1-lat-amp). The phase-plane fit only overtakes amplitude within this
+narrower failure band: it is already accurate ($<=0.03 "mm"$ error) from
+$1\/4 lambda$ downward, but at $1 lambda$ and $1\/2 lambda$ --- where
+amplitude differencing remains comfortably resolvable --- the phase fit is
+still wrapped and inaccurate. Vertical movement therefore shows the phase
+estimator's advantage is concentrated specifically where amplitude has
+already failed, not a blanket improvement across the whole sweep.
 
 == Diagonal Movement <sec:hyp1-diagonal>
 
@@ -294,39 +279,27 @@ five scenarios, using the same domain and grid as
 @sec:hyp1-lateral and @sec:hyp1-vertical.
 
 #supp-note[The forward-model setup (domain, scenario table, target
-positions), background-subtracted B-scans, and migration-comparison figure
-for this scenario set are provided in the Supplementary Material, §S2.3.1.
-Individual per-method migrated images and time-lapse differences, zoomed
-around the scatterer, are given in @app:hyp1-methods.]
-
-=== Amplitude Test <sec:hyp1-diag-amplitude>
-
-#supp-note[The Rayleigh-criterion ratio table and the zoomed
-Baseline-versus-Monitor PSF comparison for this scenario set are provided
-in the Supplementary Material, §S2.3.2.]
+positions), background-subtracted B-scans, migration-comparison figure,
+Rayleigh-criterion ratio table and PSF comparison, and phase-plane WLS
+displacement-error tables ($#Dz$ and $#Dx$) and shift-estimation
+diagnostics for this scenario set are all provided in the Supplementary
+Material, §S2.3. Individual per-method migrated images and time-lapse
+differences, zoomed around the scatterer, are given in @app:hyp1-methods.]
 
 The diagonal amplitude ratio crosses below $1$ at Scenario 3
 ($1\/4 lambda_x$, $1\/8 lambda_z$) for Gazdag and Kirchhoff, and remains just
 above $1$ for back-propagation at that scenario ($1.266$) before also
-collapsing by Scenario 4. Diagonal movement therefore fails at roughly the
-same combined-displacement scale as the lateral case (@tab:h1-lat-amp), not
-at the looser vertical floor established in @sec:hyp1-vert-amplitude.
-
-=== Phase Test <sec:hyp1-diag-phase>
-
-#supp-note[The per-scenario phase-plane WLS displacement-error tables
-($#Dz$ and $#Dx$), and the Kirchhoff-, Gazdag-, and
-back-propagation-migrated phase-plane shift-estimation diagnostics, for
-this scenario set are provided in the Supplementary Material, §S2.3.3.]
-
-Scenarios 1 and 2 remain wrapped for every method, as in the lateral and
-vertical cases. From Scenario 3 downward, Gazdag and Kirchhoff recover both
-$#Dz$ and $#Dx$ to within $0.02 "mm"$, and back-propagation follows from
-Scenario 4 (a single outlier of $-1.51 "mm"$ in $#Dz$ remains at Scenario
-3). The recovered $#Dz$ and $#Dx$ at Scenarios 3--5 satisfy the known
-$#Dx = 2 #Dz$ ratio of the scenario geometry to well within the reported
-error, confirming that the 2D WLS fit correctly separates the two
-simultaneous displacement components.
+collapsing by Scenario 4 --- roughly the same combined-displacement failure
+scale as the lateral case (@tab:h1-lat-amp), not the looser vertical floor
+of @sec:hyp1-vertical. The phase-plane fit tracks this failure point
+closely: Scenarios 1 and 2 remain wrapped for every method, as in the
+lateral and vertical cases, but from Scenario 3 downward Gazdag and
+Kirchhoff recover both $#Dz$ and $#Dx$ to within $0.02 "mm"$ (back-propagation
+follows from Scenario 4, with a single $-1.51 "mm"$ outlier in $#Dz$ at
+Scenario 3). The recovered $#Dz$/$#Dx$ ratio at Scenarios 3--5 matches the
+known $#Dx = 2 #Dz$ scenario geometry to well within the reported error,
+confirming the 2D WLS fit correctly separates the two simultaneous
+displacement components.
 
 == Fluid Flow <sec:hyp1-fluidflow>
 
@@ -375,36 +348,23 @@ position (@fig:h1-ff-setup).
     $1\/32 lambda$ --- identical sweep to @sec:hyp1-lateral.],
 ) <fig:h1-ff-setup>
 
-#supp-note[Background-subtracted B-scans and the migration-comparison
-figure for this scenario set are provided in the Supplementary Material,
-§S2.4.1.]
-
-=== Amplitude Test <sec:hyp1-ff-amplitude>
-
-#supp-note[The Rayleigh-criterion ratio table and the zoomed
-Baseline-versus-Monitor PSF comparison for this scenario set are provided
-in the Supplementary Material, §S2.4.2.]
+#supp-note[Background-subtracted B-scans, the migration-comparison figure,
+the Rayleigh-criterion ratio table and PSF comparison, and the phase-plane
+WLS front-displacement-error table and shift-estimation diagnostics for
+this scenario set are all provided in the Supplementary Material, §S2.4.]
 
 The graded front's broader intrinsic point-spread function makes amplitude
-differencing far harder than for a discrete point scatterer even at large
-scales: Gazdag's ratio is already below $1$ at $2 lambda$, and Kirchhoff is
-the only method still resolvable ($1.237$) at $1\/2 lambda$, failing by
-$1\/4 lambda$. By $1\/16 lambda$ every method has collapsed to $ratio <= 0.09$.
-
-=== Phase Test <sec:hyp1-ff-phase>
-
-#supp-note[The per-scenario phase-plane WLS front-displacement-error table,
-and the Kirchhoff-, Gazdag-, and back-propagation-migrated phase-plane
-shift-estimation diagnostics, for this scenario set are provided in the
-Supplementary Material, §S2.4.3.]
-
+differencing far harder than for a discrete point scatterer, even at large
+scales: Gazdag's ratio is already below $1$ at $2 lambda$, and Kirchhoff ---
+the only method still resolvable ($1.237$) at $1\/2 lambda$ --- fails by
+$1\/4 lambda$; every method has collapsed to $ratio <= 0.09$ by
+$1\/16 lambda$. The phase-plane fit is unaffected by this earlier collapse:
 Gazdag and Kirchhoff are already accurate (within $1.2 "mm"$) from
-$1 lambda$ downward, and all three methods are within $1 "mm"$ from
-$1\/2 lambda$ down to $1\/32 lambda$ --- the entire regime in which the
-amplitude test above showed amplitude differencing has already failed. The
-graded, spatially-extended front is therefore recovered by the same
-phase-plane approach used for the point scatterers above, despite its
-inherently broader PSF.
+$1 lambda$ downward, and all three methods stay within $1 "mm"$ from
+$1\/2 lambda$ down to $1\/32 lambda$ --- the entire regime in which
+amplitude differencing has already failed. The graded, spatially-extended
+front is therefore recovered by the same phase-plane approach used for the
+point scatterers above, despite its inherently broader PSF.
 
 == Summary of the Results <sec:hyp1-summary>
 
@@ -439,13 +399,34 @@ already collapsed.
   kind: table,
 ) <tab:h1-mae>
 
+@fig:h1-detectability puts every movement type's Rayleigh-criterion ratio
+and phase-plane error on one shared displacement axis, making @tab:h1-mae's
+numbers directly comparable across Lateral, Vertical, Diagonal, and
+FluidFlow at a glance: in every column, the bottom-row phase-error curves
+drop below their $5%$ threshold at or before the top-row amplitude-ratio
+curves cross below $1$, visually confirming that phase overtakes amplitude
+precisely where amplitude differencing gives out, for every movement type
+tested.
+
+#figure(
+  img("H1_037_Hypothesis_1_--_Detectability_Map_Amplitude_vs_Phase.png"),
+  caption: [Detectability map, clean data: top row, Rayleigh-criterion
+    amplitude ratio (threshold $1$); bottom row, absolute phase-plane WLS
+    displacement error as a percentage of the true displacement (log scale,
+    threshold $5%$); for all three migration methods, across all four
+    movement types. The full per-scenario numeric tables underlying this
+    figure are given in @tab:h1-lat-amp/@tab:h1-lat-phase (Lateral, in the
+    main text) and the Supplementary Material, §S2.2--§S2.4 (Vertical,
+    Diagonal, FluidFlow).],
+) <fig:h1-detectability>
+
 Two patterns stand out. First, for every point-scatterer geometry
 (Lateral, Vertical, Diagonal), at least one migration method recovers the
 true displacement to a few hundredths of a millimetre mean absolute error
 (Gazdag on Lateral and Diagonal; Kirchhoff on Lateral) --- several orders of
 magnitude below the wavelength scale, at displacements where
-@sec:hyp1-lat-amplitude, @sec:hyp1-vert-amplitude, and
-@sec:hyp1-diag-amplitude showed amplitude differencing has already failed.
+@sec:hyp1-lat-amplitude, @sec:hyp1-vertical, and
+@sec:hyp1-diagonal showed amplitude differencing has already failed.
 Second, the larger MAE values in @tab:h1-mae are driven almost entirely by a
 *single* remaining scenario per (movement, method) pair, not by a systematic
 sub-wavelength failure: back-propagation's $23.6 "mm"$ Lateral MAE is $99%$
@@ -458,7 +439,7 @@ the easiest case for every method once past its two largest scenarios.
 FluidFlow's graded, spatially-extended front is recovered to within roughly
 $1 "mm"$ mean absolute error by every method --- harder than the sharpest
 point-scatterer results, but still two to three orders of magnitude below
-the wavelength scale, and, per @sec:hyp1-ff-phase, at displacement scales
+the wavelength scale, and, per @sec:hyp1-fluidflow, at displacement scales
 where amplitude differencing has already collapsed for all three algorithms.
 
 Across all four experiments, from $1\/4 lambda$ down to $1\/32 lambda$, the

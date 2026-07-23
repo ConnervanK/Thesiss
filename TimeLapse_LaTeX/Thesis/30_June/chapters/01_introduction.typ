@@ -2,9 +2,6 @@
 
 = Introduction <ch:introduction>
 
-#draftnote[this chapter is a placeholder skeleton. Expand with a precise
-statement of the research questions before submission.]
-
 #draftnote[Placeholder]
 
 // Ground-penetrating radar (GPR) images subsurface structure by emitting a

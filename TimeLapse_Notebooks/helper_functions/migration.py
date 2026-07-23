@@ -1117,3 +1117,248 @@ def wls_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
     diag = dict(KZ=KZ, KX=KX, w=w_amp, phi=phi, mask=kmask, fitted=fitted,
                 kz_ax=kz_ax, kx_ax=kx_ax)
     return dz_est, dx_est, phi_0, n_mask, diag
+
+
+def _wrap_to_pi(angle):
+    """Wrap an array of angles [rad] to (-pi, pi]."""
+    return (angle + np.pi) % (2 * np.pi) - np.pi
+
+
+def ransac_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
+                            roi_px=None, data_pad=8, taper='edge', tukey_alpha=0.15,
+                            kz_band_fac=0.5, kx_band_fac=2.0, amp_thr=0.20,
+                            pad_fac=10, force_dz_zero=False, mask=None,
+                            n_iter=1000, residual_thr=0.35, weight_by_amp=True,
+                            final_wls_pow=1, random_state=0,
+                            return_diagnostics=False):
+    """
+    RANSAC cross-spectrum phase-plane fit -- a robust alternative to
+    wls_phase_plane_fit for the same model phi(kz, kx) = kz*dz_est + kx*dx_est + phi_0.
+
+    wls_phase_plane_fit minimises squared phase residual over every k-cell it is
+    given, on the raw np.angle(XS) values (no unwrapping). Any masked cell --
+    cross-spectrum noise, side-lobe energy from a reflector other than the one
+    being tracked, or a cell where the true phase ramp exceeds +-pi across the
+    fitting window and so wraps -- pulls the fitted plane, and a high-amplitude
+    wrapped cell can pull it hard even under |XS|**wls_pow weighting. This is the
+    suspected mechanism behind the larger, harder-to-trust Delta_z on the
+    wider-band pairs (Chase/Wait/Pull; c.f. Push's "sub-wavelength increments,
+    zero wrapping" in WLS_FIT_DEFAULTS_BY_METHOD's notebook comment).
+
+    This function fits the same plane with RANSAC instead: repeatedly (a) fits the
+    exact plane through a minimal random sample of 2 (force_dz_zero) or 3 k-cells,
+    (b) scores it by the amplitude-weighted count of cells whose CIRCULAR residual
+    (phase wrapped to (-pi, pi] via _wrap_to_pi, so a cell that is a whole 2*pi off
+    the candidate plane is correctly scored as a perfect inlier, not an outlier)
+    falls under `residual_thr`, and (c) keeps the best-scoring consensus set across
+    `n_iter` trials. The final estimate is an amplitude-weighted least-squares
+    refit (`final_wls_pow`, same |XS|**power weighting as wls_phase_plane_fit)
+    restricted to that best inlier set only -- cells that don't lie on any
+    consistent plane (the actual outliers) never enter the estimate, rather than
+    being merely down-weighted alongside genuine signal.
+
+    Shares its crop/taper/mask/cross-spectrum construction with
+    wls_phase_plane_fit -- same base/mon/dz/dx/kz_cent/roi_px/data_pad/taper/
+    kz_band_fac/kx_band_fac/amp_thr/mask semantics (see that docstring), so the two
+    are directly comparable: call both on the same (base, mon, roi_px, ...), or
+    both with the same explicit `mask` (e.g. from a napari manual-picking cell), to
+    isolate the fitting method as the only difference between the two estimates.
+
+    Parameters (in addition to wls_phase_plane_fit's shared ones above)
+    ----------
+    n_iter : int
+        Number of random minimal-sample trials.
+    residual_thr : float
+        Circular phase-residual threshold [rad] for a k-cell to count as an inlier
+        of a candidate plane.
+    weight_by_amp : bool
+        If True (default), a candidate plane's consensus score is the summed |XS|
+        of its inliers rather than the raw inlier count -- a plane explained by a
+        few strong reflections outscores one explained by many weak/noisy cells,
+        consistent with wls_phase_plane_fit's own amplitude weighting.
+    final_wls_pow : float
+        Weight exponent (|XS|**final_wls_pow) for the final WLS refit on the best
+        inlier set. Set to 0 for an unweighted refit.
+    random_state : int or None
+        Seed for the minimal-sample draws (np.random.default_rng). Fixed by
+        default so repeated notebook runs reproduce the same fit; pass None for a
+        fresh draw each call.
+    return_diagnostics : bool
+        If True, also return a dict like wls_phase_plane_fit's diag, plus
+        `inlier_mask` / `outlier_mask` (2D boolean, full KZ/KX grid, split from
+        `mask`) and `best_score`.
+
+    Returns
+    -------
+    (dz_est, dx_est, phi_0, n_inliers) or, if return_diagnostics, with a 5th dict
+    element `diag`.
+    """
+    from scipy.signal.windows import tukey as _tukey
+
+    if roi_px is not None:
+        z0, z1, x0, x1 = roi_px
+        Nz_img, Nx_img = base.shape
+        z0p, z1p = max(0, z0 - data_pad), min(Nz_img, z1 + data_pad)
+        x0p, x1p = max(0, x0 - data_pad), min(Nx_img, x1 + data_pad)
+        base_crop = base[z0p:z1p, x0p:x1p]
+        mon_crop = mon[z0p:z1p, x0p:x1p]
+        pad_lo_hi = (z0 - z0p, z1p - z1, x0 - x0p, x1p - x1)
+    else:
+        base_crop, mon_crop = base, mon
+        pad_lo_hi = None
+
+    Nz, Nx = base_crop.shape
+    Nz_pad, Nx_pad = Nz * pad_fac, Nx * pad_fac
+
+    if taper == 'edge':
+        if pad_lo_hi is None:
+            raise ValueError(
+                "taper='edge' requires roi_px (needs a real-data margin to ramp through)")
+
+        def _edge_taper_1d(N, n_lo, n_hi):
+            win = np.ones(N)
+            if n_lo > 0:
+                win[:n_lo] = np.sin(np.linspace(0, np.pi / 2, n_lo)) ** 2
+            if n_hi > 0:
+                win[-n_hi:] = np.sin(np.linspace(np.pi / 2, 0, n_hi)) ** 2
+            return win
+
+        nz_lo, nz_hi, nx_lo, nx_hi = pad_lo_hi
+        win2d = np.outer(_edge_taper_1d(Nz, nz_lo, nz_hi), _edge_taper_1d(Nx, nx_lo, nx_hi))
+    elif taper == 'tukey':
+        win2d = np.outer(_tukey(Nz, alpha=tukey_alpha), _tukey(Nx, alpha=tukey_alpha))
+    elif taper == 'none':
+        win2d = 1.0
+    else:
+        raise ValueError(f"taper must be 'edge', 'tukey', or 'none', got {taper!r}")
+
+    kz_ax = np.fft.fftfreq(Nz_pad, d=dz) * 2 * np.pi
+    kx_ax = np.fft.fftfreq(Nx_pad, d=dx) * 2 * np.pi
+    KZ, KX = np.meshgrid(kz_ax, kx_ax, indexing='ij')
+
+    XS = (np.fft.fft2(base_crop * win2d, s=(Nz_pad, Nx_pad)) *
+          np.conj(np.fft.fft2(mon_crop * win2d, s=(Nz_pad, Nx_pad))))
+    w_amp, phi = np.abs(XS), np.angle(XS)
+
+    if mask is not None:
+        kmask = mask
+    else:
+        band = (np.abs(KZ) < kz_band_fac * kz_cent) & (np.abs(KX) < kx_band_fac * kz_cent)
+        kmask = (w_amp > amp_thr * w_amp.max()) & band & ((np.abs(KZ) + np.abs(KX)) > 0)
+
+    n_mask = int(kmask.sum())
+    min_pts = 2 if force_dz_zero else 3
+
+    def _empty_result():
+        if not return_diagnostics:
+            return 0.0, 0.0, 0.0, 0
+        diag = dict(KZ=KZ, KX=KX, w=w_amp, phi=phi, mask=kmask,
+                    inlier_mask=np.zeros_like(kmask), outlier_mask=kmask.copy(),
+                    fitted=np.zeros_like(KZ), kz_ax=kz_ax, kx_ax=kx_ax, best_score=0.0)
+        return 0.0, 0.0, 0.0, 0, diag
+
+    if n_mask < min_pts:
+        return _empty_result()
+
+    kz_pts, kx_pts, phi_pts, w_pts = KZ[kmask], KX[kmask], phi[kmask], w_amp[kmask]
+    n_pts = phi_pts.size
+    A_full = (np.column_stack([kx_pts, np.ones(n_pts)]) if force_dz_zero else
+              np.column_stack([kz_pts, kx_pts, np.ones(n_pts)]))
+
+    rng = np.random.default_rng(random_state)
+    best_inliers = np.zeros(n_pts, dtype=bool)
+    best_score = -1.0
+    for _ in range(n_iter):
+        sample = rng.choice(n_pts, size=min_pts, replace=False)
+        c = np.linalg.lstsq(A_full[sample], phi_pts[sample], rcond=None)[0]
+        resid = _wrap_to_pi(phi_pts - A_full @ c)
+        inliers = np.abs(resid) < residual_thr
+        score = float(w_pts[inliers].sum()) if weight_by_amp else float(inliers.sum())
+        if score > best_score:
+            best_score, best_inliers = score, inliers
+
+    n_inliers = int(best_inliers.sum())
+    if n_inliers < min_pts:
+        return _empty_result()
+
+    W = w_pts[best_inliers] ** final_wls_pow
+    c = np.linalg.lstsq(A_full[best_inliers] * W[:, None], phi_pts[best_inliers] * W,
+                         rcond=None)[0]
+    if force_dz_zero:
+        dz_est, dx_est, phi_0 = 0.0, float(c[0]), float(c[1])
+    else:
+        dz_est, dx_est, phi_0 = float(c[0]), float(c[1]), float(c[2])
+
+    if not return_diagnostics:
+        return dz_est, dx_est, phi_0, n_inliers
+
+    inlier_full = np.zeros_like(kmask)
+    outlier_full = np.zeros_like(kmask)
+    idx2d = np.where(kmask)
+    inlier_full[idx2d[0][best_inliers], idx2d[1][best_inliers]] = True
+    outlier_full[idx2d[0][~best_inliers], idx2d[1][~best_inliers]] = True
+    fitted = KX * dx_est + KZ * dz_est + phi_0
+    diag = dict(KZ=KZ, KX=KX, w=w_amp, phi=phi, mask=kmask,
+                inlier_mask=inlier_full, outlier_mask=outlier_full,
+                fitted=fitted, kz_ax=kz_ax, kx_ax=kx_ax, best_score=best_score)
+    return dz_est, dx_est, phi_0, n_inliers, diag
+
+
+def plot_phase_slice(ax, k_pts, other_pts, phi_pts, w_pts, slope_est, other_slope_est, phi_0, *,
+                      xlabel='k [rad/m]', color='tab:blue', outlier=None, line_label=None):
+    """1-D phase-plane-fit diagnostic: scatter the fit's own input points against
+    one k-axis (with the OTHER axis's estimated contribution subtracted out, so the
+    fitted plane collapses to a single line), and overlay that line -- lets a viewer
+    see at a glance whether a fitted plane (wls_phase_plane_fit or
+    ransac_phase_plane_fit) actually tracks its input points, the same question
+    Figure 3's 1-D kz/kx slice panels answer, but built from the fit's own
+    (kz_pts, kx_pts, phi_pts, w_pts) directly rather than a row/column-averaged band
+    -- so this shows exactly the points a given fit was computed from (all of them
+    for a WLS call, inliers-vs-rejected for a RANSAC call), not a broader summary.
+
+    No phase unwrapping is applied (matches Figure 3 / _wls_diag's convention) --
+    valid as long as the fitted plane's total phase excursion across the plotted
+    k-range stays within about a cycle, which holds for this notebook's
+    sub-wavelength-to-moderate displacement regime.
+
+    Parameters
+    ----------
+    ax : matplotlib Axes
+    k_pts, other_pts, phi_pts, w_pts : ndarray, 1-D, same shape
+        This axis's k-coordinate, the other axis's k-coordinate, phase, and
+        amplitude weight, for every point being plotted (e.g. KZ[mask], KX[mask],
+        phi[mask], w[mask] for a kz-slice of the fit's full input; or the same
+        indexed by an inlier/outlier split for a RANSAC inlier-only slice).
+    slope_est, other_slope_est, phi_0 : float
+        The fitted (dz_est or dx_est), the OTHER axis's fitted slope (used only to
+        subtract its contribution from phi_pts), and phi_0 -- from the same fit
+        call that produced k_pts's population.
+    outlier : ndarray (bool) or None
+        Same shape as k_pts. True marks a point as rejected (plotted as a red '×'
+        instead of the amplitude-coloured dot) -- pass RANSAC's outlier split to
+        show what got excluded and where it sits relative to the fitted line.
+    line_label : str or None
+        Legend label for the fitted line (e.g. 'WLS' / 'RANSAC'); None omits it.
+
+    Returns
+    -------
+    The scatter PathCollection (for an external colorbar), or None if k_pts is empty.
+    """
+    if outlier is None:
+        outlier = np.zeros(k_pts.shape, dtype=bool)
+    inlier = ~outlier
+    y = phi_pts - other_pts * other_slope_est
+
+    sc = None
+    if inlier.any():
+        sc = ax.scatter(k_pts[inlier], y[inlier], c=w_pts[inlier], cmap='viridis', s=16, zorder=3)
+    if outlier.any():
+        ax.scatter(k_pts[outlier], y[outlier], marker='x', c='red', s=30, linewidths=1.3,
+                   zorder=4, label='rejected')
+    if k_pts.size:
+        k_line = np.array([k_pts.min(), k_pts.max()])
+        ax.plot(k_line, k_line * slope_est + phi_0, color=color, lw=1.6, zorder=5, label=line_label)
+    ax.axhline(0, color='k', lw=0.5, ls='--', zorder=1)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel('phase (other-axis contribution removed) [rad]')
+    return sc

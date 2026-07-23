@@ -402,36 +402,22 @@ The vertical displacement sweep of @sec:hyp1-vertical
 is repeated under the same Laplace noise, for all three migration
 algorithms, using sign-bit time-reversal for the noisy back-propagation run.
 
-#supp-note[The migration-comparison figure for this _noisy_ scenario set is
-provided in the Supplementary Material, §S3.2.1.]
-
-=== Amplitude Test <sec:hyp3-vert-amplitude>
-
-#supp-note[The Rayleigh-criterion ratio table (compare the clean-data
-version in Supplementary Material §S2.2.2) and the zoomed
-Baseline-versus-Monitor PSF comparison for this _noisy_ scenario set are
-provided in the Supplementary Material, §S3.2.2.]
+#supp-note[The migration-comparison figure, the Rayleigh-criterion ratio
+table and zoomed PSF comparison (compare the clean-data version in
+Supplementary Material §S2.2), and the per-scenario phase-plane WLS
+displacement-error table and shift-estimation diagnostics for this _noisy_
+scenario set are all provided in the Supplementary Material, §S3.2.]
 
 As in the clean case, vertical amplitude differencing stays resolvable
 comfortably below $1\/4 lambda$ for every method, only crossing below $1$
-between $1\/4 lambda$ and $1\/8 lambda$ --- noise has almost no effect on
-this floor either.
-
-=== Phase Test <sec:hyp3-vert-phase>
-
-#supp-note[The per-scenario phase-plane WLS displacement-error table
-(compare the clean-data version in Supplementary Material §S2.2.3), and the
-Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit) phase-plane
-shift-estimation diagnostics, for this _noisy_ scenario set are provided in
-the Supplementary Material, §S3.2.3.]
-
-Kirchhoff is now the most consistent method here, staying within
-$0.08 "mm"$ from $1\/4 lambda$ downward. Back-propagation is close behind
-(within $0.82 "mm"$). Gazdag remains markedly worse, ranging from
-$-2.93 "mm"$ to a single $+6.95 "mm"$ outlier at $1\/16 lambda$ --- clearly
-improved from the $24$--$25 "mm"$ errors of the earlier noisy-envelope-search
-version of this table, but still the least accurate of the three methods at
-every sub-half-wavelength scenario.
+between $1\/4 lambda$ and $1\/8 lambda$ --- noise barely affects this floor.
+Below it, the phase-plane fit separates the three methods clearly: Kirchhoff
+is now the most consistent (within $0.08 "mm"$ from $1\/4 lambda$
+downward), back-propagation close behind (within $0.82 "mm"$), while Gazdag
+remains markedly worse ($-2.93 "mm"$ to a $+6.95 "mm"$ outlier at
+$1\/16 lambda$) --- clearly improved from the $24$--$25 "mm"$ errors of an
+earlier, noisy-envelope-search version of this pipeline, but still the
+least accurate method at every sub-half-wavelength scenario.
 
 == Noisy Diagonal Movement <sec:hyp3-diagonal>
 
@@ -440,27 +426,17 @@ is likewise repeated under Laplace noise, for all
 three migration algorithms, again using sign-bit time-reversal for the noisy
 back-propagation run.
 
-#supp-note[The migration-comparison figure for this _noisy_ scenario set is
-provided in the Supplementary Material, §S3.3.1.]
+#supp-note[The migration-comparison figure, the Rayleigh-criterion ratio
+table and zoomed PSF comparison (compare the clean-data version in
+Supplementary Material §S2.3), and the per-scenario phase-plane WLS
+displacement-error tables ($#Dz$ and $#Dx$) and shift-estimation
+diagnostics for this _noisy_ scenario set are all provided in the
+Supplementary Material, §S3.3.]
 
-=== Amplitude Test <sec:hyp3-diag-amplitude>
-
-#supp-note[The Rayleigh-criterion ratio table (compare the clean-data
-version in Supplementary Material §S2.3.2) and the zoomed
-Baseline-versus-Monitor PSF comparison for this _noisy_ scenario set are
-provided in the Supplementary Material, §S3.3.2.]
-
-=== Phase Test <sec:hyp3-diag-phase>
-
-#supp-note[The per-scenario phase-plane WLS displacement-error tables
-($#Dz$ and $#Dx$, compare the clean-data versions in Supplementary Material
-§S2.3.3), and the Kirchhoff-, Gazdag-, and back-propagation-migrated
-(sign-bit) phase-plane shift-estimation diagnostics, for this _noisy_
-scenario set are provided in the Supplementary Material, §S3.3.3.]
-
-Kirchhoff is now the most accurate method from Scenario 3 onward (within
-$0.13 "mm"$ on both axes). Back-propagation is close behind (within
-$1.05 "mm"$). Gazdag again carries a persistent tens-of-millimetre error
+The diagonal amplitude ratio behaves almost identically to the clean case.
+Kirchhoff is the most accurate phase-plane method from Scenario 3 onward
+(within $0.13 "mm"$ on both axes); back-propagation is close behind (within
+$1.05 "mm"$); Gazdag again carries a persistent tens-of-millimetre error
 through Scenarios 3 and 4 (up to $-41.00 "mm"$ in $#Dx$ at Scenario 4),
 only approaching the other two methods' accuracy at Scenario 5.
 
@@ -472,25 +448,14 @@ target directly relevant to the real fluid-injection field data of
 @ch:hyp3 --- a graded wetting zone rather than a discrete point scatterer,
 swept laterally across the same seven scenarios.
 
-#supp-note[The migration-comparison figure for this _noisy_ scenario set is
-provided in the Supplementary Material, §S3.4.1.]
+#supp-note[The migration-comparison figure, the Rayleigh-criterion ratio
+table and zoomed PSF comparison (compare the clean-data version in
+Supplementary Material §S2.4), and the per-scenario phase-plane WLS
+front-displacement-error table and shift-estimation diagnostics for this
+_noisy_ scenario set are all provided in the Supplementary Material, §S3.4.]
 
-=== Amplitude Test <sec:hyp3-ff-amplitude>
-
-#supp-note[The Rayleigh-criterion ratio table (compare the clean-data
-version in Supplementary Material §S2.4.2) and the zoomed
-Baseline-versus-Monitor PSF comparison for this _noisy_ scenario set are
-provided in the Supplementary Material, §S3.4.2.]
-
-=== Phase Test <sec:hyp3-ff-phase>
-
-#supp-note[The per-scenario phase-plane WLS front-displacement-error table
-(compare the clean-data version in Supplementary Material §S2.4.3), and the
-Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit) phase-plane
-shift-estimation diagnostics, for this _noisy_ scenario set are provided in
-the Supplementary Material, §S3.4.3.]
-
-Gazdag improves the most dramatically of any result in this chapter: where
+The amplitude ratio behaves similarly to the clean case. Gazdag improves
+the most dramatically of any result in this chapter: where
 the noisy-envelope-search version of this table left it flat at $-100%$
 error from $1\/2 lambda$ down to $1\/32 lambda$ (never resolving any front
 displacement at all), it now tracks the front to within $1.50 "mm"$ from
@@ -534,6 +499,46 @@ is directly comparable to the clean-data result of @ch:hyp1.
   kind: table,
 ) <tab:h2-mae>
 
+@fig:h2-detectability is this chapter's counterpart to @fig:h1-detectability,
+built from the same noisy Rayleigh-ratio and phase-error data underlying
+@tab:h2-mae: in every column the bottom-row phase-error curves still drop
+below their $5%$ threshold at or before the top-row amplitude-ratio curves
+cross below $1$, though noise pushes both crossing points later (further
+down the displacement sweep) than in the clean-data map, and Gazdag's
+phase-error curve in particular now sits noticeably higher than the other
+two methods' throughout.
+
+#figure(
+  img("H2_029_Hypothesis_2_--_Detectability_Map_Noisy.png"),
+  caption: [Detectability map, _noisy_ data (compare @fig:h1-detectability):
+    top row, Rayleigh-criterion amplitude ratio (threshold $1$); bottom row,
+    absolute phase-plane WLS displacement error as a percentage of the true
+    displacement (log scale, threshold $5%$); for all three migration
+    methods, across all four movement types. The full per-scenario numeric
+    tables underlying this figure are given in
+    @tab:h2-lat-amp/@tab:h2-lat-phase (Lateral, in the main text) and the
+    Supplementary Material, §S3.2--§S3.4 (Vertical, Diagonal, FluidFlow).],
+) <fig:h2-detectability>
+
+@fig:h2-dumbbell puts every (movement, method) pair's clean-data and
+noisy-data mean absolute phase-plane error, as a percentage of the true
+displacement, on one shared log axis, so @tab:h1-mae and @tab:h2-mae ---
+and the whole of @ch:hyp1 versus this chapter --- can be compared directly
+in one picture instead of two separate tables. Background shading groups
+the twelve (movement, method) rows by movement type, since otherwise the
+plain row list is hard to scan at a glance.
+
+#figure(
+  img("H2_030_Hypothesis_2_--_Clean_vs_Noisy_MAE_Dumbbell_Plot.png"),
+  caption: [Clean-versus-noisy mean absolute phase-plane displacement error,
+    as a percentage of the true displacement, for every movement type and
+    migration method: circle marker = clean data (@tab:h1-mae, @ch:hyp1),
+    square marker = noisy data (@tab:h2-mae, this chapter), connecting line
+    shows the resulting noise-driven degradation. Background colour bands
+    group rows by movement type (Lateral, Vertical, Diagonal, FluidFlow).
+    Log-scaled horizontal axis.],
+) <fig:h2-dumbbell>
+
 With the localisation fix of @sec:hyp3-groundtruth-apex applied uniformly to
 all three methods, Kirchhoff is now the most accurate method for three of
 the four movement types (Lateral $0.24 "mm"$, Diagonal $0.07 "mm"$,
@@ -550,7 +555,7 @@ of the four movement types (all but FluidFlow).
 
 The size of Gazdag's improvement is not uniform across movement types, which
 is itself informative. FluidFlow improves the most dramatically
-($25.6 -> 0.98 "mm"$, @sec:hyp3-ff-phase) --- consistent with a genuine
+($25.6 -> 0.98 "mm"$, @sec:hyp3-fluidflow) --- consistent with a genuine
 localisation failure being the dominant error source there. Lateral and
 Diagonal improve more modestly ($37.9 -> 22.3 "mm"$ and
 $26.2 -> 23.3 "mm"$). Vertical, conversely, gets *worse*
@@ -558,7 +563,7 @@ $26.2 -> 23.3 "mm"$). Vertical, conversely, gets *worse*
 Material, §S3.2.3) shows this is driven
 almost entirely by spurious lateral ($#Dx$) error the WLS fit assigns even
 though Vertical's true $#Dx = 0$ by construction (e.g. $-30.4 "mm"$ at
-$1\/8 lambda$, @sec:hyp3-vert-phase) --- cross-axis leakage that a better
+$1\/8 lambda$, @sec:hyp3-vertical) --- cross-axis leakage that a better
 crop window does not fix. Locating the target correctly is therefore
 necessary but not sufficient to explain Gazdag's noise sensitivity: a
 real, Gazdag-specific weakness remains, most visible as this cross-axis
