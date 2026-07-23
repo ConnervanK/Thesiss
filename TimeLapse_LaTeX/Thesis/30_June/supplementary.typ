@@ -20,6 +20,7 @@
   date:         "June 30, 2026",
 )
 
-#include "supp_chapters/S1_hypothesis1.typ"
-#include "supp_chapters/S2_hypothesis2.typ"
-#include "supp_chapters/S3_hypothesis3.typ"
+#include "supp_chapters/S1_methodology.typ"
+#include "supp_chapters/S2_hypothesis1.typ"
+#include "supp_chapters/S3_hypothesis2.typ"
+#include "supp_chapters/S4_hypothesis3.typ"

@@ -280,6 +280,23 @@ sub-wavelength fracture filling with fluid) in the intercept $c$, cleanly
 separated from the geometric shift $(#Dz, #Dx)$ --- the derivation of this
 decoupling is given in @sec:th-material-change.
 
+@fig:phaseplane-schematic summarises the full pipeline derived above: a
+baseline and monitor image are Fourier transformed, their cross-spectrum
+isolates a linear phase ramp via the shift theorem of
+@sec:th-fourier-shift, and the weighted least-squares fit of @sec:th-wls
+recovers the sub-wavelength displacement from that ramp's slope.
+
+#figure(
+  img("RES_018_Phase-Plane_Method__Conceptual_Workflow.png"),
+  caption: [Conceptual overview of the phase-plane shift-estimation
+    pipeline, illustrated on a synthetic toy scatterer: (a) baseline
+    image; (b) monitor image, displaced by a sub-wavelength fraction of
+    $lambda$; (c) cross-spectrum phase, a linear ramp whose slope encodes
+    the displacement (@sec:th-cross-spectrum); (d) the weighted
+    least-squares plane fit recovering the displacement from that slope
+    (@sec:th-wls).],
+) <fig:phaseplane-schematic>
+
 == Time-Frequency Perspective: Local Phase and Spectral-Line Analysis <sec:th-local>
 
 The phase-plane fit treats the migrated image as a whole. @sec:hyp1-phaseplane
@@ -366,10 +383,10 @@ used to test any of the hypotheses.
 
 // All B-scans are simulated with the open-source finite-difference time-domain
 // solver gprMax @gprmax. The source is a Ricker wavelet with centre frequency
-// $f_c = 1.5 "GHz"$ and time-zero offset $t_0 = 0.943 "ns"$ (@fig:res-setup
-// (a)), chosen so that its usable bandwidth defines the dominant wavelength
-// $lambda$ used to express every displacement scale in this thesis ($2 lambda$
-// down to $1 \/ 32 lambda$). The computational domain is discretised on a
+// $f_c = 1.5 "GHz"$ and time-zero offset $t_0 = 0.943 "ns"$ (Supplementary
+// Material, §S1.1), chosen so that its usable bandwidth defines the dominant
+// wavelength $lambda$ used to express every displacement scale in this
+// thesis ($2 lambda$ down to $1 \/ 32 lambda$). The computational domain is discretised on a
 // uniform $1 "mm"$ grid with perfectly-matched-layer (PML) absorbing
 // boundaries.
 
@@ -475,22 +492,24 @@ PEC cylinders illuminated by a zero-offset GPR B-scan, migrated with all three
 algorithms. Its result is the amplitude-based resolution floor against which
 every displacement-detection result in @ch:hyp1 and @ch:hyp2 is later compared.
 
-@fig:res-setup shows the forward-model setup: the Ricker source wavelet, the
-gprMax domain and grid, and the swept separation between two PEC cylinder
-scatterers ($r = 28 "mm"$, depth $0.676 "m"$), from $2 lambda$ down to
-$1 \/ 16 lambda$.
+@fig:res-setup shows the forward-model setup: the gprMax domain and grid,
+and the swept separation between two PEC cylinder scatterers ($r = 28 "mm"$,
+depth $0.676 "m"$), from $2 lambda$ down to $1 \/ 16 lambda$. The source is a
+Ricker wavelet with centre frequency $f_c = 1.5 "GHz"$ and time-zero offset
+$t_0 = 0.943 "ns"$, shown in the Supplementary Material, §S1.1.
 
 #figure(
   subfigs(cols: 1,
-    img("RES_001_Ricker_Wavelet_f_c__15_GHz_t0__0943_ns.png"),
     img("RES_002_Resolution_Study__Model_Geometry__domain_4010_m_Δx__1_mm_PML.png"),
     img("RES_003_Scatterer_Positions__PEC_Cylinders__r__28_mm_depth__0676_m.png", width: 70%),
   ),
-  caption: [Forward-model setup for the resolution validation: (a) the Ricker
-    source wavelet ($f_c = 1.5 "GHz"$, $t_0 = 0.943 "ns"$); (b) the gprMax
-    domain and grid; (c) the swept separation between the two PEC cylinder
+  caption: [Forward-model setup for the resolution validation: (a) the gprMax
+    domain and grid; (b) the swept separation between the two PEC cylinder
     scatterers, $r = 28 "mm"$, depth $0.676 "m"$.],
 ) <fig:res-setup>
+
+#supp-note[The Ricker source wavelet used throughout this thesis is shown in
+the Supplementary Material, §S1.1.]
 
 @fig:res-bscans shows the simulated zero-offset B-scans before and after
 background subtraction, and @fig:res-taper the effect of the standard
@@ -515,49 +534,31 @@ $2 lambda$ separation scenario.
     (a) a single representative trace; (b) the complete B-scan.],
 ) <fig:res-taper>
 
-@fig:res-kirchhoff, @fig:res-gazdag, and @fig:res-backprop show the migrated
-image for every separation scenario, for Kirchhoff, Gazdag, and
-back-propagation migration respectively, zoomed around the true scatterer
-depth.
-
-#figure(
-  img("RES_009_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png", width: 90%),
-  caption: [Kirchhoff migration of the resolution validation ($f_c = 1.5 "GHz"$,
-    aperture $= 40$ traces), all separation scenarios, zoomed around the
-    scatterer depth.],
-) <fig:res-kirchhoff>
-
-#figure(
-  img("RES_011_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png", width: 90%),
-  caption: [Gazdag phase-shift migration of the resolution validation
-    ($f_c = 1.5 "GHz"$), all separation scenarios, zoomed around the
-    scatterer depth.],
-) <fig:res-gazdag>
-
-#figure(
-  subfigs(cols: 1,
-    img("RES_013_Back-Propagation_E_zoomed____focus_at_1906_ns.png"),
-    img("RES_015_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png"),
-  ),
-  caption: [Time-reversal back-propagation migration of the resolution
-    validation, focused at $t = 19.06 "ns"$ and zoomed around the scatterer
-    depth: (a) field magnitude $||bold(E)||$; (b) the $E_z$ component.],
-) <fig:res-backprop>
+#supp-note[The individual migrated image for every separation scenario, for
+Kirchhoff, Gazdag, and back-propagation migration respectively (zoomed
+around the true scatterer depth), is provided in the Supplementary
+Material, §S1.2.]
 
 @fig:res-psf (a) overlays the signed migrated amplitude from all three
-algorithms at $f_c = 1.5 "GHz"$, and @fig:res-psf (b) plots the normalised
-lateral point-spread function (PSF) extracted at the true scatterer depth as
-a function of separation.
+algorithms at $f_c = 1.5 "GHz"$, and @fig:res-psf (b) zooms on the
+Baseline-versus-Monitor point-spread function at the true scatterer depth,
+for every separation scenario and method, mirroring the amplitude-test
+figures used throughout @ch:hyp1 and @ch:hyp2 (@sec:hyp1-lat-amplitude):
+the shaded band marks the FWHM measured once from the widest ($2 lambda$)
+separation, where the two scatterers' responses do not yet overlap, and the
+dashed lines mark the true position of each scatterer.
 
 #figure(
   subfigs(cols: 2,
-    img("RES_016_Migration_Comparison__Signed_Amplitude____f_c15_GHz____apert.png"),
-    img("RES_017_Normalised_Lateral_PSF_at_True_Scatterer_Depth.png"),
+    img("RES_016_Resolution_Study_--_Migration_Comparison_f_c15_GHz_aperture4.png"),
+    img("RES_017_Resolution_Study_--_PSF_Zoom_Baseline_vs_Monitor.png"),
   ),
   caption: [(a) Signed migrated amplitude for Kirchhoff, Gazdag, and
-    back-propagation migration overlaid at $f_c = 1.5 "GHz"$; (b) the
-    normalised lateral point-spread function at the true scatterer depth,
-    swept across separations from $2 lambda$ to $1 \/ 16 lambda$.],
+    back-propagation migration overlaid at $f_c = 1.5 "GHz"$; (b) zoomed
+    Baseline-versus-Monitor PSF at the true scatterer depth, swept across
+    separations from $2 lambda$ to $1 \/ 16 lambda$: shaded = reference
+    ($2 lambda$) FWHM at each true scatterer position; dashed = true
+    scatterer positions.],
 ) <fig:res-psf>
 
 All three migration algorithms collapse the two scatterer hyperbolae into

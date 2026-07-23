@@ -35,37 +35,34 @@ correction inflates the amplitude scale by several orders of magnitude and
 is not representative of the raw simulated $E_z$ amplitudes used elsewhere in
 this thesis.
 
-#figure(
-  img("H2_001_Noise_amplitude_distribution_by_processing_stage.png"),
-  caption: [Noise amplitude distribution at every one of the eleven tracked
-    processing stages, each with a Gaussian reference overlay.],
-) <fig:h2-noise-stages>
+#supp-note[The noise amplitude distribution at every one of the eleven
+tracked processing stages, each with a Gaussian reference overlay, is
+provided in the Supplementary Material, §S3.5.]
 
 #figure(
-  img("H2_002_Noise_distribution_at_7_Constant_Velocity_pre-gain_with_Lapl.png"),
-  caption: [Noise distribution at the pipeline stage actually sampled to
-    generate every noisy dataset used from §5.2 onward ("7 Constant
-    Velocity", pre-gain), with both Laplace and Gaussian fits overlaid.],
-) <fig:h2-noise-laplace-fit>
-
-#figure(
-  table(
-    columns: (auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Stage*], [*Laplace scale*], [*Gaussian $sigma$*],
-    table.hline(stroke: 0.4pt),
-    [9 Crop Samples (post-gain)],     [$117 space 584.0$], [$171 space 156.1$],
-    [7 Constant Velocity (pre-gain)], [$6.085$],           [$9.233$],
-    table.hline(stroke: 0.7pt),
+  subfigs(cols: 1,
+    img("H2_002_Noise_distribution_at_7_Constant_Velocity_pre-gain_with_Lapl.png"),
+    table(
+      columns: (auto, auto, auto),
+      stroke: none,
+      inset: (x: 0.8em, y: 0.3em),
+      table.hline(stroke: 0.7pt),
+      [*Stage*], [*Laplace scale*], [*Gaussian $sigma$*],
+      table.hline(stroke: 0.4pt),
+      [9 Crop Samples (post-gain)],     [$117 space 584.0$], [$171 space 156.1$],
+      [7 Constant Velocity (pre-gain)], [$6.085$],           [$9.233$],
+      table.hline(stroke: 0.7pt),
+    ),
   ),
-  caption: [Laplace and Gaussian fits to real field noise, at two pipeline
-    stages ($n = 976 space 244$ samples each). The heavier-tailed Laplace
-    distribution is adopted throughout this thesis; loc $= 0$ for both
-    stages.],
-  kind: table,
-) <tab:laplace-fit>
+  caption: [(a) Noise distribution at the pipeline stage actually sampled to
+    generate every noisy dataset used from §5.2 onward ("7 Constant
+    Velocity", pre-gain), with both Laplace and Gaussian fits overlaid; (b)
+    the fitted Laplace scale and Gaussian $sigma$ at that stage and, for
+    reference, at the final post-gain stage ("9 Crop Samples") --- only the
+    pre-gain stage is plotted in (a); loc $= 0$ for both stages
+    ($n = 976 space 244$ samples each). The heavier-tailed Laplace
+    distribution is adopted throughout this thesis.],
+) <fig:h2-noise-laplace-fit>
 
 In both cases the fitted distribution is heavier-tailed than a Gaussian of
 matched variance, consistent with field GPR noise being dominated by
@@ -289,7 +286,7 @@ results, most visibly for Gazdag (@sec:hyp3-summary).
 
 == Noisy Lateral Movement <sec:hyp3-lateral>
 
-The lateral displacement sweep of @sec:hyp1-lateral (@tab:h1-lat-scenarios)
+The lateral displacement sweep of @sec:hyp1-lateral (@fig:h1-lat-setup)
 is repeated on B-scans contaminated with the Laplace noise of
 @sec:hyp3-laplace, for all three migration algorithms, using sign-bit
 time-reversal (@sec:hyp3-signbit) for back-propagation.
@@ -306,7 +303,7 @@ time-reversal (@sec:hyp3-signbit) for back-propagation.
 === Amplitude Test <sec:hyp3-lat-amplitude>
 
 #supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
-_noisy_ scenario set is provided in the Supplementary Material, §S2.1.1.]
+_noisy_ scenario set is provided in the Supplementary Material, §S3.1.1.]
 
 #figure(
   table(
@@ -340,7 +337,7 @@ perturbs only slightly.
 
 #supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit)
 phase-plane shift-estimation diagnostics for this _noisy_ scenario set are
-provided in the Supplementary Material, §S2.1.2.]
+provided in the Supplementary Material, §S3.1.2.]
 
 #figure(
   table(
@@ -384,7 +381,7 @@ provided in the Supplementary Material, §S2.1.2.]
   ),
   caption: [Lateral phase-plane WLS displacement error, $#Dx$, as a
     percentage of the true displacement, _noisy_ data (compare
-    @tab:h1-lat-phase-pct).],
+    @tab:h1-lat-phase).],
   kind: table,
 ) <tab:h2-lat-phase-pct>
 
@@ -401,44 +398,19 @@ compares once every movement type is combined.
 
 == Noisy Vertical Movement <sec:hyp3-vertical>
 
-The vertical displacement sweep of @sec:hyp1-vertical (@tab:h1-vert-scenarios)
+The vertical displacement sweep of @sec:hyp1-vertical
 is repeated under the same Laplace noise, for all three migration
 algorithms, using sign-bit time-reversal for the noisy back-propagation run.
 
-=== Migration Results <sec:hyp3-vert-migration>
-
-#figure(
-  img("H2_014_Vertical_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_A.png", width: 85%),
-  caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
-    for all three migration algorithms, vertical time-lapse study, _noisy_
-    data.],
-) <fig:h2-vert-summary-amp>
+#supp-note[The migration-comparison figure for this _noisy_ scenario set is
+provided in the Supplementary Material, §S3.2.1.]
 
 === Amplitude Test <sec:hyp3-vert-amplitude>
 
-#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
-_noisy_ scenario set is provided in the Supplementary Material, §S2.2.1.]
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [$1 lambda$],     [6.508], [5.695], [6.528],
-    [$1\/2 lambda$],  [3.977], [3.480], [3.406],
-    [$1\/4 lambda$],  [2.169], [1.582], [1.703],
-    [$1\/8 lambda$],  [1.085], [0.633], [0.851],
-    [$1\/16 lambda$], [1.085], [0.316], [0.568],
-    [$1\/32 lambda$], [0.362], [0.0],   [0.284],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [Vertical Rayleigh-criterion ratio, _noisy_ data (compare
-    @tab:h1-vert-amp).],
-  kind: table,
-) <tab:h2-vert-amp>
+#supp-note[The Rayleigh-criterion ratio table (compare the clean-data
+version in Supplementary Material §S2.2.2) and the zoomed
+Baseline-versus-Monitor PSF comparison for this _noisy_ scenario set are
+provided in the Supplementary Material, §S3.2.2.]
 
 As in the clean case, vertical amplitude differencing stays resolvable
 comfortably below $1\/4 lambda$ for every method, only crossing below $1$
@@ -447,53 +419,11 @@ this floor either.
 
 === Phase Test <sec:hyp3-vert-phase>
 
-#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit)
-phase-plane shift-estimation diagnostics for this _noisy_ scenario set are
-provided in the Supplementary Material, §S2.2.2.]
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [$1 lambda$],     [$-79.52$], [$-105.61$], [$-87.51$],
-    [$1\/2 lambda$],  [$-63.82$], [$-76.54$],  [$-86.27$],
-    [$1\/4 lambda$],  [$-0.82$],  [$-0.83$],   [$-0.01$],
-    [$1\/8 lambda$],  [$-0.50$],  [$-2.93$],   [$+0.02$],
-    [$1\/16 lambda$], [$-0.53$],  [$+6.95$],   [$+0.08$],
-    [$1\/32 lambda$], [$-0.42$],  [$-1.31$],   [$+0.02$],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [Vertical phase-plane WLS displacement error, $#Dz$
-    (estimated $-$ true), millimetres, _noisy_ data (compare
-    @tab:h1-vert-phase).],
-  kind: table,
-) <tab:h2-vert-phase>
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [$1 lambda$],     [$-70.4%$],  [$-93.5%$],  [$-77.4%$],
-    [$1\/2 lambda$],  [$-114.0%$], [$-136.7%$], [$-154.0%$],
-    [$1\/4 lambda$],  [$-2.9%$],   [$-3.0%$],   [$-0.0%$],
-    [$1\/8 lambda$],  [$-3.5%$],   [$-20.9%$],  [$+0.1%$],
-    [$1\/16 lambda$], [$-7.5%$],   [$+99.3%$],  [$+1.2%$],
-    [$1\/32 lambda$], [$-10.5%$],  [$-32.7%$],  [$+0.5%$],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [Vertical phase-plane WLS displacement error, $#Dz$, as a
-    percentage of the true displacement, _noisy_ data (compare
-    @tab:h1-vert-phase-pct).],
-  kind: table,
-) <tab:h2-vert-phase-pct>
+#supp-note[The per-scenario phase-plane WLS displacement-error table
+(compare the clean-data version in Supplementary Material §S2.2.3), and the
+Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit) phase-plane
+shift-estimation diagnostics, for this _noisy_ scenario set are provided in
+the Supplementary Material, §S3.2.3.]
 
 Kirchhoff is now the most consistent method here, staying within
 $0.08 "mm"$ from $1\/4 lambda$ downward. Back-propagation is close behind
@@ -506,133 +436,27 @@ every sub-half-wavelength scenario.
 == Noisy Diagonal Movement <sec:hyp3-diagonal>
 
 The diagonal displacement sweep of @sec:hyp1-diagonal
-(@tab:h1-diag-scenarios) is likewise repeated under Laplace noise, for all
+is likewise repeated under Laplace noise, for all
 three migration algorithms, again using sign-bit time-reversal for the noisy
 back-propagation run.
 
-=== Migration Results <sec:hyp3-diag-migration>
-
-#figure(
-  img("H2_019_Diagonal_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_A.png", width: 85%),
-  caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
-    for all three migration algorithms, diagonal time-lapse study, _noisy_
-    data.],
-) <fig:h2-diag-summary-amp>
+#supp-note[The migration-comparison figure for this _noisy_ scenario set is
+provided in the Supplementary Material, §S3.3.1.]
 
 === Amplitude Test <sec:hyp3-diag-amplitude>
 
-#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
-_noisy_ scenario set is provided in the Supplementary Material, §S2.3.1.]
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [1 ($1 lambda_x$, $1\/2 lambda_z$)],   [5.295], [4.157], [3.430],
-    [2 ($1\/2 lambda_x$, $1\/4 lambda_z$)], [2.492], [2.019], [1.663],
-    [3 ($1\/4 lambda_x$, $1\/8 lambda_z$)], [1.090], [1.069], [0.831],
-    [4 ($1\/8 lambda_x$, $1\/16 lambda_z$)],[0.623], [0.594], [0.312],
-    [5 ($1\/16 lambda_x$, $1\/32 lambda_z$)],[0.156],[0.238], [0.104],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [Diagonal Rayleigh-criterion ratio, _noisy_ data (compare
-    @tab:h1-diag-amp).],
-  kind: table,
-) <tab:h2-diag-amp>
+#supp-note[The Rayleigh-criterion ratio table (compare the clean-data
+version in Supplementary Material §S2.3.2) and the zoomed
+Baseline-versus-Monitor PSF comparison for this _noisy_ scenario set are
+provided in the Supplementary Material, §S3.3.2.]
 
 === Phase Test <sec:hyp3-diag-phase>
 
-#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit)
-phase-plane shift-estimation diagnostics for this _noisy_ scenario set are
-provided in the Supplementary Material, §S2.3.2.]
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [1], [$-56.97$], [$-58.82$], [$-55.46$],
-    [2], [$-38.78$], [$-5.45$],  [$-12.38$],
-    [3], [$-1.00$],  [$-0.27$],  [$-0.02$],
-    [4], [$-0.23$],  [$-2.16$],  [$+0.01$],
-    [5], [$-0.36$],  [$+6.77$],  [$+0.08$],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [Diagonal phase-plane WLS displacement error, $#Dz$
-    (estimated $-$ true), millimetres, _noisy_ data (compare
-    @tab:h1-diag-phase-dz).],
-  kind: table,
-) <tab:h2-diag-phase-dz>
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [1], [$-114.95$], [$-117.97$], [$-150.68$],
-    [2], [$-46.55$],  [$-44.21$],  [$-81.95$],
-    [3], [$-1.05$],   [$-15.08$],  [$-0.02$],
-    [4], [$+0.04$],   [$-41.00$],  [$+0.01$],
-    [5], [$-0.05$],   [$-12.00$],  [$+0.13$],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [Diagonal phase-plane WLS displacement error, $#Dx$
-    (estimated $-$ true), millimetres, _noisy_ data (compare
-    @tab:h1-diag-phase-dx).],
-  kind: table,
-) <tab:h2-diag-phase-dx>
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [1], [$-101.7%$], [$-105.0%$], [$-99.0%$],
-    [2], [$-138.5%$], [$-19.5%$],  [$-44.2%$],
-    [3], [$-7.1%$],   [$-1.9%$],   [$-0.1%$],
-    [4], [$-3.3%$],   [$-30.8%$],  [$+0.2%$],
-    [5], [$-9.1%$],   [$+169.3%$], [$+2.0%$],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [Diagonal phase-plane WLS displacement error, $#Dz$, as a
-    percentage of the true displacement, _noisy_ data (compare
-    @tab:h1-diag-phase-dz-pct).],
-  kind: table,
-) <tab:h2-diag-phase-dz-pct>
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [1], [$-101.7%$], [$-104.4%$], [$-133.3%$],
-    [2], [$-83.1%$],  [$-79.0%$],  [$-146.3%$],
-    [3], [$-3.8%$],   [$-53.9%$],  [$-0.1%$],
-    [4], [$+0.3%$],   [$-292.9%$], [$+0.0%$],
-    [5], [$-0.8%$],   [$-171.4%$], [$+1.9%$],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [Diagonal phase-plane WLS displacement error, $#Dx$, as a
-    percentage of the true displacement, _noisy_ data (compare
-    @tab:h1-diag-phase-dx-pct).],
-  kind: table,
-) <tab:h2-diag-phase-dx-pct>
+#supp-note[The per-scenario phase-plane WLS displacement-error tables
+($#Dz$ and $#Dx$, compare the clean-data versions in Supplementary Material
+§S2.3.3), and the Kirchhoff-, Gazdag-, and back-propagation-migrated
+(sign-bit) phase-plane shift-estimation diagnostics, for this _noisy_
+scenario set are provided in the Supplementary Material, §S3.3.3.]
 
 Kirchhoff is now the most accurate method from Scenario 3 onward (within
 $0.13 "mm"$ on both axes). Back-propagation is close behind (within
@@ -643,98 +467,28 @@ only approaching the other two methods' accuracy at Scenario 5.
 == Noisy Fluid Flow <sec:hyp3-fluidflow>
 
 The clean-data fluid-flow experiment of @sec:hyp1-fluidflow
-(@tab:h1-ff-scenarios) is repeated under the same Laplace noise, for a
+(@fig:h1-ff-setup) is repeated under the same Laplace noise, for a
 target directly relevant to the real fluid-injection field data of
 @ch:hyp3 --- a graded wetting zone rather than a discrete point scatterer,
 swept laterally across the same seven scenarios.
 
-=== Migration Results <sec:hyp3-ff-migration>
-
-#figure(
-  img("H2_024_FluidFlow_--_TimeLapse_Migration_Comparison_Noisy_--_Signed.png", width: 85%),
-  caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
-    for all three migration algorithms, fluid-flow time-lapse study, _noisy_
-    data.],
-) <fig:h2-ff-summary-amp>
+#supp-note[The migration-comparison figure for this _noisy_ scenario set is
+provided in the Supplementary Material, §S3.4.1.]
 
 === Amplitude Test <sec:hyp3-ff-amplitude>
 
-#supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
-_noisy_ scenario set is provided in the Supplementary Material, §S2.4.1.]
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [$2 lambda$],     [4.853], [0.036], [5.450],
-    [$1 lambda$],     [2.427], [0.214], [2.725],
-    [$1\/2 lambda$],  [1.103], [0.605], [1.239],
-    [$1\/4 lambda$],  [0.441], [0.107], [0.495],
-    [$1\/8 lambda$],  [0.221], [0.071], [0.248],
-    [$1\/16 lambda$], [0.0],   [0.0],   [0.0],
-    [$1\/32 lambda$], [0.0],   [0.036], [0.0],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [FluidFlow Rayleigh-criterion ratio, _noisy_ data (compare
-    @tab:h1-ff-amp).],
-  kind: table,
-) <tab:h2-ff-amp>
+#supp-note[The Rayleigh-criterion ratio table (compare the clean-data
+version in Supplementary Material §S2.4.2) and the zoomed
+Baseline-versus-Monitor PSF comparison for this _noisy_ scenario set are
+provided in the Supplementary Material, §S3.4.2.]
 
 === Phase Test <sec:hyp3-ff-phase>
 
-#supp-note[The Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit)
-phase-plane shift-estimation diagnostics for this _noisy_ scenario set are
-provided in the Supplementary Material, §S2.4.2.]
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [$2 lambda$],     [$-211.14$], [$-225.00$], [$-225.00$],
-    [$1 lambda$],     [$-105.94$], [$+7.52$],   [$+11.14$],
-    [$1\/2 lambda$],  [$-57.02$],  [$-0.33$],   [$-0.63$],
-    [$1\/4 lambda$],  [$-0.72$],   [$+1.15$],   [$-0.28$],
-    [$1\/8 lambda$],  [$-0.52$],   [$+1.50$],   [$+0.02$],
-    [$1\/16 lambda$], [$-0.91$],   [$+0.50$],   [$-0.01$],
-    [$1\/32 lambda$], [$-1.27$],   [$+0.96$],   [$-0.05$],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [FluidFlow phase-plane WLS front-displacement error, $#Dx$
-    (estimated $-$ true), millimetres, _noisy_ data (compare
-    @tab:h1-ff-phase).],
-  kind: table,
-) <tab:h2-ff-phase>
-
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    stroke: none,
-    inset: (x: 0.8em, y: 0.3em),
-    table.hline(stroke: 0.7pt),
-    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
-    table.hline(stroke: 0.4pt),
-    [$2 lambda$],     [$-93.8%$],  [$-100.0%$], [$-100.0%$],
-    [$1 lambda$],     [$-93.8%$],  [$+6.7%$],   [$+9.9%$],
-    [$1\/2 lambda$],  [$-101.8%$], [$-0.6%$],   [$-1.1%$],
-    [$1\/4 lambda$],  [$-2.6%$],   [$+4.1%$],   [$-1.0%$],
-    [$1\/8 lambda$],  [$-3.7%$],   [$+10.7%$],  [$+0.2%$],
-    [$1\/16 lambda$], [$-13.1%$],  [$+7.2%$],   [$-0.1%$],
-    [$1\/32 lambda$], [$-31.7%$],  [$+24.0%$],  [$-1.4%$],
-    table.hline(stroke: 0.7pt),
-  ),
-  caption: [FluidFlow phase-plane WLS front-displacement error, $#Dx$, as a
-    percentage of the true displacement, _noisy_ data (compare
-    @tab:h1-ff-phase-pct).],
-  kind: table,
-) <tab:h2-ff-phase-pct>
+#supp-note[The per-scenario phase-plane WLS front-displacement-error table
+(compare the clean-data version in Supplementary Material §S2.4.3), and the
+Kirchhoff-, Gazdag-, and back-propagation-migrated (sign-bit) phase-plane
+shift-estimation diagnostics, for this _noisy_ scenario set are provided in
+the Supplementary Material, §S3.4.3.]
 
 Gazdag improves the most dramatically of any result in this chapter: where
 the noisy-envelope-search version of this table left it flat at $-100%$
@@ -750,15 +504,14 @@ and Gazdag now outperform it.
 
 == Summary of the Results <sec:hyp3-summary>
 
-@tab:h2-lat-phase, @tab:h2-vert-phase, @tab:h2-diag-phase-dz/@tab:h2-diag-phase-dx,
-and @tab:h2-ff-phase give the full per-scenario noisy phase-plane error for
-each experiment in millimetres, with the same errors expressed as a
-percentage of the true displacement in @tab:h2-lat-phase-pct,
-@tab:h2-vert-phase-pct, @tab:h2-diag-phase-dz-pct/@tab:h2-diag-phase-dx-pct,
-and @tab:h2-ff-phase-pct. @tab:h2-mae condenses the millimetre errors into
-one mean absolute error (MAE) per movement type and method, using the same
-sub-half-wavelength regime as @tab:h1-mae, so that it is directly comparable
-to the clean-data result of @ch:hyp1.
+@tab:h2-lat-phase and @tab:h2-lat-phase-pct give the full per-scenario noisy
+phase-plane error for the lateral case, in millimetres and as a percentage
+of the true displacement; the equivalent per-scenario tables for Vertical,
+Diagonal, and FluidFlow are provided in the Supplementary Material (§S3.2.3,
+§S3.3.3, §S3.4.3). @tab:h2-mae condenses the millimetre errors for all four
+movement types into one mean absolute error (MAE) per movement type and
+method, using the same sub-half-wavelength regime as @tab:h1-mae, so that it
+is directly comparable to the clean-data result of @ch:hyp1.
 
 #figure(
   table(
@@ -801,7 +554,8 @@ is itself informative. FluidFlow improves the most dramatically
 localisation failure being the dominant error source there. Lateral and
 Diagonal improve more modestly ($37.9 -> 22.3 "mm"$ and
 $26.2 -> 23.3 "mm"$). Vertical, conversely, gets *worse*
-($26.0 -> 34.5 "mm"$): inspecting @tab:h2-vert-phase shows this is driven
+($26.0 -> 34.5 "mm"$): inspecting the per-scenario table (Supplementary
+Material, §S3.2.3) shows this is driven
 almost entirely by spurious lateral ($#Dx$) error the WLS fit assigns even
 though Vertical's true $#Dx = 0$ by construction (e.g. $-30.4 "mm"$ at
 $1\/8 lambda$, @sec:hyp3-vert-phase) --- cross-axis leakage that a better
@@ -836,9 +590,9 @@ degrades every method's accuracy by roughly one to two orders of magnitude
 in the sub-half-wavelength regime, yet the qualitative conclusion of
 @ch:hyp1 survives: at least one method remains accurate to a few tenths of a
 millimetre or better for every movement type, at displacement scales where
-the corresponding amplitude tests (@tab:h2-lat-amp, @tab:h2-vert-amp,
-@tab:h2-diag-amp, @tab:h2-ff-amp) show amplitude differencing has already
-collapsed. Answering Hypothesis 2's question directly: no single method is
+the corresponding amplitude tests (@tab:h2-lat-amp for lateral; the
+Supplementary Material, §S3.2.2, §S3.3.2, §S3.4.2, for Vertical, Diagonal,
+and FluidFlow) show amplitude differencing has already collapsed. Answering Hypothesis 2's question directly: no single method is
 unconditionally "most noise-robust" here. By raw aggregate accuracy,
 Kirchhoff wins clearly ($4.5 "mm"$ mean MAE, roughly $2.5 times$ below
 back-propagation and $4.5 times$ below Gazdag) --- but @sec:hyp3-purenoise
