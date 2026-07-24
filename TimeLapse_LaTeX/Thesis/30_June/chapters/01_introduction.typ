@@ -55,8 +55,8 @@ testable hypotheses, each the subject of one experimental chapter:
   false-coherent artefacts and Gazdag adds incoherent speckle.
 
 / Hypothesis 3 (@ch:hyp3): The time-lapse phase-plane approach generalises
-  beyond idealised single-scatterer synthetic models to complex scenes with
-  multiple independently-moving scatterers and to real borehole GPR field data.
+  beyond idealised single-scatterer synthetic models to real borehole GPR
+  field data.
 
 == Outline
 
@@ -69,7 +69,7 @@ vertical, and diagonal sub-wavelength translation of a point scatterer.
 @ch:hyp2 tests Hypothesis 2: which migration technique is most robust to
 heavy-tailed Laplace noise, concluding that back-propagation with sign-bit
 time-reversal is the preferred method. @ch:hyp3 tests Hypothesis 3 by
-applying the full pipeline to complex synthetic scenes and to real borehole
-GPR field data. @ch:discussion integrates the results of all three
+applying the full pipeline to real borehole GPR field data.
+@ch:discussion integrates the results of all three
 hypotheses into a final answer to the Research Question, and the Summary
 restates the main conclusions.

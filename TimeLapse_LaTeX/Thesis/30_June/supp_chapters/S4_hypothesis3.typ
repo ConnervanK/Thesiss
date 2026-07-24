@@ -3,7 +3,7 @@
 = Hypothesis 3: Supplementary Figures <supp:hyp3>
 
 This chapter mirrors the section structure of Chapter 6, "Hypothesis 3:
-Generalisation to Complex Scenes and Real Field Data", of the main thesis,
+Generalisation to Real Field Data", of the main thesis,
 in the same way as @supp:hyp1 and @supp:hyp2. The Region of Influence
 Workflow section below now collects the Chase/Wait/Pull rectangular-window
 stage figures and the sliding-window scan, moved out of the main chapter's
@@ -134,6 +134,19 @@ ROI told to it.
     re-derivation.],
 ) <fig:fd-disp-backprop>
 
-== Corrected Back-Propagation Displacement Re-Estimation <supp:hyp3-fd-bp-corrected>
+=== WLS vs RANSAC <supp:hyp3-fd-ransac>
+
+Per-pick inlier/outlier phase panels for the WLS-versus-RANSAC comparison in
+the "Phase-Plane Fit Workflow" section of Chapter 6, for every stage and
+migration technique, in both the hand-painted $(k_z, k_x)$ and the
+amplitude-domain (difference B-scan) picking domains. Each panel overlays the
+painted or gated cell selection on the cross-spectrum phase and marks the
+RANSAC inliers and the rejected outliers.
+
+#supp-note[These per-pick panels are produced by the field-data notebook
+(`fielddata/output/roi_phase/`); the two aggregate WLS-versus-RANSAC summaries
+are shown in the main text.]
+
+=== Back-Propagation Cross-Check and Stage Displacements <supp:hyp3-fd-bp-corrected>
 
 == Interpretation <supp:hyp3-fd-interpretation>

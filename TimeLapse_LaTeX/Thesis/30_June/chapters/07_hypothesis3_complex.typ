@@ -1,6 +1,6 @@
 #import "../template.typ": *
 
-= Hypothesis 3: Generalisation to Complex Scenes and Real Field Data <ch:hyp3>
+= Hypothesis 3: Generalisation to Real Field Data <ch:hyp3>
 
 @ch:hyp1 and @ch:hyp2 established that the time-lapse phase-plane approach
 works on idealised synthetic data with a single known target and a controlled
@@ -14,11 +14,10 @@ method used to *choose* that region is varied.
 beyond idealised single-scatterer synthetic models to real borehole GPR field
 data.
 
-Generalisation to complex synthetic scenes with multiple independently-moving
-scatterers under noise (several PEC cylinders displaced simultaneously in
-different lateral and vertical directions, tested across Kirchhoff, Gazdag
-and back-propagation with the Laplace noise model of @sec:hyp3-laplace) is
-left as future work and is not covered further in this chapter. <sec:hyp3-complex>
+The complementary generalisation to complex synthetic scenes with multiple
+independently-moving scatterers is scoped as future work rather than tested
+here; this chapter is concerned solely with the step from controlled synthetic
+targets to uncontrolled real data.
 
 == Field Data Explanation <sec:hyp3-fielddata>
 
@@ -158,23 +157,15 @@ Gazdag, so that the one-way/two-way travel-time equivalence the scaling
 relies on holds consistently across every material in the model, not only
 the background.
 
-Modelling the borehole this way initially made results worse, not better,
-than the homogeneous-domain baseline. At the grid spacing used elsewhere in
-this study ($d_x = 0.05 "m"$), the $10 "cm"$ channel is resolved by only two
-grid cells -- too coarse to represent a sharp, high-contrast material
-boundary without introducing numerical stair-casing artefacts on top of the
-genuine physics. A diagnostic on profile 1, isolating grid resolution from
-the permittivity-scaling choice, confirmed that refining to $d_x = 0.02 "m"$
-(five cells across the channel) removes most of the excess clutter and
-recovers a reflector consistent in position with Kirchhoff and Gazdag; using
-the borehole's true, unscaled permittivity instead of the scaled value did
-not help and introduced a small position shift, so the scaled value is
-retained. An alternative amplitude normalisation (rescaling each
-time-reversed trace to $[0,1]$ rather than $[-1,1]$ around zero) was also
-tested and rejected: it removes the physical zero baseline from a bipolar
-field, and the resulting non-zero DC component injected by every current
-source overwhelmed the simulation with spurious energy -- far worse than the
-coarse-grid clutter it was meant to fix.
+The refined geometry requires a finer grid than the rest of the study: at
+$d_x = 0.05 "m"$ the $10 "cm"$ channel spans only two cells and stair-cases
+the sharp water/rock boundary, whereas $d_x = 0.02 "m"$ (five cells) removes
+most of the excess clutter and recovers a reflector consistent in position
+with Kirchhoff and Gazdag. The scaled ($times 4$) permittivity is retained for
+the borehole water as well -- using its true unscaled value did not help and
+introduced a small position shift -- and rescaling each time-reversed trace to
+$[0,1]$ rather than $[-1,1]$ was rejected, since it injects a spurious DC
+component that overwhelms the bipolar field.
 
 The refined ($d_x = 0.02 "m"$, explicit borehole) pipeline described above
 has since been extended from profile 1 to the full five-profile set used
@@ -203,128 +194,61 @@ gprMax forward runs.
 
 Back-propagation additionally requires suppressing an *injection halo*: every
 gprMax source in the time-reversal simulation is injected at the borehole
-wall ($y approx 0 "m"$ in this homogeneous-domain model), and the
-destructive interference among sources that should cancel the field away
-from the true reflector is never fully complete near $y = 0$, leaving
-residual energy at small radial distance regardless of how the input is
-pre-processed. This is a structural property of single-sided time-reversal
-from a borehole source array, not a pre-processing shortcoming, and is
-suppressed for display by zeroing the first $2.0 "m"$ of the radial axis.
-One candidate fix was tested and reverted: normalising each receiver trace
-by its RMS value amplifies low-SNR traces far from the fluid front, and
-these noisy traces then back-propagate *coherently* toward the borehole
-axis, making the halo worse rather than better.
+wall, and the destructive interference that should cancel the field away from
+the true reflector is never complete near $y = 0$, leaving residual energy at
+small radial distance. This is a structural property of single-sided
+time-reversal from a borehole source array, not a pre-processing shortcoming,
+and is suppressed for display by zeroing the first $2.0 "m"$ of the radial
+axis. (Per-trace RMS normalisation was tried as a fix and reverted: it
+amplifies low-SNR far traces that then back-propagate coherently toward the
+axis, worsening the halo.)
 
-*Post-imaging clutter removal.* The steps above all act before or during
-injection into gprMax; a further round of processing was explored on the
-completed back-propagation focus image itself (profile 1 only), following
-two published time-reversal/migration post-processing schemes. Gaussian
-smoothing followed by decomposition into low-rank and sparse components via
-Robust Principal Component Analysis (RPCA), after Li and Yan (2021), was
-tested and rejected: RPCA separates an image by amplitude sparsity, which
-suits a compact, point-like target, but this reflector's response is
-spatially extended along a consistent dip, so it behaves as low-rank rather
-than sparse and RPCA could not isolate it from the low-rank background even
-after sweeping the sparsity weight. An $f$-$k$ dip (fan) filter was adopted
-instead, separating the reflector from clutter by orientation rather than
-amplitude: the reflector's dip is estimated directly from the image (a
-per-column peak-amplitude pick over a sub-window containing the primary
-reflection, fitted with a straight line) rather than assumed, and a
-cosine-tapered wedge of $plus.minus 20 "deg"$ around that orientation in
-the $(k_z, k_x)$ domain is kept, with the taper avoiding the Gibbs ringing a
-hard-edged wedge produces. Widening the fan enough to preserve the reflector
-introduced a new artefact: incoherent noise sharing the target's orientation
-was reconstructed as coherent diagonal streaks throughout the image, since
-the filter is global and translation-invariant with no notion of proximity
-to the true reflector. An amplitude gate built from the raw image's own
-local energy envelope removes this cleanly; a windowed (spatially localised)
-version of the fan filter was also tested and rejected, since restricting
-the FFT to a local window does not stop locally-oriented noise from being
-reconstructed within that window -- the artefact is a property of what
-survives the dip criterion, not of the transform's spatial support. A final
-cosine-ramped taper suppresses residual clutter between $1.0$ and
-$3.0 "m"$ radial distance (widened from an initial $2.5 "m"$ after visual
-inspection showed clutter persisting slightly past that point), beyond the
-hard injection-halo mask already applied above.
-
-This recipe is now applied identically across the five profiles used
-throughout this chapter (1, 3, 8, 20, 38): the dip fit, fan filter, gate and
-taper are all recomputed independently per profile, since each profile's
-reflector sits at a different position. Profiles 3, 8, 20 and 38 additionally
-required new $d_x = 0.02 "m"$ gprMax back-propagation runs (profile 1's
-already existed from the grid-resolution diagnostic above) with the same
-scaled-water-permittivity, peak-normalised settings.
-
-This post-imaging recipe (20-degree tapered fan filter, amplitude gate and
-near-borehole radial taper) is applied purely to the output focus image; it
-does not change the gprMax injection file, which still only uses the
-peak-normalisation choice described above.
+*Post-imaging clutter removal.* A final round of processing acts on the
+completed back-propagation focus image. The adopted recipe is a per-profile
+$f$-$k$ dip (fan) filter -- the reflector's dip is estimated directly from the
+image and a cosine-tapered $plus.minus 20 "deg"$ wedge around that orientation
+in the $(k_z, k_x)$ domain is kept -- followed by an amplitude gate built from
+the image's own local energy envelope (which removes the coherent diagonal
+streaks a wider fan otherwise reconstructs from equally-oriented noise) and a
+cosine-ramped near-borehole taper suppressing residual clutter out to
+$3.0 "m"$ radial distance. Two alternatives were rejected: Gaussian smoothing
+plus Robust PCA decomposition (after Li and Yan, 2021), because this
+reflector's response is spatially extended along a consistent dip and so
+behaves as low-rank rather than sparse; and a spatially-windowed fan filter,
+because restricting the FFT to a local window does not stop locally-oriented
+noise from being reconstructed within it. The recipe is recomputed
+independently per profile (each reflector sits at a different position) and
+acts purely on the output focus image -- it does not change the gprMax
+injection file.
 
 === Cross-Profile Registration and Amplitude Normalisation <sec:hyp3-fd-crossprofile>
 
-Applying the recipe above independently to all five profiles and taking
-consecutive time-lapse differences (profile $n$ minus profile $n-1$) at
-first produced differences that looked nothing like Kirchhoff/Gazdag's
-compact, localised residuals (e.g. @fig:fd-stage-push):
-instead, each difference showed near-complete smearing across the full
-extent of the reflector, as if the two profiles being compared disagreed
-almost everywhere rather than only where the fluid front had actually moved.
-Isolating the cause -- by differencing raw, unfiltered back-propagation
-frames at matched snapshot times and comparing against the fan-filtered
-result -- ruled out the dip filter itself and traced the problem to two
-independent, structural bugs in how the back-propagation focus frames were
-selected and normalised.
+Taking consecutive time-lapse differences across the five-profile set at first
+produced differences that smeared across the full extent of the reflector
+rather than the compact residuals Kirchhoff/Gazdag produce. Isolating the cause
+(differencing raw, unfiltered frames at matched snapshot times) ruled out the
+dip filter and traced it to two structural issues in how the back-propagation
+focus frames were selected and normalised, both since fixed:
 
-*Snapshot-timing misalignment.* The focus frame for each profile was
-originally selected by an independent per-profile search for the gprMax
-snapshot with the highest masked peak amplitude -- a reasonable choice for
-viewing one profile in isolation, but one that let each profile lock onto a
-different snapshot *time* (indices $25$--$28$ out of the saved snapshot
-sequence, a spread of $approx 26 "ns"$). Differencing two focus frames taken
-at different times makes a still-converging, not-yet-focused wavefront look
-like it moved, even with zero real displacement -- exactly the near-full
-extent smearing observed. The fix mirrors the fixed-time convention already
-used for the homogeneous-domain model's own consecutive differencing
-(`FOCUS_IDX_OFFSET`, @sec:hyp3-fd-processing): every profile now uses the
-same nominal focus time plus the same fixed snapshot-index offset, calibrated
-once against profile 1's previously-validated best-focus index.
++ *Snapshot timing.* Selecting each profile's focus frame by an independent
+  per-profile peak-amplitude search let different profiles lock onto different
+  snapshot _times_ (a spread of $approx 26 "ns"$); differencing frames at
+  different times makes a still-converging wavefront look displaced. Every
+  profile now uses the same nominal focus time plus a fixed snapshot-index
+  offset (`FOCUS_IDX_OFFSET`), calibrated once against profile 1.
 
-*Per-trace amplitude normalisation.* The fixed-timing frames alone did not
-resolve the smearing -- differencing raw, unfiltered frames at matched times
-still showed the same near-full-reflector residual -- which pointed at
-amplitude rather than timing. The gprMax injection preparation
-(`write_borehole_backprop_files`, @sec:hyp3-fd-processing) normalised every
-trace to its own individual peak amplitude before injection. Measured
-directly across the dataset: profile 3's real, pre-normalisation RMS
-amplitude is $approx 1.8$ times profile 1's -- consistent with the reflector
-genuinely sharpening through the push stage, exactly the kind of change a
-time-lapse study is trying to detect -- and per-trace rescaling erased that
-signal entirely, along with within-profile amplitude structure (individual
-trace peaks varied $80$--$160 times$ before normalisation, so weak,
-mostly-noise traces were boosted to the same injected amplitude as the
-strongest genuine reflections). The fix replaces the per-trace scalar with a
-single amplitude shared across all five profiles -- the peak found across
-all five profiles' excitation data -- so every trace still divides by a
-constant, as gprMax's numerical stability requires, but the same constant for
-every profile, preserving both the within-profile and cross-profile
-amplitude structure.
++ *Amplitude normalisation.* Normalising every trace to its own peak before
+  injection erased both the genuine cross-profile amplitude growth (profile 3's
+  pre-normalisation RMS is $approx 1.8 times$ profile 1's -- exactly the change
+  a time-lapse study targets) and within-profile structure. A single amplitude
+  shared across all five profiles -- the peak over all five profiles'
+  excitation data -- replaces the per-trace scalar, preserving both.
 
-With both fixes applied and all five profiles re-run through gprMax,
-@fig:fd-borehole-final-grid shows the raw focus frame, the final (fan +
-gate + taper) processed frame, and the consecutive time-lapse difference for
-each of the five profiles: the differences are now compact and localised,
-qualitatively matching the character of the Kirchhoff/Gazdag residuals shown
-earlier in this chapter, a marked change from the near-full-reflector
-smearing the two bugs above had produced. One caveat carried forward
-transparently: the per-column automatic dip fit that seeds the fan filter's
-orientation, reliable for profile 1 alone, did not generalise once the
-timing and normalisation fixes changed the underlying frames -- it also
-began locking onto near-source clutter for profiles 1 and 3, not only
-8/20/38 as before the fixes. All five profiles shown in
-@fig:fd-borehole-final-grid therefore use the same manually-specified dip
-override ($m_0 = 2.2$) rather than five independent automatic fits; the
-robustness of the automatic dip estimator itself is not addressed further
-here.
+With both fixes applied and all five profiles re-run, @fig:fd-borehole-final-grid
+shows compact, localised differences matching the Kirchhoff/Gazdag character, a
+marked change from the earlier smearing. (One caveat: the automatic per-column
+dip fit did not generalise across the corrected frames, so all five profiles
+use a single manual dip override, $m_0 = 2.2$.)
 
 #figure(
   cimg("FD_borehole_final_processed_all_profiles.png"),
@@ -361,16 +285,12 @@ cross-spectrum phase of two migrated images, but only inside a region of
 influence (ROI): a subset of $(k_z, k_x)$ cells (or, equivalently, a spatial
 window before the FFT) chosen to contain the reflector's coherent energy and
 exclude noise. Every result in this chapter depends on that choice, so three
-increasingly automatic ways of making it are compared here, applied to the
-same Gazdag-migrated images and, from @sec:hyp3-fd-roi-sliding onward, the
-same four representative pairs (1→3, 3→8, 8→20, 20→38 -- approximating the
-Push, Chase, Wait and Pull stages respectively).
-#draftnote[@fig:fd-stage-push below, and its Chase/Wait/Pull counterparts in
-the Supplementary Material, §S4.3.1 (generated by the separate Thesis Figure
-Compilations pipeline, out of scope for this session's pair/sign
-corrections) still use the older stage-boundary pairs (1→4, 5→9, 10→20,
-21→38); regenerate them with the representative pairs, or adjust this
-paragraph, once that pipeline is revisited.]
+increasingly automatic ways of making it are compared here, all applied to the
+same Gazdag-migrated images. The rectangular-window examples in this section
+are shown at the four operational-stage boundaries (profiles 1→4, 5→9, 10→20,
+21→38); from @sec:hyp3-fd-roi-sliding onward the analysis uses the four
+representative pairs (1→3, 3→8, 8→20, 20→38 -- approximating the Push, Chase,
+Wait and Pull stages) that carry through the rest of the chapter.
 
 === Rectangular Window <sec:hyp3-fd-roi-rect>
 
@@ -434,11 +354,9 @@ should enter the fit are selected by hand, directly on top of the amplitude
 image or the difference B-scan. @fig:fd-roi-sensitivity compares both
 variants, for the Chase-stage pair (3→8): (a) manual versus automatic
 picking in $(k_z, k_x)$ space; (b) manual painting versus the rectangular
-ROI on the difference B-scan itself. See also the corrected
-back-propagation re-estimation in @fig:fd-borehole-napari-pairs
-(@sec:hyp3-fd-bp-corrected), which repeats this manually-painted-ROI
-comparison once the timing and normalisation fixes of
-@sec:hyp3-fd-crossprofile below have been applied.
+ROI on the difference B-scan itself. Gazdag is the worked example here; the
+same painted-ROI workflow applied to the corrected back-propagation frames is
+presented in @sec:hyp3-fd-bp-corrected.
 
 Picking the cross-spectrum directly lets the fit be restricted to exactly the
 two energy lobes visible in the display, without a relative amplitude
@@ -513,33 +431,28 @@ all 38 profiles are compared:
   highest SNR estimate of the total stage displacement before stitching into a
   global trajectory.
 
-#draftnote[insert the three strategy summary plots here (3-panel line plots of
-cumulative/direct $#Dx$, $#Dz$, and $phi_0$ vs profile number from cells 26,
-28, 30, 32 of `FieldData_Playground.ipynb`). Export them to a
-`TimeLapse_Figures/FieldData/` directory and reference via `img()` if not
-already done.]
+@fig:fd-strategies shows all three strategies applied across the 38 profiles.
+The stage-anchored Strategy 3, which gives the highest-SNR estimate of the
+displacement per stage, is the one carried forward into @tab:fielddata-stages.
+
+#figure(
+  subfigs(cols: 1,
+    img("FD_strat1_consecutive_summary.png"),
+    img("FD_strat2_baseline_summary.png"),
+    img("FD_strat3_stage_anchored_summary.png"),
+  ),
+  caption: [Displacement trajectories over all 38 profiles under the three
+    chaining strategies (Gazdag migration): (a) consecutive increments summed
+    cumulatively; (b) each profile against the fixed profile-1 baseline; (c)
+    stage-anchored. Each panel shows $#Dx$, $#Dz$ and the phase offset $phi_0$
+    versus profile number.],
+) <fig:fd-strategies>
 
 The Strategy 3 (stage-anchored) results, which give the highest-SNR estimate
 of the total displacement per stage, are summarised alongside the
 independently-processed, corrected back-propagation cross-check in
 @tab:fielddata-stages (@sec:hyp3-fd-bp-corrected), once that cross-check's
 own methodology has been introduced below.
-
-#draftnote[two corrections were made to the Strategy-3b numbers this
-session, independent
-of each other: (1) the sign of both columns -- verified via a synthetic test
-with a known, directly injected shift, run against the exact WLS fit function
-and depth/radial axis conventions used to produce this table -- confirmed the
-raw fit output equals $-#Dz$ under the "positive = downward" convention (an
-artefact of the depth axis decreasing with row index) but equals $+#Dx$
-directly under "positive = away" (no flip needed there); (2) the profile
-pairs themselves -- the table previously used stage-*boundary* pairs (1→4,
-5→9, 10→20, 21→38) with three additional bridging pairs to chain them, which
-had drifted out of sync with the representative pairs (1→3, 3→8, 8→20,
-20→38) used everywhere else in this chapter and were producing numbers that
-no longer matched any other part of the analysis. Both fixes are applied to
-the `strat3b_cd` notebook cell and verified by direct execution against the
-cached Gazdag migrations.]
 
 The dominant signal is an *upward* displacement of approximately $1.32 "m"$
 during the Push stage, accompanied by a lateral shift of $0.26 "m"$ *toward*
@@ -604,39 +517,21 @@ $#Dz$; this is addressed as an open question in @sec:hyp3-fd-interpretation.
 diagnostics, same panel layout as @fig:fd-disp-gazdag, are provided in the
 Supplementary Material, §S4.4.1 and §S4.4.2.]
 
-== Corrected Back-Propagation Displacement Re-Estimation <sec:hyp3-fd-bp-corrected>
+=== Back-Propagation Cross-Check and Stage Displacements <sec:hyp3-fd-bp-corrected>
 
-With the timing and normalisation fixes of @sec:hyp3-fd-crossprofile applied,
-the manually-painted-ROI phase-plane fit of @sec:hyp3-fd-roi-picking was
-re-run directly on the five corrected, final-processed focus frames, for the
-same four representative consecutive pairs used throughout
-@sec:hyp3-fd-roi (1→3, 3→8, 8→20, 20→38). Painting is done directly on the
-difference image rather than the cross-spectrum -- the same B-scan-painting
-variant of @fig:fd-roi-sensitivity (b) -- since a Gaussian-softened painted mask
-avoids the hard-edge spectral leakage a rectangular window would introduce,
-and the reflector's shape (and, in two of the four pairs, a visible
-side-lobe not present in the rectangular ROI) is easier to trace by eye on
-the spatial difference than on the cross-spectrum phase.
+The painted-ROI workflow of @sec:hyp3-fd-roi-picking is applied to the five
+corrected, final-processed back-propagation focus frames, for the same four
+representative consecutive pairs (1→3, 3→8, 8→20, 20→38), painting on the
+difference image so a Gaussian-softened mask can trace the reflector's shape
+(including, in two pairs, a side-lobe the rectangular ROI misses).
 
-A third bug surfaced while validating this re-estimation, independent of the
-two in @sec:hyp3-fd-crossprofile: the corrected back-propagation frames'
-depth axis increases with row index (row 0 $approx 60 "m"$, shallow; the
-last row $approx 85 "m"$, deep), the opposite convention to the
-Kirchhoff/Gazdag depth array used everywhere else in this chapter, which
-*decreases* with row index (row 0 $= 85 "m"$, deep). The phase-plane fit
-measures displacement along the increasing-row-index direction, so feeding
-it a plain positive row spacing -- as @sec:meth-phaseplane's fit does
-uniformly -- would silently report $+#Dz$ (raw fit output) for a shift
-toward *shallower* depth under the Kirchhoff/Gazdag row-index convention,
-but $+#Dz$ for a shift toward *deeper* depth under the back-propagation
-row-index convention: the same physical event, opposite-signed raw number.
-The fix negates the row-spacing constant used to build the fit's $k_z$ axis
-for the back-propagation frames only, so the *raw* fit output means the same
-physical row-index direction under both conventions -- the values below are
-already reported after that fix, and additionally converted to the
-"positive $#Dz$ = downward" convention established for
-@tab:fielddata-stages (@sec:hyp3-fd-phaseplane), i.e. negated once more
-relative to the raw fit output, consistently with that table.
+One back-propagation-specific correction is required: its focus frames' depth
+axis increases with row index, opposite to the Kirchhoff/Gazdag arrays used
+elsewhere in this chapter. Since the fit measures displacement along increasing
+row index, the $k_z$-axis row spacing is negated for the back-propagation
+frames only; the raw fit output then denotes the same physical direction under
+both conventions, and the values quoted are additionally converted to the
+"positive $#Dz$ = downward" convention of @tab:fielddata-stages.
 
 @tab:fielddata-stages's BP columns report the corrected, sign-converted
 estimates. Direction now agrees with the Gazdag columns throughout:
@@ -709,6 +604,53 @@ returns to what it might mean instead.
     @tab:fielddata-stages's BP columns for the sign-converted values used in
     the text.],
 ) <fig:fd-borehole-napari-pairs>
+
+=== WLS vs RANSAC <sec:hyp3-fd-ransac>
+
+The amplitude weighting of the WLS fit (@sec:th-wls) down-weights low-energy
+bins but still lets every masked cell contribute, so a coherent band of
+phase-wrapped or noise-dominated cells inside the mask can still bias the
+plane. As a robustness check, the same fit is repeated with a RANSAC (random
+sample consensus) estimator: it fits the plane to random cell subsets, keeps
+the largest consensus set of inliers (phase residual $< 0.35 "rad"$, over
+$2000$ iterations), and refits WLS on those inliers alone. The comparison is
+run for all four representative pairs and all three migration techniques, in
+both ROI picking domains of @sec:hyp3-fd-roi-picking.
+
+When the $(k_z, k_x)$ cells are painted by hand (@fig:fd-ransac-kspace), RANSAC
+flags no outliers -- every painted cell is already a consensus inlier -- and so
+reproduces the WLS estimate exactly in all twelve cases: a tight hand-pick
+around the coherent lobes needs no further robustification. When the cells are
+instead populated by the automatic band-plus-amplitude gate over a hand-painted
+_spatial_ ROI (@fig:fd-ransac-bscan), RANSAC rejects anywhere from a negligible
+fraction up to about half of the gated cells (e.g. $53%$ for back-propagation,
+Pull) and shifts the estimate accordingly -- usually by only a few percent, but
+by up to $23%$ in the worst case (Kirchhoff-BP, Chase: $#Dz = -1.07 "m"$ under
+WLS versus $-0.83 "m"$ under RANSAC). Direction and stage-to-stage ordering are
+preserved in every case. The practical reading is that the fitting _method_
+matters only once the cross-spectrum cell population is left to an automatic
+gate; a curated k-space pick makes WLS and RANSAC interchangeable.
+
+#figure(
+  cimg("FD_ransac_vs_wls_displacement_summary.png"),
+  caption: [WLS versus RANSAC displacement estimates for hand-painted
+    $(k_z, k_x)$ picking, all four representative pairs and three migration
+    techniques (hatched = WLS, solid = RANSAC). Every painted cell is a RANSAC
+    inlier, so the two estimates coincide.],
+) <fig:fd-ransac-kspace>
+
+#figure(
+  cimg("FD_ransac_vs_wls_bscan_displacement_summary.png"),
+  caption: [WLS versus RANSAC displacement estimates for amplitude-domain
+    (difference B-scan) picking, where an automatic gate selects the
+    $(k_z, k_x)$ cells inside a hand-painted spatial ROI. RANSAC rejects up to
+    roughly half the gated cells; the estimate shifts by up to $23%$
+    (Kirchhoff-BP, Chase) but never changes sign or stage ordering.],
+) <fig:fd-ransac-bscan>
+
+#supp-note[The per-pick WLS/RANSAC inlier--outlier phase panels for every stage
+and technique, in both picking domains, are provided in the Supplementary
+Material, §S4.4.3.]
 
 == Interpretation <sec:hyp3-fd-interpretation>
 

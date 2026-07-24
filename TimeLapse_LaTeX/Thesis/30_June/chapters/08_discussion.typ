@@ -217,8 +217,8 @@ corroborated displacement estimates rather than noise, but the further claim
 that those estimates are physically correct has not been validated against
 ground truth. The complementary generalisation test proposed alongside the
 field-data study --- a complex synthetic scene with multiple
-independently-moving scatterers under noise (@sec:hyp3-complex) --- was not
-run in this thesis and is left entirely to future work.
+independently-moving scatterers under noise --- was not run in this thesis and
+is left entirely to future work.
 
 == Limitations
 
@@ -251,10 +251,9 @@ run in this thesis and is left entirely to future work.
   full dataset.
 
 + The complex synthetic scene with multiple, independently-moving scatterers
-  under noise (@sec:hyp3-complex) was not run, so simultaneous or
-  interacting displacements --- plausibly closer to a real field scenario
-  than any single-scatterer experiment in this thesis --- remain untested
-  even synthetically.
+  under noise was not run, so simultaneous or interacting displacements ---
+  plausibly closer to a real field scenario than any single-scatterer
+  experiment in this thesis --- remain untested even synthetically.
 
 + The field-data displacement direction reported in @tab:fielddata-stages is
   internally consistent and corroborated across two independently-processed
@@ -290,7 +289,7 @@ run in this thesis and is left entirely to future work.
   Gazdag trajectory over the complete Push/Chase/Wait/Pull sequence rather
   than only the four representative pairs checked here.
 
-+ Run the complex synthetic experiment of @sec:hyp3-complex to test whether
++ Run a complex synthetic experiment to test whether
   the phase-plane fit, or a spatially-localised variant of it, can separate
   multiple simultaneously-moving scatterers under noise --- the natural next
   step between the idealised single-scatterer studies of @ch:hyp1/@ch:hyp2

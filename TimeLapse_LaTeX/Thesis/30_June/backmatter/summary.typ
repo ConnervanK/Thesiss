@@ -40,15 +40,15 @@
 // data. The phase-plane pipeline was applied to real borehole GPR field data from
 // a controlled fluid-injection experiment (38 profiles, 6 June 2016) and
 // produced displacement estimates -- after a sign-convention correction, see
-// @tab:fielddata-stages -- of approximately $1.41 "m"$ upward and toward the
+// @tab:fielddata-stages -- of roughly $1.3$--$1.9 "m"$ upward and toward the
 // borehole during Push, near-zero during Wait, and a partial reversal during
-// Pull, leaving a net residual of $approx 0.94 "m"$ along the borehole at the
+// Pull, leaving a net residual of $approx 1.5 "m"$ along the borehole at the
 // end of the experiment; an independent back-propagation re-derivation
 // (@sec:hyp3-fd-bp-corrected) agrees on sign and order of magnitude. Whether
 // this upward/inward direction (rather than the originally expected downward
 // and outward) is physically expected for this experiment is still open
-// (@sec:hyp3-fd-interpretation). The generalisation to complex
-// multi-scatterer synthetic scenes is ongoing and not yet included.
+// (@sec:hyp3-fd-interpretation). The complementary generalisation to complex
+// multi-scatterer synthetic scenes is left to future work.
 
 // #draftnote[close with a final conclusion sentence stating, in one sentence,
 // whether the Research Question is answered affirmatively by the totality of
