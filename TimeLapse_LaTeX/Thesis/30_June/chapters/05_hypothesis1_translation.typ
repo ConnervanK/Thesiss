@@ -223,16 +223,16 @@ in the Supplementary Material, §S2.1.2.]
   kind: table,
 ) <tab:h1-lat-phase>
 
-At $2 lambda$ and $1 lambda$ the cross-spectrum has wrapped and every method
-is off by tens to hundreds of millimetres, as expected outside the
-estimator's unambiguous range. From $1\/4 lambda$ down to $1\/32 lambda$,
-however, every method recovers $#Dx$ to within $0.35 "mm"$ --- Gazdag and
-Kirchhoff are already accurate at $1\/2 lambda$ (within $0.04 "mm"$), while
+From $1\/4 lambda$ down to $1\/32 lambda$ --- exactly the regime
+(@tab:h1-lat-amp) in which amplitude differencing has already collapsed to an
+unresolvable single lobe for every method --- every method recovers $#Dx$ to
+within $0.35 "mm"$: the central empirical claim of Hypothesis 1. The two
+largest scales behave as expected outside the estimator's unambiguous range:
+at $2 lambda$ and $1 lambda$ the cross-spectrum has wrapped and every method
+is off by tens to hundreds of millimetres. In between, Gazdag and Kirchhoff
+are already accurate at $1\/2 lambda$ (within $0.04 "mm"$), while
 back-propagation's fit degrades at that single scale ($-92.44 "mm"$) before
-also becoming sub-millimetre-accurate from $1\/4 lambda$ downward. This is
-exactly the regime (@tab:h1-lat-amp) in which amplitude differencing has
-already collapsed to an unresolvable single lobe for every method --- the
-central empirical claim of Hypothesis 1.
+also becoming sub-millimetre-accurate from $1\/4 lambda$ downward.
 
 == Vertical Movement <sec:hyp1-vertical>
 
@@ -256,17 +256,17 @@ the Supplementary Material, §S2.2. Individual per-method migrated images and
 time-lapse differences, zoomed around the scatterer, are given in
 @app:hyp1-methods.]
 
-Unlike the lateral case, amplitude differencing here stays resolvable a full
-octave lower: every method's Rayleigh ratio remains above $1$ down to
-$1\/4 lambda$ (minimum $1.590$), only dropping below $1$ at $1\/8 lambda$,
-before collapsing ($<0.33$ for all methods) by $1\/32 lambda$ (compare
-@tab:h1-lat-amp). The phase-plane fit only overtakes amplitude within this
-narrower failure band: it is already accurate ($<=0.03 "mm"$ error) from
-$1\/4 lambda$ downward, but at $1 lambda$ and $1\/2 lambda$ --- where
-amplitude differencing remains comfortably resolvable --- the phase fit is
-still wrapped and inaccurate. Vertical movement therefore shows the phase
-estimator's advantage is concentrated specifically where amplitude has
-already failed, not a blanket improvement across the whole sweep.
+Vertical movement shows the phase estimator's advantage is concentrated
+specifically where amplitude has already failed, not as a blanket improvement
+across the whole sweep. Unlike the lateral case, amplitude differencing here
+stays resolvable a full octave lower: every method's Rayleigh ratio remains
+above $1$ down to $1\/4 lambda$ (minimum $1.590$), only dropping below $1$ at
+$1\/8 lambda$, before collapsing ($<0.33$ for all methods) by $1\/32 lambda$
+(compare @tab:h1-lat-amp). The phase-plane fit only overtakes amplitude within
+this narrower failure band: it is already accurate ($<=0.03 "mm"$ error) from
+$1\/4 lambda$ downward, but at $1 lambda$ and $1\/2 lambda$ --- where amplitude
+differencing remains comfortably resolvable --- the phase fit is still wrapped
+and inaccurate.
 
 == Diagonal Movement <sec:hyp1-diagonal>
 

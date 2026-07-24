@@ -2,13 +2,16 @@
 
 = Hypothesis 3: Generalisation to Real Field Data <ch:hyp3>
 
-@ch:hyp1 and @ch:hyp2 established that the time-lapse phase-plane approach
-works on idealised synthetic data with a single known target and a controlled
-displacement. This chapter asks whether that generalises to real borehole GPR
-field data, where neither the target geometry nor the displacement is
-controlled, and --- because a real reflector never comes with a
-pre-labelled region of interest --- what happens to the estimate as the
-method used to *choose* that region is varied.
+The time-lapse phase-plane approach recovers a sub-wavelength displacement by
+fitting a plane to the cross-spectrum phase of a baseline and a monitor
+migrated image (@ch:theory). @ch:hyp1 and @ch:hyp2 established that it works on
+idealised synthetic data --- a single known target, a controlled displacement,
+and, under @ch:hyp2's noise model, added field noise. Real surveys offer none
+of those guarantees. This chapter asks whether the approach generalises to real
+borehole GPR field data, where neither the target geometry nor the true
+displacement is known, and --- because a real reflector never comes with a
+pre-labelled region of interest --- what happens to the estimate as the method
+used to *choose* that region is varied.
 
 #para-head[Hypothesis 3.] The time-lapse phase-plane approach generalises
 beyond idealised single-scatterer synthetic models to real borehole GPR field

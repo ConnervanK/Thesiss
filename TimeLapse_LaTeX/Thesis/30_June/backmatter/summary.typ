@@ -2,56 +2,49 @@
 
 #heading(level: 1, numbering: none, outlined: true)[Summary] <ch:summary>
 
-#draftnote[Placeholder]
+// Draft summary --- confirm the headline figures against the final results
+// tables and the General Discussion before submission.
 
-// #draftnote[this is a placeholder skeleton --- rewrite once @ch:discussion is
-// filled in with concrete numbers, since the claims below should restate
-// quantified results, not generic statements.]
+This thesis addressed one unifying hypothesis --- the research question: _can
+time-lapse ground-penetrating radar accurately track subwavelength movement, a
+form of super-resolution, by analysing phase changes in migrated images rather
+than their amplitude?_ Because a single migrated amplitude image cannot resolve
+a change smaller than a wavelength-scale floor, the method instead migrates a
+baseline and a monitor survey, forms their Fourier-domain cross-spectrum, and
+fits its phase with a weighted least-squares plane whose two slopes give the
+vertical and lateral displacement and whose intercept separates geometric
+movement from sub-wavelength material change. The hypothesis was tested through
+three experiments of increasing realism, on synthetic gprMax data across three
+migration algorithms --- Kirchhoff, Gazdag phase-shift, and time-reversal
+back-propagation --- and on real borehole field data.
 
-// This thesis addressed the Research Question: _Can time-lapse ground-penetrating
-// radar accurately track subwavelength movement --- achieving a form of
-// super-resolution --- by analysing phase changes in migrated images rather than
-// their amplitude?_
+*Hypothesis 1* established that amplitude differencing of migrated time-lapse
+images fails below a resolution floor of roughly half a wavelength, whereas the
+phase-plane estimator recovers lateral, vertical, and diagonal displacements
+down to $1 \/ 32 lambda$ --- to a few tenths of a millimetre, several orders of
+magnitude below the wavelength scale --- exactly where amplitude has already
+collapsed, and does so for a distributed fluid front as well as for a point
+scatterer. An optional local phase-gradient analysis (Hypothesis 1.5) is
+consistent with this result wherever both were computed, but remains
+exploratory.
 
-// The answer, across three progressively more complex experimental settings, is
-// yes.
+*Hypothesis 2* showed that, under a realistic Laplace noise model, no single
+migration technique is unconditionally the most noise-robust. By raw accuracy
+Kirchhoff is the best, but it alone manufactures false coherent structure from
+pure noise; back-propagation with sign-bit time-reversal --- which clamps every
+noise spike to $plus.minus 1$ while preserving phase --- is the more
+conservative choice; Gazdag is the weakest on both counts.
 
-// *Hypothesis 1* (@ch:hyp1) established that amplitude differencing of migrated
-// time-lapse images fails below a resolution floor of roughly half a wavelength
-// --- but that the 2D phase-plane estimator, which fits a linear phase ramp to
-// the cross-spectrum of a baseline/monitor image pair, recovers lateral,
-// vertical, and diagonal displacements down to $1 \/ 32 lambda$, well below that
-// floor. An optional local phase-gradient analysis (Hypothesis 1.5,
-// @sec:hyp1-h15) explored instantaneous-phase imaging, spectral-line fitting,
-// cross-phase spectrograms, and short-time Fourier transforms as complementary
-// inference routes; these are consistent with the global WLS result wherever both
-// were computed, but remain exploratory rather than fully validated.
+*Hypothesis 3* applied the full pipeline to real borehole GPR field data from a
+controlled fluid-injection experiment (38 profiles, 6 June 2016). It produced
+stable, cross-technique-corroborated displacement estimates --- of order
+$1.3$--$1.9 "m"$ during the Push stage, near-zero during Wait, and a partial
+reversal during Pull --- with an independent back-propagation re-derivation
+agreeing on sign and order of magnitude. Whether the inferred direction is
+physically expected for this experiment remains open, and generalisation to
+complex multi-scatterer scenes is left to future work.
 
-// *Hypothesis 2* (@ch:hyp2) identified back-propagation with sign-bit
-// time-reversal as the most noise-robust migration technique. Kirchhoff's
-// delay-and-sum stacking manufactures false-coherent bands from pure Laplace
-// noise (raising false-positive risk); Gazdag stays incoherent but adds
-// significant speckle; back-propagation with sign-bit time-reversal suppresses
-// impulsive noise by clamping every spike amplitude to $plus.minus 1$ while
-// preserving all phase information --- stripping noise of the outsized amplitude
-// that would otherwise let it dominate the back-propagated wavefield.
-
-// *Hypothesis 3* (@ch:hyp3) tested generalisation beyond idealised synthetic
-// data. The phase-plane pipeline was applied to real borehole GPR field data from
-// a controlled fluid-injection experiment (38 profiles, 6 June 2016) and
-// produced displacement estimates -- after a sign-convention correction, see
-// @tab:fielddata-stages -- of roughly $1.3$--$1.9 "m"$ upward and toward the
-// borehole during Push, near-zero during Wait, and a partial reversal during
-// Pull, leaving a net residual of $approx 1.5 "m"$ along the borehole at the
-// end of the experiment; an independent back-propagation re-derivation
-// (@sec:hyp3-fd-bp-corrected) agrees on sign and order of magnitude. Whether
-// this upward/inward direction (rather than the originally expected downward
-// and outward) is physically expected for this experiment is still open
-// (@sec:hyp3-fd-interpretation). The complementary generalisation to complex
-// multi-scatterer synthetic scenes is left to future work.
-
-// #draftnote[close with a final conclusion sentence stating, in one sentence,
-// whether the Research Question is answered affirmatively by the totality of
-// the three hypotheses, and noting the main caveat (the phase-plane fit is
-// currently demonstrated quantitatively under noise for the lateral case only,
-// and the complex synthetic model experiment is still pending).]
+The unifying hypothesis is therefore supported: time-lapse GPR can recover
+subwavelength movement from the phase of migrated images at scales where the
+amplitude image cannot --- subject to a migration-choice trade-off under noise,
+and to independent confirmation of the field-data interpretation.

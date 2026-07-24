@@ -2,74 +2,99 @@
 
 = Introduction <ch:introduction>
 
-#draftnote[Placeholder]
+Ground-penetrating radar (GPR) images the subsurface by emitting a short
+electromagnetic pulse and recording its reflections from dielectric contrasts
+in the ground. The resolution of that image is fundamentally limited by the
+wavelength of the probing pulse: two reflectors closer than roughly half a
+wavelength, or a single reflector that moves by a small fraction of a
+wavelength between two surveys, cannot be told apart from the migrated
+_amplitude_ image alone. This is a practical obstacle for time-lapse
+monitoring --- tracking millimetre-scale ground movement, or the advance of a
+fluid front through a thin fracture --- where the displacement or material
+change of interest is, by construction, far smaller than the wavelength of the
+radar pulse used to image it.
 
-// Ground-penetrating radar (GPR) images subsurface structure by emitting a
-// short electromagnetic pulse and recording its reflections from dielectric
-// contrasts in the ground. The achievable image resolution is fundamentally
-// limited by the wavelength of the probing pulse: two reflectors closer than
-// roughly half a wavelength apart, or a single reflector that moves by a small
-// fraction of a wavelength between two surveys, cannot be distinguished from
-// the migrated _amplitude_ image alone (@sec:meth-resolution). This
-// is a practical obstacle for time-lapse monitoring applications --- tracking
-// millimetre-scale ground movement, or the advance of a fluid front through a
-// sub-wavelength fracture --- where the displacement or material change of
-// interest is, by construction, far smaller than the wavelength of the radar
-// pulse used to image it.
+This thesis develops and validates a way around that limit that reads
+displacement from the _phase_ of the migrated wavefield rather than its
+amplitude. The idea rests on a short chain of statements, each supported in
+turn by the review of @ch:litreview and the theory of @ch:theory:
 
-// This thesis develops and validates a _phase_-based alternative: rather
-// than reading displacement off the migrated amplitude image, a baseline and a
-// monitor survey are migrated and compared in the two-dimensional Fourier
-// domain, where the Fourier shift theorem turns any sub-wavelength translation
-// into a fully resolvable linear phase ramp (@ch:theory). A weighted
-// least-squares fit of this phase plane recovers the displacement with
-// sub-millimetre precision, and --- critically --- separates a purely
-// geometric shift from a phase rotation caused by a change in the dielectric
-// properties of the target itself, which is the signature of, for example, a
-// fracture filling with water. Where the back-propagation migration algorithm
-// is used, the method is further combined with _sign-bit time-reversal_,
-// a noise-robust excitation scheme that keeps the algorithm usable even when
-// the data are heavily corrupted by noise.
++ *GPR resolution is wavelength-limited.* The migrated amplitude image cannot
+  separate two reflectors, or localise a moved one, below roughly half a
+  wavelength --- a floor set laterally by the Fresnel zone and vertically by
+  the pulse bandwidth (@ch:litreview).
 
-== Research Question
++ *The changes worth monitoring are sub-wavelength.* GPR reflectivity is
+  governed mostly by permittivity, and permittivity by water content, so the
+  processes a monitoring survey most wants to follow --- a fracture filling
+  with fluid, a slowly advancing interface --- produce their signal at exactly
+  the scale that lies below this floor.
 
-#para-head[Research Question.] Can time-lapse ground-penetrating radar
++ *Migration relocates energy but does not beat the amplitude floor.* Focusing
+  the raw B-scan repositions recorded energy toward its true location, but
+  neither migration nor its amplitude-based refinements (deconvolution,
+  least-squares and full-waveform inversion) step outside the amplitude imaging
+  condition, so all remain bound by the same floor (@ch:litreview).
+
++ *Phase retains what amplitude discards.* A sub-wavelength change that leaves
+  no amplitude signature still imprints a systematic, continuously varying
+  shift on the _phase_ of the reflected wave --- information every migration
+  algorithm computes internally and then throws away.
+
++ *A time-lapse pair turns sub-wavelength change into a recoverable phase
+  ramp.* Comparing a baseline and a monitor survey in the two-dimensional
+  Fourier domain, the Fourier shift theorem turns any sub-wavelength
+  translation between the two migrated images into an exactly linear phase ramp
+  whose slope _is_ the displacement (@ch:theory) --- so a shift invisible in
+  amplitude becomes, in principle, exactly recoverable from phase.
+
+== The Unifying Hypothesis
+
+Taken together, these statements make one hypothesis a sensible thing to test
+--- the research question of this thesis:
+
+#para-head[Research question.] Can time-lapse ground-penetrating radar
 accurately track subwavelength movement --- achieving a form of
 super-resolution --- by analysing _phase_ changes in migrated images rather
 than their amplitude?
 
-This thesis addresses this question through three specific, individually
-testable hypotheses, each the subject of one experimental chapter:
+This unifying hypothesis cannot be settled by any single experiment: for it to
+hold, phase-based inference must work across displacement direction and scale,
+survive realistic field noise, and generalise from idealised synthetic models
+to real data. It is therefore tested through three specific, individually
+testable hypotheses, each the subject of one experimental chapter and each
+asking one of those three questions in turn:
 
-/ Hypothesis 1 (@ch:hyp1): Phase changes in the two-dimensional
-  Fourier domain of time-lapse migrated images allow inferring sub-wavelength
-  displacements in the lateral, vertical, and diagonal directions, down to
-  scales where amplitude differencing has already failed. An optional
-  Hypothesis 1.5 explores whether local phase gradients
-  $partial phi \/ partial x, thin partial phi \/ partial y$ give an
-  equivalent, simpler alternative.
+/ Hypothesis 1 --- _does it work?_ (@ch:hyp1): Phase changes in the
+  two-dimensional Fourier domain of time-lapse migrated images allow inferring
+  sub-wavelength displacements in the lateral, vertical, and diagonal
+  directions, down to scales where amplitude differencing has already failed.
+  An optional Hypothesis 1.5 explores whether local phase gradients
+  $partial phi \/ partial x, thin partial phi \/ partial y$ give an equivalent,
+  simpler alternative.
 
-/ Hypothesis 2 (@ch:hyp2): Back-propagation migration with sign-bit
-  time-reversal is the most noise-robust technique for time-lapse phase-plane
-  tracking: it suppresses impulsive Laplace noise while Kirchhoff creates
-  false-coherent artefacts and Gazdag adds incoherent speckle.
+/ Hypothesis 2 --- _does it survive noise, and which migration is best?_ (@ch:hyp2): Back-propagation migration with sign-bit time-reversal is the
+  most noise-robust technique for time-lapse phase-plane tracking: it
+  suppresses impulsive Laplace noise while Kirchhoff creates false-coherent
+  artefacts and Gazdag adds incoherent speckle.
 
-/ Hypothesis 3 (@ch:hyp3): The time-lapse phase-plane approach generalises
-  beyond idealised single-scatterer synthetic models to real borehole GPR
-  field data.
+/ Hypothesis 3 --- _does it generalise to the field?_ (@ch:hyp3): The
+  time-lapse phase-plane approach generalises beyond idealised single-scatterer
+  synthetic models to real borehole GPR field data.
 
 == Outline
 
-@ch:litreview reviews the literature this thesis builds on.
-@ch:theory covers the theoretical background (migration algorithms,
-phase-plane shift estimation) and the shared simulation and processing
-methodology, including a validation of the amplitude resolution floor.
+@ch:litreview reviews the literature this thesis builds on, developing the five
+statements above into the arguments that motivate a phase-based approach.
+@ch:theory derives the theoretical background --- the migration algorithms and
+the phase-plane shift-estimation method. @ch:methodology describes the shared
+simulation and processing pipeline that applies it to data, closing with a
+validation of the amplitude resolution floor (@sec:meth-resolution) that the
+phase method is measured against.
 @ch:hyp1 tests Hypothesis 1 (and the optional Hypothesis 1.5) on lateral,
 vertical, and diagonal sub-wavelength translation of a point scatterer.
 @ch:hyp2 tests Hypothesis 2: which migration technique is most robust to
-heavy-tailed Laplace noise, concluding that back-propagation with sign-bit
-time-reversal is the preferred method. @ch:hyp3 tests Hypothesis 3 by
-applying the full pipeline to real borehole GPR field data.
-@ch:discussion integrates the results of all three
-hypotheses into a final answer to the Research Question, and the Summary
-restates the main conclusions.
+heavy-tailed Laplace noise. @ch:hyp3 tests Hypothesis 3 by applying the full
+pipeline to real borehole GPR field data. @ch:discussion integrates the
+results of all three hypotheses into a final answer to the research question,
+and the Summary restates the main conclusions.

@@ -2,21 +2,31 @@
 
 #heading(level: 1, numbering: none, outlined: true)[Abstract]
 
-#draftnote[replace with a 200--300 word abstract once the results chapters are finalised.]
+// Draft abstract --- confirm the headline figures against the final results
+// tables before submission.
 
-#draftnote[Placeholder]
+Ground-penetrating radar (GPR) resolves subsurface structure only down to a
+wavelength-scale floor, so a displacement or material change smaller than a
+fraction of a wavelength cannot be read from a migrated amplitude image ---
+precisely the regime in which time-lapse monitoring of ground movement or
+fluid migration must operate. This thesis develops a phase-based alternative:
+a baseline and a monitor survey are migrated and compared in the
+two-dimensional Fourier domain, where the Fourier shift theorem turns a
+sub-wavelength translation into a linear phase ramp across the cross-spectrum.
+A weighted least-squares fit of that ramp recovers sub-millimetre lateral and
+vertical displacements and, through its intercept, decouples purely geometric
+movement from a change in sub-wavelength material properties such as a fracture
+filling with fluid.
 
-// This thesis investigates the detection of subwavelength displacement and
-// material change in ground-penetrating radar (GPR) time-lapse surveys. Classical
-// migration imaging is shown to be amplitude-limited: point scatterers separated,
-// or displaced, by a fraction of a wavelength cannot be resolved from the migrated
-// amplitude image alone. A 2D Fourier phase-plane shift-estimation method is
-// developed instead, which exploits the Fourier shift theorem applied to the
-// cross-spectrum of baseline and monitor migrated images. A weighted least-squares
-// fit of the cross-spectrum phase recovers sub-millimetre lateral and vertical
-// displacements, and decouples purely geometric movement from a change in
-// sub-wavelength material properties (e.g. a fracture filling with fluid). The
-// method is validated on synthetic gprMax models across three migration
-// algorithms (Kirchhoff, Gazdag phase-shift, and time-reversal back-propagation),
-// across displacement scales from $2 lambda$ down to $1/32 lambda$, under
-// additive noise, and on a more realistic distributed fluid-front scenario.
+The method is tested through three hypotheses. On clean synthetic gprMax data
+--- across three migration algorithms (Kirchhoff, Gazdag phase-shift, and
+time-reversal back-propagation), displacement scales from $2 lambda$ down to
+$1 \/ 32 lambda$, and lateral, vertical, diagonal, and distributed fluid-front
+targets --- the phase-plane fit recovers displacement to a few tenths of a
+millimetre exactly where amplitude differencing has already collapsed. Under a
+realistic Laplace noise model the choice of migration algorithm matters:
+Kirchhoff is the most accurate but manufactures false coherent structure from
+noise alone, while back-propagation with sign-bit time-reversal is the more
+conservative choice. Finally, the full pipeline is applied to real borehole GPR
+field data from a fluid-injection experiment, producing stable,
+cross-technique-corroborated displacement estimates.

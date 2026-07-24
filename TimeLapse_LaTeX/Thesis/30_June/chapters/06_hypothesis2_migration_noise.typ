@@ -2,17 +2,21 @@
 
 = Hypothesis 2: Which Migration Technique Is Best Suited for Noise-Robust Phase-Plane Tracking? <ch:hyp2>
 
-@ch:hyp1 established that phase-plane regression can track sub-wavelength
-displacements on clean, synthetic data. Before the method is used in more
-complex settings, a fundamental question must be answered: does the choice of
-migration algorithm matter when the data are corrupted by noise? This
-chapter repeats all four @ch:hyp1 experiments (Lateral, Vertical, Diagonal,
-FluidFlow) under a realistic Laplace noise model fitted to real GPR field
-data, and finds that migration choice matters substantially, but that no
-single method is unconditionally "most noise-robust": Kirchhoff achieves the
-lowest aggregate displacement error of the three, back-propagation with
-sign-bit time-reversal is the only method that does not manufacture
-spurious coherent structure from noise alone, and Gazdag --- while
+The time-lapse phase-plane method of this thesis recovers a sub-wavelength
+displacement by fitting a plane to the phase of the cross-spectrum of a
+baseline and a monitor migrated image (@ch:theory), the plane's two slopes
+giving the vertical and lateral shift. @ch:hyp1 showed this works on clean
+synthetic data across four experiments --- lateral, vertical, and diagonal
+translation of a point scatterer, and a graded fluid front --- recovering
+displacements well below the amplitude-based resolution floor. Real GPR data,
+though, are never clean. This chapter therefore repeats all four experiments
+under a realistic Laplace noise model fitted to real GPR field data, to answer
+a question the clean study could not: does the choice of migration algorithm
+matter once the data are noisy? Migration choice turns out to matter
+substantially, but no single method is unconditionally "most noise-robust":
+Kirchhoff achieves the lowest aggregate displacement error of the three,
+back-propagation with sign-bit time-reversal is the only method that does not
+manufacture spurious coherent structure from noise alone, and Gazdag --- while
 substantially improved once the target-localisation problem of
 @sec:hyp3-groundtruth-apex is corrected --- remains the least accurate
 overall.
@@ -55,7 +59,7 @@ provided in the Supplementary Material, §S3.5.]
     ),
   ),
   caption: [(a) Noise distribution at the pipeline stage actually sampled to
-    generate every noisy dataset used from §5.2 onward ("7 Constant
+    generate every noisy dataset used from @sec:hyp3-purenoise onward ("7 Constant
     Velocity", pre-gain), with both Laplace and Gaussian fits overlaid; (b)
     the fitted Laplace scale and Gaussian $sigma$ at that stage and, for
     reference, at the final post-gain stage ("9 Crop Samples") --- only the
@@ -553,29 +557,27 @@ target position in both $x$ and $z$ rather than hunted for in the noisy
 envelope, but it remains the least accurate method overall, worst for three
 of the four movement types (all but FluidFlow).
 
-The size of Gazdag's improvement is not uniform across movement types, which
-is itself informative. FluidFlow improves the most dramatically
-($25.6 -> 0.98 "mm"$, @sec:hyp3-fluidflow) --- consistent with a genuine
-localisation failure being the dominant error source there. Lateral and
-Diagonal improve more modestly ($37.9 -> 22.3 "mm"$ and
-$26.2 -> 23.3 "mm"$). Vertical, conversely, gets *worse*
-($26.0 -> 34.5 "mm"$): inspecting the per-scenario table (Supplementary
-Material, §S3.2.3) shows this is driven
-almost entirely by spurious lateral ($#Dx$) error the WLS fit assigns even
-though Vertical's true $#Dx = 0$ by construction (e.g. $-30.4 "mm"$ at
-$1\/8 lambda$, @sec:hyp3-vertical) --- cross-axis leakage that a better
-crop window does not fix. Locating the target correctly is therefore
-necessary but not sufficient to explain Gazdag's noise sensitivity: a
-real, Gazdag-specific weakness remains, most visible as this cross-axis
-leakage on purely-vertical motion. Earlier work (independently, in
-`TimeLapse_Processing.ipynb`) attributed a related streaking artefact in
-Gazdag's noisy migrated images to a numerical property of the phase-shift
-depth-stepping operator rather than the noise's spectral content, and found
-that a raised-cosine low-$#kz$ taper did not resolve it; given how much of
-the earlier "Gazdag versus Kirchhoff/back-propagation" gap in this chapter
-turned out to be explained by target localisation instead, that specific
-diagnosis should be revisited rather than assumed still to hold unchanged
---- left as outstanding work (@sec:hyp3-phase-denoise).
+Locating the target correctly was necessary but not sufficient for Gazdag: it
+removed most of its excess error but left a real, Gazdag-specific weakness
+behind, most visible as cross-axis leakage on purely-vertical motion. The
+uneven size of the improvement across movement types shows this directly.
+FluidFlow improves the most dramatically ($25.6 -> 0.98 "mm"$,
+@sec:hyp3-fluidflow) --- consistent with a genuine localisation failure being
+the dominant error source there --- and Lateral and Diagonal improve more
+modestly ($37.9 -> 22.3 "mm"$ and $26.2 -> 23.3 "mm"$). Vertical, conversely,
+gets *worse* ($26.0 -> 34.5 "mm"$): the per-scenario table (Supplementary
+Material, §S3.2.3) shows this is driven almost entirely by spurious lateral
+($#Dx$) error the WLS fit assigns even though Vertical's true $#Dx = 0$ by
+construction (e.g. $-30.4 "mm"$ at $1\/8 lambda$, @sec:hyp3-vertical) ---
+cross-axis leakage that a better crop window does not fix. Earlier work
+(independently, in `TimeLapse_Processing.ipynb`) attributed a related streaking
+artefact in Gazdag's noisy migrated images to a numerical property of the
+phase-shift depth-stepping operator rather than the noise's spectral content,
+and found that a raised-cosine low-$#kz$ taper did not resolve it; given how
+much of the earlier "Gazdag versus Kirchhoff/back-propagation" gap turned out
+to be explained by target localisation instead, that diagnosis should be
+revisited rather than assumed still to hold --- left as outstanding work
+(@sec:hyp3-phase-denoise).
 
 Kirchhoff's aperture-stacking sums over many traces and partially averages
 the noise down, which now recovers Lateral's, Diagonal's, and FluidFlow's
@@ -590,27 +592,28 @@ $0.7 "mm"$ MAE), likely because its combined 2D $(#Dz, #Dx)$ error norm
 partially cancels axis-wise noise scatter that would otherwise show up as
 pure along-axis error in the Lateral or Vertical cases.
 
-Comparing @tab:h2-mae directly against the clean-data @tab:h1-mae, noise
-degrades every method's accuracy by roughly one to two orders of magnitude
-in the sub-half-wavelength regime, yet the qualitative conclusion of
-@ch:hyp1 survives: at least one method remains accurate to a few tenths of a
-millimetre or better for every movement type, at displacement scales where
-the corresponding amplitude tests (@tab:h2-lat-amp for lateral; the
-Supplementary Material, §S3.2.2, §S3.3.2, §S3.4.2, for Vertical, Diagonal,
-and FluidFlow) show amplitude differencing has already collapsed. Answering Hypothesis 2's question directly: no single method is
-unconditionally "most noise-robust" here. By raw aggregate accuracy,
-Kirchhoff wins clearly ($4.5 "mm"$ mean MAE, roughly $2.5 times$ below
-back-propagation and $4.5 times$ below Gazdag) --- but @sec:hyp3-purenoise
-showed Kirchhoff is also the only method that turns pure noise into
-coherent, wave-like bands that could be misread as real structure, a
-false-positive risk this chapter's MAE metric cannot see because every
-scenario it is computed on contains a genuine target. Back-propagation with
-sign-bit time-reversal trades some of that raw accuracy (a factor of
-$2$--$3$ worse than Kirchhoff on three of four movement types, though still
-the best method for Vertical) for staying diffuse, incoherent speckle on
-pure noise (@sec:hyp3-signbit) rather than manufacturing false structure ---
-the more conservative choice where false positives, not raw displacement
-accuracy, are the primary concern. Gazdag, despite its substantial
-improvement once correctly localised, remains the weakest choice on both
-counts and is not recommended for noisy time-lapse phase-plane tracking by
-either criterion.
+Answering Hypothesis 2's question directly: no single method is
+unconditionally "most noise-robust" here --- the answer depends on what
+"robust" is taken to mean. By raw aggregate accuracy, Kirchhoff wins clearly
+($4.5 "mm"$ mean MAE, roughly $2.5 times$ below back-propagation and
+$4.5 times$ below Gazdag) --- but @sec:hyp3-purenoise showed Kirchhoff is also
+the only method that turns pure noise into coherent, wave-like bands that could
+be misread as real structure, a false-positive risk this chapter's MAE metric
+cannot see because every scenario it is computed on contains a genuine target.
+Back-propagation with sign-bit time-reversal trades some of that raw accuracy
+(a factor of $2$--$3$ worse than Kirchhoff on three of four movement types,
+though still the best method for Vertical) for staying diffuse, incoherent
+speckle on pure noise (@sec:hyp3-signbit) rather than manufacturing false
+structure --- the more conservative choice where false positives, not raw
+displacement accuracy, are the primary concern. Gazdag, despite its substantial
+improvement once correctly localised, remains the weakest choice on both counts
+and is not recommended for noisy time-lapse phase-plane tracking by either
+criterion. Underlying all three verdicts, the qualitative conclusion of
+@ch:hyp1 survives the introduction of noise: comparing @tab:h2-mae against the
+clean-data @tab:h1-mae, noise degrades every method's accuracy by roughly one
+to two orders of magnitude in the sub-half-wavelength regime, yet at least one
+method still recovers every movement type to a few tenths of a millimetre or
+better, at displacement scales where the corresponding amplitude tests
+(@tab:h2-lat-amp for lateral; the Supplementary Material, §S3.2.2, §S3.3.2,
+§S3.4.2, for Vertical, Diagonal, and FluidFlow) show amplitude differencing has
+already collapsed.
