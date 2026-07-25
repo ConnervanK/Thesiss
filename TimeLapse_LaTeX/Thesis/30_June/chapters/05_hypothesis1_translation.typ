@@ -7,25 +7,23 @@ _stationary_ point scatterer fails below roughly half a wavelength of
 separation. This chapter scales that finding to the time-lapse setting: if a
 target moves by a sub-wavelength amount between a baseline and a monitor
 survey, can that motion be inferred? Four synthetic gprMax experiments probe
-this question from different angles, each sweeping a target displacement from
-$2 lambda$ down to $1 \/ 32 lambda$ ($lambda approx 112.6 "mm"$ at the
-$1.5 "GHz"$ centre frequency and pure-ice velocity used throughout):
-
-+ *@sec:hyp1-lateral* --- a point scatterer shifted along the survey line.
-+ *@sec:hyp1-vertical* --- the same point scatterer shifted deeper into the ice.
-+ *@sec:hyp1-diagonal* --- the point scatterer shifted along a combined
-  lateral-and-vertical ($2$:$1$) path.
-+ *@sec:hyp1-fluidflow* --- a graded, spatially-extended wetting-front
-  reflector rather than a point target, testing whether the phase-based
-  method generalises beyond an idealised point scatterer.
+this question, each sweeping a target displacement from $2 lambda$ down to
+$1 \/ 32 lambda$ ($lambda approx 112.6 "mm"$ at the $1.5 "GHz"$ centre
+frequency and pure-ice velocity used throughout). Two are developed in full:
+*lateral* translation of a point scatterer (@sec:hyp1-lateral), the worked
+example through which the diagnostics are introduced, and a graded
+*fluid-flow* front (@sec:hyp1-fluidflow), the more realistic target relevant
+to the field data of @ch:hyp3. Two further directions --- *vertical*
+(@sec:hyp1-vertical) and *diagonal* (@sec:hyp1-diagonal) translation of the
+same point scatterer --- confirm the finding and are reported alongside the
+cross-movement comparison in @sec:hyp1-summary.
 
 For every experiment, the answer is the same: amplitude differencing fails
 below the same resolution floor found in @sec:meth-resolution, but examining
 the _phase change_ in the two-dimensional Fourier domain of the migrated
 images (@ch:theory) recovers the displacement accurately down to the smallest
 scale tested. @sec:hyp1-workflow defines the shared processing and analysis
-pipeline used identically across all four experiments; @sec:hyp1-summary then
-collects the resulting displacement errors into one master comparison.
+pipeline used identically across all four experiments.
 
 #para-head[Hypothesis 1.] Can multi-dimensional phase-plane regression infer
 lateral, vertical, and diagonal subwavelength displacements from time-lapse
@@ -234,79 +232,12 @@ are already accurate at $1\/2 lambda$ (within $0.04 "mm"$), while
 back-propagation's fit degrades at that single scale ($-92.44 "mm"$) before
 also becoming sub-millimetre-accurate from $1\/4 lambda$ downward.
 
-== Vertical Movement <sec:hyp1-vertical>
-
-This section mirrors @sec:hyp1-lateral, replacing lateral displacement with
-_vertical_ (depth) displacement. The two directions are not expected to
-behave identically: @sec:th-duality showed that a migrated image separates
-lateral spatial frequencies like a prism but does not separate vertical
-ones, so the results below are an important point of comparison for
-@sec:hyp1-lateral.
-
-A single PEC cylinder ($r = 28 "mm"$) sits at lateral position $x = 2.0 "m"$
-and is displaced _downward_ from its baseline depth ($0.676 "m"$) across six
-scenarios, from $1 lambda$ down to $1 \/ 32 lambda$, using the same domain
-and grid as @sec:hyp1-lateral.
-
-#supp-note[The forward-model setup (domain, scenario table, target depths),
-background-subtracted B-scans, migration-comparison figure, Rayleigh-criterion
-ratio table and PSF comparison, and phase-plane WLS displacement-error table
-and shift-estimation diagnostics for this scenario set are all provided in
-the Supplementary Material, §S2.2. Individual per-method migrated images and
-time-lapse differences, zoomed around the scatterer, are given in
-@app:hyp1-methods.]
-
-Vertical movement shows the phase estimator's advantage is concentrated
-specifically where amplitude has already failed, not as a blanket improvement
-across the whole sweep. Unlike the lateral case, amplitude differencing here
-stays resolvable a full octave lower: every method's Rayleigh ratio remains
-above $1$ down to $1\/4 lambda$ (minimum $1.590$), only dropping below $1$ at
-$1\/8 lambda$, before collapsing ($<0.33$ for all methods) by $1\/32 lambda$
-(compare @tab:h1-lat-amp). The phase-plane fit only overtakes amplitude within
-this narrower failure band: it is already accurate ($<=0.03 "mm"$ error) from
-$1\/4 lambda$ downward, but at $1 lambda$ and $1\/2 lambda$ --- where amplitude
-differencing remains comfortably resolvable --- the phase fit is still wrapped
-and inaccurate.
-
-== Diagonal Movement <sec:hyp1-diagonal>
-
-The third translation direction combines the previous two: the scatterer
-moves simultaneously laterally and vertically, along a fixed $2$:$1$
-diagonal ($#Dx = 2 thin #Dz$ in every scenario), so that all scenarios lie on
-the same line through the baseline position. A single PEC cylinder at
-$x = 2.0 "m"$, baseline depth $0.676 "m"$, is displaced diagonally across
-five scenarios, using the same domain and grid as
-@sec:hyp1-lateral and @sec:hyp1-vertical.
-
-#supp-note[The forward-model setup (domain, scenario table, target
-positions), background-subtracted B-scans, migration-comparison figure,
-Rayleigh-criterion ratio table and PSF comparison, and phase-plane WLS
-displacement-error tables ($#Dz$ and $#Dx$) and shift-estimation
-diagnostics for this scenario set are all provided in the Supplementary
-Material, §S2.3. Individual per-method migrated images and time-lapse
-differences, zoomed around the scatterer, are given in @app:hyp1-methods.]
-
-The diagonal amplitude ratio crosses below $1$ at Scenario 3
-($1\/4 lambda_x$, $1\/8 lambda_z$) for Gazdag and Kirchhoff, and remains just
-above $1$ for back-propagation at that scenario ($1.266$) before also
-collapsing by Scenario 4 --- roughly the same combined-displacement failure
-scale as the lateral case (@tab:h1-lat-amp), not the looser vertical floor
-of @sec:hyp1-vertical. The phase-plane fit tracks this failure point
-closely: Scenarios 1 and 2 remain wrapped for every method, as in the
-lateral and vertical cases, but from Scenario 3 downward Gazdag and
-Kirchhoff recover both $#Dz$ and $#Dx$ to within $0.02 "mm"$ (back-propagation
-follows from Scenario 4, with a single $-1.51 "mm"$ outlier in $#Dz$ at
-Scenario 3). The recovered $#Dz$/$#Dx$ ratio at Scenarios 3--5 matches the
-known $#Dx = 2 #Dz$ scenario geometry to well within the reported error,
-confirming the 2D WLS fit correctly separates the two simultaneous
-displacement components.
-
 == Fluid Flow <sec:hyp1-fluidflow>
 
-The three translation studies above all move a rigid point scatterer; this
-final experiment instead repeats the clean-data comparison for a target that
-is directly relevant to the real fluid-injection field data of @ch:hyp3 ---
-a _graded wetting zone_ rather than a discrete PEC cylinder. The domain, grid,
+Where @sec:hyp1-lateral moved a rigid point scatterer, this second experiment
+repeats the comparison for the more realistic target that motivates the field
+study of @ch:hyp3 --- a _graded wetting zone_ rather than a discrete PEC
+cylinder. The domain, grid,
 and centre frequency match @sec:hyp1-lateral exactly ($4.0 times 1.0 "m"$,
 $f_c = 1.5 "GHz"$, $lambda = 112.6 "mm"$), but the moving target is a
 $7$-step graded permittivity transition (box width $11.3 "mm"$, total
@@ -366,7 +297,37 @@ amplitude differencing has already failed. The graded, spatially-extended
 front is therefore recovered by the same phase-plane approach used for the
 point scatterers above, despite its inherently broader PSF.
 
-== Summary of the Results <sec:hyp1-summary>
+== Results across Movement Types <sec:hyp1-summary>
+
+The lateral worked example (@sec:hyp1-lateral) and the fluid-flow front
+(@sec:hyp1-fluidflow) are joined by two confirmatory directions --- vertical
+and diagonal translation of the same point scatterer --- before all four are
+compared side by side.
+
+=== Vertical <sec:hyp1-vertical>
+
+Displacing the same point scatterer in depth rather than laterally confirms the
+phase-plane finding, with one direction-specific nuance predicted by
+@sec:th-duality. Because a migrated image does not separate _vertical_ spatial
+frequencies the way it separates lateral ones, vertical amplitude differencing
+stays resolvable a full octave lower --- every method's Rayleigh ratio holds
+above $1$ down to $1\/4 lambda$, only failing between $1\/4 lambda$ and
+$1\/8 lambda$, against $1\/2 lambda$ for the lateral case. The phase
+estimator's advantage window is correspondingly narrower, but within it the fit
+is again accurate to $<=0.03 "mm"$ from $1\/4 lambda$ downward (Supplementary
+Material, §S2.2).
+
+=== Diagonal <sec:hyp1-diagonal>
+
+Moving the scatterer along a combined $2$:$1$ lateral-and-vertical path
+($#Dx = 2 #Dz$) confirms that the 2D fit separates two simultaneous components
+correctly: from Scenario 3 downward the recovered $#Dz$/$#Dx$ ratio matches the
+known $#Dx = 2 #Dz$ geometry to within the reported error, with Gazdag and
+Kirchhoff accurate to $0.02 "mm"$ on both axes. The combined displacement
+collapses amplitude at roughly the lateral scale, not the looser vertical one
+(Supplementary Material, §S2.3).
+
+=== Cross-Movement Comparison
 
 @tab:h1-lat-phase gives the full per-scenario phase-plane error for the
 lateral case, in millimetres with the equivalent percentage of the true

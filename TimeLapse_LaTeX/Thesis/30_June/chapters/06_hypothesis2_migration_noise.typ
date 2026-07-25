@@ -400,50 +400,6 @@ sub-half-wavelength regime ($+6.2$ to $-32.9 "mm"$ from $1\/4 lambda$ to
 $1\/32 lambda$), though see @sec:hyp3-summary for how its aggregate accuracy
 compares once every movement type is combined.
 
-== Noisy Vertical Movement <sec:hyp3-vertical>
-
-The vertical displacement sweep of @sec:hyp1-vertical
-is repeated under the same Laplace noise, for all three migration
-algorithms, using sign-bit time-reversal for the noisy back-propagation run.
-
-#supp-note[The migration-comparison figure, the Rayleigh-criterion ratio
-table and zoomed PSF comparison (compare the clean-data version in
-Supplementary Material §S2.2), and the per-scenario phase-plane WLS
-displacement-error table and shift-estimation diagnostics for this _noisy_
-scenario set are all provided in the Supplementary Material, §S3.2.]
-
-As in the clean case, vertical amplitude differencing stays resolvable
-comfortably below $1\/4 lambda$ for every method, only crossing below $1$
-between $1\/4 lambda$ and $1\/8 lambda$ --- noise barely affects this floor.
-Below it, the phase-plane fit separates the three methods clearly: Kirchhoff
-is now the most consistent (within $0.08 "mm"$ from $1\/4 lambda$
-downward), back-propagation close behind (within $0.82 "mm"$), while Gazdag
-remains markedly worse ($-2.93 "mm"$ to a $+6.95 "mm"$ outlier at
-$1\/16 lambda$) --- clearly improved from the $24$--$25 "mm"$ errors of an
-earlier, noisy-envelope-search version of this pipeline, but still the
-least accurate method at every sub-half-wavelength scenario.
-
-== Noisy Diagonal Movement <sec:hyp3-diagonal>
-
-The diagonal displacement sweep of @sec:hyp1-diagonal
-is likewise repeated under Laplace noise, for all
-three migration algorithms, again using sign-bit time-reversal for the noisy
-back-propagation run.
-
-#supp-note[The migration-comparison figure, the Rayleigh-criterion ratio
-table and zoomed PSF comparison (compare the clean-data version in
-Supplementary Material §S2.3), and the per-scenario phase-plane WLS
-displacement-error tables ($#Dz$ and $#Dx$) and shift-estimation
-diagnostics for this _noisy_ scenario set are all provided in the
-Supplementary Material, §S3.3.]
-
-The diagonal amplitude ratio behaves almost identically to the clean case.
-Kirchhoff is the most accurate phase-plane method from Scenario 3 onward
-(within $0.13 "mm"$ on both axes); back-propagation is close behind (within
-$1.05 "mm"$); Gazdag again carries a persistent tens-of-millimetre error
-through Scenarios 3 and 4 (up to $-41.00 "mm"$ in $#Dx$ at Scenario 4),
-only approaching the other two methods' accuracy at Scenario 5.
-
 == Noisy Fluid Flow <sec:hyp3-fluidflow>
 
 The clean-data fluid-flow experiment of @sec:hyp1-fluidflow
@@ -471,7 +427,36 @@ $1\/32 lambda$ ($0.52$--$1.27 "mm"$) --- still sub-millimetre-to-low-single-digi
 accurate in absolute terms, but the only movement type where both Kirchhoff
 and Gazdag now outperform it.
 
-== Summary of the Results <sec:hyp3-summary>
+== Results across Movement Types <sec:hyp3-summary>
+
+The noisy lateral worked example (@sec:hyp3-lateral) and the fluid-flow front
+(@sec:hyp3-fluidflow) are joined by the vertical and diagonal directions ---
+which, under noise, are where the three migration methods separate most clearly
+--- before all four are compared side by side.
+
+=== Vertical <sec:hyp3-vertical>
+
+Vertical is the one movement type where the method ranking inverts. Repeating
+the depth sweep under noise, Kirchhoff is the most consistent
+scenario-by-scenario below $1\/4 lambda$ (within $0.08 "mm"$) with
+back-propagation close behind (within $0.82 "mm"$), yet in aggregate mean
+absolute error back-propagation is the single most accurate method here
+($13.4 "mm"$ against Kirchhoff's $17.5 "mm"$) --- the only movement type for
+which it beats Kirchhoff. Gazdag is markedly worse ($-2.93 "mm"$ to a
+$+6.95 "mm"$ outlier at $1\/16 lambda$), the cross-axis leakage it assigns to
+purely-vertical motion being its defining weakness under noise (Supplementary
+Material, §S3.2).
+
+=== Diagonal <sec:hyp3-diagonal>
+
+The combined $2$:$1$ path under noise reproduces the clean-data ranking:
+Kirchhoff is the most accurate from Scenario 3 onward (within $0.13 "mm"$ on
+both axes), back-propagation close behind (within $1.05 "mm"$), and Gazdag
+again carries a persistent tens-of-millimetre error through Scenarios 3--4 (up
+to $-41.00 "mm"$ in $#Dx$), only approaching the others at Scenario 5
+(Supplementary Material, §S3.3).
+
+=== Cross-Movement Comparison
 
 @tab:h2-lat-phase and @tab:h2-lat-phase-pct give the full per-scenario noisy
 phase-plane error for the lateral case, in millimetres and as a percentage
