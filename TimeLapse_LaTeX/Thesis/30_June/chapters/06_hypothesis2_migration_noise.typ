@@ -92,9 +92,11 @@ like a coherent, scatterer-like focus, every noisy result elsewhere in this
 chapter carries a false-positive risk that must be accounted for.
 
 #figure(
-  img("H2_003_Migrating_Pure_Noise_no_scatterers_no_signal_--_Kirchhoff_vs.png"),
+  img("H2_003_Migrating_Pure_Noise_no_scatterers_no_signal_--_Kirchhoff_Ga.png"),
   caption: [Migrating pure noise (no scatterers, no signal): the input
-    pure-noise B-scan, its Kirchhoff migration, and its Gazdag migration.],
+    pure-noise B-scan, its Kirchhoff migration, its Gazdag migration, and the
+    focus-time snapshot of its back-propagated wavefield (default,
+    peak-normalised excitation).],
 ) <fig:h2-purenoise-kg>
 
 *Result: the three methods do not fail the same way.* Kirchhoff turns pure
@@ -109,17 +111,12 @@ two algorithms (@sec:th-migration): Kirchhoff's spatial stacking manufactures
 apparent coherence from nothing, while Gazdag's frequency-domain downward
 continuation does not.
 
-#figure(
-  img("H2_004_Back-propagation_of_pure_noise_--_peak-normalised_excitation.png"),
-  caption: [Back-propagation of pure noise, default peak-normalised
-    excitation: focus-time snapshot of the back-propagated wavefield.],
-) <fig:h2-purenoise-backprop>
-
-With no scatterer present, there is no true location for either excitation
-scheme to focus on, so the back-propagated wavefield stays diffuse speckle
-throughout the domain rather than collapsing into an obvious spurious bright
-spot --- unlike Kirchhoff's coherent bands above, there is no clearly visible
-artefact here to point at. What does stand out is the amplitude scale:
+With no scatterer present, there is also no true location for either
+back-propagation excitation scheme to focus on, so the back-propagated
+wavefield (rightmost panel) stays diffuse speckle throughout the domain
+rather than collapsing into an obvious spurious bright spot --- unlike
+Kirchhoff's coherent bands, there is no clearly visible artefact here to
+point at. What does stand out is the amplitude scale:
 peak-normalised excitation reaches only $approx 116 space 600 "V/m"$, since
 only each trace's single largest sample is normalised to $plus.minus 1$ and
 every other noise sample stays small. @sec:hyp3-signbit revisits this with
@@ -135,7 +132,7 @@ depth) converted to an equivalent frequency via $f = v_"ice" k$ so all four
 curves share one physically comparable axis --- checks this directly.
 
 #figure(
-  img("H2_005_Migrating_Pure_Noise_--_Spectral_Content_by_Method__axes_res.png", width: 80%),
+  img("H2_004_Migrating_Pure_Noise_--_Spectral_Content_by_Method__axes_res.png", width: 80%),
   caption: [Spectral content of migrated pure noise by method: the input
     noise floor, Kirchhoff migration, Gazdag migration, and peak-normalised
     back-propagation, each averaged into one frequency spectrum (axes
@@ -191,30 +188,36 @@ default peak-normalised excitation throughout, since they have no noise to
 suppress; every noisy back-propagation result in this chapter uses sign-bit
 excitation instead.
 
+#page(flipped: true)[
 #figure(
-  img("H2_006_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Lat.png", width: 90%),
-  caption: [Sign-bit time-reversed excitation for the noisy lateral dataset:
-    B-scans (top) and their frequency spectra (bottom), every displacement
-    scenario.],
+  subfigs(cols: 1,
+    img("H2_005_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Lat.png"),
+    img("H2_006_Back-Propagation_of_a_Signal-Bearing_B-scan_Lateral_Baseline.png", width: 70%),
+  ),
+  caption: [Sign-bit time-reversal, Lateral, Noisy: (a) original noisy
+    B-scans, sign-bit B-scans, and their respective frequency spectra, for
+    every displacement scenario; (b) back-propagation of a real,
+    signal-bearing B-scan (Baseline scatterer, noisy) --- default
+    peak-normalised excitation versus sign-bit excitation, focus-time
+    snapshots side by side.],
 ) <fig:h2-signbit-excitation>
-
-#figure(
-  img("H2_007_Back-Propagation_of_Pure_Noise_--_Peak-Normalised_vs_Sign-Bi.png"),
-  caption: [Back-propagation of pure noise, peak-normalised versus sign-bit
-    excitation: focus-time snapshots side by side.],
-) <fig:h2-signbit-purenoise>
+]
 
 Sign-bit excitation reaches $approx 713 space 100 "V/m"$, about $6 times$
 larger than peak-normalised's, since forcing every sample (not just each
 trace's single peak) to $plus.minus 1$ injects far more total energy into
-the medium --- but the wavefield itself still stays diffuse speckle in both
-panels of @fig:h2-signbit-purenoise, exactly as in @sec:hyp3-purenoise ---
-pure noise has no true target to focus on, so this idealised zero-signal test
-cannot visually demonstrate whether sign-bit suppresses spurious focusing
-the way it can on real, signal-bearing data. The actual, quantitative
-evidence that sign-bit back-propagation is noise-robust comes from
-@sec:hyp3-summary's master MAE table on the real noisy studies below, where
-back-propagation is one of the two most accurate methods overall.
+the medium. Unlike the idealised, zero-signal test of @sec:hyp3-purenoise,
+both excitation schemes here have a real target --- the Baseline scatterer
+--- to focus on, so @fig:h2-signbit-excitation (b) is the direct,
+signal-bearing analogue of that pure-noise comparison: compare how tightly
+each panel's energy collapses onto the true scatterer position rather than
+staying diffuse artefact, as it did for pure noise. #draftnote[Describe what
+the regenerated focus-frame comparison actually shows once the peak-norm
+back-propagation gprMax run has completed --- see the run instructions
+printed by the corresponding Hypothesis_2.ipynb cell.] The actual,
+quantitative evidence that sign-bit back-propagation is noise-robust comes
+from @sec:hyp3-summary's master MAE table on the real noisy studies below,
+where back-propagation is one of the two most accurate methods overall.
 
 == Extra Processing Steps in the Phase Domain to Remove Noise <sec:hyp3-phase-denoise>
 
@@ -228,7 +231,7 @@ sub-wavelength shift ($1\/32 lambda approx 3.5 "mm"$) against Baseline ---
 the scenario with the weakest signal relative to the noise floor.
 
 #figure(
-  img("H2_008_Chapter_54_--_OLS_vs_WLS_Phase-Plane_Fitting_on_Noisy_Data.png"),
+  img("H2_007_Chapter_54_--_OLS_vs_WLS_Phase-Plane_Fitting_on_Noisy_Data.png"),
   caption: [OLS (unweighted, top row) versus WLS (weighted, bottom row)
     phase-plane fitting on the same noisy cross-spectrum: cross-spectrum
     phase, cross-spectrum power, the fitted plane, and two 1D cross-sections
@@ -239,22 +242,22 @@ the scenario with the weakest signal relative to the noise floor.
 Both fits see exactly the same masked cross-spectrum bins (the scatter
 points in the two cross-section panels are identical between rows); only
 the weight each bin is given during the least-squares solve differs. The
-true lateral shift is $+4.000 "mm"$; OLS recovers $+13.865 "mm"$
-($9.865 "mm"$ error) and WLS recovers $+14.239 "mm"$ ($10.239 "mm"$ error)
---- at this single, deliberately worst-case scenario, WLS does *not* reduce
-the displacement error relative to OLS. What the cross-section panels make
-visible is the *mechanism*, not a guaranteed accuracy win in every case:
-the bright (high-weight) points visibly cluster closer to the fitted line
-than the dim (low-weight, noise-dominated) points in both rows, confirming
-that $|X S|$-weighting does discount incoherent bins as intended --- but for
-a scenario this deep in the sub-wavelength, high-noise regime, both fits are
-already dominated by the same handful of highest-power bins, so
-down-weighting the remaining low-power ones barely moves the solution.
-WLS's benefit over OLS is therefore not visible as a blanket accuracy gain
-at every scenario; @sec:hyp3-summary's master MAE table (computed with WLS
-throughout this chapter, consistent with @ch:hyp1) remains the relevant
-comparison for overall noise robustness across methods, not this single
-worst-case OLS/WLS pair.
+true lateral shift is $+4.000 "mm"$.
+#draftnote[Fill in the OLS/WLS estimates and errors below once
+Hypothesis_2.ipynb has been re-run with the corrected scenario index (§5.4
+previously fit the $1\/8 lambda$ monitor image against the $1\/32 lambda$
+truth by mistake; it now fits the $1\/32 lambda$ image against the $1\/32
+lambda$ truth, matching the "smallest, hardest shift" described above).]
+OLS recovers *[TBC]* mm (*[TBC]* mm error) and WLS recovers *[TBC]* mm
+(*[TBC]* mm error). What the cross-section panels make visible is the
+*mechanism*: the bright
+(high-weight) points visibly cluster closer to the fitted line than the dim
+(low-weight, noise-dominated) points in both rows, confirming that $|X
+S|$-weighting does discount incoherent bins as intended.
+@sec:hyp3-summary's master MAE table (computed with WLS throughout this
+chapter, consistent with @ch:hyp1) remains the relevant comparison for
+overall noise robustness across methods, not this single scenario's
+OLS/WLS pair.
 
 == Locating the Target Under Noise <sec:hyp3-groundtruth-apex>
 
@@ -298,7 +301,7 @@ time-reversal (@sec:hyp3-signbit) for back-propagation.
 === Migration Results <sec:hyp3-lat-migration>
 
 #figure(
-  img("H2_009_Lateral_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_Am.png", width: 85%),
+  img("H2_008_Lateral_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_Am.png", width: 85%),
   caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
     for all three migration algorithms, lateral time-lapse study, _noisy_
     data.],
@@ -497,8 +500,9 @@ down the displacement sweep) than in the clean-data map, and Gazdag's
 phase-error curve in particular now sits noticeably higher than the other
 two methods' throughout.
 
+#page(flipped: true)[
 #figure(
-  img("H2_029_Hypothesis_2_--_Detectability_Map_Noisy.png"),
+  img("H2_028_Hypothesis_2_--_Detectability_Map_Noisy.png"),
   caption: [Detectability map, _noisy_ data (compare @fig:h1-detectability):
     top row, Rayleigh-criterion amplitude ratio (threshold $1$); bottom row,
     absolute phase-plane WLS displacement error as a percentage of the true
@@ -508,6 +512,7 @@ two methods' throughout.
     @tab:h2-lat-amp/@tab:h2-lat-phase (Lateral, in the main text) and the
     Supplementary Material, §S3.2--§S3.4 (Vertical, Diagonal, FluidFlow).],
 ) <fig:h2-detectability>
+]
 
 @fig:h2-dumbbell puts every (movement, method) pair's clean-data and
 noisy-data mean absolute phase-plane error, as a percentage of the true
@@ -517,8 +522,9 @@ in one picture instead of two separate tables. Background shading groups
 the twelve (movement, method) rows by movement type, since otherwise the
 plain row list is hard to scan at a glance.
 
+#page(flipped: true)[
 #figure(
-  img("H2_030_Hypothesis_2_--_Clean_vs_Noisy_MAE_Dumbbell_Plot.png"),
+  img("H2_029_Hypothesis_2_--_Clean_vs_Noisy_MAE_Dumbbell_Plot.png"),
   caption: [Clean-versus-noisy mean absolute phase-plane displacement error,
     as a percentage of the true displacement, for every movement type and
     migration method: circle marker = clean data (@tab:h1-mae, @ch:hyp1),
@@ -527,6 +533,7 @@ plain row list is hard to scan at a glance.
     group rows by movement type (Lateral, Vertical, Diagonal, FluidFlow).
     Log-scaled horizontal axis.],
 ) <fig:h2-dumbbell>
+]
 
 With the localisation fix of @sec:hyp3-groundtruth-apex applied uniformly to
 all three methods, Kirchhoff is now the most accurate method for three of

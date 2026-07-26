@@ -300,21 +300,25 @@ sub-wavelength fracture filling with fluid) in the intercept $c$, cleanly
 separated from the geometric shift $(#Dz, #Dx)$ --- the derivation of this
 decoupling is given in @sec:th-material-change.
 
-@fig:phaseplane-schematic summarises the full pipeline derived above: a
-baseline and monitor image are Fourier transformed, their cross-spectrum
-isolates a linear phase ramp via the shift theorem of
+@fig:phaseplane-schematic summarises the full pipeline derived above on a
+real worked example --- Gazdag-migrated Lateral movement data at the
+smallest scale tested, $1\/32 lambda$ (@ch:hyp1) --- rather than a synthetic
+toy scatterer: a baseline and monitor image are Fourier transformed, their
+cross-spectrum isolates a linear phase ramp via the shift theorem of
 @sec:th-fourier-shift, and the weighted least-squares fit of @sec:th-wls
 recovers the sub-wavelength displacement from that ramp's slope.
 
 #figure(
-  img("RES_018_Phase-Plane_Method__Conceptual_Workflow.png"),
-  caption: [Conceptual overview of the phase-plane shift-estimation
-    pipeline, illustrated on a synthetic toy scatterer: (a) baseline
-    image; (b) monitor image, displaced by a sub-wavelength fraction of
-    $lambda$; (c) cross-spectrum phase, a linear ramp whose slope encodes
-    the displacement (@sec:th-cross-spectrum); (d) the weighted
-    least-squares plane fit recovering the displacement from that slope
-    (@sec:th-wls).],
+  img("H1_038_Phase-Plane_Workflow_--_Gazdag_Lateral_132lambda.png"),
+  caption: [Phase-plane shift-estimation pipeline on a real worked example
+    (Gazdag migration, Lateral movement, $1\/32 lambda$, @ch:hyp1). Top row:
+    (a) migrated baseline image; (b) migrated monitor image; (c) their
+    difference. Bottom row: (d) cross-spectrum phase, opaque inside and
+    transparent outside the fitting mask ($|#XS| > 10%$ of its peak and
+    $|#kz|, |#kx| < 1.4 k_(z c)$, @sec:th-mask-weight); (e) cross-spectrum
+    energy $|#XS|$, with the same mask outlined; (f) the weighted
+    least-squares plane fit along $#kx$ (@sec:th-wls), points coloured by
+    fit weight $|#XS|$.],
 ) <fig:phaseplane-schematic>
 
 == Space-Wavenumber Duality: Lateral versus Vertical Asymmetry <sec:th-duality>

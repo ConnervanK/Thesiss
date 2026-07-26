@@ -142,18 +142,20 @@ in a $4.0 times 1.0 "m"$ pure-ice domain ($eps_r = 3.15$).
     depth is fixed ($#Dz = 0$), swept from $2 lambda$ down to $1\/32 lambda$.],
 ) <fig:h1-lat-setup>
 
-=== Raw and Processed B-scans, and Migration Results <sec:hyp1-lat-bscans>
+=== Migration Results <sec:hyp1-lat-bscans>
 
+The raw and background-subtracted B-scans follow the standard conditioning
+pipeline of @sec:meth-conditioning, already illustrated in @ch:methodology
+(@fig:res-bscans); @fig:tl-summary-amp shows the resulting time-lapse
+migration comparison directly.
+
+#page(flipped: true)[
 #figure(
-  subfigs(cols: 1,
-    img("H1_003_Lateral_Movement_--_Background-Subtracted_B-Scans.png"),
-    img("H1_004_Lateral_--_TimeLapse_Migration_Comparison_Clean_--_Signed_Am.png", width: 95%),
-  ),
-  caption: [(a) Background-subtracted B-scans for the lateral time-lapse
-    study, all eight scenarios; (b) signed time-lapse-difference amplitude
-    (monitor-minus-baseline) for all three migration algorithms, clean
-    data.],
+  img("H1_004_Lateral_--_TimeLapse_Migration_Comparison_Clean_--_Signed_Am.png"),
+  caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
+    for all three migration algorithms, clean data, all eight scenarios.],
 ) <fig:tl-summary-amp>
+]
 
 Individual per-method migrated images and time-lapse differences, zoomed
 around the scatterer, are given in @app:hyp1-methods.
@@ -369,6 +371,7 @@ curves cross below $1$, visually confirming that phase overtakes amplitude
 precisely where amplitude differencing gives out, for every movement type
 tested.
 
+#page(flipped: true)[
 #figure(
   img("H1_037_Hypothesis_1_--_Detectability_Map_Amplitude_vs_Phase.png"),
   caption: [Detectability map, clean data: top row, Rayleigh-criterion
@@ -380,6 +383,7 @@ tested.
     main text) and the Supplementary Material, §S2.2--§S2.4 (Vertical,
     Diagonal, FluidFlow).],
 ) <fig:h1-detectability>
+]
 
 Two patterns stand out. First, for every point-scatterer geometry
 (Lateral, Vertical, Diagonal), at least one migration method recovers the

@@ -51,7 +51,7 @@ Every raw B-scan is processed identically before migration:
 + *Tapering and $t_0$ alignment.* An exponential decay taper suppresses
   late-arriving energy, a cosine end-taper removes hyperbola tails at the edge
   of the migration aperture, and a static shift aligns the surface reflection
-  to $t = 0$ (e.g. @fig:res-taper).
+  to $t = 0$ (e.g. @fig:res-bscans).
 
 + *Noise injection (where stated).* @ch:hyp2 contaminates the conditioned
   B-scan with synthetic Laplace-distributed noise at $10%$ of the signal
@@ -132,28 +132,27 @@ $t_0 = 0.943 "ns"$, shown in the Supplementary Material, §S1.1.
 #supp-note[The Ricker source wavelet used throughout this thesis is shown in
 the Supplementary Material, §S1.1.]
 
-@fig:res-bscans shows the simulated zero-offset B-scans before and after
-background subtraction, and @fig:res-taper the effect of the standard
-tapering and $t_0$-shift conditioning of @sec:meth-conditioning on the
-$2 lambda$ separation scenario.
+@fig:res-bscans shows the full signal-conditioning pipeline of
+@sec:meth-conditioning on the $2 lambda$ separation scenario: the simulated
+zero-offset B-scans before and after background subtraction, and the effect
+of tapering and the $t_0$ shift on both a single trace and the complete
+B-scan.
 
 #figure(
   subfigs(cols: 1,
     img("RES_004_GPR_B-Scans__Background_and_Separation_Models.png"),
     img("RES_005_GPR_B-Scans__Background_Subtracted.png"),
-  ),
-  caption: [Raw zero-offset B-scans for the resolution validation, before (a)
-    and after (b) background subtraction.],
-) <fig:res-bscans>
-
-#figure(
-  subfigs(cols: 1,
     img("RES_006_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png"),
     img("RES_007_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png"),
   ),
-  caption: [Effect of tapering and the $t_0$ shift on the $2 lambda$ dataset:
-    (a) a single representative trace; (b) the complete B-scan.],
-) <fig:res-taper>
+  caption: [Signal-conditioning pipeline for the resolution validation's
+    $2 lambda$ dataset (@sec:meth-conditioning): (a) raw zero-offset B-scans,
+    background and separation models; (b) after background subtraction; (c)
+    effect of tapering and the $t_0$ shift on a single representative trace;
+    (d) the complete B-scan after tapering and the $t_0$ shift. Dashed lines
+    in (a)--(b) mark the true baseline/monitor scatterer positions, the same
+    convention used in @fig:res-psf.],
+) <fig:res-bscans>
 
 #supp-note[The individual migrated image for every separation scenario, for
 Kirchhoff, Gazdag, and back-propagation migration respectively (zoomed
@@ -169,8 +168,9 @@ the shaded band marks the FWHM measured once from the widest ($2 lambda$)
 separation, where the two scatterers' responses do not yet overlap, and the
 dashed lines mark the true position of each scatterer.
 
+#page(flipped: true)[
 #figure(
-  subfigs(cols: 2,
+  subfigs(cols: 1,
     img("RES_016_Resolution_Study_--_Migration_Comparison_f_c15_GHz_aperture4.png"),
     img("RES_017_Resolution_Study_--_PSF_Zoom_Baseline_vs_Monitor.png"),
   ),
@@ -181,6 +181,7 @@ dashed lines mark the true position of each scatterer.
     ($2 lambda$) FWHM at each true scatterer position; dashed = true
     scatterer positions.],
 ) <fig:res-psf>
+]
 
 All three migration algorithms collapse the two scatterer hyperbolae into
 distinguishable amplitude peaks for separations down to roughly half a
