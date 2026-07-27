@@ -968,7 +968,7 @@ def wls_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
                          roi_px=None, data_pad=8, taper='edge', tukey_alpha=0.15,
                          kz_band_fac=0.5, kx_band_fac=2.0, amp_thr=0.20, wls_pow=1,
                          pad_fac=10, force_dz_zero=False, mask=None,
-                         return_diagnostics=False):
+                         pos_kz_only=True, return_diagnostics=False):
     """
     Weighted least-squares (WLS) cross-spectrum phase-plane fit -- the displacement
     estimator behind every ROI-workflow strategy in FieldData_Playground.ipynb
@@ -1030,8 +1030,26 @@ def wls_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
         If True, fit only (dx_est, phi_0) -- for a known lateral-only displacement.
     mask : ndarray (bool) or None
         Explicit k-space mask over the (padded) KZ/KX grid. If given, the fit is
-        restricted to exactly these cells and kz_band_fac/kx_band_fac/amp_thr are
-        ignored entirely (manual picking).
+        restricted to exactly these cells and kz_band_fac/kx_band_fac/amp_thr/
+        pos_kz_only are ignored entirely (manual picking).
+    pos_kz_only : bool
+        If True (default), the automatic mask additionally requires KZ > 0.
+        base/mon are real-valued, so XS = FFT(base)*conj(FFT(mon)) is exactly
+        Hermitian: XS(-kz,-kx) = conj(XS(kz,kx)), i.e. phi(-kz,-kx) = -phi(kz,kx).
+        The symmetric band |KZ| < kz_band_fac*kz_cent therefore always admits a
+        point cloud together with its exact mirror through the origin. Fitting
+        phi = kz*dz + kx*dx + phi_0 through both at once forces a single shared
+        phi_0 onto data that actually needs phi_0 and -phi_0 on the two halves;
+        the least-squares fit resolves that conflict by driving phi_0 towards
+        zero and biasing the fitted slope (dz_est/dx_est) to compensate -- i.e.
+        it averages the tangent between the two mirrored point clouds instead of
+        fitting either one correctly. Restricting to KZ > 0 keeps only one
+        physical point cloud (the positive-frequency one) and removes its
+        Hermitian mirror, eliminating that bias. Only kz_cent's carrier axis
+        (KZ) needs this restriction -- KX is not itself a Hermitian-paired
+        frequency axis once KZ's sign is fixed, so kx_band_fac's range is left
+        symmetric. Ignored if `mask` is given. Set False to recover the old
+        symmetric-band behaviour.
     return_diagnostics : bool
         If True, also return a dict with KZ, KX, w (amplitude), phi (phase), the
         selected mask, and the fitted-plane array -- everything a 5-panel diagnostic
@@ -1094,6 +1112,8 @@ def wls_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
         kmask = mask
     else:
         band = (np.abs(KZ) < kz_band_fac * kz_cent) & (np.abs(KX) < kx_band_fac * kz_cent)
+        if pos_kz_only:
+            band = band & (KZ > 0)
         kmask = (w_amp > amp_thr * w_amp.max()) & band & ((np.abs(KZ) + np.abs(KX)) > 0)
 
     n_mask = int(kmask.sum())
@@ -1128,6 +1148,7 @@ def ransac_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
                             roi_px=None, data_pad=8, taper='edge', tukey_alpha=0.15,
                             kz_band_fac=0.5, kx_band_fac=2.0, amp_thr=0.20,
                             pad_fac=10, force_dz_zero=False, mask=None,
+                            pos_kz_only=True,
                             n_iter=1000, residual_thr=0.35, weight_by_amp=True,
                             final_wls_pow=1, random_state=0,
                             return_diagnostics=False):
@@ -1159,10 +1180,13 @@ def ransac_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
 
     Shares its crop/taper/mask/cross-spectrum construction with
     wls_phase_plane_fit -- same base/mon/dz/dx/kz_cent/roi_px/data_pad/taper/
-    kz_band_fac/kx_band_fac/amp_thr/mask semantics (see that docstring), so the two
-    are directly comparable: call both on the same (base, mon, roi_px, ...), or
-    both with the same explicit `mask` (e.g. from a napari manual-picking cell), to
-    isolate the fitting method as the only difference between the two estimates.
+    kz_band_fac/kx_band_fac/amp_thr/mask/pos_kz_only semantics (see that
+    docstring -- in particular pos_kz_only=True's fix for the Hermitian-mirror
+    tangent-averaging bias, since the same automatic-mask construction is shared
+    here), so the two are directly comparable: call both on the same (base, mon,
+    roi_px, ...), or both with the same explicit `mask` (e.g. from a napari
+    manual-picking cell), to isolate the fitting method as the only difference
+    between the two estimates.
 
     Parameters (in addition to wls_phase_plane_fit's shared ones above)
     ----------
@@ -1244,6 +1268,8 @@ def ransac_phase_plane_fit(base, mon, dz, dx, kz_cent, *,
         kmask = mask
     else:
         band = (np.abs(KZ) < kz_band_fac * kz_cent) & (np.abs(KX) < kx_band_fac * kz_cent)
+        if pos_kz_only:
+            band = band & (KZ > 0)
         kmask = (w_amp > amp_thr * w_amp.max()) & band & ((np.abs(KZ) + np.abs(KX)) > 0)
 
     n_mask = int(kmask.sum())
