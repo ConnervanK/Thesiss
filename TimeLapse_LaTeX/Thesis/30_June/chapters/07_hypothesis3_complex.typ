@@ -155,12 +155,6 @@ Kirchhoff or Gazdag even after the post-imaging taper, consistent with the
 injection halo being a structural property of single-sided time-reversal
 rather than a processing shortcoming.
 
-#draftnote[@fig:fd-profile-grid must be regenerated once the post-imaging
-recipe above is applied to the Kirchhoff-BP and Gazdag columns in the new
-notebook pipeline (currently only back-propagation carries it) and once the
-back-propagation column is drawn from the corrected, borehole-geometry
-pipeline rather than the earlier homogeneous-domain one.]
-
 #figure(
   cimg("FD_profile_migration_grid.png"),
   caption: [Processed B-scans and their migrated counterparts for profiles 1,
@@ -190,6 +184,25 @@ cells can be painted directly on the cross-spectrum phase or amplitude
 display, or the spatial region can be painted on the difference B-scan
 itself, letting the ROI trace the reflector's actual shape rather than an
 axis-aligned box.
+
+Because the two migrated images being compared are real-valued, their
+cross-spectrum is exactly Hermitian: $#XS (-#kz, -#kx) = #XS (#kz, #kx)^*$, so
+every genuine $(#kz, #kx)$ point has an exact phase-negated mirror duplicate
+at $(-#kz, -#kx)$, and fitting a plane through both at once biases the
+estimate.
+For this borehole/VRP geometry, the antenna radiates along the radial
+direction $x$ as it is lowered down the borehole, so $x$ --- not $z$ --- is
+the carrier/wavelet axis, and it is this mirror duplicate that sits at
+$-#kx$. The $#kz$ axis is simply the spatial direction the antenna traverses
+along the borehole, and a real reflector's diffraction response has genuine,
+independent structure on both its $+#kz$ (antenna receding) and $-#kz$
+(antenna approaching) flanks --- restricting $#kz$ instead would discard half
+of every real target's structure while leaving its Hermitian mirror
+untouched. Both napari picking variants are therefore restricted to
+$#kx >= 0$, with $#kz$ left unrestricted: the wavenumber-domain display only
+shows, and only allows painting on, $#kx >= 0$, and the amplitude-domain
+automatic gate that resolves the $(#kz, #kx)$ population behind a
+spatially-painted B-scan region applies the same restriction.
 
 Picking the cross-spectrum directly restricts the fit to exactly the
 coherent energy lobes visible in the display, with no relative amplitude
@@ -223,10 +236,6 @@ Gazdag): the two migrated images being compared, and the two napari picks --
 one on the amplitude-domain difference B-scan, one on the wavenumber-domain
 cross-spectrum -- that together define the ROI entering the fit.
 
-#draftnote[@fig:fd-wls-workflow does not yet exist and must be assembled in
-the new notebook pipeline from the napari k-space and B-scan picking cells,
-combined into a single 2×2 composite for the 1→3 pair.]
-
 #figure(
   cimg("FD_wls_workflow_1_to_3.png"),
   caption: [WLS cross-spectrum phase-plane workflow, Push-stage pair (1→3),
@@ -246,26 +255,26 @@ $k_z$-axis row spacing is negated for back-propagation before the fit, and
 the raw output is converted to the "positive $#Dz$ = downward" convention
 used throughout this chapter.
 
-#draftnote[the stage-displacement figures below are the values from the
-prior (rectangular-ROI, three-strategy) pipeline and must be re-verified
-against the napari-only, stage-anchored, universally post-imaged pipeline
-described above before submission -- the sign and rough magnitude are not
-expected to change, but the exact numbers will.]
-
 @tab:fielddata-stages summarises the resulting stage-by-stage displacement
 estimates for Gazdag and for the independently-processed back-propagation
-cross-check. The dominant signal is an *upward* displacement of approximately
-$1.32 "m"$ during the Push stage, accompanied by a lateral shift of
-$0.26 "m"$ *toward* the borehole. The Chase stage adds a smaller increment in
-the same direction, the Wait stage partially reverses it, and the Pull stage
-continues that reversal, leaving a net residual of $#Dz approx -1.50 "m"$
-(upward), $#Dx approx -0.15 "m"$ (toward the borehole) at profile 38 relative
-to profile 1. Back-propagation agrees with Gazdag on direction in every stage
--- upward and toward the borehole during Push and Chase, downward and away
-during Wait and Pull -- once its depth-axis convention is corrected, despite
-the two techniques sharing no processing steps downstream of the raw
-B-scans. @sec:hyp3-fd-interpretation returns to what this reversed-from-naive
-direction means physically.
+cross-check, from the napari-only, stage-anchored, universally post-imaged
+pipeline with the corrected $#kx > 0$ Hermitian-mirror restriction
+(@sec:hyp3-fd-roi) in place. The dominant signal is a *downward* displacement
+of approximately $1.66 "m"$ during the Push stage, accompanied by a smaller
+lateral shift of $0.17 "m"$ *toward* the borehole. The Chase stage adds a
+comparable increment in the same (downward) direction, and the Wait stage
+substantially reverses it ($-0.67 "m"$, i.e. upward); Gazdag shows no further
+net movement during Pull ($+0.00 "m"$, at the noise floor) while
+back-propagation continues a smaller reversal ($-0.24 "m"$), leaving a net
+residual of $#Dz approx +2.61 "m"$ (downward), $#Dx approx -0.10 "m"$ (toward
+the borehole) at profile 38 relative to profile 1 for Gazdag. Back-propagation
+agrees with Gazdag on direction during Push, Chase and Wait -- downward and
+toward the borehole during Push, downward and away during Chase, upward
+during Wait -- once its depth-axis convention is corrected, despite the two
+techniques sharing no processing steps downstream of the raw B-scans; the two
+diverge only in the Pull stage, where Gazdag's estimate sits at the noise
+floor rather than truly disagreeing in sign. @sec:hyp3-fd-interpretation
+returns to what this displacement pattern means physically.
 
 #figure(
   table(
@@ -276,12 +285,12 @@ direction means physically.
     [*Stage*], [*Pair*], [*$#Dz$ (Gazdag)*], [*$#Dx$ (Gazdag)*],
     [*$#Dz$ (BP, corrected)*], [*$#Dx$ (BP, corrected)*],
     table.hline(stroke: 0.4pt),
-    [Push],  [1→3],   [$-1.32 "m"$], [$-0.26 "m"$], [$-1.91 "m"$], [$-0.34 "m"$],
-    [Chase], [3→8],   [$-0.76 "m"$], [$-0.06 "m"$], [$-1.37 "m"$], [$-0.21 "m"$],
-    [Wait],  [8→20],  [$+0.30 "m"$], [$+0.03 "m"$], [$+0.54 "m"$], [$+0.08 "m"$],
-    [Pull],  [20→38], [$+0.28 "m"$], [$+0.15 "m"$], [$+0.75 "m"$], [$+0.14 "m"$],
+    [Push],  [1→3],   [$+1.66 "m"$], [$-0.17 "m"$], [$+2.08 "m"$], [$-0.25 "m"$],
+    [Chase], [3→8],   [$+1.62 "m"$], [$+0.07 "m"$], [$+1.65 "m"$], [$+0.06 "m"$],
+    [Wait],  [8→20],  [$-0.67 "m"$], [$+0.01 "m"$], [$-0.28 "m"$], [$+0.03 "m"$],
+    [Pull],  [20→38], [$+0.00 "m"$], [$-0.00 "m"$], [$-0.24 "m"$], [$-0.14 "m"$],
     table.hline(stroke: 0.4pt),
-    [*Net (prof 1→38)*], [], [$-1.50 "m"$], [$-0.15 "m"$], [--], [--],
+    [*Net (prof 1→38)*], [], [$+2.61 "m"$], [$-0.10 "m"$], [--], [--],
     table.hline(stroke: 0.7pt),
   ),
   caption: [Stage-anchored phase-plane displacement estimates from the
@@ -298,14 +307,20 @@ direction means physically.
 
 == Interpretation (WLS vs. RANSAC) <sec:hyp3-fd-interpretation>
 
-Back-propagation and Kirchhoff/Gazdag agree on the sign of the displacement
-in every stage (@tab:fielddata-stages) once back-propagation's depth-axis
-convention is corrected, despite sharing no processing steps downstream of
-the raw B-scans. This is the strongest evidence in this chapter that the
-reversed-from-naive-expectation direction -- Push and Chase move *upward and
-toward* the borehole, not the "downward and outward" a naive injection
-picture would predict -- is a genuine feature of this dataset rather than a
-processing or sign-convention artefact specific to one migration technique.
+Back-propagation and Gazdag agree on the sign of the displacement during
+Push, Chase and Wait (@tab:fielddata-stages) once back-propagation's
+depth-axis convention is corrected, despite sharing no processing steps
+downstream of the raw B-scans; the two diverge only in the Pull stage, where
+Gazdag's estimate sits at the noise floor rather than truly disagreeing in
+sign. This cross-method agreement is evidence that the recovered $#Dz$
+pattern -- downward during Push and Chase, reversing upward during Wait -- is
+a genuine feature of this dataset rather than a processing or
+sign-convention artefact specific to one migration technique. The dominant
+vertical displacement now agrees in direction with the naive expectation of
+@sec:hyp3-fielddata (a downward displacement during active injection); the
+lateral component does not straightforwardly follow the same naive "outward
+spread" picture, moving *toward* the borehole during Push before reversing
+*away* from it in the later stages.
 
 #draftnote[fill in the remaining physical interpretation once the borehole
 geometry, injection depth, and fluid-injection parameters are confirmed from
@@ -313,10 +328,11 @@ the field survey metadata. Key questions: (1) do the inferred $#Dz$ and $#Dx$
 values agree with the known injection depth and expected lateral spread for
 the given fracture geometry, or is there a physical reason (fracture
 geometry, the specific reflector tracked vs. the injection point, a
-coordinate-system offset) the reversed direction should be expected? (2)
-does the field result agree with the synthetic fluid-front experiment? (3)
-does the WLS-vs-RANSAC spread below bound a meaningful "fit-method
-uncertainty" that should be reported alongside the headline numbers?]
+coordinate-system offset) the toward-the-borehole lateral component during
+Push should be expected? (2) does the field result agree with the synthetic
+fluid-front experiment? (3) does the WLS-vs-RANSAC spread below bound a
+meaningful "fit-method uncertainty" that should be reported alongside the
+headline numbers?]
 
 *WLS vs. RANSAC.* The amplitude weighting of the WLS fit (@sec:th-wls)
 down-weights low-energy bins but still lets every masked cell contribute, so
@@ -330,24 +346,19 @@ both the wavenumber-domain and amplitude-domain napari picking variants of
 @sec:hyp3-fd-roi.
 
 When the $(k_z, k_x)$ cells are painted by hand directly on the
-cross-spectrum, RANSAC flags no outliers -- every painted cell is already a
-consensus inlier -- and reproduces the WLS estimate exactly in every case: a
-tight hand-pick around the coherent lobes needs no further robustification.
-When the cells are instead populated by gating a hand-painted amplitude-domain
+cross-spectrum, RANSAC flags few or no outliers and closely reproduces the
+WLS estimate in every case (within about $6%$ at worst): a tight hand-pick
+around the coherent lobes needs little further robustification. When the
+cells are instead populated by gating a hand-painted amplitude-domain
 (difference B-scan) region, RANSAC rejects anywhere from a negligible
 fraction up to about half of the gated cells and shifts the estimate
-accordingly -- usually by only a few percent, but by up to $23%$ in the worst
-case. Direction and stage-to-stage ordering are preserved in every case. The
-practical reading is that the fitting *method* matters only once the
-cross-spectrum cell population is left to an automatic gate over a painted
-region; a tight, direct k-space pick makes WLS and RANSAC interchangeable.
-
-#draftnote[the WLS-vs-RANSAC figures below (and the percentages quoted
-above) are from the prior pipeline and must be regenerated once the
-`pos_kz_only` Hermitian-mirror bias fix, universal post-imaging, and
-napari-only ROI selection are all in place; @fig:fd-ransac-phase-slices in
-particular does not yet exist in its required 2×4 form (an amplitude column
-must be added to the existing 2×3 phase/$k_z$/$k_x$ diagnostic).]
+accordingly -- usually by a few percent up to around twenty percent, but by
+as much as $59%$ in the worst case (Kirchhoff-BP, Chase stage). Direction is
+preserved in every case; stage-to-stage ordering is preserved in most cases.
+The practical reading is unchanged from a tight k-space pick: the fitting
+*method* matters far more once the cross-spectrum cell population is left to
+an automatic gate over a painted region than when it comes from a direct,
+hand-picked selection.
 
 #figure(
   cimg("FD_ransac_vs_wls_phase_amp_fit_gazdag_chasing_3_to_8.png"),
@@ -365,9 +376,9 @@ must be added to the existing 2×3 phase/$k_z$/$k_x$ diagnostic).]
   ),
   caption: [WLS versus RANSAC displacement estimates, all four representative
     pairs and three migration techniques (hatched = WLS, solid = RANSAC): (a)
-    wavenumber-domain (hand-painted $(k_z,k_x)$) picking, where every painted
-    cell is a RANSAC inlier so the two estimates coincide; (b)
+    wavenumber-domain (hand-painted $(k_z,k_x)$) picking, where nearly every
+    painted cell is a RANSAC inlier so the two estimates closely coincide; (b)
     amplitude-domain (difference B-scan) picking, where an automatic gate
     populates the $(k_z,k_x)$ cells inside the painted spatial ROI and RANSAC
-    rejects a fraction of them.],
+    rejects a larger fraction of them.],
 ) <fig:fd-ransac-summary>
