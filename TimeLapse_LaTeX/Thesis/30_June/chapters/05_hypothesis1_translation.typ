@@ -149,9 +149,9 @@ pipeline of @sec:meth-conditioning, already illustrated in @ch:methodology
 (@fig:res-bscans); @fig:tl-summary-amp shows the resulting time-lapse
 migration comparison directly.
 
-#page(flipped: true)[
+#page(flipped: false)[
 #figure(
-  img("H1_004_Lateral_--_TimeLapse_Migration_Comparison_Clean_--_Signed_Am.png"),
+  img("H1_004_Lateral_--_TimeLapse_Migration_Comparison_Clean_--_Signed_Am.png", width: 95%),
   caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
     for all three migration algorithms, clean data, all eight scenarios.],
 ) <fig:tl-summary-amp>

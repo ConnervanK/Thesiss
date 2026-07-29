@@ -170,9 +170,9 @@ dashed lines mark the true position of each scatterer.
 
 #page(flipped: true)[
 #figure(
-  subfigs(cols: 1,
-    img("RES_016_Resolution_Study_--_Migration_Comparison_f_c15_GHz_aperture4.png"),
-    img("RES_017_Resolution_Study_--_PSF_Zoom_Baseline_vs_Monitor.png"),
+  subfigs(cols: 2,
+    img("RES_016_Resolution_Study_--_Migration_Comparison_f_c15_GHz_aperture4.png", width: 90%),
+    img("RES_017_Resolution_Study_--_PSF_Zoom_Baseline_vs_Monitor.png", width: 87%),
   ),
   caption: [(a) Signed migrated amplitude for Kirchhoff, Gazdag, and
     back-propagation migration overlaid at $f_c = 1.5 "GHz"$; (b) zoomed

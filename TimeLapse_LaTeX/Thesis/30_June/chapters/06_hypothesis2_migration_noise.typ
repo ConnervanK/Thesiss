@@ -191,8 +191,8 @@ excitation instead.
 #page(flipped: true)[
 #figure(
   subfigs(cols: 1,
-    img("H2_005_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Lat.png"),
-    img("H2_006_Back-Propagation_of_a_Signal-Bearing_B-scan_Lateral_Baseline.png", width: 70%),
+    img("H2_005_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Lat.png", width: 65%),
+    img("H2_006_Back-Propagation_of_a_Signal-Bearing_B-scan_Lateral_Baseline.png", width: 39%),
   ),
   caption: [Sign-bit time-reversal, Lateral, Noisy: (a) original noisy
     B-scans, sign-bit B-scans, and their respective frequency spectra, for
@@ -211,10 +211,12 @@ both excitation schemes here have a real target --- the Baseline scatterer
 --- to focus on, so @fig:h2-signbit-excitation (b) is the direct,
 signal-bearing analogue of that pure-noise comparison: compare how tightly
 each panel's energy collapses onto the true scatterer position rather than
-staying diffuse artefact, as it did for pure noise. #draftnote[Describe what
+staying diffuse artefact, as it did for pure noise. 
+#draftnote[Describe what
 the regenerated focus-frame comparison actually shows once the peak-norm
 back-propagation gprMax run has completed --- see the run instructions
-printed by the corresponding Hypothesis_2.ipynb cell.] The actual,
+printed by the corresponding Hypothesis_2.ipynb cell.] 
+The actual,
 quantitative evidence that sign-bit back-propagation is noise-robust comes
 from @sec:hyp3-summary's master MAE table on the real noisy studies below,
 where back-propagation is one of the two most accurate methods overall.
@@ -301,7 +303,7 @@ time-reversal (@sec:hyp3-signbit) for back-propagation.
 === Migration Results <sec:hyp3-lat-migration>
 
 #figure(
-  img("H2_008_Lateral_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_Am.png", width: 85%),
+  img("H2_008_Lateral_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_Am.png", width: 95%),
   caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
     for all three migration algorithms, lateral time-lapse study, _noisy_
     data.],

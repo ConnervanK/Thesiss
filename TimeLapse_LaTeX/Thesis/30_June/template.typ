@@ -359,7 +359,7 @@
       grid(
         columns: (1fr, auto),
         align(left,  text(weight: "bold", size: 9pt)[#h1-title]),
-        align(right, text(weight: "bold", size: 9pt)[#counter(page).display("i")]),
+        align(right, text(weight: "bold", size: 9pt)[#counter(page).display(here().page-numbering())]),
       )
       line(length: 100%, stroke: 0.4pt)
     },
