@@ -183,16 +183,8 @@ dashed lines mark the true position of each scatterer.
 ) <fig:res-psf>
 ]
 
-All three migration algorithms collapse the two scatterer hyperbolae into
-distinguishable amplitude peaks for separations down to roughly half a
-wavelength, but the two peaks progressively merge into a single lobe as the
-separation shrinks further: the amplitude image alone cannot certify two
-scatterers, or a sub-wavelength displacement of one scatterer, below this
-floor.
+All three migration algorithms collapse the two scatterer hyperbolae into distinguishable amplitude peaks for separations down to roughly half a wavelength, but the two peaks progressively merge into a single lobe as the separation shrinks further. The amplitude image alone cannot certify two scatterers, or a sub-wavelength displacement of one scatterer, below this floor—formally known as the Rayleigh diffraction limit. This fundamental amplitude-based limit is the motivation for the phase-plane approach developed in @ch:theory and tested in @ch:hyp1 and @ch:hyp2.
 
 #draftnote[state the precise separation at which the methods stop resolving
 two distinguishable PSF peaks, read directly off @fig:res-psf (b), and
 comment on any difference between the three algorithms.]
-
-This amplitude-based floor is the motivation for the phase-plane approach
-developed in @ch:theory and tested in @ch:hyp1 and @ch:hyp2.

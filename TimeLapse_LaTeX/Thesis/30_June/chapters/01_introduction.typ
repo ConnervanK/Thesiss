@@ -19,14 +19,16 @@ displacement from the _phase_ of the migrated wavefield rather than its
 amplitude. The idea rests on a short chain of statements, each supported in
 turn by the review of @ch:litreview and the theory of @ch:theory:
 
-+ *GPR resolution is wavelength-limited.* The migrated amplitude image cannot
-  separate two reflectors, or localise a moved one, below roughly half a
-  wavelength --- a floor set laterally by the Fresnel zone and vertically by
-  the pulse bandwidth (@ch:litreview).
+// + *GPR resolution is wavelength-limited.* The migrated amplitude image cannot
+//   separate two reflectors, or localise a moved one, below roughly half a
+//   wavelength --- a floor set laterally by the Fresnel zone and vertically by
+  // the pulse bandwidth (@ch:litreview).
+
++ *GPR resolution is generally wavelength-limited,* with the Fresnel zone and pulse bandwidth setting a lateral and vertical floor of roughly half a wavelength for separating two distinct reflectors. While a single migrated amplitude image cannot resolve features below this limit, sub-wavelength localisation of a _moved_ reflector is possible using windowed cross-correlation on two migrated amplitude images, which bypasses the amplitude resolution limit by indirectly leveraging phase shifts. (@ch:litreview).
 
 + *The changes worth monitoring are sub-wavelength.* GPR reflectivity is
   governed mostly by permittivity, and permittivity by water content, so the
-  processes a monitoring survey most wants to follow --- a fracture filling
+  processes a monitoring survey described in this thesis --- a fracture filling
   with fluid, a slowly advancing interface --- produce their signal at exactly
   the scale that lies below this floor.
 
@@ -39,7 +41,7 @@ turn by the review of @ch:litreview and the theory of @ch:theory:
 + *Phase retains what amplitude discards.* A sub-wavelength change that leaves
   no amplitude signature still imprints a systematic, continuously varying
   shift on the _phase_ of the reflected wave --- information every migration
-  algorithm computes internally and then throws away.
+  algorithm computes internally and could potentially be used.
 
 + *A time-lapse pair turns sub-wavelength change into a recoverable phase
   ramp.* Comparing a baseline and a monitor survey in the two-dimensional
@@ -55,7 +57,7 @@ Taken together, these statements make one hypothesis a sensible thing to test
 
 #para-head[Research question.] Can time-lapse ground-penetrating radar
 accurately track subwavelength movement --- achieving a form of
-super-resolution --- by analysing _phase_ changes in migrated images rather
+super-resolution monitoring --- by analysing _phase_ changes in migrated images rather
 than their amplitude?
 
 This unifying hypothesis cannot be settled by any single experiment: for it to
@@ -97,4 +99,4 @@ vertical, and diagonal sub-wavelength translation of a point scatterer.
 heavy-tailed Laplace noise. @ch:hyp3 tests Hypothesis 3 by applying the full
 pipeline to real borehole GPR field data. @ch:discussion integrates the
 results of all three hypotheses into a final answer to the research question,
-and the Summary restates the main conclusions.
+and the #link(<ch:summary>)[Summary] presents the main conclusions.

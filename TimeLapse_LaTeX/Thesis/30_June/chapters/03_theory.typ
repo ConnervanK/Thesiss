@@ -141,19 +141,11 @@ in this thesis @gprmax --- using gprMax as the wave-equation solver that
 carries out the extrapolation itself, the same role it plays in
 @geng2022's gprMax-based reverse-time migration (RTM) of GPR data.
 
-Geng and Ye's RTM additionally forward-models the source-side wavefield
-with gprMax and cross-correlates it against the reverse-time-extrapolated
-receiver-side wavefield at every time step to build the image @geng2022,
-a genuinely two-wavefield imaging condition. That is unnecessary here:
-because every survey in this thesis is zero-offset and already treated
-under the exploding-reflector convention of @sec:th-migration
-@claerbout1985, the recorded data already stand in for the source-side
-wavefield, so the single back-propagated wavefield read off at
-$t_"focus"$ is sufficient --- this thesis therefore implements
-back-propagation, not full cross-correlation RTM. Because it makes no
-high-frequency, single-arrival, or $v(z)$-only approximation beyond the
-exploding-reflector velocity halving itself, this method serves as a
-useful independent numerical check on the other two.
+Geng and Ye’s RTM additionally forward-models the source-side wavefield with gprMax and cross-correlates it against the reverse-time-extrapolated receiver-side wavefield 
+at every time step to build the image @geng2022, 
+a genuinely two-wavefield imaging condition. While this full cross-correlation approach offers distinct advantages in noise suppression and phase accuracy—particularly when a high-quality wavelet is used for the forward extrapolation—the added computational expense is not strictly required here. Because every survey in this thesis is zero-offset and already treated under the exploding-reflector convention of @sec:th-migration
+@claerbout1985, the recorded data effectively stand in for the source-side wavefield. Consequently, reading off a single back-propagated wavefield at
+$t_"focus"$ provides sufficient structural fidelity for this analysis; this thesis therefore implements back-propagation rather than full cross-correlation RTM. Because it makes no high-frequency, single-arrival, or $v(z)$-only approximation beyond the exploding-reflector velocity halving itself, this method serves as a useful independent numerical check on the other two.
 
 // As an independent, purely numerical cross-check of the two analytic methods
 // above, every B-scan is also migrated by literal time-reversal: each trace is
@@ -386,70 +378,3 @@ weighting by $|#XS|$ has no clean spatial-domain analogue; and (iii) in the
 spatial picture a calibration-bias intercept mixes irrecoverably with the
 vertical term $-k_(z c) #Dz$ in @eq:dphi-2d, whereas the Fourier-domain fit
 keeps them exactly orthogonal (@sec:th-wls).
-
-== Time-Frequency Perspective: Local Phase and Spectral-Line Analysis <sec:th-local>
-
-The phase-plane fit treats the migrated image as a whole. @sec:hyp1-phaseplane
-(@sec:tlp-spectral-line, @sec:tlp-spectrogram, @sec:tlp-stft) instead
-analyses individual unmigrated or migrated _traces_ with a localised
-time-frequency transform, which gives access to _when_ (in two-way
-time) a phase change occurs, complementing the spatial picture above.
-
-=== The localised Fourier shift theorem
-
-Let $s_1(t)$ be a baseline trace. A sliding-window transform (Gaussian or
-Hanning window $w$) gives a localised spectrum
-$
-  S_1(tau, omega) = integral_(-oo)^(oo) s_1(t) thin w(t - tau) thin e^(-j omega t) thin dif t ,
-$ <eq:stft-def>
-at window centre $tau$ and angular frequency $omega = 2 pi f$. If the monitor
-trace is a delayed, phase-rotated copy, $s_2(t) = s_1(t - #Dt) e^(j #Dtheta)$,
-and the delay $#Dt$ is small compared with the window width, the window
-itself barely shifts and the _localised Fourier shift theorem_ applies,
-$ S_2(tau, omega) approx S_1(tau, omega) e^(-j omega #Dt) e^(j #Dtheta) . $ <eq:local-shift>
-Forming the local cross-spectrum exactly as in @eq:cross-spectrum-def
-and taking its angle, the baseline phase and amplitude cancel, leaving the
-local analogue of @eq:phase-plane,
-$ Delta Phi(tau, f) approx -2 pi f thin #Dt + #Dtheta . $ <eq:local-phase-line>
-At the two-way time $tau_0$ of the target reflection, a straight-line fit of
-$Delta Phi$ against $f$ has slope $-2 pi #Dt$ (the mechanical shift) and
-intercept $#Dtheta$ (a calibration or material-change offset) --- the exact
-time-domain counterpart of the slope/intercept decomposition in @sec:th-wls.
-Converting between the two-way-time and depth pictures uses the standard relation
-$ #Dt = (2 #Dz) / v , $ <eq:dt-dz>
-so that $omega #Dt equiv #kz #Dz$ with $#kz = 2 omega \/ v$: the temporal-frequency
-slope and the vertical-wavenumber slope are the same physical quantity, viewed
-in two different but exactly equivalent coordinate systems.
-
-=== Three diagnostic views used in @sec:hyp1-phaseplane
-
-Three derived plots make @eq:local-phase-line directly visible in the
-data, and are used repeatedly in the figures of @sec:hyp1-phaseplane:
-
-/ Spectral line, $Delta Phi(f)$ at fixed $tau_0$: a straight line
-  through the origin for pure mechanical movement; a flat line offset from
-  zero for a pure phase-rotation offset; a sloped line with non-zero intercept
-  for a combination of the two.
-
-/ Cross-phase spectrogram, $Delta Phi(tau, f)$: outside the target
-  reflection this is incoherent, salt-and-pepper phase noise; at the
-  target's two-way time a coherent window appears, showing a vertical
-  fringe pattern for movement or a uniform colour block for a pure phase
-  offset.
-
-/ Polar vector rotation: the complex coefficient at the dominant
-  frequency and peak two-way time, plotted as a vector in the complex
-  plane for baseline and monitor; a phase offset rotates this vector with
-  negligible length change for a purely geometric shift.
-
-These local, trace-based views and the global 2D wavenumber fit of
-@sec:th-wls are not competing techniques: they are Fourier duals of the
-same underlying physics, related by a spatial Fourier transform of the
-time-frequency decomposition with respect to the lateral coordinate $x$,
-which reduces (under a smooth-window approximation) directly to the global
-spectrum $U(omega, #kx)$ used throughout this chapter. The wavenumber-domain
-fit remains the primary quantitative tool because it linearises the spatial
-curvature of @eq:kx-inst exactly and admits amplitude weighting
-natively (@sec:th-mask-weight); the local, time-frequency view is used
-in @sec:hyp1-phaseplane to localise _where_ (in $tau$) a phase
-anomaly originates, which the global fit alone cannot show.

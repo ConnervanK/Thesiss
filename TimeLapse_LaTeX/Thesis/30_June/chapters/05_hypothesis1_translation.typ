@@ -18,12 +18,7 @@ to the field data of @ch:hyp3. Two further directions --- *vertical*
 same point scatterer --- confirm the finding and are reported alongside the
 cross-movement comparison in @sec:hyp1-summary.
 
-For every experiment, the answer is the same: amplitude differencing fails
-below the same resolution floor found in @sec:meth-resolution, but examining
-the _phase change_ in the two-dimensional Fourier domain of the migrated
-images (@ch:theory) recovers the displacement accurately down to the smallest
-scale tested. @sec:hyp1-workflow defines the shared processing and analysis
-pipeline used identically across all four experiments.
+FFor every experiment, the conclusion is consistent: simple amplitude differencing fails below the resolution floor found in @sec:meth-resolution. While windowed cross-correlation of migrated amplitudes can offer an intermediate solution by indirectly exploiting phase, directly examining the _phase change_ in the two-dimensional Fourier domain of the migrated images (@ch:theory) recovers the displacement accurately down to the smallest scale tested. @sec:hyp1-workflow defines the shared processing and analysis pipeline used identically across all four experiments.
 
 #para-head[Hypothesis 1.] Can multi-dimensional phase-plane regression infer
 lateral, vertical, and diagonal subwavelength displacements from time-lapse

@@ -32,12 +32,10 @@ false-positive structure manufactured from noise alone?
 Rather than injecting arbitrary synthetic noise, the noise level and shape
 used throughout this thesis are fitted to real GPR field noise. A sample of
 field noise is tracked through eleven stages of the processing pipeline and
-fitted with both a Laplace and a Gaussian distribution at two stages: after
-the final processing stage ("9 Crop Samples"), and at the last stage before
-the spherical-gain correction ("7 Constant Velocity"), since the gain
-correction inflates the amplitude scale by several orders of magnitude and
-is not representative of the raw simulated $E_z$ amplitudes used elsewhere in
-this thesis.
+fitted with both a Laplace and a Gaussian distribution at the last stage
+before the spherical-gain correction, since the gain correction inflates the
+amplitude scale by several orders of magnitude and is not representative of
+the raw simulated $E_z$ amplitudes used elsewhere in this thesis.
 
 #supp-note[The noise amplitude distribution at every one of the eleven
 tracked processing stages, each with a Gaussian reference overlay, is
@@ -45,30 +43,29 @@ provided in the Supplementary Material, §S3.5.]
 
 #figure(
   subfigs(cols: 1,
-    img("H2_002_Noise_distribution_at_7_Constant_Velocity_pre-gain_with_Lapl.png"),
+    img("H2_031_Hypothesis_2_--_Noise_window_signal_zone_reference.png", width: 90%),
+    img("H2_002_Noise_distribution_at_7_Constant_Velocity_pre-gain_with_Lapl.png", width: 70%),
     table(
-      columns: (auto, auto, auto),
+      columns: (auto, auto),
       stroke: none,
       inset: (x: 0.8em, y: 0.3em),
       table.hline(stroke: 0.7pt),
-      [*Stage*], [*Laplace scale*], [*Gaussian $sigma$*],
+      [*Laplace scale*], [*Gaussian $sigma$*],
       table.hline(stroke: 0.4pt),
-      [9 Crop Samples (post-gain)],     [$117 space 584.0$], [$171 space 156.1$],
-      [7 Constant Velocity (pre-gain)], [$6.085$],           [$9.233$],
+      [$6.085$], [$9.233$],
       table.hline(stroke: 0.7pt),
     ),
   ),
-  caption: [(a) Noise distribution at the pipeline stage actually sampled to
-    generate every noisy dataset used from @sec:hyp3-purenoise onward ("7 Constant
-    Velocity", pre-gain), with both Laplace and Gaussian fits overlaid; (b)
-    the fitted Laplace scale and Gaussian $sigma$ at that stage and, for
-    reference, at the final post-gain stage ("9 Crop Samples") --- only the
-    pre-gain stage is plotted in (a); loc $= 0$ for both stages
-    ($n = 976 space 244$ samples each). The heavier-tailed Laplace
-    distribution is adopted throughout this thesis.],
+  caption: [(a) B-scan showing the signal zone the noise sample is drawn
+    from; (b) noise distribution at the pipeline stage actually sampled to
+    generate every noisy dataset used from @sec:hyp3-purenoise onward (the
+    last stage before the spherical-gain correction), with both Laplace and
+    Gaussian fits overlaid; (c) the fitted Laplace scale and Gaussian
+    $sigma$ at that stage; loc $= 0$ ($n = 976 space 244$ samples). The
+    heavier-tailed Laplace distribution is adopted throughout this thesis.],
 ) <fig:h2-noise-laplace-fit>
 
-In both cases the fitted distribution is heavier-tailed than a Gaussian of
+The fitted distribution is heavier-tailed than a Gaussian of
 matched variance, consistent with field GPR noise being dominated by
 occasional large-amplitude clutter and interference rather than purely
 thermal noise. The pre-gain fit is the one actually used to generate
@@ -129,7 +126,7 @@ tied to a specific frequency. A complementary spectral view --- each
 method's pure-noise output averaged into one frequency spectrum, with every
 domain's natural sample axis (time, depth, or back-propagation snapshot
 depth) converted to an equivalent frequency via $f = v_"ice" k$ so all four
-curves share one physically comparable axis --- checks this directly.
+curves share one physically comparable axis --- checks this directly in @fig:h2-purenoise-spectral.
 
 #figure(
   img("H2_004_Migrating_Pure_Noise_--_Spectral_Content_by_Method__axes_res.png", width: 80%),

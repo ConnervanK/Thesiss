@@ -7,15 +7,14 @@
 
 Ground-penetrating radar (GPR) resolves subsurface structure only down to a
 wavelength-scale floor, so a displacement or material change smaller than a
-fraction of a wavelength cannot be read from a migrated amplitude image ---
+fraction of a wavelength cannot be read from a migrated amplitude difference image ---
 precisely the regime in which time-lapse monitoring of ground movement or
 fluid migration must operate. This thesis develops a phase-based alternative:
 a baseline and a monitor survey are migrated and compared in the
 two-dimensional Fourier domain, where the Fourier shift theorem turns a
 sub-wavelength translation into a linear phase ramp across the cross-spectrum.
 A weighted least-squares fit of that ramp recovers sub-millimetre lateral and
-vertical displacements and, through its intercept, decouples purely geometric
-movement from a change in sub-wavelength material properties such as a fracture
+vertical displacements, or a change in sub-wavelength material properties such as a fracture
 filling with fluid.
 
 The method is tested through three hypotheses. On clean synthetic gprMax data
