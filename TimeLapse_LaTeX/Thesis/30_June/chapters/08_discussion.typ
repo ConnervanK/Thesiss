@@ -83,26 +83,25 @@ phase performs once it is reached.
 
 === Hypothesis 1.5: Local Phase-Gradient Methods
 
-The local, trace-based alternative explored in @sec:hyp1-h15 --- tracking
-the instantaneous phase gradient directly, rather than fitting a global 2D
-plane to the cross-spectrum --- can only be reported as exploratory. Where
-it has actually been computed, the results are qualitatively consistent with
-the global fit and with @sec:th-duality's predicted asymmetry: the lateral
-instantaneous-phase cross-section produces a slope proportional to
-displacement, while the vertical cross-section produces a plateau rather than
-a slope, exactly mirroring @eq:dphi-lateral and @eq:dphi-vertical. However,
-three of the four diagnostic views described in @sec:th-local --- the
-spectral-line fit, the cross-phase spectrogram, and the localised
-short-time-Fourier-transform decomposition (@sec:tlp-spectral-line,
-@sec:tlp-spectrogram, @sec:tlp-stft) --- currently have no corresponding
-figures at all, because the notebook sections that generate them are
-disabled, and no direct quantitative comparison between any local method and
-the global WLS fit has been run on the same dataset. Hypothesis 1.5 is
-therefore neither confirmed nor refuted by the evidence collected so far: the
-one local method with results available (instantaneous-phase imaging) is
-consistent with the global fit wherever both exist, but the claim that local
-phase gradients offer an "equivalent, simpler" route to the same displacement
-estimate remains untested.
+The local, trace-based alternative explored in the Supplementary Material,
+§S5 --- tracking the instantaneous phase gradient directly, rather than
+fitting a global 2D plane to the cross-spectrum --- can only be reported as
+exploratory. Where it has actually been computed, the results are
+qualitatively consistent with the global fit and with @sec:th-duality's
+predicted asymmetry: the lateral instantaneous-phase cross-section produces
+a slope proportional to displacement, while the vertical cross-section
+produces a plateau rather than a slope, exactly mirroring @eq:dphi-lateral
+and @eq:dphi-vertical. However, three of the four diagnostic views described
+alongside it in the Supplementary Material --- the spectral-line fit, the
+cross-phase spectrogram, and polar vector rotation --- currently have no
+corresponding figures at all, because the notebook sections that generate
+them are disabled, and no direct quantitative comparison between any local
+method and the global WLS fit has been run on the same dataset. Hypothesis
+1.5 is therefore neither confirmed nor refuted by the evidence collected so
+far: the one local method with results available (instantaneous-phase
+imaging) is consistent with the global fit wherever both exist, but the
+claim that local phase gradients offer an "equivalent, simpler" route to the
+same displacement estimate remains untested.
 
 == Hypothesis 2: Accuracy and False-Positive Avoidance Favour Different Methods
 
@@ -222,8 +221,8 @@ is left entirely to future work.
 
 == Limitations
 
-+ Hypothesis 1.5's local phase-gradient methods (@sec:hyp1-h15) remain
-  exploratory: three of the four diagnostic views have no corresponding
++ Hypothesis 1.5's local phase-gradient methods (Supplementary Material,
+  §S5) remain exploratory: three of the four diagnostic views have no corresponding
   results because the notebook cells that generate them are currently
   disabled, and no quantitative comparison against the global WLS fit has
   been run on shared data.

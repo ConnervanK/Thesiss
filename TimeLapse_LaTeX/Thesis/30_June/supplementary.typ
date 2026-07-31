@@ -24,3 +24,6 @@
 #include "supp_chapters/S2_hypothesis1.typ"
 #include "supp_chapters/S3_hypothesis2.typ"
 #include "supp_chapters/S4_hypothesis3.typ"
+#include "supp_chapters/S5_spatial_intuition.typ"
+#include "supp_chapters/S6_material_change.typ"
+#include "supp_chapters/S7_hypothesis1_extended_migration.typ"

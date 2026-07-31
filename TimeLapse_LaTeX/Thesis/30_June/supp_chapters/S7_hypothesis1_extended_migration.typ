@@ -1,22 +1,22 @@
 #import "../template.typ": *
 
-= Extended Per-Method Migration Figures for Hypothesis 1 <app:hyp1-methods>
+= Extended Per-Method Migration Figures for Hypothesis 1 <supp:hyp1-methods>
 
-@sec:hyp1-lateral, @sec:hyp1-vertical, and @sec:hyp1-diagonal each migrate
+Chapter 5's Lateral, Vertical, and Diagonal movement sections each migrate
 every displacement scenario with Kirchhoff, Gazdag, and back-propagation
 migration, but the main chapter shows only the combined-comparison summary
-figure per direction (e.g. @fig:tl-summary-amp), to keep the chapter focused on
-the detectability result rather than on three near-identical sets of migrated
-images. This appendix gives the individual migrated image and time-lapse
-difference for each of the three migration algorithms, in each of the three
-displacement directions, zoomed around the scatterer.
+figure per direction, to keep the chapter focused on the detectability
+result rather than on three near-identical sets of migrated images. This
+chapter gives the individual migrated image and time-lapse difference for
+each of the three migration algorithms, in each of the three displacement
+directions, zoomed around the scatterer.
 
 == Lateral Movement
 
 #figure(
   subfigs(cols: 1,
-    img("TL_011_Kirchhoff_Migration__All_8_Datasets____f_c15_GHz____aperture.png"),
-    img("TL_013_Kirchhoff_Migration__TimeLapse_Differences_migrated__migrate.png"),
+    img("TL_011_Kirchhoff_Migration__All_8_Datasets____f_c15_GHz____aperture.png", width: 70%),
+    img("TL_013_Kirchhoff_Migration__TimeLapse_Differences_migrated__migrate.png", width: 70%),
   ),
   caption: [Kirchhoff migration of the lateral time-lapse study ($f_c = 1.5 "GHz"$,
     aperture $= 40$), zoomed around the scatterers: (a) migrated image for all
@@ -25,8 +25,8 @@ displacement directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("TL_015_Gazdag_Phase-Shift_Migration__All_7_Datasets____f_c15_GHz.png"),
-    img("TL_017_Gazdag_Migration__TimeLapse_Differences_migrated__migrated_b.png"),
+    img("TL_015_Gazdag_Phase-Shift_Migration__All_7_Datasets____f_c15_GHz.png", width: 70%),
+    img("TL_017_Gazdag_Migration__TimeLapse_Differences_migrated__migrated_b.png", width: 70%),
   ),
   caption: [Gazdag phase-shift migration of the lateral time-lapse study
     ($f_c = 1.5 "GHz"$), zoomed around the scatterers: (a) migrated image;
@@ -35,9 +35,9 @@ displacement directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("TL_019_Back-Propagation_E__All_7_Datasets____focus_at_1906_ns_zoome.png", width: 90%),
-    img("TL_021_Back-Propagation_Ez__All_7_Datasets____focus_at_1906_ns_zoom.png", width: 90%),
-    img("TL_023_Back-Propagation__TimeLapse_Differences_Ez_Ez__Ez_baseline.png", width: 90%),
+    img("TL_019_Back-Propagation_E__All_7_Datasets____focus_at_1906_ns_zoome.png", width: 50%),
+    img("TL_021_Back-Propagation_Ez__All_7_Datasets____focus_at_1906_ns_zoom.png", width: 50%),
+    img("TL_023_Back-Propagation__TimeLapse_Differences_Ez_Ez__Ez_baseline.png", width: 50%),
   ),
   caption: [Time-reversal back-propagation migration of the lateral time-lapse
     study, focused at $t = 19.06 "ns"$ and zoomed around the scatterers:
@@ -49,8 +49,8 @@ displacement directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("VTL_010_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png"),
-    img("VTL_012_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png"),
+    img("VTL_010_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png", width: 70%),
+    img("VTL_012_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png", width: 70%),
   ),
   caption: [Kirchhoff migration of the vertical time-lapse study
     ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterer:
@@ -59,8 +59,8 @@ displacement directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("VTL_014_Gazdag_Phase-Shift_Migration_zoomed____f_cf_c_GHz_GHz.png"),
-    img("VTL_016_Gazdag_Migration__TimeLapse_Differences_zoomed.png"),
+    img("VTL_014_Gazdag_Phase-Shift_Migration_zoomed____f_cf_c_GHz_GHz.png", width: 70%),
+    img("VTL_016_Gazdag_Migration__TimeLapse_Differences_zoomed.png", width: 70%),
   ),
   caption: [Gazdag phase-shift migration of the vertical time-lapse study
     ($f_c = 1.5 "GHz"$), zoomed around the scatterer: (a) migrated image;
@@ -69,9 +69,9 @@ displacement directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("VTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("VTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("VTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
+    img("VTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 50%),
+    img("VTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 50%),
+    img("VTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 50%),
   ),
   caption: [Time-reversal back-propagation migration of the vertical time-lapse
     study, focused at $t = 19.06 "ns"$ and zoomed around the scatterer:
@@ -83,8 +83,8 @@ displacement directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("DTL_010_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png"),
-    img("DTL_012_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png"),
+    img("DTL_010_Kirchhoff_Migration_zoomed____f_c15_GHz____aperture40.png", width: 55%),
+    img("DTL_012_Kirchhoff_Migration__TimeLapse_Differences_zoomed.png", width: 55%),
   ),
   caption: [Kirchhoff migration of the diagonal time-lapse study
     ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterer:
@@ -93,8 +93,8 @@ displacement directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("DTL_014_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png"),
-    img("DTL_016_Gazdag_Migration__TimeLapse_Differences_zoomed.png"),
+    img("DTL_014_Gazdag_Phase-Shift_Migration_zoomed____f_c15_GHz.png", width: 55%),
+    img("DTL_016_Gazdag_Migration__TimeLapse_Differences_zoomed.png", width: 55%),
   ),
   caption: [Gazdag phase-shift migration of the diagonal time-lapse study
     ($f_c = 1.5 "GHz"$), zoomed around the scatterer: (a) migrated image;
@@ -103,9 +103,9 @@ displacement directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("DTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("DTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 90%),
-    img("DTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 90%),
+    img("DTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 38%),
+    img("DTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 38%),
+    img("DTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 38%),
   ),
   caption: [Time-reversal back-propagation migration of the diagonal time-lapse
     study, focused at $t = 19.06 "ns"$ and zoomed around the scatterer:

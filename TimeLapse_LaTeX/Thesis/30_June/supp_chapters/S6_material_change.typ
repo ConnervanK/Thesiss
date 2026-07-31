@@ -1,13 +1,27 @@
 #import "../template.typ": *
 
-= Decoupling Geometric Movement from Material Change <sec:th-material-change>
+= Decoupling Geometric Movement from Material Change <supp:material-change>
 
-The third column of the design matrix in @eq:design-matrix is the
-constant vector $bold(1)$, deliberately included alongside the two
-wavenumber columns. This appendix shows, for theoretical completeness, why that
-design choice lets the same fit simultaneously measure displacement _and_
-detect a change in the dielectric material at the target, and why the two
-never contaminate each other.
+The third column of Chapter 3's WLS design matrix is the constant vector
+$bold(1)$, deliberately included alongside the two wavenumber columns. This
+chapter derives, for theoretical completeness, why that design choice lets
+the same fit simultaneously measure displacement _and_ detect a change in
+the dielectric material at the target, and why the two never contaminate
+each other.
+
+#supp-note[This is a theoretical capability of the fit, not an empirical
+result tested in this thesis. No experiment here investigates a genuine
+material-change scenario in this specific sense --- a fixed target whose
+permittivity changes between baseline and monitor surveys (e.g. a fracture
+that fills with fluid while its position and thickness stay fixed). The
+closest empirical analogue is the *FluidFlow* experiment (Chapter 5,
+Chapter 6), which tracks a wetting front's advancing _position_ --- that
+remains fundamentally a geometric displacement of the front's location, not
+a fixed-position permittivity swap, even though a change in fluid content is
+what physically drives it. The derivation below establishes that the method
+_could_ separate the two effects if both occurred together at a fixed
+location, a capability relevant to future field deployments, but it is
+unverified against real or synthetic material-change data in this work.]
 
 == Why a sub-wavelength fracture produces a frequency-independent phase shift
 
@@ -46,9 +60,10 @@ $alpha$.
 == Why the WLS fit puts material change exactly into the intercept
 
 For a fluid-substitution event with no mechanical movement
-($#Dz = #Dx = 0$), @eq:thinlayer-phase means every observation in
-@eq:phase-plane-discrete is the same constant, $Phi_i = #Dtheta$ for
-all $i$. Looking at the three columns of $A$ in @eq:design-matrix:
+($#Dz = #Dx = 0$), the frequency-independent phase offset derived above
+means every observation in Chapter 3's discrete phase-plane model is the
+same constant, $Phi_i = #Dtheta$ for all $i$. Looking at the three columns
+of the design matrix $A$:
 
 - the $#kz$ column spans negative to positive wavenumbers --- any
   non-zero $#Dz$ tilts the predicted plane, which can only _increase_
@@ -58,8 +73,8 @@ all $i$. Looking at the three columns of $A$ in @eq:design-matrix:
   matches the flat target with zero residual.
 
 This is possible because the wavenumber columns and the constant column are
-linearly independent: the matrix inversion in @eq:wls-solution decouples them
-exactly. If a target both moves _and_ changes material at once, the fitted
-plane both tilts (giving $#Dz, #Dx$) and shifts vertically (giving
-$c = #Dtheta$), and the two effects remain perfectly separable in the same
-single fit.
+linearly independent: the matrix inversion in Chapter 3's weighted
+least-squares solution decouples them exactly. If a target both moves _and_
+changes material at once, the fitted plane both tilts (giving
+$#Dz, #Dx$) and shifts vertically (giving $c = #Dtheta$), and the two
+effects remain perfectly separable in the same single fit.

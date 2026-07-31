@@ -79,25 +79,3 @@
 #heading(level: 1, numbering: none, outlined: true)[Bibliography]
 #bibliography("references.bib", style: "chicago-author-date", title: none)
 
-// ======================== APPENDIX ===========================
-
-// Reset heading counter and switch to letter numbering
-#counter(heading).update(0)
-#set heading(numbering: (..nums) => {
-  let n = nums.pos()
-  let letters = ("A","B","C","D","E","F","G","H","I","J")
-  if n.len() == 1 {
-    letters.at(n.at(0) - 1)
-  } else {
-    letters.at(n.at(0) - 1) + "." + n.slice(1).map(str).join(".")
-  }
-})
-#show heading.where(level: 1): set heading(supplement: "Annex")
-#show heading.where(level: 2): set heading(supplement: "Section")
-#show heading.where(level: 3): set heading(supplement: "Section")
-#chapter-word.update("Annex")
-
-#include "appendix/A_extended_sweeps.typ"
-#include "appendix/B_material_change.typ"
-#include "appendix/C_hypothesis1_extended_migration_figures.typ"
-#include "appendix/D_hypothesis1-5_local_phase.typ"

@@ -8,11 +8,13 @@ then develops the core result of this thesis --- that a sub-wavelength shift
 between two migrated images becomes a recoverable linear phase ramp: the 2D
 Fourier shift theorem (@sec:th-fourier-shift), its isolation via the
 cross-spectrum (@sec:th-cross-spectrum), and the weighted least-squares fit
-that recovers the displacement from it (@sec:th-wls). Two supporting views
-then build intuition for that result --- a spatial-domain picture of the
-lateral/vertical asymmetry (@sec:th-duality) and a localised time-frequency
-counterpart (@sec:th-local). The shared simulation and processing pipeline
-that applies this theory to data is described separately in @ch:methodology.
+that recovers the displacement from it (@sec:th-wls). A supporting view
+then builds spatial intuition for that result: a spatial-domain picture of
+the lateral/vertical asymmetry (@sec:th-duality), confirmed independently in
+simulation and extended with a complementary time-frequency perspective in
+the Supplementary Material, §S5. The shared simulation and processing
+pipeline that applies this theory to data is described separately in
+@ch:methodology.
 
 == GPR Migration Fundamentals <sec:th-migration>
 
@@ -290,7 +292,7 @@ Beyond absorbing calibration bias, the constant column of
 phase offset caused by a _material_ change at the target (e.g. a
 sub-wavelength fracture filling with fluid) in the intercept $c$, cleanly
 separated from the geometric shift $(#Dz, #Dx)$ --- the derivation of this
-decoupling is given in @sec:th-material-change.
+decoupling is given in the Supplementary Material, §S6.
 
 @fig:phaseplane-schematic summarises the full pipeline derived above on a
 real worked example --- Gazdag-migrated Lateral movement data at the
@@ -378,3 +380,9 @@ weighting by $|#XS|$ has no clean spatial-domain analogue; and (iii) in the
 spatial picture a calibration-bias intercept mixes irrecoverably with the
 vertical term $-k_(z c) #Dz$ in @eq:dphi-2d, whereas the Fourier-domain fit
 keeps them exactly orthogonal (@sec:th-wls).
+
+#supp-note[This asymmetry is confirmed independently, in simulation, by a
+local instantaneous-phase diagnostic applied to the same lateral- and
+vertical-displacement datasets, and is further developed with a
+complementary time-frequency perspective, in the Supplementary Material,
+§S5.]

@@ -28,8 +28,8 @@ failed?
 An optional, local trace-based alternative to the global phase-plane fit used
 in this chapter (Hypothesis 1.5: tracking the local phase gradients
 $partial phi \/ partial x$ and $partial phi \/ partial y$ directly) is
-explored separately in @sec:hyp1-h15 and is not required for the results
-below.
+explored separately in the Supplementary Material, §S5, and is not required
+for the results below.
 
 == Workflow Defined <sec:hyp1-workflow>
 
@@ -74,7 +74,8 @@ notebooks.
 === The Phase-Plane Fit (WLS) <sec:hyp1-phaseplane>
 
 The 2D weighted-least-squares (WLS) phase-plane fit derived in
-@sec:th-fourier-shift, @sec:th-wls, and @sec:th-material-change, and
+@sec:th-fourier-shift and @sec:th-wls (with the material-change decoupling
+of the intercept term derived in the Supplementary Material, §S6), and
 implemented as described in @sec:meth-phaseplane, is applied to the
 baseline/monitor cross-spectrum. The target apex is first localised from the
 peak of the Baseline envelope nearest to where the two images differ most,
@@ -161,7 +162,7 @@ migration comparison directly.
 ]
 
 Individual per-method migrated images and time-lapse differences, zoomed
-around the scatterer, are given in @app:hyp1-methods.
+around the scatterer, are given in the Supplementary Material, §S7.
 
 === Amplitude Test <sec:hyp1-lat-amplitude>
 
