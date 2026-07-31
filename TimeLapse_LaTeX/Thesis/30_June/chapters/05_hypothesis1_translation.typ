@@ -127,13 +127,13 @@ in a $4.0 times 1.0 "m"$ pure-ice domain ($eps_r = 3.15$).
       [*Scenario*], [*$#Dx$*], [*$#Dz$*],
       table.hline(stroke: 0.4pt),
       [Baseline], [$0$], [$0$],
-      [$2 lambda$], [$2 lambda$], [$0$],
-      [$1 lambda$], [$1 lambda$], [$0$],
-      [$1\/2 lambda$], [$1\/2 lambda$], [$0$],
-      [$1\/4 lambda$], [$1\/4 lambda$], [$0$],
-      [$1\/8 lambda$], [$1\/8 lambda$], [$0$],
-      [$1\/16 lambda$], [$1\/16 lambda$], [$0$],
-      [$1\/32 lambda$], [$1\/32 lambda$], [$0$],
+      [$2 lambda$], [$22.5 "cm"$], [$0$],
+      [$1 lambda$], [$11.3 "cm"$], [$0$],
+      [$1\/2 lambda$], [$5.6 "cm"$], [$0$],
+      [$1\/4 lambda$], [$2.8 "cm"$], [$0$],
+      [$1\/8 lambda$], [$1.4 "cm"$], [$0$],
+      [$1\/16 lambda$], [$0.7 "cm"$], [$0$],
+      [$1\/32 lambda$], [$0.4 "cm"$], [$0$],
       table.hline(stroke: 0.7pt),
     ),
   ),
@@ -166,6 +166,15 @@ around the scatterer, are given in the Supplementary Material, §S7.
 
 === Amplitude Test <sec:hyp1-lat-amplitude>
 
+The amplitude test asks whether the Baseline and Monitor point-spread
+functions remain distinguishable as two separate peaks after migration,
+using the classical Rayleigh criterion: two peaks are resolved when their
+separation is at least the Baseline peak's Full Width at Half Maximum
+(FWHM), i.e. a separation-to-FWHM ratio of $1$ or more; below that, the two
+peaks blur into one and amplitude alone can no longer tell Baseline and
+Monitor apart. @tab:h1-lat-amp reports this ratio for every scenario and
+migration method.
+
 #supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
 scenario set is provided in the Supplementary Material, §S2.1.1.]
 
@@ -196,7 +205,12 @@ Every method's ratio drops below $1$ at or before $1\/4 lambda$ (Kirchhoff
 already at $1\/2 lambda$, ratio $0.954$) and falls below $0.4$ by
 $1\/8 lambda$: from $1\/4 lambda$ downward, amplitude differencing alone
 cannot resolve the lateral displacement for any of the three migration
-algorithms.
+algorithms. Back-propagation's ratio at $1\/32 lambda$ is exactly $0$ rather
+than a small positive value like the other two methods at that scale: the
+true displacement there ($0.4 "cm"$) falls below the spatial sampling of the
+peak-position estimate, so the Baseline and Monitor peaks land on the
+identical grid sample -- a finite-grid-size artefact of the FDTD
+discretisation, not a qualitatively different failure mode.
 
 === Phase Test <sec:hyp1-lat-phase>
 
@@ -267,13 +281,13 @@ position (@fig:h1-ff-setup).
       [*Scenario*], [*Front displacement $#Dx$*],
       table.hline(stroke: 0.4pt),
       [Baseline], [$0$],
-      [$2 lambda$], [$2 lambda$],
-      [$1 lambda$], [$1 lambda$],
-      [$1\/2 lambda$], [$1\/2 lambda$],
-      [$1\/4 lambda$], [$1\/4 lambda$],
-      [$1\/8 lambda$], [$1\/8 lambda$],
-      [$1\/16 lambda$], [$1\/16 lambda$],
-      [$1\/32 lambda$], [$1\/32 lambda$],
+      [$2 lambda$], [$22.5 "cm"$],
+      [$1 lambda$], [$11.3 "cm"$],
+      [$1\/2 lambda$], [$5.6 "cm"$],
+      [$1\/4 lambda$], [$2.8 "cm"$],
+      [$1\/8 lambda$], [$1.4 "cm"$],
+      [$1\/16 lambda$], [$0.7 "cm"$],
+      [$1\/32 lambda$], [$0.4 "cm"$],
       table.hline(stroke: 0.7pt),
     ),
   ),

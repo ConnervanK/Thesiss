@@ -201,11 +201,10 @@ quantitative evidence that sign-bit back-propagation is noise-robust comes
 from @sec:hyp3-summary's master MAE table (@tab:h2-mae) on the real noisy studies below,
 where back-propagation is the second most accurate method overall.
 
-#page(flipped: true)[
 #figure(
   subfigs(cols: 1,
-    img("H2_005_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Lat.png", width: 65%),
-    img("H2_006_Back-Propagation_of_a_Signal-Bearing_B-scan_Lateral_Baseline.png", width: 39%),
+    img("H2_005_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Lat.png", width: 100%),
+    img("H2_006_Back-Propagation_of_a_Signal-Bearing_B-scan_Lateral_Baseline.png", width: 100%),
   ),
   caption: [Sign-bit time-reversal, Lateral, Noisy: (a) original noisy
     B-scans, sign-bit B-scans, and their respective frequency spectra, for
@@ -214,7 +213,6 @@ where back-propagation is the second most accurate method overall.
     peak-normalised excitation versus sign-bit excitation, focus-time
     snapshots side by side.],
 ) <fig:h2-signbit-excitation>
-]
 
 
 

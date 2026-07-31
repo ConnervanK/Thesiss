@@ -136,7 +136,14 @@ the Supplementary Material, §S1.1.]
 @sec:meth-conditioning on the $2 lambda$ separation scenario: the simulated
 zero-offset B-scans before and after background subtraction, and the effect
 of tapering and the $t_0$ shift on both a single trace and the complete
-B-scan.
+B-scan. The direct wave itself is removed by the background subtraction of
+@sec:meth-conditioning and so is not visible in the single-trace panels; had
+it still been present, it would start exactly at $t = 0$. gprMax's source
+wavelet is instead excited with a small built-in delay ($t_0 approx
+0.943 "ns"$ for the Ricker wavelet used throughout this thesis) purely to
+avoid the numerical onset artefact of starting the simulation abruptly at
+the wavelet's peak; the $t_0$ shift undoes exactly this delay so the surface
+reflection aligns back to $t = 0$ in the conditioned trace.
 
 #figure(
   subfigs(cols: 1,
