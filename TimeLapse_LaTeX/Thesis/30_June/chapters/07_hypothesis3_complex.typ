@@ -71,18 +71,8 @@ and near-borehole taper below are generic operations on a migrated image, not
 back-propagation-specific fixes, and Kirchhoff and Gazdag images carry the
 same class of migration-artefact clutter that benefits from them.
 
-*Migration.* Kirchhoff and Gazdag apply a linear spherical-gain correction
-(compensating $1\/r$ geometric spreading) directly to the differenced B-scan
-before migrating. Back-propagation instead applies a physics-based
-3D-to-2D Green's-function correction -- a $sqrt(r)$ amplitude gain together
-with a $1\/sqrt(omega) dot e^(i phi)$ frequency-domain phase filter --
-because the survey records a 3D field but gprMax back-propagates it through a
-2D grid, and a 3D point source and a 2D line source have different Green's
-functions. The corrected B-scan is then spatially and temporally
-Tukey-tapered, passed through an $f$-$k_z$ dip filter to remove evanescent
-energy, time-reversed and peak-normalised, low-pass filtered to gprMax's
-numerical-dispersion limit, and edge-zeroed before injection into the
-explicit borehole geometry of @fig:fd-borehole-schematic ($d_x = 0.02 "m"$,
+*Migration.* Kirchhoff and Gazdag apply a linear spherical-gain correction directly to the differenced B-scan before migrating; by compensating for $1\/r$ geometric spreading, this step simultaneously acts as the requisite 3D-to-2D conversion. Back-propagation instead applies a rigorous physics-based 3D-to-2D Green’s-function correction—an amplitude gain of $sqrt(r)$ together
+with a $1\/sqrt(omega) dot e^(i phi)$ frequency-domain phase filter. This ensures dimensional consistency, because while the survey records a 3D field, gprMax back-propagates it through a 2D grid, and the Green's function governing the dipole response of a 3D medium is fundamentally different from that of a 2D medium. The corrected B-scan is then spatially and temporally Tukey-window-tapered, passed through a $f$-$k_z$ dip filter to remove evanescent energy, time-reversed and peak-normalised, low-pass filtered to gprMax’s numerical-dispersion limit, and edge-zeroed before injection into the explicit borehole geometry of @fig:fd-borehole-schematic ($d_x = 0.02 "m"$,
 $times 4$ permittivity scaling implementing the exploding-reflector
 convention $#vmig = v\/2$ shared with Kirchhoff and Gazdag, applied
 consistently to both the background and the borehole water). Back-propagation
@@ -185,12 +175,7 @@ display, or the spatial region can be painted on the difference B-scan
 itself, letting the ROI trace the reflector's actual shape rather than an
 axis-aligned box.
 
-Because the two migrated images being compared are real-valued, their
-cross-spectrum is exactly Hermitian: $#XS (-#kz, -#kx) = #XS (#kz, #kx)^*$, so
-every genuine $(#kz, #kx)$ point has an exact phase-negated mirror duplicate
-at $(-#kz, -#kx)$, and fitting a plane through both at once biases the
-estimate.
-For this borehole/VRP geometry, the antenna radiates along the radial
+Because the two migrated images being compared are real-valued, their cross-spectrum is exactly Hermitian, $#XS (-#kz, -#kx) = #XS (#kz, #kx)^*$, so every genuine $(#kz, #kx)$ point has a phase-negated mirror duplicate at $(-#kz, -#kx)$. While fitting a plane through both halves simultaneously does not bias an ideal synthetic dataset, field data inherently contains physical non-linearities—such as wavelet dispersion or deviations from a perfectly straight borehole trajectory. These real-world effects can introduce subtle asymmetries during phase unwrapping, causing a full-spectrum plane fit to become biased. To avoid this, the fit must be restricted to one half of the spectrum. For this borehole/VRP geometry, the antenna radiates along the radial
 direction $x$ as it is lowered down the borehole, so $x$ --- not $z$ --- is
 the carrier/wavelet axis, and it is this mirror duplicate that sits at
 $-#kx$. The $#kz$ axis is simply the spatial direction the antenna traverses
@@ -248,12 +233,8 @@ cross-spectrum -- that together define the ROI entering the fit.
 === Back-Propagation Cross-Check and Stage Displacements <sec:hyp3-fd-bp-corrected>
 
 The same napari-picked workflow is applied to the corrected back-propagation
-focus frames for the same four representative pairs. One back-propagation-specific
-correction is required: its focus frames' depth axis increases with row
-index, opposite to the Kirchhoff/Gazdag arrays used elsewhere, so the
-$k_z$-axis row spacing is negated for back-propagation before the fit, and
-the raw output is converted to the "positive $#Dz$ = downward" convention
-used throughout this chapter.
+focus frames for the same four representative pairs. Throughout this chapter, the "positive $#Dz$ = downward" convention
+is used.
 
 @tab:fielddata-stages summarises the resulting stage-by-stage displacement
 estimates for Gazdag and for the independently-processed back-propagation
@@ -308,8 +289,7 @@ returns to what this displacement pattern means physically.
 == Interpretation (WLS vs. RANSAC) <sec:hyp3-fd-interpretation>
 
 Back-propagation and Gazdag agree on the sign of the displacement during
-Push, Chase and Wait (@tab:fielddata-stages) once back-propagation's
-depth-axis convention is corrected, despite sharing no processing steps
+Push, Chase and Wait (@tab:fielddata-stages), despite sharing no processing steps
 downstream of the raw B-scans; the two diverge only in the Pull stage, where
 Gazdag's estimate sits at the noise floor rather than truly disagreeing in
 sign. This cross-method agreement is evidence that the recovered $#Dz$
@@ -338,7 +318,7 @@ headline numbers?]
 down-weights low-energy bins but still lets every masked cell contribute, so
 a coherent band of phase-wrapped or noise-dominated cells inside a napari
 mask could in principle still bias the plane. As a robustness check, each
-fit is repeated with RANSAC: it fits the plane to random cell subsets, keeps
+fit is repeated with RANSAC (Zhu 2025): it fits the plane to random cell subsets, keeps
 the largest consensus set of inliers (phase residual $< 0.35 "rad"$, over
 $2000$ iterations), and refits WLS on those inliers alone. The comparison is
 run for all four representative pairs and all three migration techniques, in

@@ -150,10 +150,9 @@ GPR wavelet's own frequency, so its false-coherence risk is a
 *spatial*-stacking effect (the delay-and-sum aperture's geometry, not
 its frequency response) rather than a narrowband spectral one. This is a
 purely spectral view, though: it discards the phase/spatial-alignment
-information that produces the wave-like bands visible in
+information that produces the low frequency speckle visible in
 @fig:h2-purenoise-kg, so it cannot by itself explain *why* Kirchhoff's
-aperture stacking prefers this particular frequency band --- left as an
-open question.
+aperture stacking prefers this particular frequency band.
 
 == Making Back-Propagation Noise-Robust <sec:hyp3-signbit>
 
@@ -171,19 +170,36 @@ record --- letting it act as its own competing point source during
 back-propagation, interfering at the true source locations instead of being
 suppressed by destructive interference.
 
-_Sign-bit time-reversal_ fixes this by injecting only the _sign_ of the
+While percentile normalization is often used to clip such extreme outliers, it still preserves relative amplitude variations. Because focusing is driven by phase, this thesis bypasses amplitude-capping entirely in favor of _sign-bit time-reversal_:
+
+By injecting only the _sign_ of the
 time-reversed wavefield instead of its peak-normalised value,
-$ u_"sign" (x, tau) = op("sign")(u(x, tau)) , $ <eq:signbit>
-implemented in `write_backprop_files(..., sign_bit=True)`
-(`helper_functions/migration.py`). This keeps every zero-crossing and phase
-trend of the GPR wavelet completely intact, since the sign of a signal
+$ u_"sign" (x, tau) = op("sign")(u(x, tau)) , $ <eq:signbit> every zero-crossing and phase trend is kept completely intact, since the sign of a signal
 carries its full phase information, while squashing every noise spike down
-to the same $plus.minus 1$ amplitude as the coherent signal --- stripping
-noise of the outsized amplitude that would otherwise let it dominate the
-back-propagated wavefield. The clean-data experiments of @ch:hyp1 use the
+to the same $plus.minus 1$ amplitude as the coherent signal --- stripping noise of the outsized amplitude that would otherwise dominate the back-propagated wavefield. The clean-data experiments of @ch:hyp1 use the
 default peak-normalised excitation throughout, since they have no noise to
 suppress; every noisy back-propagation result in this chapter uses sign-bit
 excitation instead.
+
+#linebreak()
+
+In @fig:h2-signbit-excitation (b) sign-bit excitation reaches $approx 15 space 100 "V/m"$, about $25 times$
+larger than peak-normalised's, since forcing every sample (not just each
+trace's single peak) to $plus.minus 1$ injects far more total energy into
+the medium. Unlike the idealised, zero-signal test of @sec:hyp3-purenoise,
+both excitation schemes here have a real target --- the Baseline scatterer
+--- to focus on, so @fig:h2-signbit-excitation (b) is the direct,
+signal-bearing analogue of that pure-noise comparison: compare how tightly
+each panel's energy collapses onto the true scatterer position rather than
+staying diffuse artefact, as it did for pure noise. 
+#draftnote[Describe what
+the regenerated focus-frame comparison actually shows once the peak-norm
+back-propagation gprMax run has completed --- see the run instructions
+printed by the corresponding Hypothesis_2.ipynb cell.] 
+The actual,
+quantitative evidence that sign-bit back-propagation is noise-robust comes
+from @sec:hyp3-summary's master MAE table (@tab:h2-mae) on the real noisy studies below,
+where back-propagation is the second most accurate method overall.
 
 #page(flipped: true)[
 #figure(
@@ -200,23 +216,7 @@ excitation instead.
 ) <fig:h2-signbit-excitation>
 ]
 
-Sign-bit excitation reaches $approx 713 space 100 "V/m"$, about $6 times$
-larger than peak-normalised's, since forcing every sample (not just each
-trace's single peak) to $plus.minus 1$ injects far more total energy into
-the medium. Unlike the idealised, zero-signal test of @sec:hyp3-purenoise,
-both excitation schemes here have a real target --- the Baseline scatterer
---- to focus on, so @fig:h2-signbit-excitation (b) is the direct,
-signal-bearing analogue of that pure-noise comparison: compare how tightly
-each panel's energy collapses onto the true scatterer position rather than
-staying diffuse artefact, as it did for pure noise. 
-#draftnote[Describe what
-the regenerated focus-frame comparison actually shows once the peak-norm
-back-propagation gprMax run has completed --- see the run instructions
-printed by the corresponding Hypothesis_2.ipynb cell.] 
-The actual,
-quantitative evidence that sign-bit back-propagation is noise-robust comes
-from @sec:hyp3-summary's master MAE table on the real noisy studies below,
-where back-propagation is one of the two most accurate methods overall.
+
 
 == Extra Processing Steps in the Phase Domain to Remove Noise <sec:hyp3-phase-denoise>
 
@@ -248,8 +248,8 @@ previously fit the $1\/8 lambda$ monitor image against the $1\/32 lambda$
 truth by mistake; it now fits the $1\/32 lambda$ image against the $1\/32
 lambda$ truth, matching the "smallest, hardest shift" described above).]
 OLS recovers *[TBC]* mm (*[TBC]* mm error) and WLS recovers *[TBC]* mm
-(*[TBC]* mm error). What the cross-section panels make visible is the
-*mechanism*: the bright
+(*[TBC]* mm error). The cross-section panels make the
+*mechanism* visible: the bright
 (high-weight) points visibly cluster closer to the fitted line than the dim
 (low-weight, noise-dominated) points in both rows, confirming that $|X
 S|$-weighting does discount incoherent bins as intended.
@@ -266,9 +266,8 @@ target before the WLS fit of @sec:hyp1-phaseplane can run
 locating the peak of the Baseline envelope nearest to where Baseline and
 Monitor differ most --- a search that works because the clean signal is, by
 construction, the dominant feature in the image. Under Laplace noise that
-assumption breaks down: an early version of this chapter's pipeline reused
-the same noisy-envelope search, cropped only along $x$ (keeping the full
-depth range), and it regularly locked onto a noise-driven false peak instead
+assumption breaks down: a noisy-envelope search, cropped only along $x$ (keeping the full
+depth range), locks onto a noise-driven false peak instead
 of the true target --- especially for Gazdag, whose incoherent speckle
 (@sec:hyp3-purenoise) both dominates the envelope search itself and, once a
 wrong window is cropped, floods the WLS fit with off-target energy.
@@ -286,9 +285,7 @@ so a crop that is tight in $x$ but left open in $z$ still lets speckle from
 other depths dominate the fit's weighted bins. This localisation fix is
 applied uniformly to Kirchhoff, Gazdag, and back-propagation alike, so it
 cannot by itself explain any remaining *difference* between methods below
---- but it substantially changes the absolute accuracy each one achieves
-relative to an earlier, noisy-envelope-search version of this chapter's
-results, most visibly for Gazdag (@sec:hyp3-summary).
+--- but it substantially changes the absolute accuracy each one achieves, most visibly for Gazdag (@sec:hyp3-summary).
 
 == Noisy Lateral Movement <sec:hyp3-lateral>
 
@@ -560,15 +557,7 @@ gets *worse* ($26.0 -> 34.5 "mm"$): the per-scenario table (Supplementary
 Material, §S3.2.3) shows this is driven almost entirely by spurious lateral
 ($#Dx$) error the WLS fit assigns even though Vertical's true $#Dx = 0$ by
 construction (e.g. $-30.4 "mm"$ at $1\/8 lambda$, @sec:hyp3-vertical) ---
-cross-axis leakage that a better crop window does not fix. Earlier work
-(independently, in `TimeLapse_Processing.ipynb`) attributed a related streaking
-artefact in Gazdag's noisy migrated images to a numerical property of the
-phase-shift depth-stepping operator rather than the noise's spectral content,
-and found that a raised-cosine low-$#kz$ taper did not resolve it; given how
-much of the earlier "Gazdag versus Kirchhoff/back-propagation" gap turned out
-to be explained by target localisation instead, that diagnosis should be
-revisited rather than assumed still to hold --- left as outstanding work
-(@sec:hyp3-phase-denoise).
+cross-axis leakage that a better crop window does not fix. The exact numerical cause of this Gazdag-specific streaking artefact remains unresolved. Given that target localisation explains so much of the performance gap between Gazdag and the other methods, diagnosing the root cause of this remaining cross-axis leakage is left as outstanding future work.
 
 Kirchhoff's aperture-stacking sums over many traces and partially averages
 the noise down, which now recovers Lateral's, Diagonal's, and FluidFlow's
