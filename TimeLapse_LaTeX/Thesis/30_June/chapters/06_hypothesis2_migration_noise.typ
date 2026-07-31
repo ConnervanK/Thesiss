@@ -458,13 +458,47 @@ to $-41.00 "mm"$ in $#Dx$), only approaching the others at Scenario 5
 === Cross-Movement Comparison
 
 @tab:h2-lat-phase and @tab:h2-lat-phase-pct give the full per-scenario noisy
-phase-plane error for the lateral case, in millimetres and as a percentage
-of the true displacement; the equivalent per-scenario tables for Vertical,
-Diagonal, and FluidFlow are provided in the Supplementary Material (§S3.2.3,
-§S3.3.3, §S3.4.3). @tab:h2-mae condenses the millimetre errors for all four
-movement types into one mean absolute error (MAE) per movement type and
-method, using the same sub-half-wavelength regime as @tab:h1-mae, so that it
-is directly comparable to the clean-data result of @ch:hyp1.
+phase-plane error for the lateral case; the equivalent per-scenario tables
+for Vertical, Diagonal, and FluidFlow are provided in the Supplementary
+Material (§S3.2.3, §S3.3.3, §S3.4.3). @fig:h2-detectability is this
+chapter's noisy counterpart to @fig:h1-detectability: in every column the
+bottom-row phase-error curves still drop below their $5%$ threshold at or
+before the top-row amplitude-ratio curves cross below $1$, though noise
+pushes both crossing points later, and Gazdag's phase-error curve sits
+noticeably higher than the other two methods' throughout.
+
+#page(flipped: true)[
+#figure(
+  img("H2_028_Hypothesis_2_--_Detectability_Map_Noisy.png"),
+  caption: [Detectability map, _noisy_ data (compare @fig:h1-detectability):
+    top row, Rayleigh-criterion amplitude ratio (threshold $1$); bottom row,
+    absolute phase-plane WLS displacement error as a percentage of the true
+    displacement (log scale, threshold $5%$); for all three migration
+    methods, across all four movement types. The full per-scenario numeric
+    tables underlying this figure are given in
+    @tab:h2-lat-amp/@tab:h2-lat-phase (Lateral, in the main text) and the
+    Supplementary Material, §S3.2--§S3.4 (Vertical, Diagonal, FluidFlow).],
+) <fig:h2-detectability>
+]
+
+@fig:h2-dumbbell puts every (movement, method) pair's clean-data and
+noisy-data MAE, as a percentage of the true displacement, on one shared log
+axis, so @tab:h1-mae and @tab:h2-mae --- and the whole of @ch:hyp1 versus
+this chapter --- can be compared directly in one picture. Background
+shading groups the twelve rows by movement type.
+
+#page(flipped: true)[
+#figure(
+  img("H2_029_Hypothesis_2_--_Clean_vs_Noisy_MAE_Dumbbell_Plot.png"),
+  caption: [Clean-versus-noisy mean absolute phase-plane displacement error,
+    as a percentage of the true displacement, for every movement type and
+    migration method: circle marker = clean data (@tab:h1-mae, @ch:hyp1),
+    square marker = noisy data (@tab:h2-mae, this chapter), connecting line
+    shows the resulting noise-driven degradation. Background colour bands
+    group rows by movement type (Lateral, Vertical, Diagonal, FluidFlow).
+    Log-scaled horizontal axis.],
+) <fig:h2-dumbbell>
+]
 
 #figure(
   table(
@@ -482,118 +516,52 @@ is directly comparable to the clean-data result of @ch:hyp1.
     [*Mean*],    [*11.059*], [*20.254*], [*4.505*],
     table.hline(stroke: 0.7pt),
   ),
-  caption: [Mean absolute phase-plane displacement error [mm], _noisy_ data,
-    sub-half-wavelength regime only (compare @tab:h1-mae).],
+  caption: [Mean absolute phase-plane displacement error [mm] underlying
+    @fig:h2-dumbbell's noisy-data series (compare @tab:h1-mae), sub-half-wavelength
+    regime only.],
   kind: table,
 ) <tab:h2-mae>
 
-@fig:h2-detectability is this chapter's counterpart to @fig:h1-detectability,
-built from the same noisy Rayleigh-ratio and phase-error data underlying
-@tab:h2-mae: in every column the bottom-row phase-error curves still drop
-below their $5%$ threshold at or before the top-row amplitude-ratio curves
-cross below $1$, though noise pushes both crossing points later (further
-down the displacement sweep) than in the clean-data map, and Gazdag's
-phase-error curve in particular now sits noticeably higher than the other
-two methods' throughout.
-
-#page(flipped: true)[
-#figure(
-  img("H2_028_Hypothesis_2_--_Detectability_Map_Noisy.png"),
-  caption: [Detectability map, _noisy_ data (compare @fig:h1-detectability):
-    top row, Rayleigh-criterion amplitude ratio (threshold $1$); bottom row,
-    absolute phase-plane WLS displacement error as a percentage of the true
-    displacement (log scale, threshold $5%$); for all three migration
-    methods, across all four movement types. The full per-scenario numeric
-    tables underlying this figure are given in
-    @tab:h2-lat-amp/@tab:h2-lat-phase (Lateral, in the main text) and the
-    Supplementary Material, §S3.2--§S3.4 (Vertical, Diagonal, FluidFlow).],
-) <fig:h2-detectability>
-]
-
-@fig:h2-dumbbell puts every (movement, method) pair's clean-data and
-noisy-data mean absolute phase-plane error, as a percentage of the true
-displacement, on one shared log axis, so @tab:h1-mae and @tab:h2-mae ---
-and the whole of @ch:hyp1 versus this chapter --- can be compared directly
-in one picture instead of two separate tables. Background shading groups
-the twelve (movement, method) rows by movement type, since otherwise the
-plain row list is hard to scan at a glance.
-
-#page(flipped: true)[
-#figure(
-  img("H2_029_Hypothesis_2_--_Clean_vs_Noisy_MAE_Dumbbell_Plot.png"),
-  caption: [Clean-versus-noisy mean absolute phase-plane displacement error,
-    as a percentage of the true displacement, for every movement type and
-    migration method: circle marker = clean data (@tab:h1-mae, @ch:hyp1),
-    square marker = noisy data (@tab:h2-mae, this chapter), connecting line
-    shows the resulting noise-driven degradation. Background colour bands
-    group rows by movement type (Lateral, Vertical, Diagonal, FluidFlow).
-    Log-scaled horizontal axis.],
-) <fig:h2-dumbbell>
-]
-
 With the localisation fix of @sec:hyp3-groundtruth-apex applied uniformly to
-all three methods, Kirchhoff is now the most accurate method for three of
-the four movement types (Lateral $0.24 "mm"$, Diagonal $0.07 "mm"$,
-FluidFlow $0.23 "mm"$); sign-bit back-propagation remains most accurate only
-for Vertical ($13.4 "mm"$, against Kirchhoff's $17.5 "mm"$ there). Averaged
-across all four movement types, Kirchhoff's mean MAE ($4.5 "mm"$) is now
-roughly a factor of $2.5$ below back-propagation's ($11.1 "mm"$) --- a
-substantially larger gap than an earlier, noisy-envelope-apex version of
-this comparison found between the two. Gazdag's mean MAE fell from
-$28.9 "mm"$ to $20.3 "mm"$ once the crop window was centred on the known
-target position in both $x$ and $z$ rather than hunted for in the noisy
-envelope, but it remains the least accurate method overall, worst for three
-of the four movement types (all but FluidFlow).
+all three methods, Kirchhoff is now the most accurate method overall
+($4.5 "mm"$ mean MAE) --- roughly $2.5 times$ below sign-bit
+back-propagation's ($11.1 "mm"$) and $4.5 times$ below Gazdag's
+($20.3 "mm"$) --- and the most accurate method for three of the four
+movement types (Lateral, Diagonal, FluidFlow); back-propagation remains
+most accurate only for Vertical ($13.4 "mm"$ against Kirchhoff's
+$17.5 "mm"$).
 
-Locating the target correctly was necessary but not sufficient for Gazdag: it
-removed most of its excess error but left a real, Gazdag-specific weakness
-behind, most visible as cross-axis leakage on purely-vertical motion. The
-uneven size of the improvement across movement types shows this directly.
-FluidFlow improves the most dramatically ($25.6 -> 0.98 "mm"$,
-@sec:hyp3-fluidflow) --- consistent with a genuine localisation failure being
-the dominant error source there --- and Lateral and Diagonal improve more
-modestly ($37.9 -> 22.3 "mm"$ and $26.2 -> 23.3 "mm"$). Vertical, conversely,
-gets *worse* ($26.0 -> 34.5 "mm"$): the per-scenario table (Supplementary
-Material, §S3.2.3) shows this is driven almost entirely by spurious lateral
-($#Dx$) error the WLS fit assigns even though Vertical's true $#Dx = 0$ by
-construction (e.g. $-30.4 "mm"$ at $1\/8 lambda$, @sec:hyp3-vertical) ---
-cross-axis leakage that a better crop window does not fix. The exact numerical cause of this Gazdag-specific streaking artefact remains unresolved. Given that target localisation explains so much of the performance gap between Gazdag and the other methods, diagnosing the root cause of this remaining cross-axis leakage is left as outstanding future work.
-
-Kirchhoff's aperture-stacking sums over many traces and partially averages
-the noise down, which now recovers Lateral's, Diagonal's, and FluidFlow's
-smallest sub-wavelength shifts to a few tenths of a millimetre once the crop
-window is correctly centred. Sign-bit back-propagation remains the most
-accurate method specifically for Vertical, consistent with
-@sec:hyp3-signbit's motivation: clamping every noise spike to
-$plus.minus 1$ before back-propagation keeps its phase-governed focusing
-intact, and it does not show Gazdag's cross-axis leakage there. Diagonal is
-the easiest case for both Kirchhoff and back-propagation (under
-$0.7 "mm"$ MAE), likely because its combined 2D $(#Dz, #Dx)$ error norm
-partially cancels axis-wise noise scatter that would otherwise show up as
-pure along-axis error in the Lateral or Vertical cases.
+Locating the target correctly was necessary but not sufficient for Gazdag:
+the fix removed most of its excess error (mean MAE $28.9 -> 20.3 "mm"$) but
+left a real, movement-specific weakness behind. FluidFlow improves most
+dramatically ($25.6 -> 0.98 "mm"$, @sec:hyp3-fluidflow), consistent with a
+genuine localisation failure being the dominant error source there;
+Vertical, conversely, gets *worse* ($26.0 -> 34.5 "mm"$), driven by spurious
+lateral ($#Dx$) error the WLS fit assigns even though Vertical's true
+$#Dx = 0$ by construction (Supplementary Material, §S3.2.3) --- a
+cross-axis-leakage artefact that a better crop window does not fix, and
+whose exact numerical cause remains unresolved (left as outstanding future
+work).
 
 Answering Hypothesis 2's question directly: no single method is
 unconditionally "most noise-robust" here --- the answer depends on what
 "robust" is taken to mean. By raw aggregate accuracy, Kirchhoff wins clearly
-($4.5 "mm"$ mean MAE, roughly $2.5 times$ below back-propagation and
-$4.5 times$ below Gazdag) --- but @sec:hyp3-purenoise showed Kirchhoff is also
-the only method that turns pure noise into coherent, wave-like bands that could
-be misread as real structure, a false-positive risk this chapter's MAE metric
-cannot see because every scenario it is computed on contains a genuine target.
-Back-propagation with sign-bit time-reversal trades some of that raw accuracy
-(a factor of $2$--$3$ worse than Kirchhoff on three of four movement types,
-though still the best method for Vertical) for staying diffuse, incoherent
-speckle on pure noise (@sec:hyp3-signbit) rather than manufacturing false
-structure --- the more conservative choice where false positives, not raw
-displacement accuracy, are the primary concern. Gazdag, despite its substantial
-improvement once correctly localised, remains the weakest choice on both counts
-and is not recommended for noisy time-lapse phase-plane tracking by either
-criterion. Underlying all three verdicts, the qualitative conclusion of
-@ch:hyp1 survives the introduction of noise: comparing @tab:h2-mae against the
-clean-data @tab:h1-mae, noise degrades every method's accuracy by roughly one
-to two orders of magnitude in the sub-half-wavelength regime, yet at least one
-method still recovers every movement type to a few tenths of a millimetre or
-better, at displacement scales where the corresponding amplitude tests
-(@tab:h2-lat-amp for lateral; the Supplementary Material, §S3.2.2, §S3.3.2,
-§S3.4.2, for Vertical, Diagonal, and FluidFlow) show amplitude differencing has
-already collapsed.
+--- but @sec:hyp3-purenoise showed Kirchhoff is also the only method that
+turns pure noise into coherent, wave-like bands that could be misread as
+real structure, a false-positive risk this chapter's MAE metric cannot see
+because every scenario it is computed on contains a genuine target.
+Back-propagation with sign-bit time-reversal trades some of that raw
+accuracy (a factor of $2$--$3$ worse than Kirchhoff on three of four
+movement types, though still the best method for Vertical) for staying
+diffuse, incoherent speckle on pure noise (@sec:hyp3-signbit) rather than
+manufacturing false structure --- the more conservative choice where false
+positives, not raw displacement accuracy, are the primary concern. Gazdag,
+despite its substantial improvement once correctly localised, remains the
+weakest choice on both counts and is not recommended for noisy time-lapse
+phase-plane tracking by either criterion. Underlying all three verdicts, the
+qualitative conclusion of @ch:hyp1 survives the introduction of noise:
+comparing @tab:h2-mae against the clean-data @tab:h1-mae, noise degrades
+every method's accuracy by roughly one to two orders of magnitude in the
+sub-half-wavelength regime, yet at least one method still recovers every
+movement type to a few tenths of a millimetre or better, at displacement
+scales where amplitude differencing has already collapsed.

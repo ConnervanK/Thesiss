@@ -145,6 +145,16 @@
 // ---- Inline paragraph heading (replaces \paragraph{}) ----
 #let para-head(title) = [*#title* ]
 
+// ---- Chapter-banner word ("CHAPTER" vs "ANNEX" in the appendix) ---
+// A state, not a show-set on heading's `supplement`, because the level-1
+// heading banner below is rendered by its own function-style show rule --
+// a competing `show heading.where(...): set heading(supplement: ...)` show
+// rule (as used for e.g. `@ref` text) does not reliably update the field
+// read back via `h.supplement` inside that function. Call
+// `chapter-word.update(...)` (e.g. in main.typ, right where the appendix
+// switches to letter numbering) to change it from that point on.
+#let chapter-word = state("chapter-word", "Chapter")
+
 // ---- Main thesis template ---------------------------------
 #let thesis(
   title:          "Subwavelength Imaging in Ground-Penetrating Radar",
@@ -153,6 +163,7 @@
   date:           "June 30, 2026",
   supervisor-one: "",
   supervisor-two: "",
+  committee-extra: "",
   keywords:       "GPR, time-lapse, phase-plane, migration, sub-wavelength",
   body
 ) = {
@@ -179,8 +190,9 @@
   // Equation numbering
   set math.equation(numbering: "(1)", supplement: "Equation")
 
-  // Figure settings
-  set figure(gap: 0.5em, supplement: "Figure")
+  // Figure settings (leave supplement unset so Typst infers "Figure" vs
+  // "Table" from each figure's kind, instead of forcing "Figure" on every table)
+  set figure(gap: 0.5em)
   set figure.caption(separator: [. ], position: bottom)
 
   // Caption style: small, sans-serif, bold label
@@ -210,9 +222,15 @@
     v(0.25em)
     if h.numbering != none {
       context {
-        let ch-num = counter(heading).display("1")
+        // Use this heading's own numbering (not a hardcoded "1"-pattern) so
+        // the appendix -- which switches to letters -- renders "A" instead
+        // of the main chapters' arabic numbering leaking through. The word
+        // itself comes from chapter-word (a state, not h.supplement --
+        // see its definition above for why).
+        let ch-num = counter(heading).display(h.numbering)
+        let word = upper(chapter-word.get())
         text(font: "Linux Biolinum O", size: 13pt, weight: "regular")[
-          CHAPTER #ch-num
+          #word #ch-num
         ]
       }
     }
@@ -231,7 +249,9 @@
     v(1.0em, weak: false)
     text(font: "Linux Biolinum O", size: 13pt, weight: "bold")[
       #if h.numbering != none {
-        context counter(heading).display("1.1") + "  "
+        // h.numbering (not a hardcoded "1.1" pattern) so the appendix's
+        // letter numbering ("A.1") isn't silently replaced with "1.1".
+        context counter(heading).display(h.numbering) + "  "
       }
       #h.body
     ]
@@ -243,7 +263,7 @@
     v(0.75em, weak: false)
     text(font: "Linux Biolinum O", size: 12pt, weight: "bold")[
       #if h.numbering != none {
-        context counter(heading).display("1.1.1") + "  "
+        context counter(heading).display(h.numbering) + "  "
       }
       #h.body
     ]
@@ -342,6 +362,7 @@
     v(1em),         [],
     [Committee Members:], align(right, line(length: 7cm) + linebreak() + supervisor-one),
     [],             align(right, v(0.8em) + line(length: 7cm) + linebreak() + supervisor-two),
+    [],             align(right, v(0.8em) + line(length: 7cm) + linebreak() + committee-extra),
   )
   v(1fr)
 
@@ -354,8 +375,20 @@
   set page(
     numbering: "i",
     header: context {
-      let h1-hits = query(heading.where(level: 1).before(here()))
-      let h1-title = if h1-hits.len() > 0 { h1-hits.last().body } else { [] }
+      // Prefer a level-1 heading that starts ON this page (e.g. a chapter's
+      // own opening page) over the nearest one before it -- otherwise the
+      // header lags one section behind on every page where a new chapter/
+      // section actually begins (its heading sits below the header's own
+      // anchor point, so a plain ".before(here())" query still finds the
+      // *previous* heading there).
+      let this-page = here().page()
+      let h1-on-page = query(heading.where(level: 1)).filter(h => h.location().page() == this-page)
+      let h1-title = if h1-on-page.len() > 0 {
+        h1-on-page.first().body
+      } else {
+        let h1-hits = query(heading.where(level: 1).before(here()))
+        if h1-hits.len() > 0 { h1-hits.last().body } else { [] }
+      }
       grid(
         columns: (1fr, auto),
         align(left,  text(weight: "bold", size: 9pt)[#h1-title]),
@@ -418,7 +451,7 @@
   set text(font: "Linux Libertine O", size: 11pt, lang: "en", hyphenate: true)
   set par(justify: true, first-line-indent: 0pt, spacing: 0.65em)
 
-  set figure(gap: 0.5em, supplement: "Figure")
+  set figure(gap: 0.5em)
   set figure.caption(separator: [. ], position: bottom)
   show figure.caption: c => {
     set text(size: 9pt, font: "Linux Biolinum O")

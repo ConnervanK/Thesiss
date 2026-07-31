@@ -1,5 +1,5 @@
 // ============================================================
-// Subwavelength Imaging in Ground-Penetrating Radar
+// Sensing the Invisible: Time-lapse Imaging of Sub-wavelength Processes using Ground Penetrating Radar
 // Using Time-Lapse Data — MSc Thesis
 //
 // Typst port of TimeLapse_LaTeX/Thesis/27_June/main.tex
@@ -12,12 +12,13 @@
 #import "template.typ": *
 
 #show: thesis.with(
-  title:          "Subwavelength Imaging in Ground-Penetrating Radar",
-  subtitle:       "Using Time-Lapse Data",
-  author:         "Conner van Kooten",
+  title:          "Sensing the Invisible:",
+  subtitle:       "Time-lapse Imaging of Sub-wavelength Processes using Ground Penetrating Radar",
+  author:         "Conner Marcus van Kooten",
   date:           "August 3, 2026",
   supervisor-one: "Dr. Alexis Shakas",
   supervisor-two: "Dr. Johannes Aichele",
+  committee-extra: "Dr. Joeri Brackenhoff",
   keywords:       "GPR, time-lapse, phase-plane, migration, sub-wavelength",
 )
 
@@ -91,9 +92,10 @@
     letters.at(n.at(0) - 1) + "." + n.slice(1).map(str).join(".")
   }
 })
-#show heading.where(level: 1): set heading(supplement: "Appendix")
+#show heading.where(level: 1): set heading(supplement: "Annex")
 #show heading.where(level: 2): set heading(supplement: "Section")
 #show heading.where(level: 3): set heading(supplement: "Section")
+#chapter-word.update("Annex")
 
 #include "appendix/A_extended_sweeps.typ"
 #include "appendix/B_material_change.typ"

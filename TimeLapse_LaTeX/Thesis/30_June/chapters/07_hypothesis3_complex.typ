@@ -362,3 +362,8 @@ hand-picked selection.
     populates the $(k_z,k_x)$ cells inside the painted spatial ROI and RANSAC
     rejects a larger fraction of them.],
 ) <fig:fd-ransac-summary>
+
+#supp-note[The per-pick inlier/outlier phase panels underlying the two
+aggregate summaries above, for every stage and migration technique, in both
+the wavenumber-domain and amplitude-domain napari picking variants, are
+provided in the Supplementary Material, §S4.1.]

@@ -33,13 +33,21 @@ below.
 
 == Workflow Defined <sec:hyp1-workflow>
 
-Every experiment in this chapter is analysed by the same five-step pipeline,
-applied identically to Lateral, Vertical, Diagonal, and FluidFlow --- only the
-gprMax domain, the moving target, and the sweep direction differ between
-them. No gprMax forward model or migration is re-run to produce this
-chapter's figures and tables: every B-scan and migrated image is loaded from
-the `.npz` caches already written by the corresponding
-`*_TimeLapse_Playground.ipynb` / `FluidFlow_Playground.ipynb` notebooks.
+Every experiment in this chapter is analysed by the same five-step pipeline
+(@fig:h1-workflow), applied identically to Lateral, Vertical, Diagonal, and
+FluidFlow --- only the gprMax domain, the moving target, and the sweep
+direction differ between them. No gprMax forward model or migration is
+re-run to produce this chapter's figures and tables: every B-scan and
+migrated image is loaded from the `.npz` caches already written by the
+corresponding `*_TimeLapse_Playground.ipynb` / `FluidFlow_Playground.ipynb`
+notebooks.
+
+#figure(
+  img("H1_040_Hypothesis_1_--_Shared_Analysis_Pipeline.png"),
+  caption: [The shared five-step pipeline applied identically to every
+    experiment in this chapter, parameterised only by the gprMax domain, the
+    moving target, and the sweep direction.],
+) <fig:h1-workflow>
 
 + *Model set up* (§X.1). The gprMax domain and grid are plotted with the
   baseline target position, followed by a second view marking every
@@ -327,16 +335,22 @@ collapses amplitude at roughly the lateral scale, not the looser vertical one
 === Cross-Movement Comparison
 
 @tab:h1-lat-phase gives the full per-scenario phase-plane error for the
-lateral case, in millimetres with the equivalent percentage of the true
-displacement alongside in parentheses; the equivalent per-scenario tables
-for Vertical, Diagonal, and FluidFlow are provided in the Supplementary
-Material (§S2.2.3, §S2.3.3, §S2.4.3). @tab:h1-mae condenses the millimetre
-errors for all four movement types into one mean absolute error (MAE)
-per movement type and migration method, restricted to the sub-half-wavelength
-regime ($1\/4 lambda$ down to $1\/32 lambda$, plus any nominal $1\/2 lambda$
-scenario that the $1 "mm"$ FDTD grid rounds to just under $0.5 lambda$,
-@sec:hyp1-workflow) --- the regime in which every amplitude test above has
-already collapsed.
+lateral case; the equivalent per-scenario tables for Vertical, Diagonal, and
+FluidFlow are provided in the Supplementary Material (§S2.2.3, §S2.3.3,
+§S2.4.3). @fig:h1-mae-summary condenses the mean absolute error (MAE) for
+all four movement types and three migration methods into one figure,
+restricted to the sub-half-wavelength regime ($1\/4 lambda$ down to
+$1\/32 lambda$, plus any nominal $1\/2 lambda$ scenario that the $1 "mm"$
+FDTD grid rounds to just under $0.5 lambda$, @sec:hyp1-workflow) --- the
+regime in which every amplitude test above has already collapsed; exact
+values are given in @tab:h1-mae below.
+
+#figure(
+  img("H1_039_Hypothesis_1_--_MAE_Summary_Across_Movement_Types.png", width: 85%),
+  caption: [Mean absolute phase-plane displacement error by movement type
+    and migration method, clean data, sub-half-wavelength regime only.
+    Background shading groups rows by movement type.],
+) <fig:h1-mae-summary>
 
 #figure(
   table(
@@ -352,19 +366,10 @@ already collapsed.
     [FluidFlow], [0.967],  [0.172],  [0.335],
     table.hline(stroke: 0.7pt),
   ),
-  caption: [Mean absolute phase-plane displacement error [mm], clean data,
-    sub-half-wavelength regime only.],
+  caption: [Mean absolute phase-plane displacement error [mm] underlying
+    @fig:h1-mae-summary.],
   kind: table,
 ) <tab:h1-mae>
-
-@fig:h1-detectability puts every movement type's Rayleigh-criterion ratio
-and phase-plane error on one shared displacement axis, making @tab:h1-mae's
-numbers directly comparable across Lateral, Vertical, Diagonal, and
-FluidFlow at a glance: in every column, the bottom-row phase-error curves
-drop below their $5%$ threshold at or before the top-row amplitude-ratio
-curves cross below $1$, visually confirming that phase overtakes amplitude
-precisely where amplitude differencing gives out, for every movement type
-tested.
 
 #page(flipped: true)[
 #figure(
@@ -380,27 +385,24 @@ tested.
 ) <fig:h1-detectability>
 ]
 
-Two patterns stand out. First, for every point-scatterer geometry
-(Lateral, Vertical, Diagonal), at least one migration method recovers the
-true displacement to a few hundredths of a millimetre mean absolute error
+In every column of @fig:h1-detectability, the bottom-row phase-error curves
+drop below their $5%$ threshold at or before the top-row amplitude-ratio
+curves cross below $1$: phase overtakes amplitude precisely where amplitude
+differencing gives out, for every movement type tested. For every
+point-scatterer geometry (Lateral, Vertical, Diagonal), at least one method
+recovers the true displacement to a few hundredths of a millimetre MAE
 (Gazdag on Lateral and Diagonal; Kirchhoff on Lateral) --- several orders of
-magnitude below the wavelength scale, at displacements where
-@sec:hyp1-lat-amplitude, @sec:hyp1-vertical, and
-@sec:hyp1-diagonal showed amplitude differencing has already failed.
-Second, the larger MAE values in @tab:h1-mae are driven almost entirely by a
-*single* remaining scenario per (movement, method) pair, not by a systematic
-sub-wavelength failure: back-propagation's $23.6 "mm"$ Lateral MAE is $99%$
-attributable to its one poorly-resolved $1\/2 lambda$ scenario
-(@tab:h1-lat-phase); Gazdag's and Kirchhoff's $16$--$17 "mm"$ Vertical MAE is
-likewise dominated by their shared $1\/2 lambda$ scenario (Supplementary
-Material, §S2.2.3), while $1\/4 lambda$ and below are already accurate to
-$0.03 "mm"$ for all three methods. Diagonal, which combines both axes, is
-the easiest case for every method once past its two largest scenarios.
-FluidFlow's graded, spatially-extended front is recovered to within roughly
-$1 "mm"$ mean absolute error by every method --- harder than the sharpest
-point-scatterer results, but still two to three orders of magnitude below
-the wavelength scale, and, per @sec:hyp1-fluidflow, at displacement scales
-where amplitude differencing has already collapsed for all three algorithms.
+magnitude below the wavelength scale. The larger MAE values visible in
+@fig:h1-mae-summary are not evidence of systematic sub-wavelength failure:
+each is driven almost entirely by a single poorly-resolved scenario per
+(movement, method) pair, close to the amplitude/phase crossover itself
+(back-propagation's Lateral fit at $1\/2 lambda$; the shared Vertical
+outlier at $1\/2 lambda$ for Gazdag and Kirchhoff), with every scale below
+that already accurate to a few tenths of a millimetre or better. FluidFlow's
+graded, spatially-extended front is the hardest case tested (MAE around
+$1 "mm"$) but is still two to three orders of magnitude below the
+wavelength scale, confirming the method's advantage is not an artefact of
+the idealised point-scatterer geometry used elsewhere in this chapter.
 
 Across all four experiments, from $1\/4 lambda$ down to $1\/32 lambda$, the
 phase-plane fit remains accurate to a few tenths of a millimetre or better
@@ -409,7 +411,6 @@ differencing has already failed --- supporting Hypothesis 1's central claim
 that sub-wavelength displacement is recoverable from phase, not amplitude,
 information. The one systematic weak point is back-propagation's fit at
 $1\/2 lambda$ (Lateral) and at $1 lambda$/$1\/2 lambda$ (Vertical, shared
-with the two analytic methods): whether this reflects a genuine
-displacement-scale effect specific to back-propagation's excitation scheme,
-or noise-free numerical sensitivity of the WLS fit at that particular scale,
-is revisited in @ch:hyp2 once Laplace noise is introduced.
+with the two analytic methods); whether this is a genuine
+displacement-scale effect or noise-free numerical sensitivity of the WLS
+fit is revisited in @ch:hyp2 once Laplace noise is introduced.
