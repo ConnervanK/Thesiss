@@ -323,14 +323,19 @@ the largest consensus set of inliers (phase residual $< 0.35 "rad"$, over
 $2000$ iterations), and refits WLS on those inliers alone. The comparison is
 run for all four representative pairs and all three migration techniques, in
 both the wavenumber-domain and amplitude-domain napari picking variants of
-@sec:hyp3-fd-roi.
+@sec:hyp3-fd-roi. @fig:fd-ransac-phase-slices shows a representative example
+(Gazdag, Chase-stage pair): the cross-spectrum phase and amplitude with the
+fit population highlighted, and the $k_x$-/$k_z$-direction 1-D fits, for WLS
+and RANSAC side by side.
 
-When the $(k_z, k_x)$ cells are painted by hand directly on the
-cross-spectrum, RANSAC flags few or no outliers and closely reproduces the
+@fig:fd-ransac-summary summarises the comparison across all four
+representative pairs and three migration techniques. When the $(k_z, k_x)$
+cells are painted by hand directly on the
+cross-spectrum (@fig:fd-ransac-summary (a)), RANSAC flags few or no outliers and closely reproduces the
 WLS estimate in every case (within about $6%$ at worst): a tight hand-pick
 around the coherent lobes needs little further robustification. When the
 cells are instead populated by gating a hand-painted amplitude-domain
-(difference B-scan) region, RANSAC rejects anywhere from a negligible
+(difference B-scan) region (@fig:fd-ransac-summary (b)), RANSAC rejects anywhere from a negligible
 fraction up to about half of the gated cells and shifts the estimate
 accordingly -- usually by a few percent up to around twenty percent, but by
 as much as $59%$ in the worst case (Kirchhoff-BP, Chase stage). Direction is
@@ -363,7 +368,7 @@ hand-picked selection.
     rejects a larger fraction of them.],
 ) <fig:fd-ransac-summary>
 
-#supp-note[The per-pick inlier/outlier phase panels underlying the two
-aggregate summaries above, for every stage and migration technique, in both
-the wavenumber-domain and amplitude-domain napari picking variants, are
-provided in the Supplementary Material, §S4.1.]
+// #supp-note[The per-pick inlier/outlier phase panels underlying the two
+// aggregate summaries above, for every stage and migration technique, in both
+// the wavenumber-domain and amplitude-domain napari picking variants, are
+// provided in the Supplementary Material, §S4.1.]

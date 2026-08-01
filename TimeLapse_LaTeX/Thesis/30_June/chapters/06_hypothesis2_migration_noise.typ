@@ -216,37 +216,35 @@ where back-propagation is the second most accurate method overall.
 
 
 
-== Extra Processing Steps in the Phase Domain to Remove Noise <sec:hyp3-phase-denoise>
+== Extra Processing Steps in the Phase Domain to Mitigate Noise <sec:hyp3-phase-denoise>
 
 Every phase-plane fit so far weights each masked cross-spectrum bin by its
 magnitude $|X S|$ (WLS, @sec:hyp1-phaseplane), so that noisy, low-power bins
 contribute less than high-power, high-SNR ones. This section tests that
 weighting choice directly, by re-running the identical fit with every masked
 bin given *equal* weight instead (OLS) and comparing the two on the hardest
-realistic case in this chapter: Kirchhoff-migrated Lateral, the smallest
-sub-wavelength shift ($1\/32 lambda approx 3.5 "mm"$) against Baseline ---
-the scenario with the weakest signal relative to the noise floor.
+realistic case in this chapter: back-propagation-migrated *diagonal*
+movement, the smallest sub-wavelength shift tested ($1\/16 lambda_x$,
+$1\/32 lambda_y$) against Baseline --- the scenario with the weakest signal
+relative to the noise floor.
 
 #figure(
   img("H2_007_Chapter_54_--_OLS_vs_WLS_Phase-Plane_Fitting_on_Noisy_Data.png"),
   caption: [OLS (unweighted, top row) versus WLS (weighted, bottom row)
-    phase-plane fitting on the same noisy cross-spectrum: cross-spectrum
-    phase, cross-spectrum power, the fitted plane, and two 1D cross-sections
-    through that plane along $k_x$ and $k_z$, with the same masked bins
-    scattered and coloured by their weight $|X S|$ in both rows.],
+    phase-plane fitting on the same noisy cross-spectrum, diagonal movement:
+    cross-spectrum phase and cross-spectrum power, followed by two 1D
+    cross-sections through the fitted plane along $k_x$ and $k_z$, with the
+    same masked bins scattered and coloured by their (raw) weight $|X S|$ in
+    both rows.],
 ) <fig:h2-ols-vs-wls>
 
 Both fits see exactly the same masked cross-spectrum bins (the scatter
 points in the two cross-section panels are identical between rows); only
-the weight each bin is given during the least-squares solve differs. The
-true lateral shift is $+4.000 "mm"$.
-#draftnote[Fill in the OLS/WLS estimates and errors below once
-Hypothesis_2.ipynb has been re-run with the corrected scenario index (§5.4
-previously fit the $1\/8 lambda$ monitor image against the $1\/32 lambda$
-truth by mistake; it now fits the $1\/32 lambda$ image against the $1\/32
-lambda$ truth, matching the "smallest, hardest shift" described above).]
-OLS recovers *[TBC]* mm (*[TBC]* mm error) and WLS recovers *[TBC]* mm
-(*[TBC]* mm error). The cross-section panels make the
+the weight each bin is given during the least-squares solve differs. In
+this diagonal-movement example the true shift along $x$ is $+7.000 "mm"$.
+OLS recovers $+6.867 "mm"$ ($-0.133 "mm"$ error) and WLS recovers $+6.945
+"mm"$ ($-0.055 "mm"$ error) --- WLS's error is under half of OLS's here. The
+cross-section panels make the
 *mechanism* visible: the bright
 (high-weight) points visibly cluster closer to the fitted line than the dim
 (low-weight, noise-dominated) points in both rows, confirming that $|X
