@@ -2,7 +2,7 @@
 
 = Theoretical Background <ch:theory>
 
-This chapter derives the theory the rest of the thesis rests on. It first
+This chapter derives the theory on which the rest of the thesis rests. It first
 establishes the three migration algorithms used throughout (@sec:th-migration),
 then develops the core result of this thesis --- that a sub-wavelength shift
 between two migrated images becomes a recoverable linear phase ramp: the 2D
@@ -28,8 +28,7 @@ true subsurface reflectivity.
 
 All data in this thesis are zero-offset (collocated transmitter/receiver)
 B-scans, which makes the _exploding-reflector model_ applicable
-@claerbout1985 --- every reflector in the subsurface is treated as if it
-were an active source that radiates a pulse upward at $t=0$, recorded by
+@claerbout1985. Every reflector in the subsurface is treated as an active source that radiates a pulse upward at $t=0$, which is recorded by
 receivers at the surface. Because the real two-way travel time corresponds to
 a wave travelling down and back up once, this fictitious one-way exploding
 source must propagate at half the true medium velocity,
@@ -94,7 +93,7 @@ migration. This matches the GPR-specific phase-shift factor
 $K = e^(j #kz delta z)$ applied step by step in @ozdemir2014@smitha2016.
 Because the whole wavefield is extrapolated via FFT rather than by tracing
 individual rays, Gazdag migration avoids Kirchhoff's high-frequency,
-single-arrival approximation and correctly handles multi-path energy, but
+single-arrival approximation. It correctly handles multi-path energy, but
 each step is restricted to a laterally invariant $v(z)$ velocity model,
 whereas Kirchhoff's per-pixel hyperbolas tolerate arbitrary $v(x,z)$
 @jones2014@schneider1978@ozdemir2014. Frequency-wavenumber pairs for which
@@ -146,7 +145,7 @@ carries out the extrapolation itself, the same role it plays in
 Geng and Ye’s RTM additionally forward-models the source-side wavefield with gprMax and cross-correlates it against the reverse-time-extrapolated receiver-side wavefield 
 at every time step to build the image @geng2022, 
 a genuinely two-wavefield imaging condition. While this full cross-correlation approach offers distinct advantages in noise suppression and phase accuracy—particularly when a high-quality wavelet is used for the forward extrapolation—the added computational expense is not strictly required here. Because every survey in this thesis is zero-offset and already treated under the exploding-reflector convention of @sec:th-migration
-@claerbout1985, the recorded data effectively stand in for the source-side wavefield. Consequently, reading off a single back-propagated wavefield at
+@claerbout1985, the recorded data effectively represent the source-side wavefield. Consequently, reading off a single back-propagated wavefield at
 $t_"focus"$ provides sufficient structural fidelity for this analysis; this thesis therefore implements back-propagation rather than full cross-correlation RTM. Because it makes no high-frequency, single-arrival, or $v(z)$-only approximation beyond the exploding-reflector velocity halving itself, this method serves as a useful independent numerical check on the other two.
 
 // As an independent, purely numerical cross-check of the two analytic methods
@@ -169,7 +168,7 @@ $t_"focus"$ provides sufficient structural fidelity for this analysis; this thes
 Let the baseline migrated image be $b(z,x)$. If a point scatterer
 translates by a vertical distance $#Dz$ and a lateral distance $#Dx$ between
 the baseline and monitor survey, the monitor image is, to the extent that
-migration is linear and the two surveys are migrated with the same velocity
+migration is linear. The two surveys are migrated with the same velocity
 model, a perfectly translated copy of the baseline image,
 $ m(z,x) = b(z - #Dz, space x - #Dx) . $ <eq:spatial-shift>
 Taking the 2D continuous Fourier transform of the baseline image,
@@ -193,7 +192,7 @@ The absolute phase of a single migrated image is not directly useful: it
 depends on the shape of the source wavelet and on the (arbitrary) position of
 the target within the image, and is, in general, a chaotic, wrapped function
 of $(#kz, #kx)$. The displacement information in @eq:fourier-shift-theorem
-is isolated by forming the complex _cross-spectrum_ between the baseline
+is obtained by forming the complex _cross-spectrum_ between the baseline
 and monitor spectra,
 $ #XS (#kz, #kx) = B(#kz, #kx) dot M^*(#kz, #kx) . $ <eq:cross-spectrum-def>
 Substituting @eq:fourier-shift-theorem,
@@ -255,7 +254,7 @@ $S(bold(u)) = (bold(Phi) - A bold(u))^upright(T) (bold(Phi) - A bold(u))$,
 giving the closed-form solution
 $bold(u) = (A^upright(T) A)^(-1) A^upright(T) bold(Phi)$.
 This treats every frequency bin as equally reliable, but in a GPR spectrum a
-bin at the antenna's peak power is far more reliable than a bin at the edge of
+bin at the antenna's peak power is far more reliable than one at the edge of
 the band, which is dominated by background noise. OLS gives both bins equal
 weight, letting noisy bins corrupt the plane fit.
 
@@ -381,8 +380,6 @@ spatial picture a calibration-bias intercept mixes irrecoverably with the
 vertical term $-k_(z c) #Dz$ in @eq:dphi-2d, whereas the Fourier-domain fit
 keeps them exactly orthogonal (@sec:th-wls).
 
-#supp-note[This asymmetry is confirmed independently, in simulation, by a
-local instantaneous-phase diagnostic applied to the same lateral- and
-vertical-displacement datasets, and is further developed with a
+#supp-note[This asymmetry is independently confirmed in simulation by a local instantaneous-phase diagnostic applied to the same lateral and vertical-displacement datasets. It is further developed with a
 complementary time-frequency perspective, in the Supplementary Material,
 §S5.]

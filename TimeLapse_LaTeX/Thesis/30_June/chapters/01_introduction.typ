@@ -29,12 +29,11 @@ turn by the review of @ch:litreview and the theory of @ch:theory:
 + *The changes worth monitoring are sub-wavelength.* GPR reflectivity is
   governed mostly by permittivity, and permittivity by water content, so the
   processes a monitoring survey described in this thesis --- a fracture filling
-  with fluid, a slowly advancing interface --- produce their signal at exactly
-  the scale that lies below this floor.
+  with fluid, a slowly advancing interface --- produce their signals at exactly the scale below this floor.
 
 + *Migration relocates energy but does not beat the amplitude floor.* Focusing
-  the raw B-scan repositions recorded energy toward its true location, but
-  neither migration nor its amplitude-based refinements (deconvolution,
+  the raw B-scan repositions recorded energy toward its true location. Still, neither
+  migration nor its amplitude-based refinements (deconvolution,
   least-squares and full-waveform inversion) step outside the amplitude imaging
   condition, so all remain bound by the same floor (@ch:litreview).
 
@@ -77,7 +76,7 @@ asking one of those three questions in turn:
 
 / Hypothesis 2 --- _does it survive noise, and which migration is best?_ (@ch:hyp2): Back-propagation migration with sign-bit time-reversal is the
   most noise-robust technique for time-lapse phase-plane tracking: it
-  suppresses impulsive Laplace noise while Kirchhoff creates false-coherent
+  suppresses impulsive Laplace noise whereas Kirchhoff creates false-coherent
   artefacts and Gazdag adds incoherent speckle.
 
 / Hypothesis 3 --- _does it generalise to the field?_ (@ch:hyp3): The
@@ -89,10 +88,7 @@ asking one of those three questions in turn:
 @ch:litreview reviews the literature this thesis builds on, developing the five
 statements above into the arguments that motivate a phase-based approach.
 @ch:theory derives the theoretical background --- the migration algorithms and
-the phase-plane shift-estimation method. @ch:methodology describes the shared
-simulation and processing pipeline that applies it to data, closing with a
-validation of the amplitude resolution floor (@sec:meth-resolution) that the
-phase method is measured against.
+the phase-plane shift-estimation method. @ch:methodology describes the shared simulation and processing pipeline that applies it to data, and closes with a validation of the amplitude resolution floor (@sec:meth-resolution) against which the phase method is measured.
 @ch:hyp1 tests Hypothesis 1 (and the optional Hypothesis 1.5) on lateral,
 vertical, and diagonal sub-wavelength translation of a point scatterer.
 @ch:hyp2 tests Hypothesis 2: which migration technique is most robust to

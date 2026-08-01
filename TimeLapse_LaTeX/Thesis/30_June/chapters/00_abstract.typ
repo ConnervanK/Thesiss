@@ -45,7 +45,7 @@ The method is tested through three hypotheses:
 
 #linebreak()
 
-- Under a realistic Laplace noise model the choice of migration algorithm matters: Kirchhoff is the most accurate but manufactures false coherent structures from noise alone, while back-propagation with sign-bit time-reversal is the more conservative choice. 
+- Under a realistic Laplace noise model, the choice of migration algorithm matters: Kirchhoff is the most accurate but manufactures false coherent structures from noise alone, while back-propagation with sign-bit time-reversal is the more conservative choice.
 
 #linebreak()
 

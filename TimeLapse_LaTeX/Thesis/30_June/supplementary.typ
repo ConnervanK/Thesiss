@@ -15,7 +15,7 @@
 
 #show: supplement.with(
   title:        "Supplementary Material",
-  parent-title: "Subwavelength Imaging in Ground-Penetrating Radar — Using Time-Lapse Data",
+  parent-title: "Time-lapse Imaging of Sub-wavelength Processes using Ground Penetrating Radar",
   author:       "Conner van Kooten",
   date:         "August 3, 2026",
 )
