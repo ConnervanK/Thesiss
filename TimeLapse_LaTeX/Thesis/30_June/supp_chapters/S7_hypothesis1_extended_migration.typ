@@ -11,6 +11,7 @@ chapter gives the individual migrated image and time-lapse difference for
 each of the three migration algorithms, in each of the three displacement
 directions, zoomed around the scatterer.
 
+#block(breakable: false)[
 == Lateral Movement
 
 #figure(
@@ -22,6 +23,7 @@ directions, zoomed around the scatterer.
     aperture $= 40$), zoomed around the scatterers: (a) migrated image for all
     scenarios; (b) migrated-monitor-minus-migrated-baseline difference.],
 ) <fig:tl-kirchhoff>
+]
 
 #figure(
   subfigs(cols: 1,
@@ -45,6 +47,7 @@ directions, zoomed around the scatterer.
     difference.],
 ) <fig:tl-backprop>
 
+#block(breakable: false)[
 == Vertical Movement
 
 #figure(
@@ -56,6 +59,7 @@ directions, zoomed around the scatterer.
     ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterer:
     (a) migrated image for all scenarios; (b) time-lapse difference.],
 ) <fig:vtl-kirchhoff>
+]
 
 #figure(
   subfigs(cols: 1,
@@ -69,9 +73,9 @@ directions, zoomed around the scatterer.
 
 #figure(
   subfigs(cols: 1,
-    img("VTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 50%),
-    img("VTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 50%),
-    img("VTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 50%),
+    img("VTL_018_Back-Propagation_E_zoomed____focus_at_1906_ns.png", width: 45%),
+    img("VTL_020_Back-Propagation_Ez_zoomed____focus_at_1906_ns.png", width: 45%),
+    img("VTL_022_Back-Propagation__TimeLapse_Differences_Ez_zoomed.png", width: 45%),
   ),
   caption: [Time-reversal back-propagation migration of the vertical time-lapse
     study, focused at $t = 19.06 "ns"$ and zoomed around the scatterer:
@@ -79,6 +83,7 @@ directions, zoomed around the scatterer.
     difference.],
 ) <fig:vtl-backprop>
 
+#block(breakable: false)[
 == Diagonal Movement
 
 #figure(
@@ -90,6 +95,7 @@ directions, zoomed around the scatterer.
     ($f_c = 1.5 "GHz"$, aperture $= 40$), zoomed around the scatterer:
     (a) migrated image for all scenarios; (b) time-lapse difference.],
 ) <fig:dtl-kirchhoff>
+]
 
 #figure(
   subfigs(cols: 1,

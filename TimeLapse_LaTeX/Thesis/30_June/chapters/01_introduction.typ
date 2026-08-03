@@ -26,28 +26,35 @@ turn by the review of @ch:litreview and the theory of @ch:theory:
 
 + *GPR resolution is generally wavelength-limited,* with the Fresnel zone and pulse bandwidth setting a lateral and vertical floor of roughly half a wavelength for separating two distinct reflectors. While a single migrated amplitude image cannot resolve features below this limit, sub-wavelength localisation of a _moved_ reflector is possible using windowed cross-correlation on two migrated amplitude images, which bypasses the amplitude resolution limit by indirectly leveraging phase shifts. (@ch:litreview).
 
-+ *The changes worth monitoring are sub-wavelength.* GPR reflectivity is
-  governed mostly by permittivity, and permittivity by water content, so the
-  processes a monitoring survey described in this thesis --- a fracture filling
-  with fluid, a slowly advancing interface --- produce their signals at exactly the scale below this floor.
++ *The changes this thesis targets are sub-wavelength in the regime that
+  matters.* Depending on the GPR centre frequency and the scale of the target, dynamic changes are not always sub-wavelength. However, for the frequencies employed in this thesis, the targeted processes—such as the millimetre-scale aperture of a fluid-filled fracture or a slowly advancing infiltration front—are physically smaller than the dominant wavelength. Because GPR reflectivity is strongly governed by the permittivity contrast of water, these specific monitoring targets produce measurable signals that remain trapped below the classical resolution floor.
 
-+ *Migration relocates energy but does not beat the amplitude floor.* Focusing
-  the raw B-scan repositions recorded energy toward its true location. Still, neither
-  migration nor its amplitude-based refinements (deconvolution,
-  least-squares and full-waveform inversion) step outside the amplitude imaging
-  condition, so all remain bound by the same floor (@ch:litreview).
++ *Migration relocates energy but does not beat the resolution floor.*
+  Focusing the raw B-scan repositions recorded energy toward its true
+  location, but the result is still read off as an _amplitude_ image. Neither
+  migration nor its amplitude-based refinements (deconvolution, least-squares
+  and full-waveform inversion) step outside that amplitude imaging condition,
+  so all remain bound by the same half-wavelength resolution floor identified
+  above (@ch:litreview).
 
-+ *Phase retains what amplitude discards.* A sub-wavelength change that leaves
-  no amplitude signature still imprints a systematic, continuously varying
-  shift on the _phase_ of the reflected wave --- information every migration
-  algorithm computes internally and could potentially be used.
++ *Phase varies linearly with a sub-wavelength shift; amplitude does not.* The envelope of a 
+  migrated image of a point scatterer is a rough amplitude lobe, so a shift
+  much smaller than a wavelength leaves the envelope itself essentially unchanged ---
+  the same resolution floor identified above. The phase of the wave
+  oscillating beneath that envelope, however, advances continuously and linearly with position. So the same shift still produces a
+  small but exactly proportional, and therefore measurable, phase change
+  (@ch:theory).
 
 + *A time-lapse pair turns sub-wavelength change into a recoverable phase
   ramp.* Comparing a baseline and a monitor survey in the two-dimensional
   Fourier domain, the Fourier shift theorem turns any sub-wavelength
   translation between the two migrated images into an exactly linear phase ramp
   whose slope _is_ the displacement (@ch:theory) --- so a shift invisible in
-  amplitude becomes, in principle, exactly recoverable from phase.
+  amplitude becomes, in principle, exactly recoverable from phase. This is the
+  sense in which _super-resolution_ is used throughout this thesis: not
+  sharpening the migrated image itself, but recovering a displacement smaller
+  than its classical half-wavelength resolution limit from phase information
+  the image already contains.
 
 == The Unifying Hypothesis
 

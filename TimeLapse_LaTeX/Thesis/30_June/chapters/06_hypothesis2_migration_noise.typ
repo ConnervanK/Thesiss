@@ -92,12 +92,14 @@ high-amplitude noise focus risks being picked up instead of the true
 scatterer response.
 
 #figure(
-  img("H2_003_Migrating_Pure_Noise_no_scatterers_no_signal_--_Kirchhoff_Ga.png"),
+  img("H2_003_Migrating_Pure_Noise_no_scatterers_no_signal_--_Kirchhoff_Ga.png", width: 125%),
   caption: [Migrating pure noise (no scatterers, no signal): the input
     pure-noise B-scan, its Kirchhoff migration, its Gazdag migration, and the
     focus-time snapshot of its back-propagated wavefield (default,
     peak-normalised excitation).],
 ) <fig:h2-purenoise-kg>
+
+#linebreak()
 
 *Result: the three methods do not fail the same way.* Kirchhoff turns pure
 noise into a clearly coherent, scatterer-like focus that could easily be
@@ -137,7 +139,7 @@ depth) converted to an equivalent frequency via $f = v_"ice" k$ so all four
 curves share one physically comparable axis --- checks this directly in @fig:h2-purenoise-spectral.
 
 #figure(
-  img("H2_004_Migrating_Pure_Noise_--_Spectral_Content_by_Method__axes_res.png", width: 80%),
+  img("H2_004_Migrating_Pure_Noise_--_Spectral_Content_by_Method__axes_res.png", width: 100%),
   caption: [Spectral content of migrated pure noise by method: the input
     noise floor, Kirchhoff migration, Gazdag migration, and peak-normalised
     back-propagation, each averaged into one frequency spectrum (axes
@@ -238,7 +240,7 @@ $1\/32 lambda_y$) against Baseline --- the scenario with the weakest signal
 relative to the noise floor.
 
 #figure(
-  img("H2_007_Chapter_54_--_OLS_vs_WLS_Phase-Plane_Fitting_on_Noisy_Data.png"),
+  img("H2_007_Chapter_54_--_OLS_vs_WLS_Phase-Plane_Fitting_on_Noisy_Data.png", width: 120%),
   caption: [OLS (unweighted, top row) versus WLS (weighted, bottom row)
     phase-plane fitting on the same noisy cross-spectrum, diagonal movement:
     cross-spectrum phase and cross-spectrum power, followed by two 1D
@@ -303,10 +305,12 @@ is repeated on B-scans contaminated with the Laplace noise of
 @sec:hyp3-laplace, for all three migration algorithms, using sign-bit
 time-reversal (@sec:hyp3-signbit) for back-propagation.
 
+#pagebreak()
+
 === Migration Results <sec:hyp3-lat-migration>
 
 #figure(
-  img("H2_008_Lateral_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_Am.png", width: 95%),
+  img("H2_008_Lateral_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_Am.png", width: 85%),
   caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
     for all three migration algorithms, lateral time-lapse study, _noisy_
     data.],
@@ -407,6 +411,8 @@ sub-half-wavelength regime ($+6.2$ to $-32.9 "mm"$ from $1\/4 lambda$ to
 $1\/32 lambda$), though see @sec:hyp3-summary for how its collective accuracy
 compares once every movement type is combined.
 
+#pagebreak()
+
 == Noisy Fluid Flow <sec:hyp3-fluidflow>
 
 The clean-data fluid-flow experiment of @sec:hyp1-fluidflow
@@ -464,6 +470,8 @@ again carries a persistent tens-of-millimetre error through Scenarios 3--4 (up
 to $-41.00 "mm"$ in $#Dx$), only approaching the others at Scenario 5
 (Supplementary Material, §S3.3).
 
+#pagebreak()
+
 === Cross-Movement Comparison
 
 @tab:h2-lat-phase and @tab:h2-lat-phase-pct give the full per-scenario noisy
@@ -476,9 +484,17 @@ before the top-row amplitude-ratio curves cross below $1$, though noise
 pushes both crossing points later, and Gazdag's phase-error curve sits
 noticeably higher than the other two methods' throughout.
 
+#linebreak()
+
+@fig:h2-dumbbell puts every (movement, method) pair's clean-data and
+noisy-data MAE, as a percentage of the true displacement, on one shared log
+axis, so @tab:h1-mae and @tab:h2-mae --- and the whole of @ch:hyp1 versus
+this chapter --- can be compared directly in one picture. Background
+shading groups the twelve rows by movement type.
+
 #page(flipped: true)[
 #figure(
-  img("H2_028_Hypothesis_2_--_Detectability_Map_Noisy.png"),
+  img("H2_028_Hypothesis_2_--_Detectability_Map_Noisy.png", width: 115%),
   caption: [Detectability map, _noisy_ data (compare @fig:h1-detectability):
     top row, Rayleigh-criterion amplitude ratio (threshold $1$); bottom row,
     absolute phase-plane WLS displacement error as a percentage of the true
@@ -490,15 +506,10 @@ noticeably higher than the other two methods' throughout.
 ) <fig:h2-detectability>
 ]
 
-@fig:h2-dumbbell puts every (movement, method) pair's clean-data and
-noisy-data MAE, as a percentage of the true displacement, on one shared log
-axis, so @tab:h1-mae and @tab:h2-mae --- and the whole of @ch:hyp1 versus
-this chapter --- can be compared directly in one picture. Background
-shading groups the twelve rows by movement type.
 
 #page(flipped: true)[
 #figure(
-  img("H2_029_Hypothesis_2_--_Clean_vs_Noisy_MAE_Dumbbell_Plot.png"),
+  img("H2_029_Hypothesis_2_--_Clean_vs_Noisy_MAE_Dumbbell_Plot.png", width: 115%),
   caption: [Clean-versus-noisy mean absolute phase-plane displacement error,
     as a percentage of the true displacement, for every movement type and
     migration method: circle marker = clean data (@tab:h1-mae, @ch:hyp1),

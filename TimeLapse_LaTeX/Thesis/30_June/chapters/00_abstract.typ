@@ -40,7 +40,7 @@ The method is tested through three hypotheses:
 // conservative choice. 
 // - Finally, the full pipeline is applied to real borehole GPR
 // field data from a fluid-injection experiment, producing stable,
-// cross-technique-corroborated displacement estimates.
+// cross-migration-technique validated displacement estimates.
 - On clean synthetic gprMax data --- across three migration algorithms (Kirchhoff, Gazdag phase-shift, and time-reversal back-propagation), displacement scales from $2 lambda$ down to $1/32 lambda$, and lateral, vertical, diagonal, and distributed fluid-front targets --- the phase-plane fit recovers displacement to a few tenths of a millimetre exactly where amplitude differencing has already collapsed. 
 
 #linebreak()
@@ -49,4 +49,4 @@ The method is tested through three hypotheses:
 
 #linebreak()
 
-- Finally, the full pipeline is applied to real borehole GPR field data from a fluid-injection experiment, producing stable, cross-technique-corroborated displacement estimates.
+- Finally, the full pipeline is applied to real borehole GPR field data from a fluid-injection experiment, producing stable, cross-migration-technique validated displacement estimates.

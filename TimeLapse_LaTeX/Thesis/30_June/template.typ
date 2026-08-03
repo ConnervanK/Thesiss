@@ -159,6 +159,7 @@
 #let thesis(
   title:          "Subwavelength Imaging in Ground-Penetrating Radar",
   subtitle:       "Using Time-Lapse Data",
+  subtitle-display: none,
   author:         "Conner van Kooten",
   date:           "June 30, 2026",
   supervisor-one: "",
@@ -174,6 +175,10 @@
     author:   author,
     keywords: keywords.split(", "),
   )
+
+  // Content shown on the title pages; falls back to the plain subtitle
+  // string if no explicit line-broken version is given.
+  let subtitle-shown = if subtitle-display != none { subtitle-display } else { subtitle }
 
   // Page layout (a4wide equivalent)
   set page(
@@ -303,9 +308,9 @@
   v(1fr)
   line(length: 100%, stroke: 1.5pt)
   v(0.4em)
-  align(right)[
+  align(center)[
     #text(size: 26pt, weight: "bold", font: "Linux Biolinum O")[#title] \
-    #text(size: 16pt, weight: "bold", font: "Linux Biolinum O")[#subtitle] \
+    #text(size: 16pt, weight: "bold", font: "Linux Biolinum O")[#subtitle-shown] \
     #v(0.3em)
     #text(size: 14pt, weight: "bold")[#author]
   ]
@@ -323,7 +328,7 @@
   v(2cm)
   align(center)[
     #text(size: 24pt, weight: "bold", font: "Linux Biolinum O")[#title] \
-    #text(size: 14pt, weight: "bold", font: "Linux Biolinum O")[#subtitle]
+    #text(size: 14pt, weight: "bold", font: "Linux Biolinum O")[#subtitle-shown]
     #v(0.8em)
     #text(size: 14pt)[Master of Science Thesis]
     #v(1.5em)

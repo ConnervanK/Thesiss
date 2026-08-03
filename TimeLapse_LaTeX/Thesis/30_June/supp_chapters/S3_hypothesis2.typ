@@ -12,18 +12,21 @@ Rayleigh-criterion-ratio and WLS-displacement-error tables, so they are
 collected here rather than reproduced in the main chapter. Section numbers
 below mirror Chapter 5's own section names one-for-one.
 
+#block(breakable: false)[
 == Noisy Lateral Movement <supp:hyp2-lateral>
 
 === Amplitude Test <supp:hyp2-lat-amplitude>
 
 #figure(
-  img("H2_010_Lateral_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 75%),
+  img("H2_010_Lateral_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 65%),
   caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
     for the raw _noisy_ migrated lateral images, all scenarios and migration
     methods. Referenced from the "Noisy Lateral Movement -- Amplitude Test"
     section of Chapter 5.],
 ) <fig:supp-h2-lat-amp-zoom>
+]
 
+#block(breakable: false)[
 === Phase Test <supp:hyp2-lat-phase>
 
 #figure(
@@ -33,6 +36,7 @@ below mirror Chapter 5's own section names one-for-one.
     Referenced from the "Noisy Lateral Movement -- Phase Test" section of
     Chapter 5.],
 ) <fig:supp-h2-lat-phase-kirchhoff>
+]
 
 #figure(
   img("H2_012_Lateral_Noisy_--_Phase-plane_shift_estimation_--_Gazdag____B.png", width: 75%),
@@ -50,18 +54,21 @@ below mirror Chapter 5's own section names one-for-one.
     Phase Test" section of Chapter 5.],
 ) <fig:supp-h2-lat-phase-backprop>
 
+#block(breakable: false)[
 == Noisy Vertical Movement <supp:hyp2-vertical>
 
 === Migration Results <supp:hyp2-vert-migration>
 
 #figure(
-  img("H2_014_Vertical_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_A.png", width: 85%),
+  img("H2_014_Vertical_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_A.png", width: 69%),
   caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
     for all three migration algorithms, vertical time-lapse study, _noisy_
     data. Referenced from the "Noisy Vertical Movement" section of
     Chapter 5.],
 ) <fig:h2-vert-summary-amp>
+]
 
+#block(breakable: false)[
 === Amplitude Test <supp:hyp2-vert-amplitude>
 
 #figure(
@@ -85,15 +92,17 @@ below mirror Chapter 5's own section names one-for-one.
     Amplitude Test" section of Chapter 5.],
   kind: table,
 ) <tab:h2-vert-amp>
+]
 
 #figure(
-  img("H2_015_Vertical_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 75%),
+  img("H2_015_Vertical_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 65%),
   caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
     for the raw _noisy_ migrated vertical images, all scenarios and
     migration methods. Referenced from the "Noisy Vertical Movement --
     Amplitude Test" section of Chapter 5.],
 ) <fig:supp-h2-vert-amp-zoom>
 
+#block(breakable: false)[
 === Phase Test <supp:hyp2-vert-phase>
 
 #figure(
@@ -119,6 +128,7 @@ below mirror Chapter 5's own section names one-for-one.
     Phase Test" section of Chapter 5.],
   kind: table,
 ) <tab:h2-vert-phase>
+]
 
 #figure(
   img("H2_016_Vertical_Noisy_--_Phase-plane_shift_estimation_--_Kirchhoff.png", width: 75%),
@@ -144,18 +154,21 @@ below mirror Chapter 5's own section names one-for-one.
     Phase Test" section of Chapter 5.],
 ) <fig:supp-h2-vert-phase-backprop>
 
+#block(breakable: false)[
 == Noisy Diagonal Movement <supp:hyp2-diagonal>
 
 === Migration Results <supp:hyp2-diag-migration>
 
 #figure(
-  img("H2_019_Diagonal_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_A.png", width: 85%),
+  img("H2_019_Diagonal_--_TimeLapse_Migration_Comparison_Noisy_--_Signed_A.png", width: 69%),
   caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
     for all three migration algorithms, diagonal time-lapse study, _noisy_
     data. Referenced from the "Noisy Diagonal Movement" section of
     Chapter 5.],
 ) <fig:h2-diag-summary-amp>
+]
 
+#block(breakable: false)[
 === Amplitude Test <supp:hyp2-diag-amplitude>
 
 #figure(
@@ -178,15 +191,17 @@ below mirror Chapter 5's own section names one-for-one.
     Amplitude Test" section of Chapter 5.],
   kind: table,
 ) <tab:h2-diag-amp>
+]
 
 #figure(
-  img("H2_020_Diagonal_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 75%),
+  img("H2_020_Diagonal_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW.png", width: 65%),
   caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
     for the raw _noisy_ migrated diagonal images, all scenarios and
     migration methods. Referenced from the "Noisy Diagonal Movement --
     Amplitude Test" section of Chapter 5.],
 ) <fig:supp-h2-diag-amp-zoom>
 
+#block(breakable: false)[
 === Phase Test <supp:hyp2-diag-phase>
 
 #figure(
@@ -211,6 +226,7 @@ below mirror Chapter 5's own section names one-for-one.
     Phase Test" section of Chapter 5.],
   kind: table,
 ) <tab:h2-diag-phase-dz>
+]
 
 #figure(
   table(
@@ -259,17 +275,20 @@ below mirror Chapter 5's own section names one-for-one.
     Phase Test" section of Chapter 5.],
 ) <fig:supp-h2-diag-phase-backprop>
 
+#block(breakable: false)[
 == Noisy Fluid Flow <supp:hyp2-fluidflow>
 
 === Migration Results <supp:hyp2-ff-migration>
 
 #figure(
-  img("H2_024_FluidFlow_--_TimeLapse_Migration_Comparison_Noisy_--_Signed.png", width: 85%),
+  img("H2_024_FluidFlow_--_TimeLapse_Migration_Comparison_Noisy_--_Signed.png", width: 69%),
   caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
     for all three migration algorithms, fluid-flow time-lapse study, _noisy_
     data. Referenced from the "Noisy Fluid Flow" section of Chapter 5.],
 ) <fig:h2-ff-summary-amp>
+]
 
+#block(breakable: false)[
 === Amplitude Test <supp:hyp2-ff-amplitude>
 
 #figure(
@@ -294,15 +313,17 @@ below mirror Chapter 5's own section names one-for-one.
     Test" section of Chapter 5.],
   kind: table,
 ) <tab:h2-ff-amp>
+]
 
 #figure(
-  img("H2_025_FluidFlow_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RA.png", width: 75%),
+  img("H2_025_FluidFlow_Noisy_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RA.png", width: 65%),
   caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
     for the raw _noisy_ migrated fluid-flow images, all scenarios and
     migration methods. Referenced from the "Noisy Fluid Flow -- Amplitude
     Test" section of Chapter 5.],
 ) <fig:supp-h2-ff-amp-zoom>
 
+#block(breakable: false)[
 === Phase Test <supp:hyp2-ff-phase>
 
 #figure(
@@ -329,6 +350,7 @@ below mirror Chapter 5's own section names one-for-one.
     section of Chapter 5.],
   kind: table,
 ) <tab:h2-ff-phase>
+]
 
 #figure(
   img("H2_026_FluidFlow_Noisy_--_Phase-plane_shift_estimation_--_Kirchhoff.png", width: 75%),
@@ -354,6 +376,7 @@ below mirror Chapter 5's own section names one-for-one.
     Test" section of Chapter 5.],
 ) <fig:supp-h2-ff-phase-backprop>
 
+#block(breakable: false)[
 == Noise Characterization <supp:hyp2-noise-stages>
 
 #figure(
@@ -362,3 +385,4 @@ below mirror Chapter 5's own section names one-for-one.
     processing stages, each with a Gaussian reference overlay. Referenced
     from the "Noise Creation" section of Chapter 5.],
 ) <fig:h2-noise-stages>
+]

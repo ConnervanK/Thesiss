@@ -11,12 +11,13 @@ the Rayleigh-criterion-ratio and WLS-displacement-error tables, so they are
 collected here rather than reproduced in the main chapter. Section numbers
 below mirror Chapter 4's own section names one-for-one.
 
+#block(breakable: false)[
 == Lateral Movement <supp:hyp1-lateral>
 
 === Amplitude Test <supp:hyp1-lat-amplitude>
 
 #figure(
-  img("H1_006_Lateral_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migrat.png", width: 80%),
+  img("H1_006_Lateral_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migrat.png", width: 65%),
   caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
     for the raw (non-difference) migrated lateral images: peak-normalised
     Baseline (blue) and Monitor (red) 1D slices, with the Baseline FWHM
@@ -24,7 +25,9 @@ below mirror Chapter 4's own section names one-for-one.
     method (columns). Referenced from the "Lateral Movement -- Amplitude
     Test" section of Chapter 4.],
 ) <fig:supp-h1-lat-amp-zoom>
+]
 
+#block(breakable: false)[
 === Phase Test <supp:hyp1-lat-phase>
 
 #figure(
@@ -33,6 +36,7 @@ below mirror Chapter 4's own section names one-for-one.
     Baseline versus each of the seven displacement scenarios. Referenced
     from the "Lateral Movement -- Phase Test" section of Chapter 4.],
 ) <fig:supp-h1-lat-phase-kirchhoff>
+]
 
 #figure(
   img("H1_008_Lateral_--_Phase-plane_shift_estimation_--_Gazdag____Baselin.png", width: 100%),
@@ -49,6 +53,7 @@ below mirror Chapter 4's own section names one-for-one.
     Chapter 4.],
 ) <fig:supp-h1-lat-phase-backprop>
 
+#block(breakable: false)[
 == Vertical Movement <supp:hyp1-vertical>
 
 === Model Set Up, B-scans, and Migration Results <supp:hyp1-vert-setup>
@@ -82,11 +87,12 @@ below mirror Chapter 4's own section names one-for-one.
     fixed ($#Dx = 0$), swept from $1 lambda$ down to $1\/32 lambda$.
     Referenced from the "Vertical Movement" section of Chapter 4.],
 ) <fig:h1-vert-setup>
+]
 
 #figure(
   subfigs(cols: 1,
     img("H1_012_Vertical_Movement_--_Background-Subtracted_B-Scans.png"),
-    img("H1_013_Vertical_--_TimeLapse_Migration_Comparison_Clean_--_Signed_A.png", width: 95%),
+    img("H1_013_Vertical_--_TimeLapse_Migration_Comparison_Clean_--_Signed_A.png", width: 55%),
   ),
   caption: [(a) Background-subtracted B-scans for the vertical time-lapse
     study, all seven scenarios; (b) signed time-lapse-difference amplitude
@@ -94,6 +100,7 @@ below mirror Chapter 4's own section names one-for-one.
     Referenced from the "Vertical Movement" section of Chapter 4.],
 ) <fig:h1-vert-summary-amp>
 
+#block(breakable: false)[
 === Amplitude Test <supp:hyp1-vert-amplitude>
 
 #figure(
@@ -117,15 +124,17 @@ below mirror Chapter 4's own section names one-for-one.
     Amplitude Test" section of Chapter 4.],
   kind: table,
 ) <tab:h1-vert-amp>
+]
 
 #figure(
-  img("H1_015_Vertical_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migra.png", width: 80%),
+  img("H1_015_Vertical_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migra.png", width: 65%),
   caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
     for the raw migrated vertical images, all scenarios and migration
     methods. Referenced from the "Vertical Movement -- Amplitude Test"
     section of Chapter 4.],
 ) <fig:supp-h1-vert-amp-zoom>
 
+#block(breakable: false)[
 === Phase Test <supp:hyp1-vert-phase>
 
 #figure(
@@ -150,6 +159,7 @@ below mirror Chapter 4's own section names one-for-one.
     Movement -- Phase Test" section of Chapter 4.],
   kind: table,
 ) <tab:h1-vert-phase>
+]
 
 #figure(
   img("H1_016_Vertical_--_Phase-plane_shift_estimation_--_Kirchhoff____Bas.png", width: 100%),
@@ -173,6 +183,7 @@ below mirror Chapter 4's own section names one-for-one.
     Chapter 4.],
 ) <fig:supp-h1-vert-phase-backprop>
 
+#block(breakable: false)[
 == Diagonal Movement <supp:hyp1-diagonal>
 
 === Model Set Up, B-scans, and Migration Results <supp:hyp1-diag-setup>
@@ -205,11 +216,12 @@ below mirror Chapter 4's own section names one-for-one.
     dominant wavelength $lambda$, in a fixed $2$:$1$ ratio. Referenced from
     the "Diagonal Movement" section of Chapter 4.],
 ) <fig:h1-diag-setup>
+]
 
 #figure(
   subfigs(cols: 1,
     img("H1_021_Diagonal_Movement_--_Background-Subtracted_B-Scans.png"),
-    img("H1_022_Diagonal_--_TimeLapse_Migration_Comparison_Clean_--_Signed_A.png", width: 95%),
+    img("H1_022_Diagonal_--_TimeLapse_Migration_Comparison_Clean_--_Signed_A.png", width: 55%),
   ),
   caption: [(a) Background-subtracted B-scans for the diagonal time-lapse
     study, all six scenarios; (b) signed time-lapse-difference amplitude
@@ -218,6 +230,7 @@ below mirror Chapter 4's own section names one-for-one.
     "Diagonal Movement" section of Chapter 4.],
 ) <fig:h1-diag-summary-amp>
 
+#block(breakable: false)[
 === Amplitude Test <supp:hyp1-diag-amplitude>
 
 #figure(
@@ -241,15 +254,17 @@ below mirror Chapter 4's own section names one-for-one.
     Chapter 4.],
   kind: table,
 ) <tab:h1-diag-amp>
+]
 
 #figure(
-  img("H1_024_Diagonal_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migra.png", width: 80%),
+  img("H1_024_Diagonal_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migra.png", width: 65%),
   caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
     for the raw migrated diagonal images, sampled along the motion direction,
     all scenarios and migration methods. Referenced from the "Diagonal
     Movement -- Amplitude Test" section of Chapter 4.],
 ) <fig:supp-h1-diag-amp-zoom>
 
+#block(breakable: false)[
 === Phase Test <supp:hyp1-diag-phase>
 
 #figure(
@@ -273,6 +288,7 @@ below mirror Chapter 4's own section names one-for-one.
     Movement -- Phase Test" section of Chapter 4.],
   kind: table,
 ) <tab:h1-diag-phase-dz>
+]
 
 #figure(
   table(
@@ -318,6 +334,7 @@ below mirror Chapter 4's own section names one-for-one.
     Chapter 4.],
 ) <fig:supp-h1-diag-phase-backprop>
 
+#block(breakable: false)[
 == Fluid Flow <supp:hyp1-fluidflow>
 
 === B-scans and Migration Results <supp:hyp1-ff-setup>
@@ -325,14 +342,16 @@ below mirror Chapter 4's own section names one-for-one.
 #figure(
   subfigs(cols: 1,
     img("H1_030_FluidFlow_Movement_--_Background-Subtracted_B-Scans.png"),
-    img("H1_031_FluidFlow_--_TimeLapse_Migration_Comparison_Clean_--_Signed.png", width: 95%),
+    img("H1_031_FluidFlow_--_TimeLapse_Migration_Comparison_Clean_--_Signed.png", width: 55%),
   ),
   caption: [(a) Background-subtracted B-scans for the fluid-flow time-lapse
     study, all eight scenarios; (b) signed time-lapse-difference amplitude
     (monitor-minus-baseline) for all three migration algorithms, clean data.
     Referenced from the "Fluid Flow" section of Chapter 4.],
 ) <fig:h1-ff-summary-amp>
+]
 
+#block(breakable: false)[
 === Amplitude Test <supp:hyp1-ff-amplitude>
 
 #figure(
@@ -357,15 +376,17 @@ below mirror Chapter 4's own section names one-for-one.
     Amplitude Test" section of Chapter 4.],
   kind: table,
 ) <tab:h1-ff-amp>
+]
 
 #figure(
-  img("H1_033_FluidFlow_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migr.png", width: 80%),
+  img("H1_033_FluidFlow_--_Amplitude_PSF_zoom_Baseline_vs_Monitor_RAW_migr.png", width: 65%),
   caption: [Zoomed Baseline-versus-Monitor point-spread-function comparison
     for the raw migrated fluid-flow images, all scenarios and migration
     methods. Referenced from the "Fluid Flow -- Amplitude Test" section of
     Chapter 4.],
 ) <fig:supp-h1-ff-amp-zoom>
 
+#block(breakable: false)[
 === Phase Test <supp:hyp1-ff-phase>
 
 #figure(
@@ -392,6 +413,7 @@ below mirror Chapter 4's own section names one-for-one.
     of Chapter 4.],
   kind: table,
 ) <tab:h1-ff-phase>
+]
 
 #figure(
   img("H1_034_FluidFlow_--_Phase-plane_shift_estimation_--_Kirchhoff____Ba.png", width: 100%),

@@ -113,11 +113,7 @@ mask and no mean can be formed).
     accumulated more than one full cycle, so the wrapped value folds back
     into $(-pi, pi]$ and appears discontinuous with the trend at smaller
     scales. Both points have $2 pi$ subtracted here to restore the
-    physically continuous, monotonically decreasing curve. A naive
-    one-cycle-per-$lambda$ reference curve shown in an earlier version of
-    this figure has been removed, as it does not correctly model this
-    between-depths mean and is not a physically meaningful comparison for
-    this diagnostic.],
+    physically continuous, monotonically decreasing curve],
 ) <fig:tlp-instphase-vert-summary>
 
 == Time-Frequency Perspective: A Complementary, Largely Unexplored View <supp:spatial-timefreq>
@@ -129,10 +125,7 @@ access to _when_ (in two-way time) a phase change occurs, complementing the
 spatial picture of @supp:spatial-lateral and @supp:spatial-vertical above.
 This view is developed analytically below for completeness, but --- unlike
 the instantaneous-phase confirmation above --- it remains mostly future
-research: of its three diagnostic views (below), none has yet been run to
-produce a figure, because the notebook cells that would generate them are
-currently disabled (see Chapter 8's discussion of Hypothesis 1.5 for the
-current status). It is included here as physical intuition for, not a
+research. It is included here as physical intuition for, not a
 demonstrated confirmation of, the duality result.
 
 === The localised Fourier shift theorem
@@ -167,23 +160,36 @@ in two different but exactly equivalent coordinate systems.
 === Three diagnostic views for a future local-phase estimator
 
 Three derived plots would make the local phase line directly visible in the
-data, mirroring the aggregate views used for the global fit in Chapter 5:
+data, mirroring the views used for the global fit in Chapter 5:
 
-/ Spectral line, $Delta Phi(f)$ at fixed $tau_0$: a straight line
-  through the origin for pure mechanical movement; a flat line offset from
-  zero for a pure phase-rotation offset; a sloped line with non-zero intercept
-  for a combination of the two.
+/ Spectral line, $Delta Phi(f)$ at fixed $tau_0$: evaluating the local
+  phase-line relation above at the target's two-way time gives a straight
+  line in $f$ whose slope and intercept separate the two causes directly ---
+  a line through the origin (slope only, $#Dtheta = 0$) for pure mechanical
+  movement; a flat line offset from zero (intercept only, $#Dt = 0$) for a
+  pure phase-rotation offset; a sloped line with non-zero intercept for a
+  combination of the two.
 
-/ Cross-phase spectrogram, $Delta Phi(tau, f)$: outside the target
-  reflection this is incoherent, salt-and-pepper phase noise; at the
-  target's two-way time a coherent window appears, showing a vertical
-  fringe pattern for movement or a uniform colour block for a pure phase
-  offset.
+/ Cross-phase spectrogram, $Delta Phi(tau, f)$: the same relation, now
+  shown across every window centre $tau$, not only $tau_0$. Outside the
+  target reflection the baseline and monitor traces share no coherent
+  phase, so this is incoherent, salt-and-pepper noise; at the target's
+  two-way time a coherent window appears, and within it the $-2 pi f #Dt$
+  term winds through repeated $2 pi$ cycles as $f$ increases, producing a
+  vertical fringe pattern for movement, versus a uniform colour block where
+  the phase is constant across $f$ for a pure phase offset.
 
 / Polar vector rotation: the complex coefficient at the dominant
   frequency and peak two-way time, plotted as a vector in the complex
-  plane for baseline and monitor; a phase offset rotates this vector with
-  negligible length change for a purely geometric shift.
+  plane for baseline and monitor. Both $#Dt$ and $#Dtheta$ enter the
+  localised Fourier shift theorem above as unit-magnitude phase factors, so
+  either cause --- or their combination --- rotates this vector with
+  negligible change in length; a genuine amplitude change (e.g. altered
+  reflectivity) would
+  instead shrink or grow it. This view therefore distinguishes a purely
+  geometric/phase shift from an amplitude-affecting one, though separating
+  $#Dt$ from $#Dtheta$ still requires the multi-frequency slope of the
+  spectral-line view above.
 
 These local, trace-based views and the global 2D wavenumber fit of Chapter
 3's Weighted Least-Squares Plane Fitting are not competing techniques: they

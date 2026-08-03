@@ -12,8 +12,9 @@
 #import "template.typ": *
 
 #show: thesis.with(
-  title:          "Sensing the Invisible:",
+  title:          "Sensing the Invisible",
   subtitle:       "Time-lapse Imaging of Sub-wavelength Processes using Ground Penetrating Radar",
+  subtitle-display: [Time-lapse Imaging of Sub-wavelength Processes #linebreak() using Ground Penetrating Radar],
   author:         "Conner Marcus van Kooten",
   date:           "August 3, 2026",
   supervisor-one: "Dr. Alexis Shakas",

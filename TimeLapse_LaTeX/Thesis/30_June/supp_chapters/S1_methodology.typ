@@ -6,6 +6,7 @@ This chapter collects figures moved out of the Theory and Methodology
 chapter of the main thesis to keep that chapter's resolution-validation
 section concise.
 
+#block(breakable: false)[
 == Forward-Model Source Wavelet <supp:methodology-ricker>
 
 #figure(
@@ -15,6 +16,7 @@ section concise.
     model in Chapters 4 and 5 ("Hypothesis 1" and "Hypothesis 2") and the
     resolution validation in the Theory and Methodology chapter.],
 ) <fig:supp-ricker-wavelet>
+]
 
 == Per-Method Migration Images <supp:methodology-migration>
 

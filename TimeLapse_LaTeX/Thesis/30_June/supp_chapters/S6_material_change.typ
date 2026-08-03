@@ -9,19 +9,28 @@ the same fit simultaneously measure displacement _and_ detect a change in
 the dielectric material at the target, and why the two never contaminate
 each other.
 
-#supp-note[This is a theoretical capability of the fit, not an empirical
-result tested in this thesis. No experiment here investigates a genuine
-material-change scenario in this specific sense --- a fixed target whose
-permittivity changes between baseline and monitor surveys (e.g. a fracture
-that fills with fluid while its position and thickness stay fixed). The
-closest empirical analogue is the *FluidFlow* experiment (Chapter 5,
-Chapter 6), which tracks a wetting front's advancing _position_ --- that
-remains fundamentally a geometric displacement of the front's location, not
-a fixed-position permittivity swap, even though a change in fluid content is
-what physically drives it. The derivation below establishes that the method
-_could_ separate the two effects if both occurred together at a fixed
-location, a capability relevant to future field deployments, but it is
-unverified against real or synthetic material-change data in this work.]
+#supp-note[This whole chapter is highly theoretical and *unconfirmed*: it is
+a purely analytical derivation that has not yet been tested, either against
+real or synthetic material-change data, or independently checked on its own
+mathematical terms. Beyond the lack of an empirical test, the algebra itself
+-- the thin-layer reflection-coefficient approximation, the baseline/monitor
+ratio simplification, and the resulting flat-phase-offset claim below -- has
+not been independently verified (e.g. numerically, or symbolically against
+a computer-algebra system), so a sign error, a dropped term, or an invalid
+approximation cannot yet be ruled out. This is a theoretical capability of
+the fit, not an empirical result tested in this thesis. No experiment here
+investigates a genuine material-change scenario in this specific sense --- a
+fixed target whose permittivity changes between baseline and monitor surveys
+(e.g. a fracture that fills with fluid while its position and thickness stay
+fixed). The closest empirical analogue is the *FluidFlow* experiment
+(Chapter 5, Chapter 6), which tracks a wetting front's advancing _position_
+--- that remains fundamentally a geometric displacement of the front's
+location, not a fixed-position permittivity swap, even though a change in
+fluid content is what physically drives it. The derivation below establishes
+that the method _could_ separate the two effects if both occurred together
+at a fixed location, a capability relevant to future field deployments, but
+both the physical claim and the maths underpinning it are unverified and
+should be checked before being relied upon.]
 
 == Why a sub-wavelength fracture produces a frequency-independent phase shift
 

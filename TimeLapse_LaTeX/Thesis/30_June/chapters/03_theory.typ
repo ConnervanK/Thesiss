@@ -328,7 +328,7 @@ example, the phase-plane fit recovered the true lateral displacement with
 no error.
 
 #figure(
-  img("H1_038_Phase-Plane_Workflow_--_Gazdag_Lateral_132lambda.png"),
+  img("H1_038_Phase-Plane_Workflow_--_Gazdag_Lateral_132lambda.png", width: 115%),
   caption: [Phase-plane shift-estimation pipeline on a synthetic example
     (Gazdag migration, Lateral movement, $1\/32 lambda$, @ch:hyp1). Top row:
     (a) migrated baseline image; (b) migrated monitor image; (c) their

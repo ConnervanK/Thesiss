@@ -178,7 +178,7 @@ pipeline of @sec:meth-conditioning, already illustrated in @ch:methodology
 
 #page(flipped: false)[
 #figure(
-  img("H1_004_Lateral_--_TimeLapse_Migration_Comparison_Clean_--_Signed_Am.png", width: 95%),
+  img("H1_004_Lateral_--_TimeLapse_Migration_Comparison_Clean_--_Signed_Am.png", width: 110%),
   caption: [Signed time-lapse-difference amplitude (monitor-minus-baseline)
     for all three migration algorithms, clean data, all eight scenarios.],
 ) <fig:tl-summary-amp>
@@ -427,7 +427,7 @@ regime in which every amplitude test above has already collapsed; exact
 values are given in @tab:h1-mae below.
 
 #figure(
-  img("H1_039_Hypothesis_1_--_MAE_Summary_Across_Movement_Types.png", width: 85%),
+  img("H1_039_Hypothesis_1_--_MAE_Summary_Across_Movement_Types.png", width: 110%),
   caption: [Mean absolute phase-plane displacement error by movement type
     and migration method, clean data, sub-half-wavelength regime only.
     Background shading groups rows by movement type.],
@@ -454,7 +454,7 @@ values are given in @tab:h1-mae below.
 
 #page(flipped: true)[
 #figure(
-  img("H1_037_Hypothesis_1_--_Detectability_Map_Amplitude_vs_Phase.png"),
+  img("H1_037_Hypothesis_1_--_Detectability_Map_Amplitude_vs_Phase.png", width: 115%),
   caption: [Detectability map, clean data: top row, Rayleigh-criterion
     amplitude ratio (threshold $1$); bottom row, absolute phase-plane WLS
     displacement error as a percentage of the true displacement (log scale,

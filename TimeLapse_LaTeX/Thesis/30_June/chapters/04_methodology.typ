@@ -42,6 +42,7 @@ determines this timestep itself from the $1 "mm"$ spatial discretisation,
 choosing the largest value that still satisfies the Courant-Friedrichs-Lewy
 (CFL) stability criterion for the FDTD update @gprmax.
 
+#pagebreak()
 
 == Scatterer and Medium Models
 
@@ -102,6 +103,8 @@ convention $#vmig = v \/ 2$ of @eq:vmig, so that the same velocity model and the
 same migration aperture are used for a baseline/monitor pair, which is required
 for the displacement estimate of @sec:meth-phaseplane to be valid.
 
+#pagebreak()
+
 == The 2D Phase-Plane Shift-Estimation Pipeline <sec:meth-phaseplane>
 
 The theory of @sec:th-fourier-shift and @sec:th-wls is applied to the
@@ -161,8 +164,8 @@ $t_0 = 0.943 "ns"$, shown in the Supplementary Material, §S1.1.
 
 #figure(
   subfigs(cols: 1,
-    img("RES_002_Resolution_Study__Model_Geometry__domain_4010_m_Δx__1_mm_PML.png"),
-    img("RES_003_Scatterer_Positions__PEC_Cylinders__r__28_mm_depth__0676_m.png", width: 70%),
+    img("RES_002_Resolution_Study__Model_Geometry__domain_4010_m_Δx__1_mm_PML.png", width: 110%),
+    img("RES_003_Scatterer_Positions__PEC_Cylinders__r__28_mm_depth__0676_m.png", width: 90%),
   ),
   caption: [Forward-model setup for the resolution validation: (a) the gprMax
     domain and grid; (b) the swept separation between the two PEC cylinder
@@ -187,10 +190,10 @@ reflection aligns back to $t = 0$ in the conditioned trace.
 
 #figure(
   subfigs(cols: 1,
-    img("RES_004_GPR_B-Scans__Background_and_Separation_Models.png"),
-    img("RES_005_GPR_B-Scans__Background_Subtracted.png"),
-    img("RES_006_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png"),
-    img("RES_007_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png"),
+    img("RES_004_GPR_B-Scans__Background_and_Separation_Models.png", width: 120%),
+    img("RES_005_GPR_B-Scans__Background_Subtracted.png", width: 120%),
+    img("RES_006_Effect_of_Tapering_and_t0_Shift__2λ_dataset_single_trace.png", width: 115%),
+    img("RES_007_B-scan_effect_of_tapering_and_t0_shift__2λ_dataset.png", width: 100%),
   ),
   caption: [Signal-conditioning pipeline for the resolution validation's
     $2 lambda$ dataset (@sec:meth-conditioning): (a) raw zero-offset B-scans,
@@ -216,7 +219,7 @@ lines mark the true position of each scatterer.
 #page(flipped: true)[
 #figure(
   subfigs(cols: 2,
-    img("RES_016_Resolution_Study_--_Migration_Comparison_f_c15_GHz_aperture4.png", width: 90%),
+    img("RES_016_Resolution_Study_--_Migration_Comparison_f_c15_GHz_aperture4.png", width: 95%),
     img("RES_017_Resolution_Study_--_PSF_Zoom_Baseline_vs_Monitor.png", width: 87%),
   ),
   caption: [(a) Signed migrated amplitude for Kirchhoff, Gazdag, and
