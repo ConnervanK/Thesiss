@@ -3,12 +3,11 @@
 = General Materials and Methods <ch:methodology>
 
 This chapter gathers the simulation and processing methodology shared by the
-synthetic experiments of @ch:hyp1 and @ch:hyp2. Everything common to two or
-more of those experiments is described here once --- the gprMax forward model,
+synthetic experiments of @ch:hyp1 and @ch:hyp2. Everything common to the experiments in @ch:hyp1, @ch:hyp2, and @ch:hyp3 is described here once --- the gprMax forward model,
 the signal-conditioning steps, the three migration implementations, and the 2D
 phase-plane estimator derived in @sec:th-wls --- so that each experimental
-chapter need only add the scatterer configuration and displacement specific to
-it. The chapter closes with a validation experiment (@sec:meth-resolution)
+chapter only needs to describe the physical behaviour of a moving scatterer or fluid front. The chapter
+closes with a validation experiment (@sec:meth-resolution)
 that establishes the amplitude-based resolution floor of the migration
 algorithms before they are used to test any hypothesis.
 
@@ -17,28 +16,61 @@ algorithms before they are used to test any hypothesis.
 All B-scans are simulated with the open-source finite-difference time-domain
 solver gprMax @gprmax. The source is a Ricker wavelet with centre frequency
 $f_c = 1.5 "GHz"$ and time-zero offset $t_0 = 0.943 "ns"$ (Supplementary
-Material, §S1.1), chosen so that its usable bandwidth defines the dominant
+Material, §S1.1) --- gprMax delays the Ricker pulse by $t_0$ so that it
+starts from an amplitude of effectively zero rather than being switched on
+abruptly at $t=0$, avoiding the high-frequency numerical noise such a
+discontinuity would otherwise inject into the FDTD update --- chosen so
+that its usable bandwidth defines the dominant
 wavelength $lambda$ used to express every displacement scale in this thesis
 ($2 lambda$ down to $1 \/ 32 lambda$). The computational domain is discretised
-on a uniform $1 "mm"$ grid with perfectly-matched-layer (PML) absorbing
-boundaries. A zero-offset (collocated transmitter and receiver) survey is
-simulated by sweeping a single transmitter--receiver pair across the surface.
+on a uniform $1 "mm"$ grid --- chosen against $4 "GHz"$, the highest
+significant frequency component of the Ricker wavelet, so that even that
+shortest wavelength in ice is sampled by more than ten cells, keeping
+numerical dispersion of the FDTD grid negligible --- with
+perfectly-matched-layer (PML) absorbing boundaries, and measures
+$4 times 1 "m"$ in $(x, z)$. A zero-offset
+(collocated transmitter and receiver) survey is simulated by sweeping a
+single transmitter--receiver pair across the surface in $1 "cm"$ steps,
+with the receiver trailing the source by a fixed $10 "cm"$ offset; each
+resulting position yields one A-scan, and $380$ such steps are stacked to
+form each B-scan. Each simulation runs for a $20 "ns"$ time window, stepped
+at $Delta t approx 2.36 "ps"$ per iteration ($8481$ iterations in total); gprMax
+determines this timestep itself from the $1 "mm"$ spatial discretisation,
+choosing the largest value that still satisfies the Courant-Friedrichs-Lewy
+(CFL) stability criterion for the FDTD update @gprmax.
 
-#draftnote[the figure titles encode the domain extent as "4010 m"; the same
-auto-titling code elsewhere strips decimal points from floats (e.g. a depth of
-0.676 m appears as `0676_m`, and a position of 2.0 m appears as `20_m`), so
-this almost certainly reads as a domain of ≈4.01 m rather than 4010 m ---
-confirm against the notebook before quoting a final value.]
 
 == Scatterer and Medium Models
 
 One target geometry is used across the synthetic experiments. *Point
 scatterers* (@sec:meth-resolution, @ch:hyp1) are perfect-electric-conductor
 (PEC) cylinders of radius $r = 28 "mm"$, buried at a depth of $0.676 "m"$ in
-ice. @sec:meth-resolution places two such cylinders at a swept separation;
-@ch:hyp1 instead holds one cylinder fixed as a baseline and displaces a second,
-in the lateral, vertical, or diagonal direction, by the same family of
-sub-wavelength steps.
+ice. @sec:meth-resolution places two such cylinders at a swept separation.
+@ch:hyp1's vertical and diagonal scenarios instead use a single cylinder,
+simulated once at its original position (baseline) and again after a
+sub-wavelength displacement (monitor); its lateral scenarios additionally
+keep a second cylinder fixed alongside the moving one, present in both the
+baseline and monitor B-scans. This fixed scatterer serves as a check that
+differencing the monitor and baseline images successfully cancels a static
+target, leaving only the moving one behind. All three directions sweep the
+same family of sub-wavelength steps.
+
+#linebreak()
+
+The host medium is ice with relative permittivity $epsilon_r = 3.15$ and
+electric conductivity $sigma = 1 times 10^(-6) "S"\/"m"$, giving a
+propagation velocity $v = c \/ sqrt(epsilon_r) approx 0.169 "m"\/"ns"$ and,
+at the source centre frequency $f_c = 1.5 "GHz"$, a dominant wavelength
+$lambda approx 112.6 "mm"$. The scatterer itself is modelled as an ideal
+PEC boundary rather than being assigned a permittivity or conductivity, so
+that its response is governed purely by its geometry. Both materials are
+non-magnetic: relative permeability $mu_r = 1$ and magnetic loss $sigma^* =
+0$. The cylinder radius,
+$r = 28 "mm"$, is therefore about a quarter of the dominant wavelength
+($approx 0.25 lambda$), and its burial depth of $0.676 "m"$ places it
+roughly six wavelengths ($approx 6 lambda$) below the surface --- well
+beyond the near-field region, so the scatterer is illuminated by a locally
+planar wavefront.
 
 == Signal Conditioning Pipeline <sec:meth-conditioning>
 
@@ -62,9 +94,7 @@ Every raw B-scan is processed identically before migration:
 Every conditioned B-scan in @sec:meth-resolution, @ch:hyp1, and @ch:hyp2 is
 migrated with all three algorithms derived in @sec:th-migration --- Kirchhoff
 delay-and-sum (PyLops zero-offset operator), Gazdag $f$-$k$ phase-shift
-migration, and gprMax-based time-reversal back-propagation. All three share the
-implementation in `helper_functions/migration.py` (`PylopsKirchoffMigration`,
-`gazdag_migration`, and `write_backprop_files`) and the exploding-reflector
+migration, and gprMax-based time-reversal back-propagation. All three share the exploding-reflector
 convention $#vmig = v \/ 2$ of @eq:vmig, so that the same velocity model and the
 same migration aperture are used for a baseline/monitor pair, which is required
 for the displacement estimate of @sec:meth-phaseplane to be valid.
@@ -72,23 +102,30 @@ for the displacement estimate of @sec:meth-phaseplane to be valid.
 == The 2D Phase-Plane Shift-Estimation Pipeline <sec:meth-phaseplane>
 
 The theory of @sec:th-fourier-shift and @sec:th-wls is applied to the
-migrated images produced above via the function `estimate_shift_2d` defined in
-`TimeLapse_Processing.ipynb`. The end-to-end workflow is:
+migrated images produced above via the function `estimate_shift_2d`,
+reproduced in full in the Supplementary Material, §S1.3. The end-to-end
+workflow is:
 
 + *Migrate* the baseline and monitor B-scan with an identical velocity model
   and aperture (@sec:th-migration).
 
 + *Crop a region of interest (ROI)* tightly around the target (in this
   thesis, a window of $plus.minus 2.5 lambda$ about the scatterer apex,
-  located on the Hilbert-envelope peak of the baseline image), so that
-  static background structure elsewhere in the image cannot drag the fitted
-  plane towards zero.
+  located on the Hilbert-envelope peak of the baseline image). The apex is
+  found via the high-amplitude region of the difference (monitor minus
+  baseline) B-scan, which highlights the rough area the scatterer has moved
+  through, so that the ROI stays clear of static background noise elsewhere
+  in the image.
 
 + *Taper, then take the 2D FFT* of both cropped images and form the
   cross-spectrum $#XS$ of @eq:cross-spectrum-def.
 
-+ *Mask and weight*: restrict the fit to $|#kz|, |#kx| < 1.4 k_(z c)$ and
-  weight every bin by $|#XS|$ (@sec:th-mask-weight).
++ *Mask and weight*: mask out frequency bins below an amplitude threshold,
+  keeping only the high-energy part of the cross-spectrum phase, and weight
+  the surviving bins by $|#XS|$ in the WLS fit; further restrict the fit to
+  $|#kz|, |#kx| < 1.4 k_(z c)$, where the $1.4$ passband factor is an
+  empirical value that must be tuned to avoid phase wraparound
+  (@sec:th-mask-weight).
 
 + *Solve* the weighted least-squares system of @eq:wls-preweighted for
   $(#Dz, #Dx, c)$.
@@ -105,7 +142,7 @@ unless the velocity is recalibrated against a known static reflector first.
 
 == Validation: Amplitude Resolution Floor of the Migration Algorithms <sec:meth-resolution>
 
-Before any of the hypotheses can be tested with confidence, the migration
+Before any of the hypotheses can be tested with confidence, the signal conditioning
 pipeline above is validated on a simple, well-understood baseline problem: how
 closely can two _stationary_ point scatterers be spaced before the migration
 algorithms can no longer tell them apart? This validation experiment uses two
@@ -161,19 +198,17 @@ reflection aligns back to $t = 0$ in the conditioned trace.
     convention used in @fig:res-psf.],
 ) <fig:res-bscans>
 
-#supp-note[The individual migrated image for every separation scenario, for
-Kirchhoff, Gazdag, and back-propagation migration respectively (zoomed
-around the true scatterer depth), is provided in the Supplementary
-Material, §S1.2.]
 
 @fig:res-psf (a) overlays the signed migrated amplitude from all three
 algorithms at $f_c = 1.5 "GHz"$, and @fig:res-psf (b) zooms on the
 Baseline-versus-Monitor point-spread function at the true scatterer depth,
 for every separation scenario and method, mirroring the amplitude-test
-figures used throughout @ch:hyp1 and @ch:hyp2 (@sec:hyp1-lat-amplitude):
-the shaded band marks the FWHM measured once from the widest ($2 lambda$)
-separation, where the two scatterers' responses do not yet overlap, and the
-dashed lines mark the true position of each scatterer.
+figures used throughout @ch:hyp1 and @ch:hyp2 (@sec:hyp1-lat-amplitude). The shaded band marks the FWHM (the full width, along $x$, of the migrated
+point-spread function's main lobe at half its peak amplitude --- a standard
+measure of how broad, and hence how resolvable, that lobe is), measured
+from a scatterer's point-spread function. We use one FWHM value based on
+the reference ($2 lambda$ case) for all the other separation cases. The FWHM value calculated in the reference case is used as a benchmark as the two scatterers are still clearly separated. The dashed
+lines mark the true position of each scatterer.
 
 #page(flipped: true)[
 #figure(
@@ -190,8 +225,18 @@ dashed lines mark the true position of each scatterer.
 ) <fig:res-psf>
 ]
 
+#supp-note[The individual migrated image for every separation scenario, for
+Kirchhoff, Gazdag, and back-propagation migration respectively (zoomed
+around the true scatterer depth), is provided in the Supplementary
+Material, §S1.2.]
+
 All three migration algorithms collapse the two scatterer hyperbolae into distinguishable amplitude peaks for separations down to roughly half a wavelength, but the two peaks progressively merge into a single lobe as the separation shrinks further. The amplitude image alone cannot certify two scatterers, or a sub-wavelength displacement of one scatterer, below this floor—formally known as the Rayleigh diffraction limit. This fundamental amplitude-based limit is the motivation for the phase-plane approach developed in @ch:theory and tested in @ch:hyp1 and @ch:hyp2.
 
-#draftnote[state the precise separation at which the methods stop resolving
-two distinguishable PSF peaks, read directly off @fig:res-psf (b), and
-comment on any difference between the three algorithms.]
+#linebreak()
+
+Read directly off @fig:res-psf (b), the three algorithms differ noticeably
+in exactly where that floor falls: Kirchhoff stops resolving two
+distinguishable peaks below a separation of $1 lambda$, Gazdag remains
+resolvable down to $1 \/ 2 lambda$, and back-propagation --- the
+best-performing of the three --- barely still resolves two peaks at
+$1 \/ 4 lambda$.

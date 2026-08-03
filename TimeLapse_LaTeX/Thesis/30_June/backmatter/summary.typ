@@ -37,12 +37,15 @@ conservative choice; Gazdag is the weakest on both counts.
 
 *Hypothesis 3* applied the full pipeline to real borehole GPR field data from a
 controlled fluid-injection experiment (38 profiles, 6 June 2016). It produced
-stable, cross-technique-corroborated displacement estimates --- of order
-$1.3$--$1.9 "m"$ during the Push stage, near-zero during Wait, and a partial
-reversal during Pull --- with an independent back-propagation re-derivation
-agreeing on sign and order of magnitude. Whether the inferred direction is
-physically expected for this experiment remains open, and generalisation to
-complex multi-scatterer scenes is left to future work.
+stable, cross-technique-corroborated displacement estimates --- downward by
+roughly $1.7$--$2.1 "m"$ during Push and Chase, reversing upward during Wait,
+and settling near the noise floor during Pull --- accompanied by a smaller
+lateral shift toward the borehole, the opposite of the naive
+outward-spreading picture even though the vertical direction matches it, and
+corroborated in sign by an independent back-propagation re-derivation.
+Whether that lateral shift is physically expected for this experiment
+remains open, and generalisation to complex multi-scatterer scenes is left
+to future work.
 
 The unifying hypothesis is therefore supported: time-lapse GPR can recover
 subwavelength movement from the phase of migrated images at scales where the

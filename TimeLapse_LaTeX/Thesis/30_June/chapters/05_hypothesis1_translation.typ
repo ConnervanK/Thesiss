@@ -18,29 +18,27 @@ to the field data of @ch:hyp3. Two further directions --- *vertical*
 same point scatterer --- confirm the finding and are reported alongside the
 cross-movement comparison in @sec:hyp1-summary.
 
-FFor every experiment, the conclusion is consistent: simple amplitude differencing fails below the resolution floor found in @sec:meth-resolution. While windowed cross-correlation of migrated amplitudes can offer an intermediate solution by indirectly exploiting phase, directly examining the _phase change_ in the two-dimensional Fourier domain of the migrated images (@ch:theory) recovers the displacement accurately down to the smallest scale tested. @sec:hyp1-workflow defines the shared processing and analysis pipeline used identically across all four experiments.
+For every experiment, the conclusion is consistent: simple amplitude differencing fails below the resolution floor found in @sec:meth-resolution. While windowed cross-correlation of migrated amplitudes can offer an intermediate solution by indirectly exploiting phase, directly examining the _phase change_ in the two-dimensional Fourier domain of the migrated images (@ch:theory) recovers the displacement accurately down to the smallest scale tested. @sec:hyp1-workflow defines the shared processing and analysis pipeline used identically across all four experiments.
+
+#linebreak()
 
 #para-head[Hypothesis 1.] Can multi-dimensional phase-plane regression infer
 lateral, vertical, and diagonal subwavelength displacements from time-lapse
 migrated GPR images, at scales where amplitude differencing has already
 failed?
 
-An optional, local trace-based alternative to the global phase-plane fit used
-in this chapter (Hypothesis 1.5: tracking the local phase gradients
-$partial phi \/ partial x$ and $partial phi \/ partial y$ directly) is
-explored separately in the Supplementary Material, §S5, and is not required
-for the results below.
+// An optional, local trace-based alternative to the global phase-plane fit used
+// in this chapter (Hypothesis 1.5: tracking the local phase gradients
+// $partial phi \/ partial x$ and $partial phi \/ partial y$ directly) is
+// explored separately in the Supplementary Material, §S5, and is not required
+// for the results below.
 
 == Workflow Defined <sec:hyp1-workflow>
 
 Every experiment in this chapter is analysed by the same five-step pipeline
 (@fig:h1-workflow), applied identically to Lateral, Vertical, Diagonal, and
-FluidFlow --- only the gprMax domain, the moving target, and the sweep
-direction differ between them. No gprMax forward model or migration is
-re-run to produce this chapter's figures and tables: every B-scan and
-migrated image is loaded from the `.npz` caches already written by the
-corresponding `*_TimeLapse_Playground.ipynb` / `FluidFlow_Playground.ipynb`
-notebooks.
+FluidFlow --- only the gprMax domain; the moving scatterer or fluid front; and the sweep
+direction of the moving scatterer differ between them.
 
 #figure(
   img("H1_040_Hypothesis_1_--_Shared_Analysis_Pipeline.png"),
@@ -49,62 +47,85 @@ notebooks.
     moving target, and the sweep direction.],
 ) <fig:h1-workflow>
 
-+ *Model set up* (§X.1). The gprMax domain and grid are plotted with the
++ *Model set up* (@sec:hyp1-lat-setup, @sec:hyp1-ff-setup). \
+  The gprMax domain and grid are plotted with the
   baseline target position, followed by a second view marking every
   scenario's target position across the full displacement sweep.
-+ *Raw and processed B-scans* (§X.2). The background-subtracted B-scan is
-  shown for every scenario, using the tapering and $t_0$-shift conditioning
-  of @sec:meth-conditioning.
-+ *Migration results* (§X.3). Every scenario is migrated with Kirchhoff,
++ *Raw and processed B-scans* (@sec:hyp1-lat-bscans, §S2.4). \
+  The background-subtracted B-scan is shown for every scenario, using the
+  tapering and $t_0$-shift conditioning of @sec:meth-conditioning.
++ *Migration results* (@sec:hyp1-lat-bscans, @sec:hyp1-fluidflow). \
+  Every scenario is migrated with Kirchhoff,
   Gazdag, and back-propagation, and the signed time-lapse-difference
   amplitude (monitor-minus-baseline) is compared across all three methods in
   one zoomed grid.
-+ *Amplitude test* (§X.4). A Rayleigh-criterion argument is built from the
-  *raw* (non-difference) migrated images, not the bipolar time-lapse
-  difference: the Baseline and each Monitor scenario are each single-lobed
-  point-spread functions, so the Baseline-to-Monitor peak-to-peak separation,
-  measured against the Baseline PSF's own full width at half maximum (FWHM),
-  is the standard two-point resolution argument. A separation/FWHM ratio well
-  below $1$ means the two peaks cannot be distinguished from amplitude alone.
-+ *Phase test* (§X.5, @sec:hyp1-phaseplane below). The 2D weighted-least-squares
++ *Amplitude test* (@sec:hyp1-lat-amplitude, @sec:hyp1-fluidflow). \
+  A Rayleigh-criterion argument is built from the
+  baseline and monitor migrated images, not from a time-lapse
+  difference image. The migrated baseline and all monitor images are each single-lobed
+  point-spread functions. We measure the FWHM value of the baseline PSF. The peak of the monitor PSF is then located, and the distance between the two peaks is measured. This distance is then divided by the baseline FWHM to give a separation/FWHM ratio. A ratio above $1$ means the two peaks are resolvable, while a ratio below $1$ means the two peaks cannot be distinguished from amplitude alone.
++ *Phase test* (@sec:hyp1-lat-phase, @sec:hyp1-fluidflow). \
+  The 2D weighted-least-squares
   phase-plane fit is applied to the baseline/monitor cross-spectrum, using a
   window cropped around the target apex, and recovers the sub-wavelength
   displacement $(#Dz, #Dx)$ directly from the cross-spectrum's phase plane.
+  The error metric is simply this estimate minus the true (grid-rounded)
+  displacement, reported in millimetres and as a percentage of the true
+  displacement, for every scenario and migration method.
 
 === The Phase-Plane Fit (WLS) <sec:hyp1-phaseplane>
 
 The 2D weighted-least-squares (WLS) phase-plane fit derived in
-@sec:th-fourier-shift and @sec:th-wls (with the material-change decoupling
-of the intercept term derived in the Supplementary Material, §S6), and
+@sec:th-fourier-shift and @sec:th-wls, and
 implemented as described in @sec:meth-phaseplane, is applied to the
-baseline/monitor cross-spectrum. The target apex is first localised from the
-peak of the Baseline envelope nearest to where the two images differ most,
-both images are then cropped to a $plus.minus 2.5 lambda$ window around that
+baseline/monitor cross-spectrum. The target apex is first localised by
+taking the time-lapse difference (Monitor minus Baseline) of the migrated
+images and computing its envelope (Hilbert magnitude) to find the
+high-amplitude region where the two images differ most, then refining to
+the nearby peak of the Baseline envelope itself, which anchors the crop
+window precisely on the true, undisplaced target position; both baseline and monitor images are
+then cropped to a $plus.minus 2.5 lambda$ window around that
 apex, and the WLS fit recovers the sub-wavelength displacement
 $(#Dz, #Dx)$ directly from the cropped cross-spectrum's phase plane, using
-the central wavenumber $k_(z,c) = 2 pi \/ lambda$. A six-panel diagnostic
-(cropped difference image with the apex marked, cross-spectrum phase,
-cross-spectrum energy, a numeric True/Estimated/Error summary, and two
-plane-fit panels) is shown for every scenario and every migration method, in
-every §X.5 section below. The two plane-fit panels isolate the fitted plane
-$phi = k_z #Dz + k_x #Dx + phi_0$ along each wavenumber axis separately, by
-subtracting the *other* axis's fitted contribution from the measured
-cross-spectrum phase ($phi - k_z #Dz$ plotted against $k_x$, and
-$phi - k_x #Dx$ plotted against $k_z$): a good fit collapses the scattered,
-per-bin phase measurements onto the fitted line in both panels. Each point is
-coloured by the cross-spectrum magnitude $|X S|$, i.e. the weight that bin
+the central wavenumber $k_(z,c) = 2 pi \/ lambda$. 
+A diagnostic image
+(containing the cross-spectrum phase,
+cross-spectrum energy, and the 1D plane-fit panels) illustrates this process for one representative scenario, like
+in the example of @ch:theory (@fig:phaseplane-schematic). 
+
+#linebreak()
+
+The full set of per-scenario,
+per-method diagnostics is instead provided in the Supplementary Material,
+with the numeric results collected in this chapter's error tables (e.g.
+@tab:h1-lat-phase). Because the fitted plane $phi = k_z #Dz + k_x #Dx +
+phi_0$ lives in the 3-D space $(k_z, k_x, phi)$, it cannot be checked by
+eye from a single 2-D plot; the two plane-fit panels instead give two 1-D
+cross-sections through it. In the $k_x$ panel, the already-fitted $k_z
+#Dz$ contribution is subtracted from every measured phase value ($phi -
+k_z #Dz$) and the residual is plotted against $k_x$ alone, so a correct
+fit collapses onto a straight line of slope $#Dx$; the $k_z$ panel does the
+same with the roles of $k_z$ and $k_x$ reversed. A good fit therefore shows
+the scattered per-bin phase measurements clustering tightly along that
+fitted line in both panels, rather than scattering around it. A worked example of the
+full six-panel diagnostic --- Lateral study, Gazdag migration, Baseline
+versus each of the seven displacement scenarios --- is given in the
+Supplementary Material, §S2.1.2.
+
+#linebreak()
+
+Each point is
+coloured by the cross-spectrum magnitude $|#XS|$, i.e. the weight that bin
 actually received in the WLS fit, making visible which measurements drove the
 result versus which were downweighted as noise.
+
+#linebreak()
 
 One further subtlety affects the smallest scenarios tested: because the
 FDTD grid cell is $1 "mm"$, the *nominal* fraction-of-$lambda$ displacement
 requested of gprMax (e.g. $1\/32 lambda approx 3.52 "mm"$) is rounded to the
 nearest grid cell before the simulation is run. The *true* displacement used
-throughout this chapter's error tables is this grid-rounded value, not the
-raw continuous fraction --- at the smallest scale tested this is a
-$approx 14%$ correction, and it is why a handful of nominal-$1\/2 lambda$
-scenarios below fall just inside a "$< 1\/2 lambda$" regime rather than
-exactly on its boundary.
+throughout this chapter's error tables is this grid-rounded value.
 
 == Lateral Movement <sec:hyp1-lateral>
 
@@ -112,6 +133,8 @@ A single PEC cylinder ($r = 28 "mm"$, baseline depth $0.676 "m"$) is held
 fixed in the baseline survey and displaced laterally by each of seven
 scenarios (@fig:h1-lat-setup), from $2 lambda$ down to $1 \/ 32 lambda$,
 in a $4.0 times 1.0 "m"$ pure-ice domain ($eps_r = 3.15$).
+
+#pagebreak(weak: true)
 
 === Model Set Up <sec:hyp1-lat-setup>
 
@@ -151,7 +174,7 @@ in a $4.0 times 1.0 "m"$ pure-ice domain ($eps_r = 3.15$).
 The raw and background-subtracted B-scans follow the standard conditioning
 pipeline of @sec:meth-conditioning, already illustrated in @ch:methodology
 (@fig:res-bscans); @fig:tl-summary-amp shows the resulting time-lapse
-migration comparison directly.
+(migrated monitor image minus migrated baseline image) comparison directly.
 
 #page(flipped: false)[
 #figure(
@@ -172,8 +195,18 @@ using the classical Rayleigh criterion: two peaks are resolved when their
 separation is at least the Baseline peak's Full Width at Half Maximum
 (FWHM), i.e. a separation-to-FWHM ratio of $1$ or more; below that, the two
 peaks blur into one and amplitude alone can no longer tell Baseline and
-Monitor apart. @tab:h1-lat-amp reports this ratio for every scenario and
-migration method.
+Monitor apart. 
+
+#linebreak()
+
+Concretely, a 1-D profile through the *raw* migrated image
+is extracted along the movement axis at the true target depth for both
+Baseline and each Monitor scenario, windowed to $plus.minus 2.5 lambda$
+around the baseline position so that unrelated features (e.g. noise for later scenarios) are ignored. The separation is
+measured as the distance between the two profiles' peak positions, while
+the FWHM is measured once, from the Baseline profile alone; the reported
+ratio is simply that separation divided by the Baseline FWHM. @tab:h1-lat-amp
+reports this ratio for every scenario and migration method.
 
 #supp-note[The zoomed Baseline-versus-Monitor PSF comparison for this
 scenario set is provided in the Supplementary Material, §S2.1.1.]
@@ -226,20 +259,41 @@ in the Supplementary Material, §S2.1.2.]
     table.hline(stroke: 0.7pt),
     [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
     table.hline(stroke: 0.4pt),
-    [$2 lambda$],     [$-221.66 (-98.5%)$],  [$-201.58 (-89.6%)$], [$-212.45 (-94.4%)$],
-    [$1 lambda$],     [$-79.14 (-70.0%)$],   [$-39.65 (-35.1%)$],  [$-88.31 (-78.2%)$],
-    [$1\/2 lambda$],  [$-92.44 (-165.1%)$],  [$-0.00 (-0.0%)$],    [$+0.04 (+0.1%)$],
-    [$1\/4 lambda$],  [$-0.35 (-1.2%)$],     [$-0.00 (-0.0%)$],    [$+0.04 (+0.1%)$],
-    [$1\/8 lambda$],  [$-0.17 (-1.2%)$],     [$-0.00 (-0.0%)$],    [$+0.02 (+0.1%)$],
-    [$1\/16 lambda$], [$-0.10 (-1.5%)$],     [$-0.00 (-0.0%)$],    [$+0.01 (+0.1%)$],
-    [$1\/32 lambda$], [$-0.06 (-1.6%)$],     [$-0.00 (-0.0%)$],    [$+0.01 (+0.1%)$],
+    [$2 lambda$],     [$-221.66$], [$-201.58$], [$-212.45$],
+    [$1 lambda$],     [$-79.14$],  [$-39.65$],  [$-88.31$],
+    [$1\/2 lambda$],  [$-92.44$],  [$-0.00$],   [$+0.04$],
+    [$1\/4 lambda$],  [$-0.35$],   [$-0.00$],   [$+0.04$],
+    [$1\/8 lambda$],  [$-0.17$],   [$-0.00$],   [$+0.02$],
+    [$1\/16 lambda$], [$-0.10$],   [$-0.00$],   [$+0.01$],
+    [$1\/32 lambda$], [$-0.06$],   [$-0.00$],   [$+0.01$],
     table.hline(stroke: 0.7pt),
   ),
   caption: [Lateral phase-plane WLS displacement error, $#Dx$
-    (estimated $-$ true), in millimetres, with the equivalent percentage of
-    the true displacement in parentheses.],
+    (estimated $-$ true), millimetres.],
   kind: table,
 ) <tab:h1-lat-phase>
+
+#figure(
+  table(
+    columns: (auto, auto, auto, auto),
+    stroke: none,
+    inset: (x: 0.8em, y: 0.3em),
+    table.hline(stroke: 0.7pt),
+    [*Scenario*], [*Back-prop*], [*Gazdag*], [*Kirchhoff*],
+    table.hline(stroke: 0.4pt),
+    [$2 lambda$],     [$-98.5%$],  [$-89.6%$], [$-94.4%$],
+    [$1 lambda$],     [$-70.0%$],  [$-35.1%$], [$-78.2%$],
+    [$1\/2 lambda$],  [$-165.1%$], [$-0.0%$],  [$+0.1%$],
+    [$1\/4 lambda$],  [$-1.2%$],   [$-0.0%$],  [$+0.1%$],
+    [$1\/8 lambda$],  [$-1.2%$],   [$-0.0%$],  [$+0.1%$],
+    [$1\/16 lambda$], [$-1.5%$],   [$-0.0%$],  [$+0.1%$],
+    [$1\/32 lambda$], [$-1.6%$],   [$-0.0%$],  [$+0.1%$],
+    table.hline(stroke: 0.7pt),
+  ),
+  caption: [Lateral phase-plane WLS displacement error, $#Dx$, as a
+    percentage of the true displacement.],
+  kind: table,
+) <tab:h1-lat-phase-pct>
 
 From $1\/4 lambda$ down to $1\/32 lambda$ --- exactly the regime
 (@tab:h1-lat-amp) in which amplitude differencing has already collapsed to an
@@ -260,12 +314,17 @@ study of @ch:hyp3 --- a _graded wetting zone_ rather than a discrete PEC
 cylinder. The domain, grid,
 and centre frequency match @sec:hyp1-lateral exactly ($4.0 times 1.0 "m"$,
 $f_c = 1.5 "GHz"$, $lambda = 112.6 "mm"$), but the moving target is a
-$7$-step graded permittivity transition (box width $11.3 "mm"$, total
-transition $78.8 "mm"$) between water and ice at depth $0.676 "m"$, standing
+$7$-step graded permittivity transition (box width $11.3 "mm" approx
+lambda \/ 10$, total transition $78.8 "mm" approx 0.7 lambda$) between
+water ($eps_r = 80$) and air ($eps_r = 1$) at depth $0.676 "m"$, stepping
+down in $eps_r$ by $10$ per box ($70, 60, dots, 10$) before the final,
+slightly smaller step to air, standing
 in for a fluid front advancing through a horizontal fracture. As in
 @sec:hyp1-lateral, the front is swept laterally across the same seven
 scenarios, from $2 lambda$ down to $1 \/ 32 lambda$ relative to its baseline
 position (@fig:h1-ff-setup).
+
+#pagebreak(weak: true)
 
 === Model Set Up <sec:hyp1-ff-setup>
 
@@ -299,23 +358,29 @@ position (@fig:h1-ff-setup).
     $1\/32 lambda$ --- identical sweep to @sec:hyp1-lateral.],
 ) <fig:h1-ff-setup>
 
-#supp-note[Background-subtracted B-scans, the migration-comparison figure,
-the Rayleigh-criterion ratio table and PSF comparison, and the phase-plane
-WLS front-displacement-error table and shift-estimation diagnostics for
-this scenario set are all provided in the Supplementary Material, §S2.4.]
+#linebreak()
 
-The graded front's broader intrinsic point-spread function makes amplitude
+The graded front's broader intrinsic point-spread function (visible in the
+zoomed fluid-flow migration results and PSF's: Supplementary Material, §S2.4.2, §S2.4.1) makes amplitude
 differencing far harder than for a discrete point scatterer, even at large
-scales: Gazdag's ratio is already below $1$ at $2 lambda$, and Kirchhoff ---
+scales: Gazdag's FWHM ratio is already below $1$ at $2 lambda$, and Kirchhoff ---
 the only method still resolvable ($1.237$) at $1\/2 lambda$ --- fails by
 $1\/4 lambda$; every method has collapsed to $ratio <= 0.09$ by
 $1\/16 lambda$. The phase-plane fit is unaffected by this earlier collapse:
 Gazdag and Kirchhoff are already accurate (within $1.2 "mm"$) from
-$1 lambda$ downward, and all three methods stay within $1 "mm"$ from
+$1 lambda$ downward, and all three methods stay within $1 "mm"$ displacement
+estimate error from
 $1\/2 lambda$ down to $1\/32 lambda$ --- the entire regime in which
 amplitude differencing has already failed. The graded, spatially-extended
 front is therefore recovered by the same phase-plane approach used for the
 point scatterers above, despite its inherently broader PSF.
+
+#linebreak()
+
+#supp-note[Background-subtracted B-scans, the migration-comparison figure,
+the Rayleigh-criterion ratio table and PSF comparison, and the phase-plane
+WLS front-displacement-error table and shift-estimation diagnostics for
+this scenario set are all provided in the Supplementary Material, §S2.4.]
 
 == Results across Movement Types <sec:hyp1-summary>
 
@@ -332,10 +397,11 @@ phase-plane finding, with one direction-specific nuance predicted by
 frequencies the way it separates lateral ones, vertical amplitude differencing
 stays resolvable a full octave lower --- every method's Rayleigh ratio holds
 above $1$ down to $1\/4 lambda$, only failing between $1\/4 lambda$ and
-$1\/8 lambda$, against $1\/2 lambda$ for the lateral case. The phase
-estimator's advantage window is correspondingly narrower, but within it the fit
-is again accurate to $<=0.03 "mm"$ from $1\/4 lambda$ downward (Supplementary
-Material, §S2.2).
+$1\/8 lambda$, against $1\/2 lambda$ for the lateral case. Because amplitude
+differencing already works down to a smaller scale here, the regime where
+phase estimation offers a genuine advantage over it is correspondingly
+narrower; even so, within that regime the fit remains accurate to
+$<=0.03 "mm"$ from $1\/4 lambda$ downward (Supplementary Material, §S2.2).
 
 === Diagonal <sec:hyp1-diagonal>
 
@@ -349,8 +415,8 @@ collapses amplitude at roughly the lateral scale, not the looser vertical one
 
 === Cross-Movement Comparison
 
-@tab:h1-lat-phase gives the full per-scenario phase-plane error for the
-lateral case; the equivalent per-scenario tables for Vertical, Diagonal, and
+@tab:h1-lat-phase and @tab:h1-lat-phase-pct give the full per-scenario
+phase-plane error for the lateral case; the equivalent per-scenario tables for Vertical, Diagonal, and
 FluidFlow are provided in the Supplementary Material (§S2.2.3, §S2.3.3,
 §S2.4.3). @fig:h1-mae-summary condenses the mean absolute error (MAE) for
 all four movement types and three migration methods into one figure,
@@ -394,8 +460,8 @@ values are given in @tab:h1-mae below.
     displacement error as a percentage of the true displacement (log scale,
     threshold $5%$); for all three migration methods, across all four
     movement types. The full per-scenario numeric tables underlying this
-    figure are given in @tab:h1-lat-amp/@tab:h1-lat-phase (Lateral, in the
-    main text) and the Supplementary Material, §S2.2--§S2.4 (Vertical,
+    figure are given in @tab:h1-lat-amp/@tab:h1-lat-phase/@tab:h1-lat-phase-pct
+    (Lateral, in the main text) and the Supplementary Material, §S2.2--§S2.4 (Vertical,
     Diagonal, FluidFlow).],
 ) <fig:h1-detectability>
 ]
@@ -416,8 +482,12 @@ outlier at $1\/2 lambda$ for Gazdag and Kirchhoff), with every scale below
 that already accurate to a few tenths of a millimetre or better. FluidFlow's
 graded, spatially-extended front is the hardest case tested (MAE around
 $1 "mm"$) but is still two to three orders of magnitude below the
-wavelength scale, confirming the method's advantage is not an artefact of
-the idealised point-scatterer geometry used elsewhere in this chapter.
+wavelength scale, confirming that the method's advantage holds not only for
+a moving point scatterer but also for a moving fluid front, and is not
+simply an artefact of the idealised point-scatterer geometry used elsewhere
+in this chapter.
+
+#linebreak()
 
 Across all four experiments, from $1\/4 lambda$ down to $1\/32 lambda$, the
 phase-plane fit remains accurate to a few tenths of a millimetre or better
@@ -427,5 +497,5 @@ that sub-wavelength displacement is recoverable from phase, not amplitude,
 information. The one systematic weak point is back-propagation's fit at
 $1\/2 lambda$ (Lateral) and at $1 lambda$/$1\/2 lambda$ (Vertical, shared
 with the two analytic methods); whether this is a genuine
-displacement-scale effect or noise-free numerical sensitivity of the WLS
+phase wrapping effect or noise-free numerical sensitivity of the WLS
 fit is revisited in @ch:hyp2 once Laplace noise is introduced.

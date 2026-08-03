@@ -176,48 +176,48 @@ is identified as future work below.
 @sec:hyp3-fielddata applied the full pipeline to 38 real, zero-offset
 borehole GPR profiles from a controlled fluid-injection experiment, where ---
 unlike every @ch:hyp1/@ch:hyp2 experiment --- neither the target geometry nor
-the true displacement is known in advance. Three independent strategies for
-choosing the region of influence that the phase-plane fit is restricted to
-(a hand-picked rectangular window, a systematic sliding-window scan, and
-manual pixel-level painting, @sec:hyp3-fd-roi) agree on where the reflector
-is and on the sign of the displacement, while differing by $10$--$30%$ on
-its exact magnitude --- a real, quantified source of estimate uncertainty
-that has no counterpart in the synthetic studies, where the crop window is
-centred on a known ground-truth position instead.
+the true displacement is known in advance. The region of influence is
+therefore chosen entirely by hand with the napari image viewer
+(@sec:hyp3-fd-roi) --- painting on the wavenumber-domain cross-spectrum or
+the spatial difference B-scan --- rather than by an automatic rectangular or
+sliding-window search. A RANSAC check confirms this is largely trustworthy:
+a direct cross-spectrum pick reproduces the WLS estimate to within about
+$6%$, while an amplitude-gated pick from a painted B-scan region shifts it
+by up to $59%$ in the worst case, though direction is always preserved ---
+a real source of estimate uncertainty absent from the synthetic studies,
+where the crop is instead centred on known ground truth.
 
-With the rectangular ROI fixed, the stage-anchored displacement estimates of
-@tab:fielddata-stages (@sec:hyp3-fd-phaseplane) tell a consistent and, at
-first glance, counter-intuitive story: the dominant signal is an upward
-displacement of roughly $1.3$--$1.9 "m"$ and a lateral shift toward the
-borehole during the Push stage, the opposite of both axes from what a naive
-"downward and outward" picture of active fluid injection would predict; the
-Wait stage produces the smallest displacement of the four, as expected of
-paused injection; and the Pull stage only partially reverses the accumulated
-Push/Chase displacement, leaving a net residual rather than returning to the
-starting position. What makes this more than a single-pipeline artefact is
-that the corrected back-propagation re-estimation of @sec:hyp3-fd-bp-corrected
---- a technique that shares no processing steps with the Kirchhoff/Gazdag
-branch downstream of the raw B-scans --- agrees with the Gazdag estimate on
-sign in every one of the four stages, and on order of magnitude in three of
-the four, once its own depth-axis and amplitude-normalisation bugs
-(@sec:hyp3-fd-crossprofile) are corrected. Two independently-processed
-techniques agreeing this closely makes it unlikely that the reversed
-direction is a processing artefact specific to either pipeline.
+With the ROI fixed, the stage-anchored estimates of @tab:fielddata-stages
+(@sec:hyp3-fd-phaseplane) tell a consistent story, but only partly the naive
+one: the dominant signal is a *downward* displacement of $1.66 "m"$
+(Gazdag) / $2.08 "m"$ (back-propagation) during Push, with a smaller lateral
+shift *toward* the borehole ($-0.17$/$-0.25 "m"$) --- matching the naive
+vertical expectation for active injection, but not the lateral one. Chase
+adds a comparable downward increment ($+1.62$/$+1.65 "m"$) while the lateral
+shift reverses to move away from the borehole ($+0.07$/$+0.06 "m"$); Wait
+substantially reverses the accumulated downward movement ($-0.67$/
+$-0.28 "m"$, i.e. upward); and Pull is where the two techniques part ways,
+Gazdag settling at the noise floor ($+0.00 "m"$) while back-propagation
+continues a smaller upward reversal ($-0.24 "m"$), leaving a net residual of
+$#Dz approx +2.61 "m"$ (downward) and $#Dx approx -0.10 "m"$ (toward the
+borehole) at profile 38. Back-propagation, sharing no processing steps with
+the Gazdag branch, agrees with it on direction and roughly on magnitude
+during Push, Chase and Wait, diverging only in Pull, where Gazdag sits at
+the noise floor rather than truly disagreeing in sign --- evidence that
+neither the vertical reversal nor the toward-the-borehole lateral shift is a
+processing artefact.
 
-Whether that reversed direction is _physically_ expected for this particular
-fluid-injection experiment, however, is a question this thesis cannot yet
-answer: @sec:hyp3-fd-interpretation explicitly leaves it open pending
-independent ground truth from the field survey (injection depth, volume, and
-fracture geometry) that was not available during processing. Hypothesis 3 is
-therefore best read as partially, not fully, supported: the pipeline
-demonstrably generalises to real, noisy, geometry-unknown field data in the
-procedural sense that it produces stable, self-consistent, cross-technique-
-corroborated displacement estimates rather than noise, but the further claim
-that those estimates are physically correct has not been validated against
-ground truth. The complementary generalisation test proposed alongside the
-field-data study --- a complex synthetic scene with multiple
-independently-moving scatterers under noise --- was not run in this thesis and
-is left entirely to future work.
+Whether that lateral shift is _physically_ expected, however, is a question
+this thesis cannot answer: @sec:hyp3-fd-interpretation leaves it open
+pending independent ground truth (injection depth, volume, fracture
+geometry) not available during processing. Hypothesis 3 is therefore best
+read as partially, not fully, supported: the pipeline generalises to real,
+noisy, geometry-unknown field data procedurally, producing stable,
+cross-technique-corroborated estimates, but whether those estimates are
+physically correct remains unvalidated. The complementary test proposed
+alongside it --- a complex synthetic scene with multiple
+independently-moving scatterers under noise --- was not run and is left to
+future work.
 
 == Limitations
 
@@ -230,10 +230,11 @@ is left entirely to future work.
 + The clean-versus-noisy comparison of @ch:hyp1/@ch:hyp2 relies on cropping
   the phase-plane fit around the _known_ target position under noise
   (@sec:hyp3-groundtruth-apex) --- legitimate for synthetic data with exact
-  ground truth, but unavailable on real field data, where three substitute
-  ROI-selection strategies (@sec:hyp3-fd-roi) were needed instead and
-  introduced a $10$--$30%$ magnitude spread not present in the synthetic
-  study.
+  ground truth, but unavailable on real field data, where hand-painted ROI
+  selection (@sec:hyp3-fd-roi) was needed instead: a RANSAC check shows this
+  introduces an estimate spread of a few percent up to $59%$ in the worst
+  case depending on how the ROI is picked, with no equivalent uncertainty in
+  the synthetic study.
 
 + The migration-technique comparison of @ch:hyp2 is based on a single fixed
   noise level ($10%$ of each B-scan's own signal standard deviation,
@@ -242,12 +243,12 @@ is left entirely to future work.
   advantage and back-propagation's false-positive-avoidance advantage trade
   places.
 
-+ Field-data back-propagation coverage is partial: the original,
-  homogeneous-domain model reaches 14 of 37 processed profiles, while the
-  corrected, explicit-borehole-geometry pipeline ($d_x = 0.02 "m"$,
-  @sec:hyp3-fd-crossprofile) has been validated on only the five
-  representative profiles (1, 3, 8, 20, 38) used throughout @ch:hyp3, not the
-  full dataset.
++ Field-data back-propagation coverage is partial: Kirchhoff and Gazdag are
+  available for all 37 processed profiles, but the explicit-borehole-geometry
+  pipeline ($d_x = 0.02 "m"$, @sec:hyp3-fd-crossprofile) --- the only
+  back-propagation configuration now used in this thesis --- has been
+  validated on only the five representative profiles (1, 3, 8, 20, 38) used
+  throughout @ch:hyp3, not the full dataset.
 
 + The complex synthetic scene with multiple, independently-moving scatterers
   under noise was not run, so simultaneous or interacting displacements ---
@@ -297,9 +298,9 @@ is left entirely to future work.
 + Obtain independent field metadata (injection depth and volume, fracture
   and borehole geometry) and cross-check it against the field-data
   displacement estimates of @tab:fielddata-stages, to resolve whether the
-  observed upward, borehole-ward displacement is physically expected for
-  this experiment or points to a coordinate-convention issue not yet
-  identified.
+  observed toward-the-borehole lateral shift during Push is physically
+  expected for this experiment or points to a coordinate-convention issue not
+  yet identified.
 
 + Run a systematic sweep across multiple noise levels, rather than the
   single $10%$ level tested in @ch:hyp2, to locate any crossover between
@@ -319,7 +320,7 @@ is left entirely to future work.
   a true velocity change can be distinguished from a spurious vertical shift
   $#Dz$ in field deployment.
 
-+ Propagate the $10$--$30%$ ROI-choice sensitivity found in the field-data
-  study (@sec:hyp3-fd-roi) into a reported uncertainty band alongside the
-  headline displacement numbers of @tab:fielddata-stages, rather than a
-  single point estimate per stage.
++ Propagate the ROI/fitting-method sensitivity found in the field-data study
+  (up to $59%$ in the worst case, @sec:hyp3-fd-roi) into a reported
+  uncertainty band alongside the headline displacement numbers of
+  @tab:fielddata-stages, rather than a single point estimate per stage.

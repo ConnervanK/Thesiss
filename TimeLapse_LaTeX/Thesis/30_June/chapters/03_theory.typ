@@ -133,7 +133,9 @@ reversed in time, normalised, and re-injected as a source at its original
 receiver position into a full electromagnetic simulation of the medium at
 the migration velocity $#vmig$. By the time-reversal symmetry of the wave
 equation, the back-propagated field refocuses at the true scatterer
-location at the focusing time $t_"focus" = T - t_0$ ($T$ the trace length),
+location at the focusing time $t_"focus" = T - t_0$ ($T$ the trace length
+and $t_0$ the static time-zero correction that shifts each trace so its
+recorded onset coincides with the wave's true departure from the antenna),
 and the migrated image is simply the field snapshot read off at that
 instant. This thesis performs the re-injection and back-propagation
 numerically with gprMax, the same open-source finite-difference
@@ -237,7 +239,7 @@ $
     A
   )
   underbrace(
-    mat(delim: "[", #Dz; #Dx; c),
+    mat(delim: "[", #Dz, #Dx, c)^upright(T),
     bold(u)
   )
   =
@@ -266,7 +268,11 @@ Two safeguards make the fit robust enough for sub-wavelength accuracy.
 restricted to bins inside the coherent envelope of the source wavelet,
 $|#kz|, |#kx| < 1.4 k_(z c)$, where $k_(z c)$ is the dominant vertical
 wavenumber of the pulse. This keeps the total phase rotation $Phi_i$ inside
-$plus.minus pi$, preventing the fit from wrapping.
+$plus.minus pi$, preventing the fit from wrapping. The threshold $1.4$ is an
+empirical choice, tuned by trial and error to balance the two failure modes
+of the mask: too large, and bins far from the spectral peak accumulate
+enough phase to wrap around $plus.minus pi$; too small, and bins that still
+carry useful, coherent phase information are excluded from the fit.
 
 #para-head[B. Amplitude weighting.] A diagonal weight matrix $W$ is built from
 the cross-spectrum magnitude, $W_(i i) = |italic("XS")_i|$, so that high-energy bins
@@ -282,7 +288,7 @@ In practice, computing $(A^upright(T) W^2 A)^(-1)$ directly squares the
 condition number of the system; the implementation instead pre-multiplies
 both sides by $W$,
 $ (W A) bold(u) = (W bold(Phi)) , $ <eq:wls-preweighted>
-and solves the pre-weighted system with `numpy.linalg.lstsq` via
+and solves the pre-weighted system via
 singular value decomposition, which is equivalent to @eq:wls-solution
 but numerically far more stable.
 
@@ -294,12 +300,16 @@ separated from the geometric shift $(#Dz, #Dx)$ --- the derivation of this
 decoupling is given in the Supplementary Material, §S6.
 
 @fig:phaseplane-schematic summarises the full pipeline derived above on a
-real worked example --- Gazdag-migrated Lateral movement data at the
-smallest scale tested, $1\/32 lambda$ (@ch:hyp1) --- rather than a synthetic
-toy scatterer: a baseline and monitor image are Fourier transformed, their
+moving PEC point scatterer example --- Gazdag-migrated Lateral movement data at the
+smallest scale tested, $1\/32 lambda$ (@ch:hyp1): the baseline image is the
+B-scan of the scatterer at its initial position and the monitor image is
+the B-scan after it has been laterally translated by $1\/32 lambda$; both
+are Fourier transformed, their
 cross-spectrum isolates a linear phase ramp via the shift theorem of
 @sec:th-fourier-shift, and the weighted least-squares fit of @sec:th-wls
-recovers the sub-wavelength displacement from that ramp's slope.
+recovers the sub-wavelength displacement from that ramp's slope. For this
+example, the phase-plane fit recovered the true lateral displacement with
+no error.
 
 #figure(
   img("H1_038_Phase-Plane_Workflow_--_Gazdag_Lateral_132lambda.png"),
@@ -331,7 +341,7 @@ $phi(x)$ is well approximated by a parabola,
 $phi(x) approx 1/2 C x^2 + phi_0$,
 where $C$ is the spatial curvature of the focused pulse. Its spatial
 derivative, the instantaneous lateral wavenumber, is then
-$ k_(x,"inst")(x) = partial phi / partial x approx C thin x , $ <eq:kx-inst>
+$ k_(x,"inst")(x) = (partial phi) / (partial x) approx C thin x , $ <eq:kx-inst>
 i.e. _linearly proportional to lateral position_: the migrated image
 behaves like a prism, naturally separating horizontal spatial frequencies
 across its width. If the scatterer shifts laterally by $#Dx$, a first-order
@@ -350,7 +360,7 @@ wavenumber $k_(z c) = 4 pi f_c \/ v$. Near the peak, its phase is linear in dept
 $phi(z) approx k_(z c)(z - z_0) + phi_0$, so the instantaneous vertical
 wavenumber is
 $
-  k_(z,"inst")(z) = partial phi / partial z approx k_(z c)
+  k_(z,"inst")(z) = (partial phi) / (partial z) approx k_(z c)
   = "constant" ,
 $ <eq:kz-inst>
 independent of $z$: unlike the lateral case, depth position is _not_ a
@@ -373,8 +383,8 @@ which has the same structure as the phase plane derived formally in
 @sec:th-fourier-shift above, with local approximations
 $k_(z,"inst") -> #kz$ and $C thin x -> #kx$. The formal Fourier derivation
 is preferred as the primary quantitative tool for three reasons: (i) the
-parabolic approximation in @eq:kx-inst only holds near the apex, whereas the
-Fourier plane is exactly flat everywhere inside the passband; (ii) amplitude
+parabolic approximation in @eq:kx-inst only holds near the apex of a difference migrated B-scan, whereas the
+Fourier plane is exactly flat everywhere inside the wavenumber passband; (ii) amplitude
 weighting by $|#XS|$ has no clean spatial-domain analogue; and (iii) in the
 spatial picture a calibration-bias intercept mixes irrecoverably with the
 vertical term $-k_(z c) #Dz$ in @eq:dphi-2d, whereas the Fourier-domain fit

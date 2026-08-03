@@ -12,6 +12,8 @@ borehole GPR field data, where neither the target geometry nor the true
 displacement is known, and --- because a real reflector never comes with a
 pre-labelled region of interest --- how that region is chosen.
 
+#linebreak()
+
 #para-head[Hypothesis 3.] The time-lapse phase-plane approach generalises
 beyond idealised single-scatterer synthetic models to real borehole GPR field
 data.

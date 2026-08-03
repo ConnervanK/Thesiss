@@ -21,6 +21,8 @@ substantially improved once the target-localisation problem of
 @sec:hyp3-groundtruth-apex is corrected --- remains the least accurate
 overall.
 
+#linebreak()
+
 #para-head[Hypothesis 2.] Which migration algorithm is best suited to
 noise-robust time-lapse phase-plane tracking under a realistic, heavy-tailed
 Laplace noise model, and does the answer depend on what "noise-robust" is
