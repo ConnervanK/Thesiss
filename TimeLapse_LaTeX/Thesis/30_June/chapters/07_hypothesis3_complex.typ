@@ -21,7 +21,9 @@ data.
 == Field Data Explanation <sec:hyp3-fielddata>
 
 The dataset consists of 38 zero-offset borehole GPR profiles acquired on
-6 June 2016, with the following parameters: medium propagation velocity
+6 June 2016, from the same push-pull, single-hole GPR tracer-test field
+campaign in fractured rock described in @shakas2016, with the following
+parameters: medium propagation velocity
 $v = 0.10 "m/ns"$, centre frequency $f_0 = 0.10 "GHz"$, trace spacing
 $d_L = 0.05 "m"$, and maximum depth $85 "m"$. The experiment was conducted in
 four operational stages, each with a distinct expected fluid behaviour:
@@ -312,7 +314,7 @@ headline numbers?]
 down-weights low-energy bins but still lets every masked cell contribute, so
 a coherent band of phase-wrapped or noise-dominated cells inside a napari
 mask could in principle still bias the plane. As a robustness check, each
-fit is repeated with RANSAC (Zhu 2025): it fits the plane to random cell subsets, keeps
+fit is repeated with RANSAC #cite(<zhu2025>, form: "prose"): it fits the plane to random cell subsets, keeps
 the largest consensus set of inliers (phase residual $< 0.35 "rad"$, over
 $2000$ iterations), and refits WLS on those inliers alone. The comparison is
 run for all four representative pairs and all three migration techniques, in

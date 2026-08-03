@@ -181,6 +181,10 @@ $ <eq:2d-fourier>
 the Fourier shift theorem states that the spatial translation in
 @eq:spatial-shift becomes a linear phase rotation of the spectrum,
 $ M(#kz, #kx) = B(#kz, #kx) dot e^(-j(#kz #Dz + #kx #Dx)) . $ <eq:fourier-shift-theorem>
+This is the same 2D shift theorem that underlies classical Fourier-domain
+image-registration methods, where it is used to recover a rigid translation
+between two images from the phase of their cross-power spectrum
+@decastro1987.
 The amplitude spectrum is unchanged, $|M|=|B|$, but every frequency
 coordinate $(#kz, #kx)$ acquires a phase shift proportional to that
 coordinate. This is the central fact the rest of the chapter exploits: a
@@ -195,8 +199,13 @@ depends on the shape of the source wavelet and on the (arbitrary) position of
 the target within the image, and is, in general, a chaotic, wrapped function
 of $(#kz, #kx)$. The displacement information in @eq:fourier-shift-theorem
 is obtained by forming the complex _cross-spectrum_ between the baseline
-and monitor spectra,
+and monitor spectra @decastro1987,
 $ #XS (#kz, #kx) = B(#kz, #kx) dot M^*(#kz, #kx) . $ <eq:cross-spectrum-def>
+Recovering a relative shift or delay from the phase of a cross-spectrum
+between two otherwise-similar signals is an established technique used in for example cross-spectral analysis of ambient seismic noise @clarke2011, and the cross-spectrum
+itself is a standard tool for isolating a correlated signal shared between
+two measurements in precision metrology @nelson2014.
+
 Substituting @eq:fourier-shift-theorem,
 $
   #XS (#kz, #kx)
@@ -262,7 +271,9 @@ weight, letting noisy bins corrupt the plane fit.
 
 === The weighted solution <sec:th-mask-weight>
 
-Two safeguards make the fit robust enough for sub-wavelength accuracy.
+Two safeguards make the fit robust enough for sub-wavelength accuracy:
+
+#linebreak()
 
 #para-head[A. The band-pass mask.] The system in @eq:design-matrix is
 restricted to bins inside the coherent envelope of the source wavelet,
@@ -274,10 +285,15 @@ of the mask: too large, and bins far from the spectral peak accumulate
 enough phase to wrap around $plus.minus pi$; too small, and bins that still
 carry useful, coherent phase information are excluded from the fit.
 
+#linebreak()
+
 #para-head[B. Amplitude weighting.] A diagonal weight matrix $W$ is built from
 the cross-spectrum magnitude, $W_(i i) = |italic("XS")_i|$, so that high-energy bins
-dominate the fit and noise-floor bins are suppressed. The cost function
-becomes the energy-weighted residual,
+dominate the fit and noise-floor bins are suppressed, the same
+reliability-weighting principle used to stabilise weighted least-squares
+phase-to-displacement inversion in differential InSAR time-series processing
+@falabella2020 and coherence-weighted phase-delay regression in ambient-noise
+seismology @clarke2011. The cost function becomes the energy-weighted residual,
 $
   S_W (bold(u)) = sum_(i=1)^(N) |italic("XS")_i|^2
     (Phi_i - (k_(z,i) thin #Dz + k_(x,i) thin #Dx + c))^2 ,
