@@ -33,6 +33,8 @@ failed?
 // explored separately in the Supplementary Material, §S5, and is not required
 // for the results below.
 
+#pagebreak()
+
 == Workflow Defined <sec:hyp1-workflow>
 
 Every experiment in this chapter is analysed by the same five-step pipeline
@@ -72,6 +74,8 @@ direction of the moving scatterer differ between them.
   The error metric is simply this estimate minus the true (grid-rounded)
   displacement, reported in millimetres and as a percentage of the true
   displacement, for every scenario and migration method.
+
+#pagebreak()
 
 === The Phase-Plane Fit (WLS) <sec:hyp1-phaseplane>
 
@@ -427,7 +431,7 @@ regime in which every amplitude test above has already collapsed; exact
 values are given in @tab:h1-mae below.
 
 #figure(
-  img("H1_039_Hypothesis_1_--_MAE_Summary_Across_Movement_Types.png", width: 110%),
+  img("H1_039_Hypothesis_1_--_MAE_Summary_Across_Movement_Types.png", width: 120%),
   caption: [Mean absolute phase-plane displacement error by movement type
     and migration method, clean data, sub-half-wavelength regime only.
     Background shading groups rows by movement type.],

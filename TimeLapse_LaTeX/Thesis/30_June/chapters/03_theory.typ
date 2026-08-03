@@ -150,6 +150,20 @@ a genuinely two-wavefield imaging condition. While this full cross-correlation a
 @claerbout1985, the recorded data effectively represent the source-side wavefield. Consequently, reading off a single back-propagated wavefield at
 $t_"focus"$ provides sufficient structural fidelity for this analysis; this thesis therefore implements back-propagation rather than full cross-correlation RTM. Because it makes no high-frequency, single-arrival, or $v(z)$-only approximation beyond the exploding-reflector velocity halving itself, this method serves as a useful independent numerical check on the other two.
 
+#linebreak()
+
+This fidelity extends to source directivity. Because the re-injected source
+is propagated with the same gprMax finite-difference solver used for the
+forward model, back-propagation is the only one of the three migration
+methods that properly accounts for the radiation pattern of the Hertzian
+dipole antenna (@ch:methodology): the directivity is whatever the FDTD
+simulation of that antenna actually produces, not an analytic
+approximation to it. Kirchhoff migration, by contrast, represents
+directivity only through its scalar obliquity factor $cos theta$ (above),
+which captures the angle-dependent fall-off expected of a simple point
+source but not the lobed, polarisation-dependent pattern of a true dipole
+antenna; Gazdag migration includes no directivity term at all.
+
 // As an independent, purely numerical cross-check of the two analytic methods
 // above, every B-scan is also migrated by literal time-reversal: each trace is
 // reversed in time, normalised, and re-injected as a source at its original
@@ -191,6 +205,8 @@ coordinate. This is the central fact the rest of the chapter exploits: a
 displacement that is invisible in the migrated amplitude image
 (@sec:meth-resolution) is, in principle, exactly recoverable from the phase of
 the spectrum.
+
+#pagebreak()
 
 == Isolating the Phase Plane: The Cross-Spectrum <sec:th-cross-spectrum>
 
@@ -268,6 +284,8 @@ This treats every frequency bin as equally reliable, but in a GPR spectrum a
 bin at the antenna's peak power is far more reliable than one at the edge of
 the band, which is dominated by background noise. OLS gives both bins equal
 weight, letting noisy bins corrupt the plane fit.
+
+#pagebreak()
 
 === The weighted solution <sec:th-mask-weight>
 

@@ -55,12 +55,7 @@ provided in the Supplementary Material, §S3.5.]
     ),
   ),
   caption: [(a) B-scan showing the signal zone the noise sample is drawn
-    from; (b) noise distribution at the pipeline stage actually sampled to
-    generate every noisy dataset used from @sec:hyp3-purenoise onward (the
-    last stage before the spherical-gain correction), with both Laplace and
-    Gaussian fits overlaid; (c) the fitted Laplace scale and Gaussian
-    $sigma$ at that stage; loc $= 0$ ($n = 976 space 244$ samples). The
-    heavier-tailed Laplace distribution is adopted throughout this thesis.],
+    from. (b) Noise distribution at the specific pipeline stage used to generate all noisy datasets from @sec:hyp3-purenoise onward (i.e., the final stage before the spherical-gain correction), overlaid with both Laplace and Gaussian fits. (c) The fitted Laplace scale and Gaussian $sigma$ at that corresponding stage, given in the field instrument's raw, pre-gain amplitude units. As detailed in @sec:hyp3-laplace, only the shape of this fitted distribution is carried over to the synthetic noise model, not the absolute scale. The distribution location is centered at zero (loc = 0) with a sample size of $n = 976,244$. The heavier-tailed Laplace distribution is adopted consistently throughout this thesis.],
 ) <fig:h2-noise-laplace-fit>
 
 The fitted distribution is heavier-tailed than a Gaussian of
@@ -74,8 +69,6 @@ scale ((@fig:h2-noise-laplace-fit c)) is
 rescaled so that the resulting noise standard deviation is exactly $10%$ of
 each synthetic B-scan's own signal standard deviation --- a light, realistic
 noise level rather than the raw fitted scale, which would be disproportionately large compared to the synthetic $E_z$ amplitudes.
-
-#linebreak()
 
 == Migrating Noise <sec:hyp3-purenoise>
 
@@ -214,8 +207,8 @@ where back-propagation is the second most accurate method overall.
 
 #figure(
   subfigs(cols: 1,
-    img("H2_005_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Lat.png", width: 100%),
-    img("H2_006_Back-Propagation_of_a_Signal-Bearing_B-scan_Lateral_Baseline.png", width: 100%),
+    img("H2_005_Sign-Bit_Time-Reversed_Excitation_--_B-scans_and_Spectra_Lat.png", width: 125%),
+    img("H2_006_Back-Propagation_of_a_Signal-Bearing_B-scan_Lateral_Baseline.png", width: 125%),
   ),
   caption: [Sign-bit time-reversal, Lateral, Noisy: (a) original noisy
     B-scans, sign-bit B-scans, and their respective frequency spectra, for
@@ -240,7 +233,7 @@ $1\/32 lambda_y$) against Baseline --- the scenario with the weakest signal
 relative to the noise floor.
 
 #figure(
-  img("H2_007_Chapter_54_--_OLS_vs_WLS_Phase-Plane_Fitting_on_Noisy_Data.png", width: 120%),
+  img("H2_007_Chapter_54_--_OLS_vs_WLS_Phase-Plane_Fitting_on_Noisy_Data.png", width: 128%),
   caption: [OLS (unweighted, top row) versus WLS (weighted, bottom row)
     phase-plane fitting on the same noisy cross-spectrum, diagonal movement:
     cross-spectrum phase and cross-spectrum power, followed by two 1D
@@ -264,6 +257,8 @@ S|$-weighting does discount incoherent bins as intended.
 chapter, consistent with @ch:hyp1) remains the relevant comparison for
 overall noise robustness across methods, not this single scenario's
 OLS/WLS pair.
+
+#pagebreak()
 
 == Locating the Target Under Noise <sec:hyp3-groundtruth-apex>
 
@@ -338,7 +333,8 @@ _noisy_ scenario set is provided in the Supplementary Material, §S3.1.1.]
     [$1\/32 lambda$], [0.341], [0.0],   [0.159],
     table.hline(stroke: 0.7pt),
   ),
-  caption: [Lateral Rayleigh-criterion ratio, _noisy_ data (compare
+  caption: [Lateral Rayleigh-criterion ratio (Baseline--Monitor peak
+    separation / Baseline FWHM), _noisy_ data (compare
     @tab:h1-lat-amp).],
   kind: table,
 ) <tab:h2-lat-amp>

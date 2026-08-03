@@ -9,6 +9,8 @@ the same fit simultaneously measure displacement _and_ detect a change in
 the dielectric material at the target, and why the two never contaminate
 each other.
 
+#linebreak()
+
 #supp-note[This whole chapter is highly theoretical and *unconfirmed*: it is
 a purely analytical derivation that has not yet been tested, either against
 real or synthetic material-change data, or independently checked on its own

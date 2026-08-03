@@ -305,7 +305,7 @@ an amplitude-threshold gate over a painted B-scan region than when it comes
 from a direct, hand-picked selection in the wavenumber domain.
 
 #figure(
-  cimg("FD_ransac_vs_wls_phase_amp_fit_gazdag_chasing_3_to_8.png", width: 120%),
+  cimg("FD_ransac_vs_wls_phase_amp_fit_gazdag_chasing_3_to_8.png", width: 125%),
   caption: [WLS (top row) versus RANSAC (bottom row) phase-plane fit,
     Chase-stage pair (3→8), Gazdag migration. Columns: cross-spectrum phase,
     cross-spectrum amplitude, $x$-direction ($#kx$) fit, $z$-direction

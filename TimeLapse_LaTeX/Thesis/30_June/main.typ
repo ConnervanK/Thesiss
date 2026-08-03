@@ -80,3 +80,7 @@
 #heading(level: 1, numbering: none, outlined: true)[Bibliography]
 #bibliography("references.bib", style: "chicago-author-date", title: none)
 
+// Declaration on the Use of Generative AI
+#pagebreak()
+#include "backmatter/ai_declaration.typ"
+
