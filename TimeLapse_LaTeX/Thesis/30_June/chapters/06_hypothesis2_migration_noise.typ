@@ -14,11 +14,9 @@ under a realistic Laplace noise model fitted to real GPR field data, to answer
 a question the clean study could not: does the choice of migration algorithm
 matter once the data are noisy? Migration choice turns out to matter
 substantially, but no single method is unconditionally "most noise-robust":
-Kirchhoff achieves the lowest aggregate displacement error of the three,
+Kirchhoff achieves the lowest collective displacement error of the three,
 back-propagation with sign-bit time-reversal is the only method that does not
-manufacture spurious coherent structure from noise alone, and Gazdag --- while
-substantially improved once the target-localisation problem of
-@sec:hyp3-groundtruth-apex is corrected --- remains the least accurate
+manufacture spurious coherent structure from noise alone, and Gazdag remains the least accurate
 overall.
 
 #linebreak()
@@ -26,21 +24,19 @@ overall.
 #para-head[Hypothesis 2.] Which migration algorithm is best suited to
 noise-robust time-lapse phase-plane tracking under a realistic, heavy-tailed
 Laplace noise model, and does the answer depend on what "noise-robust" is
-taken to mean --- lowest aggregate displacement error, or avoiding
+taken to mean --- lowest collective displacement error, or avoiding
 false-positive structure manufactured from noise alone?
 
 == Noise Creation <sec:hyp3-laplace>
 
 Rather than injecting arbitrary synthetic noise, the noise level and shape
 used throughout this thesis are fitted to real GPR field noise. A sample of
-field noise is tracked through eleven stages of the processing pipeline and
-fitted with both a Laplace and a Gaussian distribution at the last stage
-before the spherical-gain correction, since the gain correction inflates the
+field noise is processed (@fig:h2-noise-laplace-fit a) and
+fitted with both a Laplace and a Gaussian distribution (@fig:h2-noise-laplace-fit b). No spherical-gain correction was applied before fitting the distribution, since the gain correction inflates the
 amplitude scale by several orders of magnitude and is not representative of
 the raw simulated $E_z$ amplitudes used elsewhere in this thesis.
 
-#supp-note[The noise amplitude distribution at every one of the eleven
-tracked processing stages, each with a Gaussian reference overlay, is
+#supp-note[The noise amplitude distribution at every processing stage, each with a Gaussian reference overlay, is
 provided in the Supplementary Material, §S3.5.]
 
 #figure(
@@ -70,15 +66,16 @@ provided in the Supplementary Material, §S3.5.]
 The fitted distribution is heavier-tailed than a Gaussian of
 matched variance, consistent with field GPR noise being dominated by
 occasional large-amplitude clutter and interference rather than purely
-thermal noise. The pre-gain fit is the one actually used to generate
+thermal noise. The fit in @fig:h2-noise-laplace-fit b is used to generate
 synthetic noise for every experiment in @sec:hyp3-lateral,
 @sec:hyp3-vertical, @sec:hyp3-diagonal, and @sec:hyp3-fluidflow --- its
 Laplace _shape_ (loc $= 0$, heavier tails than Gaussian) is kept, but its
-scale is
+scale ((@fig:h2-noise-laplace-fit c)) is
 rescaled so that the resulting noise standard deviation is exactly $10%$ of
 each synthetic B-scan's own signal standard deviation --- a light, realistic
-noise level rather than the raw fitted scale, which would be incommensurate
-with the synthetic $E_z$ amplitudes.
+noise level rather than the raw fitted scale, which would be disproportionately large compared to the synthetic $E_z$ amplitudes.
+
+#linebreak()
 
 == Migrating Noise <sec:hyp3-purenoise>
 
@@ -88,7 +85,11 @@ empty B-scan (no scatterer, no real signal) containing only the Laplace
 noise of @sec:hyp3-laplace is migrated with Kirchhoff, Gazdag, and
 back-propagation. If a method turns pure noise into something that looks
 like a coherent, scatterer-like focus, every noisy result elsewhere in this
-chapter carries a false-positive risk that must be accounted for.
+chapter carries a false-positive risk that must be accounted for: the
+phase-plane pipeline crops its fitting window around the highest-amplitude
+region of the migrated envelope (@sec:meth-phaseplane), so a spurious
+high-amplitude noise focus risks being picked up instead of the true
+scatterer response.
 
 #figure(
   img("H2_003_Migrating_Pure_Noise_no_scatterers_no_signal_--_Kirchhoff_Ga.png"),
@@ -99,31 +100,36 @@ chapter carries a false-positive risk that must be accounted for.
 ) <fig:h2-purenoise-kg>
 
 *Result: the three methods do not fail the same way.* Kirchhoff turns pure
-noise into clearly coherent, smooth wave-like bands that could easily be
-misread as real layered structure: its delay-and-sum aperture stacking
+noise into a clearly coherent, scatterer-like focus that could easily be
+misread as a real target: its delay-and-sum aperture stacking
 imposes coherence on incoherent input by construction, summing many traces
 along travel-time curves and smoothing incoherent noise into
 locally-correlated structure. Gazdag's noise output, by contrast, stays
-speckled and incoherent, with no wave-like artefacts --- just texture. This
+speckled and incoherent, with no coherent, scatterer-like focus --- just texture. This
 is a direct, practical consequence of the structural difference between the
 two algorithms (@sec:th-migration): Kirchhoff's spatial stacking manufactures
 apparent coherence from nothing, while Gazdag's frequency-domain downward
 continuation does not.
 
-With no scatterer present, there is also no true location for either
+With no scatterer present, there is also no true location for the
 back-propagation excitation scheme to focus on, so the back-propagated
-wavefield (rightmost panel) stays diffuse speckle throughout the domain
+wavefield stays diffuse speckle throughout the domain
 rather than collapsing into an obvious spurious bright spot --- unlike
-Kirchhoff's coherent bands, there is no clearly visible artefact here to
-point at. What does stand out is the amplitude scale:
-peak-normalised excitation reaches only $approx 116 space 600 "V/m"$, since
-only each trace's single largest sample is normalised to $plus.minus 1$ and
-every other noise sample stays small. @sec:hyp3-signbit revisits this with
+Kirchhoff's coherent, scatterer-like focus, there is no clearly visible artefact here to
+point at. What does stand out is the noise amplitude:
+peak-normalised excitation reaches $approx 116 space 600 "V/m"$ at the
+focus snapshot --- a large raw FDTD field value driven by re-injecting many
+individually unit-normalised traces, not a physically calibrated source
+strength, since only each trace's single largest sample is normalised to
+$plus.minus 1$ and every other noise sample stays small. This peak value is
+reached at only a handful of outlier pixels. @sec:hyp3-signbit revisits this with
 sign-bit excitation, where every sample --- not just the peak --- is forced
 to $plus.minus 1$.
 
-The image-domain comparison above shows Kirchhoff manufacturing spatially
-coherent bands from noise, but says nothing about whether that coherence is
+#linebreak()
+
+The image-domain comparison above (@fig:h2-purenoise-kg) shows Kirchhoff manufacturing a spatially
+coherent, scatterer-like focus from noise, but says nothing about whether that coherence is
 tied to a specific frequency. A complementary spectral view --- each
 method's pure-noise output averaged into one frequency spectrum, with every
 domain's natural sample axis (time, depth, or back-propagation snapshot
@@ -146,7 +152,7 @@ above. Kirchhoff is the outlier: its spectrum is suppressed below
 $approx 1 "GHz"$, rises steeply through $1$--$2.5 "GHz"$, peaks around
 $2.5$--$3 "GHz"$ (*above*, not at, $f_c$), and then rolls off toward
 $5 "GHz"$ --- a pronounced band-pass shape none of the other three methods
-share. This does not contradict the coherent-bands finding above; rather, it
+share. This does not contradict the coherent, focussed noise finding above; rather, it
 localises the mechanism: Kirchhoff is not manufacturing energy at the
 GPR wavelet's own frequency, so its false-coherence risk is a
 *spatial*-stacking effect (the delay-and-sum aperture's geometry, not
@@ -163,8 +169,8 @@ Gazdag: it is not a post-processing step on an already-recorded image, but
 requires re-injecting the (time-reversed) recorded data as a source into a
 new forward simulation. This makes it vulnerable to noise in a way the other
 two methods are not: spatial focusing during back-propagation is governed
-almost entirely by _phase_ (the zero-crossings of the time-reversed
-wavefield), not by amplitude, yet the default excitation scheme injects the
+almost entirely by _phase_ (and the zero-crossings of the time-reversed
+wavefield), not by amplitude, yet the default excitation scheme in gprMax injects the
 _peak-normalised_ time-reversed wavefield $u(x, tau)$. A large-amplitude
 noise spike anywhere in the data is peak-normalised along with everything
 else, so it is injected with the same outsized amplitude it had in the noisy
@@ -185,7 +191,7 @@ excitation instead.
 
 #linebreak()
 
-In @fig:h2-signbit-excitation (b) sign-bit excitation reaches $approx 15 space 100 "V/m"$, about $25 times$
+In @fig:h2-signbit-excitation (b) the back-propagation result with sign-bit excitation reaches $approx 15 space 100 "V/m"$, about $25 times$
 larger than peak-normalised's, since forcing every sample (not just each
 trace's single peak) to $plus.minus 1$ injects far more total energy into
 the medium. Unlike the idealised, zero-signal test of @sec:hyp3-purenoise,
@@ -193,11 +199,12 @@ both excitation schemes here have a real target --- the Baseline scatterer
 --- to focus on, so @fig:h2-signbit-excitation (b) is the direct,
 signal-bearing analogue of that pure-noise comparison: compare how tightly
 each panel's energy collapses onto the true scatterer position rather than
-staying diffuse artefact, as it did for pure noise. 
-#draftnote[Describe what
-the regenerated focus-frame comparison actually shows once the peak-norm
-back-propagation gprMax run has completed --- see the run instructions
-printed by the corresponding Hypothesis_2.ipynb cell.] 
+staying diffuse artefact, as it did for pure noise.
+In @fig:h2-signbit-excitation (b), the sign-bit result visibly illuminates
+the true scatterer position far more tightly than the peak-normalised
+result, whose energy stays comparatively diffuse around the target ---
+the same qualitative advantage seen for pure noise in @sec:hyp3-purenoise,
+now confirmed on a real, signal-bearing B-scan.
 The actual,
 quantitative evidence that sign-bit back-propagation is noise-robust comes
 from @sec:hyp3-summary's master MAE table (@tab:h2-mae) on the real noisy studies below,
@@ -259,31 +266,35 @@ OLS/WLS pair.
 == Locating the Target Under Noise <sec:hyp3-groundtruth-apex>
 
 Every phase-plane fit in this chapter needs a crop window centred on the
-target before the WLS fit of @sec:hyp1-phaseplane can run
-(@sec:hyp1-phaseplane). On clean data (@ch:hyp1) that centre is found by
-locating the peak of the Baseline envelope nearest to where Baseline and
-Monitor differ most --- a search that works because the clean signal is, by
-construction, the dominant feature in the image. Under Laplace noise that
-assumption breaks down: a noisy-envelope search, cropped only along $x$ (keeping the full
-depth range), locks onto a noise-driven false peak instead
-of the true target --- especially for Gazdag, whose incoherent speckle
-(@sec:hyp3-purenoise) both dominates the envelope search itself and, once a
-wrong window is cropped, floods the WLS fit with off-target energy.
+target before the WLS fit of @sec:hyp1-phaseplane can run. On clean data
+(@ch:hyp1), that centre is found automatically: the true scatterer response
+is, by construction, the highest-amplitude region of the time-lapse
+difference envelope, so simply locating that peak (cropped only along $x$,
+keeping the full depth range) reliably locates the target. Under Laplace
+noise, this automatic approach breaks down, because a patch of noise can
+easily outshine the real, comparatively weak target response: locking onto
+the highest-amplitude region no longer reliably locates the target, and
+instead risks locking onto a noise-driven false peak --- especially for
+Gazdag, whose incoherent speckle (@sec:hyp3-purenoise) is itself
+high-amplitude enough to dominate the search, so that once the wrong window
+is cropped, it also floods the WLS fit with off-target energy.
 
 Because every experiment in this chapter is synthetic FDTD data, the true
 target position is always known exactly, in both $x$ and $z$ --- a shortcut
 that would not be available on real field data, but is legitimate here. Every
 result below therefore crops directly around that known position (a
-$plus.minus 2.5 lambda$ window in *both* $x$ and $z$, not $x$ alone), reused
-identically across every scenario and all three migration methods, rather
-than re-localising it from the noisy image. Restricting the crop in depth as
+$plus.minus 2.5 lambda$ window in *both* $x$ and $z$). Restricting the crop in depth as
 well as laterally matters specifically because Gazdag's noise speckle is not
 confined to the target's depth: it fills the migrated image at every depth,
 so a crop that is tight in $x$ but left open in $z$ still lets speckle from
 other depths dominate the fit's weighted bins. This localisation fix is
 applied uniformly to Kirchhoff, Gazdag, and back-propagation alike, so it
 cannot by itself explain any remaining *difference* between methods below
---- but it substantially changes the absolute accuracy each one achieves, most visibly for Gazdag (@sec:hyp3-summary).
+--- but it substantially changes the absolute accuracy each one achieves:
+cropping only in $x$ and leaving depth open measurably lowers the recovered
+accuracy for every method, most visibly for Gazdag, whose depth-independent
+speckle would otherwise keep flooding the fit with off-target energy
+(@sec:hyp3-summary).
 
 == Noisy Lateral Movement <sec:hyp3-lateral>
 
@@ -391,10 +402,9 @@ crop window now centred on the *known* scatterer position in both $x$ and
 $z$ (@sec:hyp3-groundtruth-apex) rather than an apex hunted for in the noisy
 envelope, Kirchhoff and back-propagation both stay within a third of a
 millimetre from $1\/4 lambda$ downward (Kirchhoff $<=0.28 "mm"$,
-back-propagation $<=0.20 "mm"$) --- noise-driven scatter around zero rather
-than a systematic bias. Gazdag remains qualitatively worse throughout the
+back-propagation $<=0.20 "mm"$). Gazdag remains qualitatively worse throughout the
 sub-half-wavelength regime ($+6.2$ to $-32.9 "mm"$ from $1\/4 lambda$ to
-$1\/32 lambda$), though see @sec:hyp3-summary for how its aggregate accuracy
+$1\/32 lambda$), though see @sec:hyp3-summary for how its collective accuracy
 compares once every movement type is combined.
 
 == Noisy Fluid Flow <sec:hyp3-fluidflow>
@@ -405,17 +415,18 @@ target directly relevant to the real fluid-injection field data of
 @ch:hyp3 --- a graded wetting zone rather than a discrete point scatterer,
 swept laterally across the same seven scenarios.
 
+#linebreak()
+
 #supp-note[The migration-comparison figure, the Rayleigh-criterion ratio
 table and zoomed PSF comparison (compare the clean-data version in
 Supplementary Material §S2.4), and the per-scenario phase-plane WLS
 front-displacement-error table and shift-estimation diagnostics for this
 _noisy_ scenario set are all provided in the Supplementary Material, §S3.4.]
 
+#linebreak()
+
 The amplitude ratio behaves similarly to the clean case. Gazdag improves
-the most dramatically of any result in this chapter: where
-the noisy-envelope-search version of this table left it flat at $-100%$
-error from $1\/2 lambda$ down to $1\/32 lambda$ (never resolving any front
-displacement at all), it now tracks the front to within $1.50 "mm"$ from
+the most dramatically of any result in this chapter: it tracks the front to within $1.50 "mm"$ from
 $1\/4 lambda$ downward --- closely matching Kirchhoff. Kirchhoff remains the
 single most accurate method overall, within $0.63 "mm"$ from
 $1\/2 lambda$ downward. Back-propagation is, for the first time in this
@@ -436,8 +447,8 @@ which, under noise, are where the three migration methods separate most clearly
 Vertical is the one movement type where the method ranking inverts. Repeating
 the depth sweep under noise, Kirchhoff is the most consistent
 scenario-by-scenario below $1\/4 lambda$ (within $0.08 "mm"$) with
-back-propagation close behind (within $0.82 "mm"$), yet in aggregate mean
-absolute error back-propagation is the single most accurate method here
+back-propagation close behind (within $0.82 "mm"$), yet in terms of mean
+absolute error, back-propagation is the single most accurate method here
 ($13.4 "mm"$ against Kirchhoff's $17.5 "mm"$) --- the only movement type for
 which it beats Kirchhoff. Gazdag is markedly worse ($-2.93 "mm"$ to a
 $+6.95 "mm"$ outlier at $1\/16 lambda$), the cross-axis leakage it assigns to
@@ -520,8 +531,7 @@ shading groups the twelve rows by movement type.
   kind: table,
 ) <tab:h2-mae>
 
-With the localisation fix of @sec:hyp3-groundtruth-apex applied uniformly to
-all three methods, Kirchhoff is now the most accurate method overall
+Kirchhoff is the most accurate method overall
 ($4.5 "mm"$ mean MAE) --- roughly $2.5 times$ below sign-bit
 back-propagation's ($11.1 "mm"$) and $4.5 times$ below Gazdag's
 ($20.3 "mm"$) --- and the most accurate method for three of the four
@@ -529,36 +539,39 @@ movement types (Lateral, Diagonal, FluidFlow); back-propagation remains
 most accurate only for Vertical ($13.4 "mm"$ against Kirchhoff's
 $17.5 "mm"$).
 
-Locating the target correctly was necessary but not sufficient for Gazdag:
-the fix removed most of its excess error (mean MAE $28.9 -> 20.3 "mm"$) but
-left a real, movement-specific weakness behind. FluidFlow improves most
-dramatically ($25.6 -> 0.98 "mm"$, @sec:hyp3-fluidflow), consistent with a
-genuine localisation failure being the dominant error source there;
-Vertical, conversely, gets *worse* ($26.0 -> 34.5 "mm"$), driven by spurious
-lateral ($#Dx$) error the WLS fit assigns even though Vertical's true
-$#Dx = 0$ by construction (Supplementary Material, §S3.2.3) --- a
-cross-axis-leakage artefact that a better crop window does not fix, and
-whose exact numerical cause remains unresolved (left as outstanding future
-work).
+Gazdag's error is not uniform across movement types: it is comparatively
+large for the three point-scatterer movements --- $22.254 "mm"$ (Lateral),
+$34.476 "mm"$ (Vertical), and $23.308 "mm"$ (Diagonal) --- but drops
+sharply for FluidFlow ($0.980 "mm"$, @sec:hyp3-fluidflow), close to
+Kirchhoff's own FluidFlow result ($0.234 "mm"$). Vertical is Gazdag's
+single worst case, driven by spurious lateral ($#Dx$) error the WLS fit
+assigns even though Vertical's true $#Dx = 0$ by construction
+(Supplementary Material, §S3.2.3) --- a cross-axis-leakage artefact whose
+exact numerical cause remains unresolved (left as outstanding future work).
 
 Answering Hypothesis 2's question directly: no single method is
 unconditionally "most noise-robust" here --- the answer depends on what
-"robust" is taken to mean. By raw aggregate accuracy, Kirchhoff wins clearly
+"robust" is taken to mean. By raw MAE accuracy, Kirchhoff wins clearly
 --- but @sec:hyp3-purenoise showed Kirchhoff is also the only method that
-turns pure noise into coherent, wave-like bands that could be misread as
-real structure, a false-positive risk this chapter's MAE metric cannot see
-because every scenario it is computed on contains a genuine target.
-Back-propagation with sign-bit time-reversal trades some of that raw
-accuracy (a factor of $2$--$3$ worse than Kirchhoff on three of four
-movement types, though still the best method for Vertical) for staying
-diffuse, incoherent speckle on pure noise (@sec:hyp3-signbit) rather than
-manufacturing false structure --- the more conservative choice where false
-positives, not raw displacement accuracy, are the primary concern. Gazdag,
-despite its substantial improvement once correctly localised, remains the
+turns pure noise into a coherent, scatterer-like focus that could be misread as
+a real target, a false-positive risk this chapter's MAE metric cannot see:
+every scenario it is computed on contains a genuine target, and
+(@sec:hyp3-groundtruth-apex) the crop window is forced onto that known true
+location rather than onto wherever the image happens to look most
+coherent, so a Kirchhoff noise focus elsewhere in the image is never given
+the chance to be mistaken for the target.
+Back-propagation with sign-bit time-reversal sacrifices some of that raw
+accuracy in exchange for reliability: on pure noise it stays diffuse,
+incoherent speckle (@sec:hyp3-signbit) rather than manufacturing false
+structure the way Kirchhoff does. That trade-off costs a factor of
+$2$--$3$ in displacement error compared to Kirchhoff on three of the four
+movement types (it remains the best method for Vertical) --- a worthwhile
+cost when avoiding false positives matters more than raw displacement
+accuracy. Gazdag remains the
 weakest choice on both counts and is not recommended for noisy time-lapse
 phase-plane tracking by either criterion. Underlying all three verdicts, the
 qualitative conclusion of @ch:hyp1 survives the introduction of noise:
-comparing @tab:h2-mae against the clean-data @tab:h1-mae, noise degrades
+comparing @tab:h2-mae against the clean-data @tab:h1-mae (as visualised in @fig:h2-dumbbell), noise degrades
 every method's accuracy by roughly one to two orders of magnitude in the
 sub-half-wavelength regime, yet at least one method still recovers every
 movement type to a few tenths of a millimetre or better, at displacement

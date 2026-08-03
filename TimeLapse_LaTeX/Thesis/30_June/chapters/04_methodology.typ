@@ -33,7 +33,10 @@ $4 times 1 "m"$ in $(x, z)$. A zero-offset
 single transmitter--receiver pair across the surface in $1 "cm"$ steps,
 with the receiver trailing the source by a fixed $10 "cm"$ offset; each
 resulting position yields one A-scan, and $380$ such steps are stacked to
-form each B-scan. Each simulation runs for a $20 "ns"$ time window, stepped
+form each B-scan. Although gprMax records all six field/flux-density
+components at every receiver, only the $E_z$ component (the vertical
+electric field, in $"V"\/"m"$) is extracted to build every A-scan and
+B-scan in this thesis. Each simulation runs for a $20 "ns"$ time window, stepped
 at $Delta t approx 2.36 "ps"$ per iteration ($8481$ iterations in total); gprMax
 determines this timestep itself from the $1 "mm"$ spatial discretisation,
 choosing the largest value that still satisfies the Courant-Friedrichs-Lewy

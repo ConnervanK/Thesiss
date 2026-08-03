@@ -18,15 +18,10 @@ pre-labelled region of interest --- how that region is chosen.
 beyond idealised single-scatterer synthetic models to real borehole GPR field
 data.
 
-The complementary generalisation to complex synthetic scenes with multiple
-independently-moving scatterers is scoped as future work rather than tested
-here; this chapter is concerned solely with the step from controlled synthetic
-targets to uncontrolled real data.
-
 == Field Data Explanation <sec:hyp3-fielddata>
 
 The dataset consists of 38 zero-offset borehole GPR profiles acquired on
-6 June 2016, with the following parameters: propagation velocity
+6 June 2016, with the following parameters: medium propagation velocity
 $v = 0.10 "m/ns"$, centre frequency $f_0 = 0.10 "GHz"$, trace spacing
 $d_L = 0.05 "m"$, and maximum depth $85 "m"$. The experiment was conducted in
 four operational stages, each with a distinct expected fluid behaviour:
@@ -123,9 +118,7 @@ a single amplitude shared across all five profiles' excitation data replaces
 the per-trace scalar. With both fixes applied, differences across the
 five-profile set (1, 3, 8, 20, 38) are compact and localised, matching the
 Kirchhoff/Gazdag character, rather than smeared across the reflector as
-occurred before the fix (one caveat: the automatic per-profile dip fit did
-not generalise across the corrected frames, so all five profiles use a single
-manual dip override, $m_0 = 2.2$).
+occurred before the fix.
 
 Kirchhoff and Gazdag migrations are available for all 37 processed profiles
 (profiles 2--38, differenced against profile 1 as the fixed baseline).
@@ -235,8 +228,9 @@ cross-spectrum -- that together define the ROI entering the fit.
 === Back-Propagation Cross-Check and Stage Displacements <sec:hyp3-fd-bp-corrected>
 
 The same napari-picked workflow is applied to the corrected back-propagation
-focus frames for the same four representative pairs. Throughout this chapter, the "positive $#Dz$ = downward" convention
-is used.
+focus frames for the same four representative pairs. Throughout this chapter, negative $#Dz$ corresponds to
+downward (increasing depth) movement, and positive $#Dz$ to upward
+(decreasing depth) movement.
 
 @tab:fielddata-stages summarises the resulting stage-by-stage displacement
 estimates for Gazdag and for the independently-processed back-propagation
@@ -246,17 +240,16 @@ pipeline with the corrected $#kx > 0$ Hermitian-mirror restriction
 of approximately $1.66 "m"$ during the Push stage, accompanied by a smaller
 lateral shift of $0.17 "m"$ *toward* the borehole. The Chase stage adds a
 comparable increment in the same (downward) direction, and the Wait stage
-substantially reverses it ($-0.67 "m"$, i.e. upward); Gazdag shows no further
-net movement during Pull ($+0.00 "m"$, at the noise floor) while
-back-propagation continues a smaller reversal ($-0.24 "m"$), leaving a net
-residual of $#Dz approx +2.61 "m"$ (downward), $#Dx approx -0.10 "m"$ (toward
+substantially reverses it ($+0.68 "m"$, i.e. upward); both methods continue a
+smaller reversal during Pull ($+0.14 "m"$ for Gazdag, $+0.24 "m"$ for
+back-propagation), leaving a net residual of $#Dz approx -2.44 "m"$
+(downward), $#Dx approx +0.22 "m"$ (away from
 the borehole) at profile 38 relative to profile 1 for Gazdag. Back-propagation
-agrees with Gazdag on direction during Push, Chase and Wait -- downward and
+agrees with Gazdag on direction in every stage -- downward and
 toward the borehole during Push, downward and away during Chase, upward
-during Wait -- once its depth-axis convention is corrected, despite the two
-techniques sharing no processing steps downstream of the raw B-scans; the two
-diverge only in the Pull stage, where Gazdag's estimate sits at the noise
-floor rather than truly disagreeing in sign. @sec:hyp3-fd-interpretation
+during Wait and Pull -- once its depth-axis convention is corrected, despite
+the two techniques sharing no processing steps downstream of the raw
+B-scans. @sec:hyp3-fd-interpretation
 returns to what this displacement pattern means physically.
 
 #figure(
@@ -268,19 +261,19 @@ returns to what this displacement pattern means physically.
     [*Stage*], [*Pair*], [*$#Dz$ (Gazdag)*], [*$#Dx$ (Gazdag)*],
     [*$#Dz$ (BP, corrected)*], [*$#Dx$ (BP, corrected)*],
     table.hline(stroke: 0.4pt),
-    [Push],  [1→3],   [$+1.66 "m"$], [$-0.17 "m"$], [$+2.08 "m"$], [$-0.25 "m"$],
-    [Chase], [3→8],   [$+1.62 "m"$], [$+0.07 "m"$], [$+1.65 "m"$], [$+0.06 "m"$],
-    [Wait],  [8→20],  [$-0.67 "m"$], [$+0.01 "m"$], [$-0.28 "m"$], [$+0.03 "m"$],
-    [Pull],  [20→38], [$+0.00 "m"$], [$-0.00 "m"$], [$-0.24 "m"$], [$-0.14 "m"$],
+    [Push],  [1→3],   [$-1.66 "m"$], [$-0.17 "m"$], [$-2.06 "m"$], [$-0.25 "m"$],
+    [Chase], [3→8],   [$-1.60 "m"$], [$+0.07 "m"$], [$-1.65 "m"$], [$+0.06 "m"$],
+    [Wait],  [8→20],  [$+0.68 "m"$], [$+0.01 "m"$], [$+0.28 "m"$], [$+0.03 "m"$],
+    [Pull],  [20→38], [$+0.14 "m"$], [$+0.31 "m"$], [$+0.24 "m"$], [$-0.14 "m"$],
     table.hline(stroke: 0.4pt),
-    [*Net (prof 1→38)*], [], [$+2.61 "m"$], [$-0.10 "m"$], [--], [--],
+    [*Net (prof 1→38)*], [], [$-2.44 "m"$], [$+0.22 "m"$], [--], [--],
     table.hline(stroke: 0.7pt),
   ),
   caption: [Stage-anchored phase-plane displacement estimates from the
     borehole GPR field dataset, for the four representative pairs (1→3,
     3→8, 8→20, 20→38): the Gazdag-migrated estimate alongside the
     independently-processed, corrected back-propagation cross-check
-    (napari-painted ROI). Positive $#Dz$ is downward (along the borehole,
+    (napari-painted ROI). Negative $#Dz$ is downward (along the borehole,
     increasing depth); positive $#Dx$ is away from the borehole. Net values
     are the cumulative sum of the four Gazdag stage estimates;
     back-propagation has no corresponding net row since it was estimated
@@ -290,12 +283,11 @@ returns to what this displacement pattern means physically.
 
 == Interpretation (WLS vs. RANSAC) <sec:hyp3-fd-interpretation>
 
-Back-propagation and Gazdag agree on the sign of the displacement during
-Push, Chase and Wait (@tab:fielddata-stages), despite sharing no processing steps
-downstream of the raw B-scans; the two diverge only in the Pull stage, where
-Gazdag's estimate sits at the noise floor rather than truly disagreeing in
-sign. This cross-method agreement is evidence that the recovered $#Dz$
-pattern -- downward during Push and Chase, reversing upward during Wait -- is
+Back-propagation and Gazdag agree on the sign of the displacement in every
+stage (@tab:fielddata-stages), despite sharing no processing steps
+downstream of the raw B-scans. This cross-method agreement is evidence that the recovered $#Dz$
+pattern -- downward during Push and Chase, reversing upward during Wait and
+continuing through Pull -- is
 a genuine feature of this dataset rather than a processing or
 sign-convention artefact specific to one migration technique. The dominant
 vertical displacement now agrees in direction with the naive expectation of

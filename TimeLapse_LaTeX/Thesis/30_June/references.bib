@@ -1,50 +1,34 @@
 % ============================================================
-% Placeholder bibliography.
-% Every entry below is a best-effort skeleton for a real, well-known
-% reference in this field. VERIFY all fields (exact authors, volume,
-% pages, DOI) against the original source before submission --- none
-% of these have been checked against the published record.
+% Bibliography for the literature review (Chapter 2) and theory
+% (Chapter 3) chapters. Every entry below has been cross-checked
+% against either the source PDF supplied for this thesis
+% (TimeLapse_LaTeX/Papers_used/Used/) or the publisher/DOI record
+% collected in new_references.bib (Zotero export, urldate 2026-08-03).
 % ============================================================
 
-@article{stolt1978,
-  author  = {Stolt, R. H.},
-  title   = {Migration by {Fourier} transform},
-  journal = {Geophysics},
-  year    = {1978},
-  volume  = {43},
-  number  = {1},
-  pages   = {23--48},
-  note    = {Placeholder entry --- verify against original.}
-}
-
-@article{gazdag1978,
-  author  = {Gazdag, J.},
-  title   = {Wave equation migration with the phase-shift method},
-  journal = {Geophysics},
-  year    = {1978},
-  volume  = {43},
-  number  = {7},
-  pages   = {1342--1351},
-  note    = {Placeholder entry --- verify against original.}
-}
-
 @article{schneider1978,
-  author  = {Schneider, William A.},
+  author  = {Schneider, W. A.},
   title   = {Integral formulation for migration in two and three dimensions},
   journal = {Geophysics},
   year    = {1978},
   volume  = {43},
   number  = {1},
   pages   = {49--76},
-  note    = {Placeholder entry --- verify against original; Kirchhoff/integral migration.}
+  issn    = {0016-8033},
+  doi     = {10.1190/1.1440828},
+  note    = {Fields confirmed against the publisher (SEG/GeoScienceWorld) record; source of the Kirchhoff/integral migration formulation used in Chapter~3.}
 }
 
 @book{claerbout1985,
   author    = {Claerbout, Jon F.},
   title     = {Imaging the Earth's Interior},
   publisher = {Blackwell Scientific Publications},
+  address   = {Oxford},
   year      = {1985},
-  note      = {Placeholder entry --- verify against original; source of the exploding-reflector model used throughout Chapter~2.}
+  pages     = {414},
+  isbn      = {978-0-86542-304-6},
+  url       = {https://archive.org/details/imagingearthsint0000clae},
+  note      = {Publisher, place, and page count confirmed against the review in Geophysical Journal International 86(1):217 (1986), and directly against \S1.1 "Exploding Reflectors" of the source PDF supplied for this thesis; source of the exploding-reflector model used throughout Chapter~2. Freely readable at the URL above.}
 }
 
 @inproceedings{yao2012,
@@ -65,9 +49,11 @@
   journal = {Mathematical Problems in Engineering},
   year    = {2014},
   volume  = {2014},
-  pages   = {1--16},
-  note    = {Article ID 280738. Fields taken directly from the source PDF supplied for this thesis.},
-  doi     = {10.1155/2014/280738}
+  number  = {1},
+  pages   = {280738},
+  issn    = {1563-5147},
+  doi     = {10.1155/2014/280738},
+  note    = {Article ID 280738 (journal uses article numbers, not page ranges); fields confirmed against the publisher record.}
 }
 
 @article{smitha2016,
@@ -76,20 +62,25 @@
   journal = {International Journal of Geo-Engineering},
   year    = {2016},
   volume  = {7},
-  number  = {4},
+  number  = {1},
+  pages   = {4},
+  issn    = {2198-2783},
   doi     = {10.1186/s40703-016-0019-6},
-  note    = {Fields taken directly from the source PDF supplied for this thesis.}
+  note    = {Issue number and article number confirmed against the publisher (SpringerOpen) record.}
 }
 
 @article{jones2014,
-  author  = {Jones, Ian F.},
+  author  = {Jones, Ian},
   title   = {Tutorial: Migration Imaging Conditions},
   journal = {First Break},
   year    = {2014},
   volume  = {32},
+  number  = {12},
   pages   = {45--55},
+  issn    = {1365-2397},
+  publisher = {European Association of Geoscientists \& Engineers},
   doi     = {10.3997/1365-2397.2014017},
-  note    = {Fields taken directly from the source PDF supplied for this thesis.}
+  note    = {Fields confirmed against the publisher (EAGE) record.}
 }
 
 @incollection{schuster2017,
@@ -99,7 +90,10 @@
   publisher = {Society of Exploration Geophysicists},
   year      = {2017},
   chapter   = {10},
-  note      = {Placeholder entry --- chapter/author attribution inferred from internal content (SEG/EAGE salt model tests, phase-shift/SSF/PSPI/FFD derivation, phase-encoding migration); the source PDF supplied for this thesis carries no title page. Verify author, publisher, and year against the original source before submission.}
+  isbn      = {978-1-56080-342-3},
+  doi       = {10.1190/1.9781560803423},
+  url       = {https://csim.kaust.edu.sa/files/Short.Courses/BP.2011/PPT/chphasemig.pdf},
+  note      = {Author and chapter confirmed: the source PDF supplied for this thesis (no title page) is a byte-for-byte match against Schuster's own freely hosted course-notes copy at the URL above, which later became Chapter~10 of the SEG book cited here. The DOI/ISBN identify the book as a whole; no chapter-level DOI is assigned.}
 }
 
 @inproceedings{geng2022,
@@ -107,18 +101,23 @@
   title     = {Revers Time Migration Method of Ground Penetrating Radar Based on {gprMax}},
   booktitle = {2022 International Applied Computational Electromagnetics Society Symposium (ACES-China)},
   year      = {2022},
+  pages     = {1--3},
   publisher = {IEEE},
   doi       = {10.1109/ACES-China56081.2022.10064751},
   note      = {Title reproduced verbatim from the source PDF, including its "Revers" typo. Fields taken directly from the source PDF supplied for this thesis.}
 }
 
-@misc{pylops,
-  author       = {Ravasi, Matteo and Vasconcelos, Ivan},
-  title        = {{PyLops}: A Linear-Operator Python Library for Scalable Algebra and Optimization},
-  howpublished = {Package documentation},
-  url          = {https://pylops.readthedocs.io/},
-  year         = {2020},
-  note         = {Placeholder entry --- the citable record is Ravasi \& Vasconcelos (2020), SoftwareX 11:100361; verify before submission. URL is the documentation site referenced in this thesis.}
+@article{pylops,
+  author  = {Ravasi, Matteo and Vasconcelos, Ivan},
+  title   = {{PyLops}---A Linear-Operator {Python} Library for Scalable Algebra and Optimization},
+  journal = {SoftwareX},
+  year    = {2020},
+  volume  = {11},
+  pages   = {100361},
+  issn    = {2352-7110},
+  doi     = {10.1016/j.softx.2019.100361},
+  url     = {https://pylops.readthedocs.io/},
+  note    = {Citable record for the {PyLops} library used throughout Chapters~3--4 for the Kirchhoff and phase-shift migration operators; URL is the documentation site referenced directly in the text.}
 }
 
 @incollection{annan2009,
@@ -127,6 +126,7 @@
   booktitle = {Ground Penetrating Radar: Theory and Applications},
   editor    = {Jol, Harry M.},
   publisher = {Elsevier},
+  address   = {Amsterdam},
   year      = {2009},
   pages     = {1--40},
   doi       = {10.1016/B978-0-444-53348-7.00001-6},
@@ -167,6 +167,7 @@
   volume  = {34},
   number  = {10},
   pages   = {105102},
+  issn    = {0957-0233},
   doi     = {10.1088/1361-6501/acdff4}
 }
 
@@ -186,6 +187,7 @@
   volume  = {40},
   number  = {1},
   pages   = {127--137},
+  issn    = {0926-9851},
   doi     = {10.1016/S0926-9851(98)00008-1}
 }
 
@@ -197,6 +199,7 @@
   volume  = {41},
   number  = {8},
   pages   = {611--620},
+  issn    = {0963-8695},
   doi     = {10.1016/j.ndteint.2008.06.002}
 }
 
@@ -217,6 +220,7 @@
   volume  = {33},
   number  = {20},
   pages   = {L20401},
+  issn    = {1944-8007},
   doi     = {10.1029/2006GL027788}
 }
 
@@ -230,16 +234,124 @@
 }
 
 @article{castagna2016,
-  author  = {Castagna, John and Zhang, Qing and Falconer, Olivia},
+  author  = {Castagna, John and Oyem, Arnold and Portniaguine, Oleg and Aikulola, Understanding},
   title   = {Phase decomposition},
   journal = {Interpretation},
   year    = {2016},
-  note    = {Placeholder entry --- referenced by name in helper\_functions/phase\_decomposition.py; verify authors, volume and pages against original.}
+  volume  = {4},
+  number  = {3},
+  pages   = {SN1--SN10},
+  issn    = {2324-8858},
+  doi     = {10.1190/INT-2015-0150.1},
+  note    = {Author list (four authors, incl. U. Aikulola) confirmed via GeoScienceWorld/ADS; referenced by name in helper\_functions/phase\_decomposition.py.}
 }
 
-@misc{gprmax,
-  author = {Warren, Craig and Giannopoulos, Antonis and Giannakis, Iraklis},
-  title  = {{gprMax}: Open source software to simulate electromagnetic wave propagation for Ground Penetrating Radar},
-  year   = {2016},
-  note   = {Placeholder entry --- verify against the gprMax project citation (Computer Physics Communications) before submission.}
+@article{gprmax,
+  author  = {Warren, Craig and Giannopoulos, Antonios and Giannakis, Iraklis},
+  title   = {{gprMax}: Open source software to simulate electromagnetic wave propagation for Ground Penetrating Radar},
+  journal = {Computer Physics Communications},
+  year    = {2016},
+  volume  = {209},
+  pages   = {163--170},
+  issn    = {0010-4655},
+  doi     = {10.1016/j.cpc.2016.08.020},
+  note    = {Citable record confirmed against the publisher (Computer Physics Communications) listing.}
+}
+
+% ------------------------------------------------------------
+% Added for the restructured literature review (Chapter 2):
+% sources for the amplitude-based-migration and phase-based-
+% interpretation sections (@sec:lit-amplitude, @sec:lit-phase),
+% and the waveform-location review cited in @sec:lit-amplitude.
+% Fields sourced from new_references.bib (Zotero export,
+% urldate 2026-08-03).
+% ------------------------------------------------------------
+
+@article{li2020,
+  author  = {Li, Lei and Tan, Jingqiang and Schwarz, Benjamin and Stan{\v e}k, Franti{\v s}ek and Poiata, Natalia and Shi, Peidong and Diekmann, Leon and Eisner, Leo and Gajewski, Dirk},
+  title   = {Recent Advances and Challenges of Waveform-Based Seismic Location Methods at Multiple Scales},
+  journal = {Reviews of Geophysics},
+  year    = {2020},
+  volume  = {58},
+  number  = {1},
+  pages   = {e2019RG000667},
+  issn    = {1944-9208},
+  doi     = {10.1029/2019RG000667}
+}
+
+@article{li2025,
+  author  = {Li, Duo and Chen, Lei and Fu, Chao and Xu, Xinji and Gong, Zhifei and Ren, Yuxiao and Liu, Zhengyu},
+  title   = {Multiple Signal Classification Algorithm--Based Reflection Matrix Imaging Method for Tunnel--Array Acoustic Wave Prospecting Technique},
+  journal = {Geophysical Prospecting},
+  year    = {2025},
+  volume  = {73},
+  number  = {8},
+  pages   = {e70096},
+  issn    = {1365-2478},
+  doi     = {10.1111/1365-2478.70096}
+}
+
+@article{schmelzbach2015,
+  author  = {Schmelzbach, Cedric and Huber, Emanuel},
+  title   = {Efficient Deconvolution of Ground-Penetrating Radar Data},
+  journal = {IEEE Transactions on Geoscience and Remote Sensing},
+  year    = {2015},
+  volume  = {53},
+  number  = {9},
+  pages   = {5209--5217},
+  issn    = {0196-2892},
+  doi     = {10.1109/TGRS.2015.2419235}
+}
+
+@article{moghaddam2019,
+  author  = {Moghaddam, Sadegh and Oskooi, Behrooz and Goudarzi, Alireza and Azadi, Asghar},
+  title   = {The Comparative Sense of Sparse Deconvolution and Least-Squares Deconvolution Methods in Increasing the Temporal Resolution of {GPR} Data},
+  journal = {Arabian Journal of Geosciences},
+  year    = {2019},
+  volume  = {12},
+  number  = {20},
+  pages   = {627},
+  issn    = {1866-7538},
+  doi     = {10.1007/s12517-019-4686-4}
+}
+
+@article{liu2024,
+  author  = {Liu, Qiancheng and Chen, Ling and Xu, Jincheng},
+  title   = {Time-Lapse One-Step Least-Squares Migration},
+  journal = {IEEE Geoscience and Remote Sensing Letters},
+  year    = {2024},
+  volume  = {21},
+  pages   = {1--4},
+  issn    = {1558-0571},
+  doi     = {10.1109/LGRS.2023.3344695}
+}
+
+@phdthesis{meles2011,
+  author = {Meles, Giovanni Angelo},
+  title  = {New Developments in Full Waveform Inversion of {GPR} Data},
+  school = {ETH Zurich},
+  year   = {2011},
+  doi    = {10.3929/ETHZ-A-006878075}
+}
+
+@article{wang2025,
+  author  = {Wang, Xun and Yu, Tianxiao and Feng, Deshan and Li, Bingchao and Ding, Siyuan},
+  title   = {Spatiotemporal Optimization of {GPR} Full Waveform Inversion Based on Super-Resolution Technology},
+  journal = {IEEE Transactions on Geoscience and Remote Sensing},
+  year    = {2025},
+  volume  = {63},
+  pages   = {1--13},
+  issn    = {1558-0644},
+  doi     = {10.1109/TGRS.2025.3551373}
+}
+
+@article{gao2022,
+  author  = {Gao, Kai and Donahue, Carly M. and Henderson, Bradley G. and Modrak, Ryan T.},
+  title   = {{SREMI}: Super-resolution Electromagnetic Imaging with Single-Channel Ground-Penetrating Radar},
+  journal = {Journal of Applied Geophysics},
+  year    = {2022},
+  volume  = {205},
+  pages   = {104777},
+  issn    = {0926-9851},
+  doi     = {10.1016/j.jappgeo.2022.104777}
 }
