@@ -20,7 +20,8 @@ tells PowerPoint to look for them.
 
 What gets produced
 ------------------
-    anim1_imaging_floor          slides 3 & 4   two scatterers merging
+    anim1_imaging_floor          slides 3 & 4   two scatterers merging (illustrative PSF)
+    anim1_extended_resolution    backup/detail  real Kirchhoff migration + metric
     anim2_monitoring_floor       slide 6        amplitude differencing fails
     anim3_envelope_vs_phase      slide 7        why phase is the observable
     anim4_kdomain_lateral        slide 8        shift -> phase ramp
@@ -29,6 +30,12 @@ What gets produced
     anim5_act1..act4             slide 9        the derivation, one clip per
                                                 formula reveal
     anim5_full                   (rehearsal)    all four acts, continuous
+    anim6_dumbbell_clean.png     slide 12       clean MAE, thesis numbers
+    anim6_dumbbell_noisy         slide 15       the same plot degrading under
+                                                noise, animated
+    anim7_noise_propagation      slide 14       noise through the whole chain
+    anim7b_noise_by_method       backup/detail  same noise ramp, Kirchhoff vs
+                                                Gazdag vs back-prop side by side
 
 Each also writes a 300-dpi *_final.png so you have a static fallback if the
 projector refuses to play video. Put those on a USB stick too.
@@ -45,10 +52,14 @@ DEFAULT_OUT = os.path.normpath(os.path.join(HERE, "..", "assets", "animations"))
 
 JOBS = [
     ("anim1_imaging_floor.py", [], "slides 3 & 4"),
+    ("anim1_extended_resolution_floor.py", [], "backup/detail — real migration"),
     ("anim2_monitoring_floor.py", [], "slide 6"),
     ("anim3_envelope_vs_phase.py", [], "slide 7"),
     ("anim4_kdomain_phase_ramp.py", ["--mode", "all"], "slides 8 & 10"),
     ("anim5_crossspectrum_derivation.py", [], "slide 9"),
+    ("anim6_mae_dumbbell.py", [], "slides 12 & 15"),
+    ("anim7_noise_propagation.py", [], "slide 14"),
+    ("anim7b_noise_by_method.py", [], "backup/detail — 3-method comparison"),
 ]
 
 
@@ -90,7 +101,7 @@ def main():
         # anim5 derives its length from its own four-act structure, so a
         # blanket --duration would squash the acts out of proportion.
         per = list(common)
-        if not args.preview and "anim5" not in script:
+        if not args.preview and not any(k in script for k in ("anim5", "anim6", "anim7")):
             per += ["--duration", str(args.duration)]
         r = subprocess.run([sys.executable, os.path.join(HERE, script)]
                            + extra + per, cwd=HERE)
