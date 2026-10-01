@@ -262,8 +262,11 @@ def write_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns, x_midpo
     domain_x = np.ceil((x_max + x_offset + pml_pad) / dx) * dx + pml_pad
     dz       = dx
 
-    # Source x-positions (loaded at gprMax runtime)
-    npy_path = out_dir / 'src_positions.npy'
+    # Source x-positions (loaded at gprMax runtime). Resolved to an absolute
+    # path: the #python: block below is exec'd against gprMax's *process* cwd
+    # at run time, not the .in file's directory, so a relative path here would
+    # only resolve when gprMax happens to be invoked from study_root's cwd.
+    npy_path = (out_dir / 'src_positions.npy').resolve()
     np.save(npy_path, x_src)
 
     # Write .in file
@@ -475,7 +478,11 @@ def write_borehole_backprop_files(study_root, label, slug, tapered_ntr_nt, dt_ns
     domain_y   = y_img_end + pml_pad
     src_y      = (y_bh_start + y_bh_end) / 2.0
 
-    npy_path = out_dir / 'src_positions.npy'
+    # Resolved to an absolute path: the #python: block below is exec'd against
+    # gprMax's *process* cwd at run time, not the .in file's directory, so a
+    # relative path here would only resolve when gprMax happens to be invoked
+    # from study_root's cwd.
+    npy_path = (out_dir / 'src_positions.npy').resolve()
     np.save(npy_path, x_src)
 
     eps_r_half       = 4.0 * eps_r
